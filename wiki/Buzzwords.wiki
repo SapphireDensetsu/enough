@@ -4,16 +4,16 @@
 
 Fundamental ideas we wish to explore and implement.
 
-* Rich (non-textual) semantic representation: 
+ * Rich (non-textual) semantic representation: 
   * Program by example
   * Dynamic viewing/editing
   * Automatic invariants tracking
   * Reversing functions automatically
-* Capabilities
-* Orthogonal Persistence
-* Lazy Evaluation
-* Promises
-* Unified Interface
-* Adaptive Profiling
-* Zero Install
-* Differential Computing 
+ * Capabilities
+ * Orthogonal Persistence
+ * Lazy Evaluation
+ * Promises
+ * Unified Interface
+ * Adaptive Profiling
+ * Zero Install
+ * Differential Computing 
