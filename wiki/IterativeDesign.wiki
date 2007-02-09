@@ -6,6 +6,14 @@ _Iterative design_ is a methodology for producing a well structured system, with
 
 Design work is done in succesive iterations, where each time the design is analyzed and re-constructed using all the lessons learnt from the previous attempts.
 
+This is what we expect to happen - we will...
+ # Create a working version of something A
+ # Find out that it isn't so good
+ # Try something else, B
+ # Realize that A was a better direction
+ # NOT go back to A. Instead, create C which is based on A
+ # etc....
+
 == So what? ==
 This is *not new* or special, but when stated clearly in advance it allows us to set realistic goals and to acheive them, without any real compromise. However, in many cases (especially in industry) results in time are the only measure of success, and the method is to create the best possible design in a single attempt, during "Design Time". After design time it is very hard to change the design and any problems found later can cause much distress.
 
