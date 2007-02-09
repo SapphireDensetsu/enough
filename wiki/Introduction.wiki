@@ -5,10 +5,10 @@
 The ENOUGH project is a combination of research and practical implementation.
 Its main aim is to ultimately design and implement the operating system and programming language of the future, with the following main features:
 
-# Security via capabilities (No ACLs, you can do only what you are explicitly allowed to) 
-# No artificial boundaries (network, processes, etc.): A whole open world of objects, protected by (1). 
-# No text-based programming languages: all programming is based on logical objects (based on (2)), seperating View (text or graphic code) and Data (the logic). 
-# Many more! See the Buzzwords 
+ # Security via capabilities (No ACLs, you can do only what you are explicitly allowed to) 
+ # No artificial boundaries (network, processes, etc.): A whole open world of objects, protected by (1). 
+ # No text-based programming languages: all programming is based on logical objects (based on (2)), seperating View (text or graphic code) and Data (the logic). 
+ # Many more! See the Buzzwords 
 
 Haven't you ever asked yourself, after wasting hours on a stupid bug, implementing some feature for the Nth time, or after discovering a security breech in your "secure" software - can this be the way we will work in 20 years?
 We have. The answer is: NO!
@@ -19,7 +19,7 @@ Why is the industry (and even the Open Source community) ignoring them? Why are 
 The ideas for this project come from many sources, including: Eros, BitC, E, Subtext, Python (useability...)
 
 Here are the main issues Enough means to solve, by redesign: 
-* Security - by using capabilities instead of ACLs 
-* Code: processing, compatibility, inspection - by using a non-textual programming "language" (live code, working by example, etc.) 
-* Networking/Multiprocessing - by using a request-grant mechanism, RPC as a fundamental part of the language, etc. 
-* UI (interoperability, extendability and automation) - by having the interface for the user be completely equivalent to the programmer's. Why should each UI desiginer re-invent macros, scripts, etc.? 
+ * Security - by using capabilities instead of ACLs 
+ * Code: processing, compatibility, inspection - by using a non-textual programming "language" (live code, working by example, etc.) 
+ * Networking/Multiprocessing - by using a request-grant mechanism, RPC as a fundamental part of the language, etc. 
+ * UI (interoperability, extendability and automation) - by having the interface for the user be completely equivalent to the programmer's. Why should each UI desiginer re-invent macros, scripts, etc.? 
