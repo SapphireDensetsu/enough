@@ -1,0 +1,11 @@
+#summary Stuff that has to be done
+#labels Featured
+
+
+= Big stuff =
+*In possible chronological order:*
+ * Formulate some ideas
+ * Write a paper
+ * Implement a first version (and description) of AntiText
+
+= Little stuff =
