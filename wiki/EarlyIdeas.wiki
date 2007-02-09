@@ -61,107 +61,59 @@ MORE IDEAS LATER... :-)
 = Q&A =
 
  
-RE: Brainstorming Lotex' Ideas
-Questions by ncryptor, answers by lotex 
+ RE: Brainstorming Lotex' Ideas
+ Questions by ncryptor, answers by lotex 
  
-> yo, 
-> 
-> some questions: 
-> * static typing in python - but in many cases you operate on a 
-> variable while allowing it to be many types: for example, you activate 
-> a method of it: 
-> result = moshe.do_stuff() 
-> and still, moshe could be any object the implements do_stuff 
-> how does static typing work with this? Maybe you mean that the 
-> type/assertion inference can infer that all callers to this function 
-> must pass a "moshe" that is of a type that has the do_stuff method 
-> implemented. but this is impossible since the do_stuff method could be 
-> created in many different ways! 
+ > yo, 
+ > 
+ > some questions: 
+ > * static typing in python - but in many cases you operate on a 
+ > variable while allowing it to be many types: for example, you activate 
+ > a method of it: 
+ > result = moshe.do_stuff() 
+ > and still, moshe could be any object the implements do_stuff 
+ > how does static typing work with this? Maybe you mean that the 
+ > type/assertion inference can infer that all callers to this function 
+ > must pass a "moshe" that is of a type that has the do_stuff method 
+ > implemented. but this is impossible since the do_stuff method could be 
+ > created in many different ways! 
  
-Yes, "static typing" here means that it infers which "protocols" must 
-be supported, and not which exact type it is. In implementation this 
-might be implemented via subclassing most of the time, but there's 
-some thought work... 
-do_stuff's signature here should be decided from the code here, I 
-believe, and not from the code inside the function. i.e: if I use 
-result in one way or the other, I make "demands" of do_stuff. Thus I 
-deduce that the protocol that defines do_stuff also defines that the 
-type returned has the protocols I use. It propagates correctly.. But 
-maybe if you give a more details example I can try to see if it really 
-works. 
+ Yes, "static typing" here means that it infers which "protocols" must be supported, and not which exact type it is. In implementation this might be implemented via subclassing most of the time, but there's some thought work... 
+ do_stuff's signature here should be decided from the code here, I believe, and not from the code inside the function. i.e: if I use result in one way or the other, I make "demands" of do_stuff. Thus I deduce that the protocol that defines do_stuff also defines that the type returned has the protocols I use. It propagates correctly.. But 
+maybe if you give a more details example I can try to see if it really works. 
  
-I have not thought about static typing enough, and I think nobody ever 
-tried incremental static typing before (i.e: Applying static typing on 
-an incrementally growing program, and not re-establishing all the 
-types from a dead textual representation every time..), so maybe what 
-we think about as "inconvinient" and such is actually fine in such a 
-case. Specifying each and every type in C++ is a chore, but in this 
-case it may not be so... 
+ I have not thought about static typing enough, and I think nobody ever tried incremental static typing before (i.e: Applying static typing on an incrementally growing program, and not re-establishing all the types from a dead textual representation every time..), so maybe what we think about as "inconvinient" and such is actually fine in such a case. Specifying each and every type in C++ is a chore, but in this case it may not be so... 
  
  
-> * "spreadsheet and a build system become the same program" - what do 
-> you mean? explain and example 
+ > * "spreadsheet and a build system become the same program" - what do 
+ > you mean? explain and example 
  
-A spreadsheet just attaches a GUI to view/edit cells and graphs, and 
-then it propagates changes through the functions according to the 
-relationships you establish (dependency tree updates). 
-A build system doesn't attach a GUI to view/edit "cells" because the 
-cells are "files" and you can edit them with the filesystem, but like 
-the spreadsheet, it "detects" changes via mtimes and propagates them 
-in the same way through the functions according to the relationship 
-you establish. 
+ A spreadsheet just attaches a GUI to view/edit cells and graphs, and then it propagates changes through the functions according to the relationships you establish (dependency tree updates). 
+ A build system doesn't attach a GUI to view/edit "cells" because the cells are "files" and you can edit them with the filesystem, but like the spreadsheet, it "detects" changes via mtimes and propagates them in the same way through the functions according to the relationship you establish. 
  
-When you update a cell in a spreadsheet, the dependent cells are 
-updated and recalculated because the GUI knows when it changes. 
-When you update a file, the build system scans its mtime to know it 
-changes, and knows to recalculate. 
-Because of these superficial differences (Spreadsheet has cells/GUI, 
-build system has files), both of these programs, while doing the exact 
-same thing, have to be implemented completely differently because of 
-the redundant concepts ("file" vs "gui object"). 
+ When you update a cell in a spreadsheet, the dependent cells are updated and recalculated because the GUI knows when it changes. When you update a file, the build system scans its mtime to know it changes, and knows to recalculate. Because of these superficial differences (Spreadsheet has cells/GUI, build system has files), both of these programs, while doing the exact same thing, have to be implemented completely differently because of the redundant concepts ("file" vs "gui object"). 
  
-Also note that a build system has a "live tree" of dependencies that 
-is encoded in a "dead textual format". It keeps translating the dead 
-representation to live, and lets you edit only the dead 
-representation. A spreadsheet has only a live tree, which would also 
-be better in a build system -- much faster (Remmember monk-daemon 
-idea?) and editing it with a GUI is much nicer than editing a textual 
-representation. 
+ Also note that a build system has a "live tree" of dependencies that
+is encoded in a "dead textual format". It keeps translating the dead representation to live, and lets you edit only the dead representation. A spreadsheet has only a live tree, which would also be better in a build system -- much faster (Remmember monk-daemon 
+idea?) and editing it with a GUI is much nicer than editing a textual representation. 
  
-You want to add another preprocessing on the source? "Splice" the 
-arrow between the source object and the function that processes it and 
-put another function on it instead. 
+ You want to add another preprocessing on the source? "Splice" the arrow between the source object and the function that processes it and put another function on it instead. 
  
  
-> * speeding up the 6 million entry array: I didnt understand. do you 
-> mean that the sort function NEVER occurs? or does it occur in idle 
-> time and in the mean time how does everything work (If i need to find 
-> an entry before the sort, what happens?) 
+ > * speeding up the 6 million entry array: I didnt understand. do you 
+ > mean that the sort function NEVER occurs? or does it occur in idle 
+ > time and in the mean time how does everything work (If i need to find 
+ > an entry before the sort, what happens?) 
  
-It NEVER occurs. "sort" looks like a sort function onscreen, that 
-takes elements and returns ordered elements. But under the hood, 
-"sort" in fact takes DELTAs and yields DELTAs in the other end. i.e, 
-input is "Entry at index #3 changed from X to Y", output is "Entry at 
-index #88 moved to #99 + Entry at index #99 changed from X to Y". 
-Note that delta-based change propagation is not only faster, but lets 
-you do nice GUI animations and not have yucky jumpy GUIs like today. 
-Also makes other features like undo's and stuff possibly more 
-powerful... 
+It NEVER occurs. "sort" looks like a sort function onscreen, that takes elements and returns ordered elements. But under the hood, "sort" in fact takes DELTAs and yields DELTAs in the other end. i.e, input is "Entry at index #3 changed from X to Y", output is "Entry at index #88 moved to #99 + Entry at index #99 changed from X to Y". 
+ Note that delta-based change propagation is not only faster, but lets you do nice GUI animations and not have yucky jumpy GUIs like today. Also makes other features like undo's and stuff possibly more powerful... 
  
  
-> * lack of processes - we should describe the problems with that. In 
-> fact we should make a list of problems with everything we think about 
-> - critical thinking is important!!! 
+ > * lack of processes - we should describe the problems with that. In 
+ > fact we should make a list of problems with everything we think about 
+ > - critical thinking is important!!! 
  
-The problem is basically choosing between safety and optimized inner 
-loops. Unsafe language code can still be used, if you can prove it to 
-be safe :-) Proof-carrying-code is a nice concept, and possibly even 
-practical for small inner loops. I think the idea though, that all 
-objects communicate via the exact same protocols without imaginary 
-"process" boundaries simplifies and defragments the computing world a 
-lot. 
-But if today you can take an OpenGL engine with highly-optimized ASM 
-stuff, with this new world, the highly-optimized ASM stuff would be 
-installed just like a driver today is. And in a way, it is: a "cpu 
-driver" :-) 
+The problem is basically choosing between safety and optimized inner loops. Unsafe language code can still be used, if you can prove it to be safe :-) Proof-carrying-code is a nice concept, and possibly even practical for small inner loops. I think the idea though, that all objects communicate via the exact same protocols without imaginary 
+"process" boundaries simplifies and defragments the computing world a lot. 
+ But if today you can take an OpenGL engine with highly-optimized ASM stuff, with this new world, the highly-optimized ASM stuff would be installed just like a driver today is. And in a way, it is: a "cpu driver" :-) 
  
