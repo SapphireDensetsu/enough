@@ -38,16 +38,14 @@ be meaningful, or people will auto-confirm.
   * The equivalent of "alt-tab" would be saying "this is more important to me now". Maybe more data can fit the screen? Let the computer do the window arrangement work... 
   * The main problem is how to easily convey (from the user) which data is important. 
   * Relating to the above, "buttons", especially small ones, are very annoying to click, especially as there's the entire screen-worth of space. Perhaps all buttons should 
-be replaced with a nicer concept I once saw, where you drag the mouse cursor from some spot into the correct angle (i.e: 0..30 degrees is option A, 30..60 is B, etc). 
-This is displayed nicely as a cut-pie. This allows you to move further for more precision or move a little carefully. 
- 
+be replaced with a nicer concept I once saw, where you drag the mouse cursor from some spot into the correct angle (i.e: 0..30 degrees is option A, 30..60 is B, etc). This is displayed nicely as a cut-pie. This allows you to move further for more precision or move a little carefully.  
  * Let logic be logic and widgets be widgets. The WYSIWYG "word processing" widget should be available for the user to connect to any function or object. 
  * "Widgets" are just object manipulators/viewers or action invokers that the user can connect to objects. 
  
 == General bugs to fix ==
-* NEVER jump, always animate (Made possible due to diff oriented flow of information). The human brain finds it very difficult to follow these jumps. 
-* Keyboard shortcuts are KEY SHORTCUTS, not symbol shortcuts. Alt-f should always mean the same, no matter what language I'm currently using. 
-* Radio buttons suck! All multi-choice options should use the same widget, that doesn't force you to hit a small spot in the screen to choose what you want, especially when the entire screen is available. 
+ * NEVER jump, always animate (Made possible due to diff oriented flow of information). The human brain finds it very difficult to follow these jumps. 
+ * Keyboard shortcuts are KEY SHORTCUTS, not symbol shortcuts. Alt-f should always mean the same, no matter what language I'm currently using. 
+ * Radio buttons suck! All multi-choice options should use the same widget, that doesn't force you to hit a small spot in the screen to choose what you want, especially when the entire screen is available. 
  
 == Misc UI ideas ==
  * Via some hotkey (i.e Ctrl+Capslock) map the keyboard to the screen, displaying a transparent keyboard image on screen, allowing the keyboard to serve as a sort of "rough 
@@ -67,7 +65,7 @@ MORE IDEAS LATER... :-)
  > yo, 
  > 
  > some questions: 
- > * static typing in python - but in many cases you operate on a 
+ > * static typing in python * - but in many cases you operate on a 
  > variable while allowing it to be many types: for example, you activate 
  > a method of it: 
  > result = moshe.do_stuff() 
@@ -85,7 +83,7 @@ maybe if you give a more details example I can try to see if it really works.
  I have not thought about static typing enough, and I think nobody ever tried incremental static typing before (i.e: Applying static typing on an incrementally growing program, and not re-establishing all the types from a dead textual representation every time..), so maybe what we think about as "inconvinient" and such is actually fine in such a case. Specifying each and every type in C++ is a chore, but in this case it may not be so... 
  
  
- > * "spreadsheet and a build system become the same program" - what do 
+ > * "spreadsheet and a build system become the same program" * - what do 
  > you mean? explain and example 
  
  A spreadsheet just attaches a GUI to view/edit cells and graphs, and then it propagates changes through the functions according to the relationships you establish (dependency tree updates). 
@@ -100,20 +98,20 @@ idea?) and editing it with a GUI is much nicer than editing a textual representa
  You want to add another preprocessing on the source? "Splice" the arrow between the source object and the function that processes it and put another function on it instead. 
  
  
- > * speeding up the 6 million entry array: I didnt understand. do you 
+ > * speeding up the 6 million entry array*: I didnt understand. do you 
  > mean that the sort function NEVER occurs? or does it occur in idle 
  > time and in the mean time how does everything work (If i need to find 
  > an entry before the sort, what happens?) 
  
-It NEVER occurs. "sort" looks like a sort function onscreen, that takes elements and returns ordered elements. But under the hood, "sort" in fact takes DELTAs and yields DELTAs in the other end. i.e, input is "Entry at index #3 changed from X to Y", output is "Entry at index #88 moved to #99 + Entry at index #99 changed from X to Y". 
+ It NEVER occurs. "sort" looks like a sort function onscreen, that takes elements and returns ordered elements. But under the hood, "sort" in fact takes DELTAs and yields DELTAs in the other end. i.e, input is "Entry at index #3 changed from X to Y", output is "Entry at index #88 moved to #99 + Entry at index #99 changed from X to Y". 
  Note that delta-based change propagation is not only faster, but lets you do nice GUI animations and not have yucky jumpy GUIs like today. Also makes other features like undo's and stuff possibly more powerful... 
  
  
- > * lack of processes - we should describe the problems with that. In 
+ > * lack of processes * - we should describe the problems with that. In 
  > fact we should make a list of problems with everything we think about 
  > - critical thinking is important!!! 
  
-The problem is basically choosing between safety and optimized inner loops. Unsafe language code can still be used, if you can prove it to be safe :-) Proof-carrying-code is a nice concept, and possibly even practical for small inner loops. I think the idea though, that all objects communicate via the exact same protocols without imaginary 
+ The problem is basically choosing between safety and optimized inner loops. Unsafe language code can still be used, if you can prove it to be safe :-) Proof-carrying-code is a nice concept, and possibly even practical for small inner loops. I think the idea though, that all objects communicate via the exact same protocols without imaginary 
 "process" boundaries simplifies and defragments the computing world a lot. 
  But if today you can take an OpenGL engine with highly-optimized ASM stuff, with this new world, the highly-optimized ASM stuff would be installed just like a driver today is. And in a way, it is: a "cpu driver" :-) 
  
