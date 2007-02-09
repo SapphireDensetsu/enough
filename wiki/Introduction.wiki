@@ -1,4 +1,5 @@
 #summary What is Enough?
+#labels Featured
 
 = Introduction =
 
