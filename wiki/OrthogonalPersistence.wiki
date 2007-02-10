@@ -23,6 +23,9 @@ The following is an outline of one possible way to achieve orthogonal persistenc
  * The checkpoints are performed in an incremental manner: only portions (pages) of memory that have been modified need to be saved to disk.
  * Special algorithms make this operation efficient.
 
+= Problems with Orthgonal Persistence =
+_Missing. Expand..._
+
 = Additional Information & References =
 _Put some more references, find publications on Orthogonal Persistence_
 [http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia]
