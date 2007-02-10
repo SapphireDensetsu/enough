@@ -1,5 +1,4 @@
 #summary Stuff that has to be done
-#labels Featured
 
 Big > Little, but not more important.
 
