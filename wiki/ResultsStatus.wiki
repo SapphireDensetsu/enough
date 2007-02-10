@@ -1,0 +1,7 @@
+#summary Results goals and status
+
+= Goals =
+== Near-future ==
+ * Implement a programming environment akin to Subtext, in Python
+ * Implement a similar program in Haskell (this is for us to learn Haskell)
+ * Organize a shared code base, and start making a Python library
