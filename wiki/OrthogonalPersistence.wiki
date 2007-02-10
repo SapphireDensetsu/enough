@@ -1,4 +1,5 @@
 #summary Definition and applications
+#labels Featured
 
 = What is Orthogonal Persistence? =
 
