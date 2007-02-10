@@ -10,6 +10,8 @@ Fundamental ideas we wish to explore and implement.
   * Dynamic viewing/editing
   * Automatic invariants tracking
   * Reversing functions automatically
+  * [MultiMetaProgramming Multi-Meta Programming]
+   * Built-in static verification
  * [Capabilities]
  * [OrthogonalPersistence Orthogonal Persistence]
  * [LazyEvaluation Lazy Evaluation]
