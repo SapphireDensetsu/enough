@@ -1,5 +1,19 @@
 #summary Definition and applications
 
-= Introduction =
+= What are Capability Systems? =
 
 Wikipedia seems to have a good entry: [http://en.wikipedia.org/wiki/Capabilities]
+
+== Background: What's wrong with ACLs ==
+
+[http://en.wikipedia.org/wiki/Access_control_list Wikipedia on ACLs]
+
+=== What is ACL? ===
+In short, ACLs (or Access Control Lists) is a list that stores the permissions available to each user. They are the common way to manage security - used both in Unix-like systems and to a lesser degree, Microsoft Windows (where the concept of permission is even less developed). An ACL could be is a list of users, where for each user it specifies what he is allowed to access and what he isn't allowed to access. Or, for a given resource, it lists who is allowed to access the resource (and with what permissions - or what operations are allowed).
+
+When a user tries to access a resource, the OS checks with the ACL to decide whether or not the operation should be allowed. For example, if the user tries to read a file, the OS will check if the user has "read" permissions on that file. If the user does not have enough permissions, the operation will not occur and his program will receive some sort of error from the OS, such as "Access Denied".
+
+=== Problems ===
+There are many problems with ACLs. Using a common 
+
+No "security permission checks" necessary. If you don't explicitly give the functions you run references to internet connections and your secret documents, they can't express operations on them, or request them.
