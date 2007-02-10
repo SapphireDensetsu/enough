@@ -1,0 +1,29 @@
+#summary Definition and applications
+
+= What is Orthogonal Persistence? =
+
+== Seperated Storage ==
+Most operating systems have a concept of File Systems. Every process that wishes to store information persistently must use the OS's system calls to create a file on a persistent storage media (e.g. hard drive). The task of storing data on disk is seperated from storing data in memory such as RAM. For this reason, we refer to this method as "Seperated storage".
+
+== Problems with Seperated Storage ==
+
+_This section should be expanded with more convincing arguments_
+
+Take the common text editor (such as notepad) as an example. You edit the text file in the window of the application. That is, you enter data. The data is there. In many cases you will want to "save" it. But for the programmer of the notepad application, this is a "hassle" - he (or she) needs to explicitly open a file on the disk, write the data, and close the file. If you modify the text and want to save the new version, the program must yet again open a file, etc.
+
+For a more complex application, such as a full-fledged word processor, the data is not a simple string of text. It exists in memory in a complex set of structures, probably containing structures such as lists that require pointers. The situation gets worse for applications that want to continously "persist" their data. They may use OS features such as memory mapping, but this puts another overhead to a very basic programming goal - *NOT LOSING YOUR DATA!*
+
+== Solution(s)? ==
+_Currently the only solution presented is Orthogonal Persistence. Expand._
+
+*Orthogonal Persistence* is 
+
+[http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia]
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
+
