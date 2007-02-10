@@ -1,0 +1,5 @@
+#summary Definition and applications
+
+= Introduction =
+
+Wikipedia seems to have a good entry: [http://en.wikipedia.org/wiki/Capabilities]
