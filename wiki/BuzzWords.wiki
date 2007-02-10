@@ -10,7 +10,7 @@ Fundamental ideas we wish to explore and implement.
   * Automatic invariants tracking
   * Reversing functions automatically
  * [Capabilities]
- * Orthogonal [Persistence]
+ * [OrthogonalPersistence Orthogonal Persistence]
  * [LazyEvaluation Lazy Evaluation]
  * [Promises]
  * [UnifiedInterface Unified Interface]
