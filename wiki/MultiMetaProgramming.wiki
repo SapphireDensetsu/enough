@@ -1,0 +1,23 @@
+#summary Multi-Meta Programming definition and applications
+
+= What is Multi-Meta Programming? =
+
+== Background - Metaprogramming ==
+[http://en.wikipedia.org/wiki/Meta_programming Wikipedia on Meta Programming]
+
+In many formal languages, sometimes we want to make a meta-statement. That is, a statement _about_ the language and not _in_ the language. The same goes for programming. Sometimes we want to describe the program on a higher level than the code of the program. For example, in automatic verification we might want to make a meta-state about a function, such as "this function should never return 3". This is obviously not something we can normally code in the function itself (because if we do, we change the function, and now we have to write the same statement again about the new function). 
+
+Many languages supply allow code to access the semantic tree of a live program. This is often called _reflection_. Languages such as LISP go further by being completely first-class. Code in LISP can manipulate other code just like any other data.
+
+To perform the static verification task of proving that a function won't ever return 3, a meta-program could analyze the semantic structure of the function and prove or disprove (or not reach any conclusion about) the requirement. [StaticAnalysis Static analysis] is a very complex issue in it's own right and is one of the BuzzWords.
+
+=== Example: Automatic Tracing ===
+A more common usage of metaprogramming is to automatically generate code that is hard or tedious work to write manually.
+For example, one might want all functions in a program to produce a trace-enter log when the function enters, and a trace-return log on return. Instead of manually adding a call to the trace function with the correct parameters at the begining and end of each function, the programmer would rather use an automatic meta-program that automatically adds these trace calls in the correct position and with the correct parameters. This meta-program will execute every time the program is compiled and in this way the functions will always be automatically traced. To remove the trace calls, the programmer doesn't have to modify his program - he just needs to disable the meta-program by removing it from the build process.
+
+== Multi-Meta Programming ==
+Metaprogramming is not a new concept, and has been successfully employed in various settings. 
+However, 
+
+== Multi-Meta Programming and Live Programming ==
+In the context of [LiveProgramming Live Programming], metaprogramming must to be treated differently.
