@@ -51,6 +51,10 @@ The application itself has to know where to look for these files on disk and may
 
 With *Orthogonal Persistence*, the application and all it's data are objects in memory. It is not important how these objects came into existence on the computer. These objects may be aquired by reading from some media or the network. What IS important is that once the application exists on the machine, it is the OS that takes care of "saving" it. 
 
+
+==== Junk ====
+When we say "junk on disk" we mean the general clutter that occurs because each program needs to store it's own files in an arbitrary amount and location. It is true that most OS suggest putting applications in certain locations (e.g. under the directory Program Files). However, nothing enforces this. Also, application may access files that are outside their installed location, and this inherently leads so clutter that is only controlled by the good will of application programmers, and by how organized each user is.
+
 = Problems =
 _Missing. Expand..._
 
