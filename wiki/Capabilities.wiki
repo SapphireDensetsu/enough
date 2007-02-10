@@ -4,11 +4,6 @@
 
 Wikipedia seems to have a good entry (I didn't read it): [http://en.wikipedia.org/wiki/Capabilities]
 
-== Primary references ==
-See the [http://code.google.com/p/enough/ main project page] for more.
- * [http://www.erights.org/talks/thesis/index.html Robust Composition]: Towards a Unified Approach to Access Control and Concurrency Control, dissertation by Mark Samuel Miller, Johns Hopkins University, May 2006
- * [http://wiki.erights.org/wiki/Walnut E in a Walnut] by Marc Stiegler
-
 == Background: What's wrong with ACLs ==
 
 [http://en.wikipedia.org/wiki/Access_control_list Wikipedia on ACLs]
@@ -44,3 +39,8 @@ Here, you can control the exact capability - for example, you may give someone a
 An implementation of this can be accomplished via digital signatures. For a party to pass this 'ticket' to someone else, he would need to give that other person his private signature, which is against his own interests (this implementation might have a weakness: what if he doesn't care about his digital signature? This could be the case if you gave your ticket to a fictitious, temporary identity. But this may be solved by verifying identities also with digital signatures)
 
 For more on capability patterns, see [http://wiki.erights.org/wiki/Walnut/Secure_Distributed_Computing/Capability_Patterns E in a walnut - Capability Patterns]
+
+== Primary references ==
+See the [http://code.google.com/p/enough/ main project page] for more.
+ * [http://www.erights.org/talks/thesis/index.html Robust Composition]: Towards a Unified Approach to Access Control and Concurrency Control, dissertation by Mark Samuel Miller, Johns Hopkins University, May 2006
+ * [http://wiki.erights.org/wiki/Walnut E in a Walnut] by Marc Stiegler
