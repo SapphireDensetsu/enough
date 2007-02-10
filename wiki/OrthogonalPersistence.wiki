@@ -16,14 +16,13 @@ For a more complex application, such as a full-fledged word processor, the data 
 == Solution(s)? ==
 _Currently the only solution presented is Orthogonal Persistence. Expand._
 
-*Orthogonal Persistence* is 
+*Orthogonal Persistence* is an alternative to storing data in process-managed files. _Orthogonal_ in this case means that there is always persistence. The idea is to let the operating system take care of persistence instead of having each process manage data that needs to be saved. 
+The following is an outline of one possible way to achieve orthogonal persistence:
+ * Every application stores it's data in memory, always, and never has to access files.
+ * Once in a (short) while, the operating system has a "checkpoint" where all the memory is stored on disk.
+ * The checkpoints are performed in an incremental manner: only portions (pages) of memory that have been modified need to be saved to disk.
+ * Special algorithms make this operation efficient.
 
+= Additional Information & References =
+_Put some more references, find publications on Orthogonal Persistence_
 [http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia]
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
-
