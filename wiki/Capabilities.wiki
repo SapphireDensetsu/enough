@@ -5,6 +5,7 @@
 Wikipedia seems to have a good entry (I didn't read it): [http://en.wikipedia.org/wiki/Capabilities]
 
 == Primary references ==
+See the [http://code.google.com/p/enough/ main project page] for more.
  * [http://www.erights.org/talks/thesis/index.html Robust Composition]: Towards a Unified Approach to Access Control and Concurrency Control, dissertation by Mark Samuel Miller, Johns Hopkins University, May 2006
  * [http://wiki.erights.org/wiki/Walnut E in a Walnut] by Marc Stiegler
 
@@ -37,7 +38,9 @@ With capabilities, no "security permission checks" are necessary. If you don't e
 
 == Advanced security control with capabilities ==
 In fact, with capabilities it is possible to control permissions on a much finer scale. One of these control methods are called _facets_. In a real credit card, once you give the number they can charge you much more than you meant them too. And they can give the number to someone else. Not so with capability systems. 
+
 Here, you can control the exact capability - for example, you may give someone a 'ticket' that lets him charge your account exactly 234$, at exactly 2 equal payments, on specific dates, thus enforcing your agreement. He cannot even _try_ to charge your account otherwise, because this 'ticket' is really his only reference to your credit card. Also, your 'ticket' may only be valid in his hands. 
+
 An implementation of this can be accomplished via digital signatures. For a party to pass this 'ticket' to someone else, he would need to give that other person his private signature, which is against his own interests (this implementation might have a weakness: what if he doesn't care about his digital signature? This could be the case if you gave your ticket to a fictitious, temporary identity. But this may be solved by verifying identities also with digital signatures)
 
 For more on capability patterns, see [http://wiki.erights.org/wiki/Walnut/Secure_Distributed_Computing/Capability_Patterns E in a walnut - Capability Patterns]
