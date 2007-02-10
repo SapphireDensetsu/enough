@@ -20,10 +20,38 @@ _Currently the only solution presented is Orthogonal Persistence. Expand._
 The following is an outline of one possible way to achieve orthogonal persistence:
  * Every application stores it's data in memory, always, and never has to access files.
  * Once in a (short) while, the operating system has a "checkpoint" where all the memory is stored on disk.
+ * The user can always request a checkpoint to make sure his most recent data is saved.
  * The checkpoints are performed in an incremental manner: only portions (pages) of memory that have been modified need to be saved to disk.
  * Special algorithms make this operation efficient.
 
-= Problems with Orthgonal Persistence =
+= Advantages =
+== No programming overhead ==
+Applications don't have to deal with files. They simply create a new object in memory, and the operating system takes care of the rest. If an application needs to "delete" data from the disk, it simply frees the memory used by that object (or use an equivalent form of "freeing memory" provided by orthogonally persistent OSs).
+
+== Persistent applications ==
+Persistence goes _beyond_ data. The applications themselves are stored automatically on disk. This leads to several new features that are otherwise impossible. 
+
+=== No junk on disk, no installers, no "orphaned files" ===
+In orthogonal persistence, the applications themselves are objects in memory. This memory was orignally allocated when the application was "installed". However, there is no concept of installation in the usual sense - there is no need to copy files to specific locations (there is no such thing as a file). Instead, the application just "starts living" straight into memory. 
+
+==== Example ====
+An application such as a word processor usually installs with files of different sorts:
+ * The main executable
+ * Additional libraries (DLL's or shared objects)
+ * Application data - localization data, icons, help files (which are actually directories or archives including many files and multimedia content)
+ * User-specific information (stored in the user's home directory or in a database such as the registry)
+ * Built-in user data (supplied by the creator of the word processor):
+  * Templates
+  * Multimedia (clipart, images, sounds)
+  * Example documents
+
+There is a whole lot of code written just to handle these files:
+The installer has to deal with putting each of these files in the correct location, and the uninstaller has to know which files were installed in order to delete exactly those.
+The application itself has to know where to look for these files on disk and maybe allow the user to control these locations.
+
+With *Orthogonal Persistence*, the application and all it's data are objects in memory. It is not important how these objects came into existence on the computer. These objects may be aquired by reading from some media or the network. What IS important is that once the application exists on the machine, it is the OS that takes care of "saving" it. 
+
+= Problems =
 _Missing. Expand..._
 
 = Additional Information & References =
