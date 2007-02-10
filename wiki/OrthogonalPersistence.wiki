@@ -28,4 +28,5 @@ _Missing. Expand..._
 
 = Additional Information & References =
 _Put some more references, find publications on Orthogonal Persistence_
+
 [http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia]
