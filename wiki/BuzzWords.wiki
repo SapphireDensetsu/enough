@@ -10,10 +10,10 @@ Fundamental ideas we wish to explore and implement.
   * Automatic invariants tracking
   * Reversing functions automatically
  * [Capabilities]
- * [Orthogonal Persistence]
- * [Lazy Evaluation]
+ * Orthogonal [Persistence]
+ * [LazyEvaluation Lazy Evaluation]
  * [Promises]
- * [Unified Interface]
- * [Adaptive Profiling]
- * [Zero Install]
- * [Differential Computing]
+ * [UnifiedInterface Unified Interface]
+ * [AdaptiveProfiling Adaptive Profiling]
+ * [ZeroInstall Zero Install]
+ * [DifferentialComputing Differential Computing]
