@@ -21,6 +21,8 @@ Once studied, it is easy to see that there is a fundamental problem with ACLs. I
 Finally, the problem can be described with a metaphor: ACLs are akin to giving out your credit card number to everybody, and then having a list in the bank managing who is and who is not allowed to charge your credit card.
 Sounds stupid, right? Nevertheless, this is how all our operating systems work.
 
+
+
 = Security via Capabilities =
 
 Capability systems are systems in which an object can not perform operations on other objects without the proper "capability". This capability can be described as a reference. If you don't have a reference to an object, you can't do anything with that object. You can't even be sure it exists (without further information). 
