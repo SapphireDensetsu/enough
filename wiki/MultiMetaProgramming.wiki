@@ -27,10 +27,27 @@ Before continuing we will list some uses of metaprogramming:
  * Analysis - metacode that analysizes code
 Of course, a metaprogram could use all three simultanously, for example analyzing a given program in order to generate a new one (like an optimizing compiler).
 
+=== Points missed by common metaprogramming ===
 Thanks to complex cases such as [StaticAnalysis Static analysis], several points about metaprogramming come into mind:
- * For some tasks, the meta language may require properties that the language does not supply. For example, in the tracing case if we are tracing a C program we wouldn't want to write the automatic tracing metaprogram in C, even if C allowed us to do so.
- * There should be a convenient way to manage metaprograms and their relations to regular programs. Usually, we write the metaprogram in specially formatted comments in the program's source code, or in a completely different file. Both options are not convenient. The metaprogram might be tightly coupled with the program it analyzes and we would want a better way to organize this relation. Furthermore, we might want to automatically assign a metaprogram to a class of programs, see next point.
- * Automatic metanalysis - assuming we have solved the issue of analysis for a certain class of functions (or programs), we may want to automatically analyze all functions with this new analyzer. Or we might want to 
+
+==== Different language requirements ===
+For some tasks, the meta language may require properties that the language does not supply. For example, in the tracing case if we are tracing a C program we wouldn't want to write the automatic tracing metaprogram in C, even if C allowed us to do so.
+
+In the case of static analysis, the metaprogram might require language features not supplied by the analyzed program's language, such as easy logic-based programming with built-in theorems. Also, it may _not_ need features that _are_ supplied by the analyzed program, which would make the task of meta-programming harder.
+
+This is normally solved by using a completely language altogether for the metaprogramming. For example if we need a high-performance and low-resource program, we might write it in C. For the metaprogramming of automatic tracing we might use Python, and for static analysis we would use some other logic-based programming language. The result of this solution is that a growing multitude of languages have to be used.
+
+The less problematic issue with this is the expertise of programmers. Either the different tasks are seperated between different programmers, or each programmer must be well-versed in many languages.
+
+The real problem with having to use so many completely different tools is the management of the program structure and build system. How do you cause the metaprogram to work in the first place? What should run first - the autogenerating Python code or the analysis program? Is the order always the same? How does one easily add a new tool? This huge overhead usually means that nobody takes the time to use these powerfull tools.
+
+The solution, as described below, is not to try and create a single programming language for all these varying tasks. Rather, to create a single programming _platform_ where different semantic systems can co-exist.
+
+==== Metaprogram management ====
+There should be a convenient way to manage metaprograms and their relations to regular programs. Usually, we write the metaprogram in specially formatted comments in the program's source code, or in a completely different file. Both options are not convenient. The metaprogram might be sometimes tightly coupled with the program it analyzes and sometimes very general and we would want a better way to organize this relation. Furthermore, we might want to automatically assign a metaprogram to a class of programs, see next point.
+
+==== Automatic metaprogram assignment and execution ====
+Back to the analysis example. Assuming we have solved the issue of analysis for a certain class of functions (or programs), we may want to automatically analyze all functions with this new analyzer. This could 
 
 == Multi-Meta Programming and Live Programming ==
 In the context of [LiveProgramming Live Programming], metaprogramming must to be treated differently.
