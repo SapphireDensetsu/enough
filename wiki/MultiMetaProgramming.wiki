@@ -39,15 +39,23 @@ This is normally solved by using a completely language altogether for the metapr
 
 The less problematic issue with this is the expertise of programmers. Either the different tasks are seperated between different programmers, or each programmer must be well-versed in many languages.
 
-The real problem with having to use so many completely different tools is the management of the program structure and build system. How do you cause the metaprogram to work in the first place? What should run first - the autogenerating Python code or the analysis program? Is the order always the same? How does one easily add a new tool? This huge overhead usually means that nobody takes the time to use these powerfull tools.
+The real problem with having to use so many completely different tools is the management of the program structure and build system. How do you cause the metaprogram to work in the first place? What should run first - the autogenerating Python code or the analysis program? Is the order always the same? How does one easily add a new tool? This huge overhead usually means that nobody takes the time to use these powerful tools.
 
-The solution, as described below, is not to try and create a single programming language for all these varying tasks. Rather, to create a single programming _platform_ where different semantic systems can co-exist.
+The solution, as described below, is not to try and create a single programming language for all these varying tasks. Rather, it is to create a single programming _platform_ where different semantic systems can co-exist.
 
 ==== Metaprogram management ====
 There should be a convenient way to manage metaprograms and their relations to regular programs. Usually, we write the metaprogram in specially formatted comments in the program's source code, or in a completely different file. Both options are not convenient. The metaprogram might be sometimes tightly coupled with the program it analyzes and sometimes very general and we would want a better way to organize this relation. Furthermore, we might want to automatically assign a metaprogram to a class of programs, see next point.
 
 ==== Automatic metaprogram assignment and execution ====
-Back to the analysis example. Assuming we have solved the issue of analysis for a certain class of functions (or programs), we may want to automatically analyze all functions with this new analyzer. This could 
+Back to the analysis example. Assuming we have solved the issue of analysis for a certain class of functions (or programs), we may want to automatically analyze all functions with this new analyzer. This could mean that every function will be scrutinzed and if it matches, it will undergo a specific transformation.
 
-== Multi-Meta Programming and Live Programming ==
-In the context of [LiveProgramming Live Programming], metaprogramming must to be treated differently.
+A much more powerful feature would be automatic analysis - while the programmer writes a new function, it is continously analyzed and if the function does not comply to pre-written requirements at any point, he will be warned immediately. Even better, the programmer will be warned if a common bug is spotted. Obviously, this feature places several requirements on both the metaprogramming language and on the programming environment.
+
+= Multi-Meta Programming and Live Programming =
+After describing various issues and desirable features of metaprogramming, we will attempt to construct a solution.
+
+In the context of [LiveProgramming Live Programming], metaprogramming can be seen in a new light. Because the program is live (syntax exists only on the screen, and semantics are easly accesible), metaprogramming is much easier. No code parsing is neccesary. By removing this single, shallow restriction, every programmer can become a metaprogrammer of his favorite language.
+
+Another BuzzWord that aids us is [UnifiedInterface Unified Interface]. This one means that the programming environment is itself a program that we can edit (in it's own environment!). Thus we can combine metaprograms with our program easily. We might program the environment to run a metaprogram over every function as it is being edited (remember there are no syntax errors in Live Programming). 
+
+The last obstacle to remove is the inherent diversity of languages required to perform different tasks. For the logical reasoning associated with analysis, we would need a logics language. This is one possibly use of the [MultipleSemantics Multiple Semantics] BuzzWord.
