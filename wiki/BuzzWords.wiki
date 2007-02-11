@@ -8,7 +8,8 @@ Fundamental ideas we wish to explore and implement.
  * [LiveProgramming Live Programming]: Rich (non-textual) semantic representation: 
   * [MultiMetaProgramming Multi-Meta Programming]
    * [StaticAnalysis Static analysis] and [StaticVerification verification]
-  * Integrated [MultipleSemantics Multiple Semantics] 
+  * Integrated [MultipleSemantics Multiple Semantics]
+  * [DependencySystem Dependency System]
   * Program by example
   * Dynamic viewing/editing
   * Automatic invariants tracking
