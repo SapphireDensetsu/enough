@@ -14,10 +14,21 @@ To perform the static verification task of proving that a function won't ever re
 === Example: Automatic Tracing ===
 A more common usage of metaprogramming is to automatically generate code that is hard or tedious work to write manually.
 For example, one might want all functions in a program to produce a trace-enter log when the function enters, and a trace-return log on return. Instead of manually adding a call to the trace function with the correct parameters at the begining and end of each function, the programmer would rather use an automatic meta-program that automatically adds these trace calls in the correct position and with the correct parameters. This meta-program will execute every time the program is compiled and in this way the functions will always be automatically traced. To remove the trace calls, the programmer doesn't have to modify his program - he just needs to disable the meta-program by removing it from the build process.
+A compiler might supply automatic tracing or the similar task of profilign, built-in. You turn on a compiler switch and the program comes out traced or profiled. In fact, normal code optimization may be viewed as metaprogramming - the compiler analyzes your program and regenerates an optimized version. The final stage of translation to machine code can also be viewed as metaprogramming.
 
 == Multi-Meta Programming ==
-Metaprogramming is not a new concept, and has been successfully employed in various settings. 
-However, 
+Metaprogramming is not a new concept, and has been successfully employed in various settings. We wish to expand it and call this expansion _multi-meta programming_.
+Before continuing we will list some uses of metaprogramming:
+ * Generation - metacode that generates code
+ * Transformation - metacode that modifies code (similar to generation)
+ * Translation - transformation into another language (commonly, into machine language)
+ * Analysis - metacode that analysizes code
+Of course, a metaprogram could use all three simultanously, for example analyzing a given program in order to generate a new one (like an optimizing compiler).
+
+Thanks to complex cases such as [StaticAnalysis Static analysis], several points about metaprogramming come into mind:
+ * For some tasks, the meta language may require properties that the language does not supply. For example, in the tracing case if we are tracing a C program we wouldn't want to write the automatic tracing metaprogram in C, even if C allowed us to do so.
+ * There should be a convenient way to manage metaprograms and their relations to regular programs. Usually, we write the metaprogram in specially formatted comments in the program's source code, or in a completely different file. Both options are not convenient. The metaprogram might be tightly coupled with the program it analyzes and we would want a better way to organize this relation. Furthermore, we might want to automatically assign a metaprogram to a class of programs, see next point.
+ * Automatic metanalysis - assuming we have solved the issue of analysis for a certain class of functions (or programs), we may want to automatically analyze all functions with this new analyzer. Or we might want to 
 
 == Multi-Meta Programming and Live Programming ==
 In the context of [LiveProgramming Live Programming], metaprogramming must to be treated differently.
