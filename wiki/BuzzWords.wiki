@@ -6,12 +6,12 @@
 Fundamental ideas we wish to explore and implement.
 
  * AntiText: Rich (non-textual) semantic representation: 
+  * [MultiMetaProgramming Multi-Meta Programming]
+   * [StaticAnalysis Static analysis] and [StaticVerification verification]
   * Program by example
   * Dynamic viewing/editing
   * Automatic invariants tracking
   * Reversing functions automatically
-  * [MultiMetaProgramming Multi-Meta Programming]
-   * Built-in static verification
  * [Capabilities]
  * [OrthogonalPersistence Orthogonal Persistence]
  * [LazyEvaluation Lazy Evaluation]
