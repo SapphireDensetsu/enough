@@ -58,4 +58,4 @@ In the context of [LiveProgramming Live Programming], metaprogramming can be see
 
 Another of the BuzzWords that aids us is [UnifiedInterface Unified Interface]. This one means that the programming environment is itself a program that we can edit (in it's own environment!). Thus we can combine metaprograms with our program easily. We might program the environment to run a metaprogram over every function as it is being edited (remember there are no syntax errors in Live Programming). 
 
-The last obstacle to remove is the inherent diversity of languages required to perform different tasks. For the logical reasoning associated with analysis, we would need a logics language. This is one possibly use of the [MultipleSemantics Multiple Semantics], yet one more of the BuzzWords.
+The last obstacle to remove is the inherent diversity of languages required to perform different tasks. For the logical reasoning associated with analysis, we would need a logics language. This problem is solved by use of the [MultipleSemantics Multiple Semantics], yet one more of the BuzzWords.
