@@ -10,6 +10,8 @@ With every new programming language, new semantics are introduced. Naturally, mo
  * Object-oriented (state-method semantics)
  * High level (closer to human-level semantics)
  * Low level (closer to machine-level semantics)
+ * Numerical
+ * Logical
  * Many more
 Some of these overlap, and some conflict. Most programming languages use a combination of varying degrees of each category. Most languages are a total mess (C++, and even likeable Python has an identity problem).
 
