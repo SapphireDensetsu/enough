@@ -24,6 +24,6 @@ With adaptive profiling, the problem in the previous example can be solved.
 
 The system continuously monitors the performance of certain actions: how long it takes to send/receive a request, how long does it take to search for an entry in the database, etc. 
 
-If a the network overhead of sending a request costs more than searching the database, the conclusion is that it may be better to place the database on the client. An adaptive profiling system may simply _move_ the database to the client's side of the network. This moving does not have to be implemented anew for each database. With capability and orthogonal persistent systems, the database is an object in memory. It can be sent securely to the client. 
+If the network overhead of sending a request costs more than searching the database, the conclusion is that it may be better to place the database on the client. An adaptive profiling system may simply _move_ the database to the client's side of the network. This moving does not have to be implemented anew for each database. With capability and orthogonal persistent systems, the database is an object in memory. It can be sent securely to the client. 
 
 _expand this section!_
