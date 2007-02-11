@@ -13,7 +13,9 @@ To perform the static verification task of proving that a function won't ever re
 
 === Example: Automatic Tracing ===
 A more common usage of metaprogramming is to automatically generate code that is hard or tedious work to write manually.
+
 For example, one might want all functions in a program to produce a trace-enter log when the function enters, and a trace-return log on return. Instead of manually adding a call to the trace function with the correct parameters at the begining and end of each function, the programmer would rather use an automatic meta-program that automatically adds these trace calls in the correct position and with the correct parameters. This meta-program will execute every time the program is compiled and in this way the functions will always be automatically traced. To remove the trace calls, the programmer doesn't have to modify his program - he just needs to disable the meta-program by removing it from the build process.
+
 A compiler might supply automatic tracing or the similar task of profilign, built-in. You turn on a compiler switch and the program comes out traced or profiled. In fact, normal code optimization may be viewed as metaprogramming - the compiler analyzes your program and regenerates an optimized version. The final stage of translation to machine code can also be viewed as metaprogramming.
 
 == Multi-Meta Programming ==
