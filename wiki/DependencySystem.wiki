@@ -26,12 +26,17 @@ A common headache in software (or any other) engineering originates from depende
 
 The eventual outcome of a requirement is some feature of the system being created. Thus, requirements _depend_ on features.
 
-The point is that *requirements are a dependency tree*. If this tree is not documented and managed, mistakes will happen. Someone might cancel a requirement without remembering to cancel all requirements that depend on it, leading to unneccesary work. A much worse scenario is the opposite - cancelling a requirement that is still caused by another existing one. 
+Obviously, *requirements are a dependency tree*. If this tree is not documented and managed, mistakes will happen. Someone might cancel a requirement without remembering to cancel all requirements that depend on it, leading to unneccesary work. A much worse scenario is the opposite - cancelling a requirement that is still caused by another existing one. 
 
-In critical systems the managers usually have enough sense to foresee this problem. To solve it, a software "requirements management system" is used. Such a system may supply features that are specific to requirements management. 
+In critical systems the managers hopefully have enough sense to foresee this problem. To solve it, a software "requirements management system" is used (and it must be properly enforced). Such a system may supply features that are specific to requirements management such as easy documentation, collaboration, etc.
 
-For every engineered project, further down the road comes quality assurance, and here too there are dependencies. A test is performed to validate some feature which was developed to fulfill some system requirement that was conceived because of a user requirement (in the average case this example does in fact reflect reality!). This tedious description of engineering dependencies must come to and end and here it is.
+For every engineered project, further down the road comes quality assurance, and here too there are dependencies. A test is performed to validate some feature which was developed to fulfill some system requirement that was conceived because of a user requirement (in the average case this example does in fact reflect reality!). Documentation of this project depends on other things as well. This tedious description of engineering dependencies must come to and end and _here it is_.
 
-The point is that dependencies can pop up everywhere. Sometimes they have a critical significance, and sometimes they can just be used to improve something.
+The points are:
+ * Dependencies can pop up everywhere. Sometimes they have a critical significance, and sometimes they can just be used to improve something, but they exist outside building software.
+ * In many cases, it is important to *integrate dependency management*. In the above engineering project example, a true requirements management system should be usable at all stages of the project, from initial project definition to final release tests.
 
-== Dependency System and Live Programming ==
+== Dependency Systems and Live Programming ==
+In [LiveProgramming Live Programming], we always work with objects that the system recognizes. Therefore, it is possible for the system to know about dependencies between these objects. *The two concepts merge naturally*. Using a Live Programming system we don't have to re-implement dependency management for every new application: it is part of the system's powerful understanding of what you are doing.
+
+_expand this section!_ 
