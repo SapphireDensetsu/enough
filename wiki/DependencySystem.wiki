@@ -22,6 +22,16 @@ People who use _make_ usually supplement the build system with scripts that will
 We haven't survyed the build system market and maybe some of them are quite good. Our point is that dependecies are much more common that just in software building. Some examples follow.
 
 == Engineering ==
-A common headache in software (or any other) engineering originates from dependencies. They begin in the _requirements_: the system designers 
+A common headache in software (or any other) engineering originates from dependencies. They begin in the _requirements_. The users or customers (a role often played by the designers themselves) define the basic _user requirements_. Sometimes these requirements are quite complex. Often, some requirements were instituted because of other requirements, even at this early stage. The next step is what we call _system requirements_. These are usually defined by the designers of the system when they begin their work. Obviously, many system requirements *depend* on one or more user requirements. Some system requirements depend on other system requirements. Some may depend on implicit requirements (the company's reputation is an implicit requirement!). During the system development process, some new requirements may come up - these too depend on something, usually something that was overlooked previously. Also, some requirements are cancelled later in the project's lifetime.
+
+The eventual outcome of a requirement is some feature of the system being created. Thus, requirements _depend_ on features.
+
+The point is that *requirements are a dependency tree*. If this tree is not documented and managed, mistakes will happen. Someone might cancel a requirement without remembering to cancel all requirements that depend on it, leading to unneccesary work. A much worse scenario is the opposite - cancelling a requirement that is still caused by another existing one. 
+
+In critical systems the managers usually have enough sense to foresee this problem. To solve it, a software "requirements management system" is used. Such a system may supply features that are specific to requirements management. 
+
+For every engineered project, further down the road comes quality assurance, and here too there are dependencies. A test is performed to validate some feature which was developed to fulfill some system requirement that was conceived because of a user requirement (in the average case this example does in fact reflect reality!). This tedious description of engineering dependencies must come to and end and here it is.
+
+The point is that dependencies can pop up everywhere. Sometimes they have a critical significance, and sometimes they can just be used to improve something.
 
 == Dependency System and Live Programming ==
