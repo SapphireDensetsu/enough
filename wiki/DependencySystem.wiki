@@ -7,7 +7,7 @@ The concept of dependency systems can be generalized beyond software building. A
 
 This example highlights the fact that a build system is much more than a build system: it is a dependency system.
 
-== Problems with Make ==
+== Side note: problems with Make ==
 Before we go into the various applications of a general dependency systems, let's review the common build systems' faults. We will review _make_, keeping in mind the fact that most build systems have similar limitations:
 
  * Requires use of special syntax (with its own limitations)
@@ -16,6 +16,12 @@ Before we go into the various applications of a general dependency systems, let'
  * Doesn't identify build changes correctly (e.g., doesn't take into account the switches we passed to the compiler when deciding whether the existing target is new or old)
  * Can't propogate information up or down a tree (e.g., if we want to disable logging in a whole subsystem we need to change the logging variable in all the makefiles of the subsystem)
 
-People who use _make_ usually supplement the build system with scripts that will make it easier to use. This means that the build system fails to supply some very important features. And of course, other build systems exist. Because of these limitations, many people use build systems other than _make_. We haven't survyed the build system market and maybe some of them are quite good. However, there is a key point we wish to express here, read on.
+People who use _make_ usually supplement the build system with scripts that will make it easier to use. This means that the build system fails to supply some very important features. And of course, other build systems exist. Because of these limitations, many people use build systems other than _make_. 
 
-= 
+= Dependency Systems =
+We haven't survyed the build system market and maybe some of them are quite good. Our point is that dependecies are much more common that just in software building. Some examples follow.
+
+== Engineering ==
+A common headache in software (or any other) engineering originates from dependencies. They begin in the _requirements_: the system designers 
+
+== Dependency System and Live Programming ==
