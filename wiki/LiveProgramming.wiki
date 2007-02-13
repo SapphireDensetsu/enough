@@ -10,3 +10,4 @@
  * [http://www.ni.com/labview/ LabView], a tool for "virtual instrumentation", including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos]
 
 = Introduction =
+Before we start, it is recommended to read about [SyntaxAndSemantics Syntax and Semantics].
