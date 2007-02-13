@@ -20,3 +20,11 @@ Sometimes the syntax imposes restrictions that the semantics don't, causing us t
 
 === Syntax that is hard to read/use ===
 In some languages (such as written French and Perl) the syntax often causes frustration. In French, the syntactical expression of single words (spelling) is very hard to learn for a newcomer. So is the French syntactical representation of decimal numbers. In Perl, the problem is that the syntax allows to many different ways to specify a single meaning. Of course one can write completely comprehensible programs in perl. But perl allows otherwise, and soon enough this happened ([http://www.perlmonks.org/index.pl?node_id=45213 Perl Camel] by [http://www.Erudil.com Stephen B. Jenkins])
+
+ # moshe
+ # shimon
+ # yosi
+  # koko
+  # jones
+
+*bold* _italics_ 
