@@ -19,7 +19,7 @@ The external relation between syntax and meaning has a price. There are several 
 Sometimes the syntax imposes restrictions that the semantics don't, causing us to think of things in a more restricted way. A language with this problem is not a good language. We define both syntax _and_ semantics as part of the language, and expect them to match.
 
 === Syntax that is hard to read/use ===
-In some languages (such as written French and Perl) the syntax often causes frustration. In French, the syntactical expression of single words (spelling) is very hard to learn for a newcomer. So is the French syntactical representation of decimal numbers. In Perl, the problem is that the syntax allows to many different ways to specify a single meaning. Of course one can write completely comprehensible programs in perl. But perl allows otherwise, and soon enough this happened (credit to Stephen B. Jenkins):
+In some languages (such as written French and Perl) the syntax often causes frustration. In French, the syntactical expression of single words (spelling) is very hard to learn for a newcomer. So is the French syntactical representation of decimal numbers. In Perl, the problem is that the syntax allows to many different ways to specify a single meaning. Of course one can write completely comprehensible programs in perl. But perl allows otherwise, and soon enough this happened (credit to [http://www.Erudil.com Stephen B. Jenkins]):
 {{{
 #!/usr/bin/perl -w                                      # camel code
 use strict;
