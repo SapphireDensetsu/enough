@@ -66,3 +66,26 @@ if is_stupid(this_person):
 This one is the more procedural point of view. In this simple example it may be less arguable (and not very important) which view is adopted. 
 
 The great question in software design is how to look at a given problem, and _in what context_, or which semantics, to solve it.
+
+==== Thinking outside the language ====
+In C, the concept of object orientation does not exist. The language _does_ supply the means to implement any object-oriented design of any system - but it does not contain the semantics. This means that you can think about objects and implement your code as objects, by defining functions in a way that conveys your intention. A common way to do this is with a struct:
+{{{
+struct person {
+   ...
+};
+
+struct person *new_person(void) {
+   ...
+}
+
+void destory_person(struct person **person) {
+   ...
+   free(*person);
+   *person = NULL;
+}
+
+... other person "methods" ...
+}}}
+Here, we obviously think about 'person' as an object. But from a purely C standpoint, there is no such thing as an object. There are functions, variables, statements, expressions, etc. But no objects.
+
+This is an example of thinking outside the language. In our mind (and conversations and documentation) we may use semantics that don't exist in the language we use to implement the program.
