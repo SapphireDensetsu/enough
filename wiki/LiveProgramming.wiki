@@ -65,3 +65,4 @@ _=<DATA>)){@camel1hum        p=split(//);}while(@dromeda
                 \163\163                                \151\1
               57\156\056
 }}}
+This program is an example of how far you can take perl's syntax when you want to. This case is 
