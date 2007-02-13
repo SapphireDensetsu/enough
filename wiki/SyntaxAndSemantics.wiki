@@ -12,15 +12,15 @@ In English, the "if...then" construct has a written syntax and a "hidden" semant
 In programming languages, a similar principle applies. In C, code with _the same semantics_ for a condition can have a different syntax:
 {{{
 if (expression)
-   statement_for_nonzero
+   statement_for_nonzero ;
 else
-   statement_for_zero
+   statement_for_zero ;
 }}}
 or:
 {{{
-expression ? statement_for_nonzero : statement_for_zero
+expression ? statement_for_nonzero : statement_for_zero ; 
 }}}
-These two syntactical forms have (for our discussion's sake) identical meaning, but not identical syntax.
+These two syntactical forms have (for our discussion's sake) identical meaning, but not identical syntax (in fact more syntax options exist in C to express the same meaning)
 
 == Semantics ==
 If syntax is the physical structure of expression, semantics can be loosely defined as the mental structure of the _meaning_. It is not the same to think of a cat as an animal, and to think of a cat as food (yuck!!). Similarly, it is not the same to think of a program in terms of procedures, and to think of the same program in terms of objects.
