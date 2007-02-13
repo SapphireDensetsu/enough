@@ -5,6 +5,9 @@ Every language (not just programming) has several seperate levels or layers, two
 
 == Syntax ==
 The syntax has a mission: to convey a meaning. It has no inherent meaning - the meaning of a given syntax is what people agree upon.
+
+Syntax is actually an artificial requirement. It exists for the sake of communication. For two parties to understand each other, meaning must be expressed in some form that both sides understand. Even for a single person, syntax may be required for some complex problems that are hard to consider completely at once. In this case the person can write down some of his thoughts, and communicate with himself. In any case, syntax is not part of the meaning (the example of using different syntactical forms in one language, for the same meaning, is a good proof).
+
 In English, the "if...then" construct has a written syntax and a "hidden" semantic meaning. A common syntax is *if* _a_ *then* _b_, where _a_ and _b_ should be syntactically correct English expressions. The _meaning_ of an "if...then" sentence is it's semantics. You may agree to write "If you are stupid, then go away" or "Go away then if your are stupid". A non-standard (and therefore possibly "incorrect" English) syntax can be defined as follows, without using the words "if..then": "you are stupiiid go away". The triple-i spelling mistake in a word signifies "if..then". Or "moo 45!! anti-monsters extereme you are stupid ___KFKSA go away".
 
 *The point* is that syntax is agreed upon to express a certain meaning. Therefore, syntax is arbitrary (besides practical considerations).
