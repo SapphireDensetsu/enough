@@ -5,5 +5,20 @@
  # _[http://en.wikipedia.org/w/index.php?title=Semantics&oldid=107257033 Semantics]_ in Wikipedia
  # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
 
-= Parts of language =
+=== Additional references ===
+ * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
+
+= Introduction =
+== Syntax and semantics ==
 Every language (not just programming) has several seperate levels or layers, two of which are: syntax and semantics. The syntax layer is the "visible" part of the language: it defines how you write or say what you mean. The semantic layer is the part that determines the underlying structure of the language. 
+
+=== Syntax ===
+In English, the "if...then" construct has a written syntax and a "hidden" semantic meaning. A common syntax is *if* _a_ *then* _b_, where _a_ and _b_ should be syntactically correct English expressions. The _meaning_ of an "if...then" sentence is it's semantics. You may agree to write "If you are stupid, then go away" or "Go away then if your are stupid". A non-standard (and therefore possibly "incorrect" English) syntax can be defined as follows, without using the words "if..then": "you are stupiiid go away". The triple-i spelling mistake in a word signifies "if..then". Or "moo 45!! anti-monsters extereme you are stupid ___KFKSA go away".
+
+The point is that if the syntax is agreed upon, the meaning stays the same. This meaning is defined by the semantics.
+
+=== Possible semantics with similar meaning ===
+When we say, "If you are stupid, go away" we mean that if the person is stupid, he should perform the act of going away. We could approach this meaning with different semantics: "A person who is stupid should go away". The meaning is similar but not identical. Or we could say "If you _think_ you are stupid, go away". This too has a different meaning. A person could be stupid but not think it.
+
+== Syntax and semantics in programming languages ==
+Like English, programming languages have syntax and semantics. 
