@@ -19,8 +19,18 @@ In English, the "if...then" construct has a written syntax and a "hidden" semant
 
 The point is that if the syntax is agreed upon, the meaning stays the same. This meaning is defined by the semantics.
 
+In programming languages, a similar principle applies. In C, we have the if-else block with the following syntax: `if ( expression ) statement else statement`. In python, _the same semantics_ for a condition have a different syntax:
+{{{
+if expression:
+   statements...
+else:
+   statements...
+}}}
+These two languages have different syntax for a virtually identical semantic entity.
+
 === Possible semantics with similar meaning ===
-When we say, "If you are stupid, go away" we mean that if the person is stupid, he should perform the act of going away. We could approach this meaning with different semantics: "A person who is stupid should go away". The meaning is similar but not identical. Or we could say "If you _think_ you are stupid, go away". This too has a different meaning. A person could be stupid but not think it.
+When we say, "If you are stupid, go away" we mean that if the person is stupid, he should perform the act of going away. We could approach this meaning with different semantics: "A person who is stupid should go away". The meaning is similar but not identical. Or we could say "If you _think_ you are stupid, go away". This too has a different meaning (the person could be stupid but not think it).
+
 
 == Syntax and semantics in programming languages ==
 Like English, programming languages have syntax and semantics. 
