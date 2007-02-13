@@ -5,8 +5,9 @@
  # _[http://en.wikipedia.org/w/index.php?title=Semantics&oldid=107257033 Semantics]_ in Wikipedia
  # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
 
-=== Additional references ===
+=== Additional resources ===
  * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
+ * [http://www.ni.com/labview/ LabView], a tool for creating instrumentation, including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos]
 
 = Introduction =
 == Syntax and semantics ==
