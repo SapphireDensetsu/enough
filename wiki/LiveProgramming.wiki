@@ -11,3 +11,6 @@
 
 = Introduction =
 Before we start, it is recommended to read about [SyntaxAndSemantics Syntax and Semantics].
+
+== Limitations of syntax ==
+The external relation between syntax and meaning has a practical toll. Sometimes the syntax imposes restrictions that the semantics don't, therefore causing us to think of things in a more restricted way.
