@@ -2,7 +2,7 @@
 
 == Main references ==
  # Ferdinand de Saussure (1916). _The Course of General Linguistics (Cours de linguistique générale)_
- # Wikipedia: [http://en.wikipedia.org/w/index.php?title=Semantics&oldid=107257033 Semantics] 
+ # _[http://en.wikipedia.org/w/index.php?title=Semantics&oldid=107257033 Semantics]_ in Wikipedia
  # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
 
 = Parts of language =
