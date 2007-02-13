@@ -2,7 +2,8 @@
 
 == Main references ==
  # Ferdinand de Saussure (1916). _The Course of General Linguistics (Cours de linguistique générale)_
- # Semantics. (2007, February 11). In _Wikipedia, The Free Encyclopedia._
+ # Wikipedia: [http://en.wikipedia.org/w/index.php?title=Semantics&oldid=107257033 Semantics] 
+ # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
 
 = Parts of language =
 Every language (not just programming) has several seperate levels or layers, two of which are: syntax and semantics. The syntax layer is the "visible" part of the language: it defines how you write or say what you mean. The semantic layer is the part that determines the underlying structure of the language. 
