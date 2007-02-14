@@ -1,7 +1,5 @@
 #summary Why textual programming is a bad thing
 
-_this needs major expansion!_
-
 = Background =
 Before we start, it is recommended to read about [SyntaxAndSemantics Syntax and Semantics].
 The external relation between syntax and meaning has a price. There are several limitations and problems.
