@@ -2,8 +2,7 @@
 
 = Background =
 
-Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]
-It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
+Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]. It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
 
 = Edit the Semantics, not the Syntax =
 In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
