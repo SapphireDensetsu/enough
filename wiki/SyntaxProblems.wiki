@@ -11,7 +11,7 @@ In some languages (such as written French and Perl) the syntax often causes frus
 = Syntax limits the language =
 The syntax imposes restrictions that the language's semantics don't, restricting our thinking and the language's power. These restrictions are typically not brick walls, but can be worked around. Nonetheless, they still discourage use of certain semantic structures and limit the programmer.
 For example, Python's nested function scoping. In Python it would be very easy to express write access to a variable that exists in the scope of an outer function, but due to syntatical limitations, this is not possible and difficult workarounds must be used.  Also impossible is access to variables of sibling function run instances, and so on.
-Another example is the virtual function table. It is a very useful way to implement (polymorphism), but C's syntax adds so much overhead to its syntatic declarations, that most people using C avoid it as much as they can.
+Another example is the virtual function table. It is a very useful way to implement [Polymorphism], but C's syntax adds so much overhead to its syntatic declarations, that most people using C avoid it as much as they can.
 
 = Syntax allows more errors =
 
