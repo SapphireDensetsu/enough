@@ -12,6 +12,9 @@ Instead of refering to objects by their names, the programmer will choose an obj
 
 _this needs major expansion!_
 
+= Main references =
+ # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
+
 = Additional resources =
  * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
  * [http://www.ni.com/labview/ LabView], a tool for "virtual instrumentation", including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos]
