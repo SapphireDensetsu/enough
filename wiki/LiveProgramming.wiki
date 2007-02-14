@@ -3,13 +3,26 @@
 = Background =
 
 Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]
+It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
 
-= No text editing =
-The real solution to all these problems is to get rid of text-based programming. If the programmer were allowed to edit a higher level representation of code. Instead of editing characters that add up to syntax, which are sub-atomic, we should let the programmer edit at the atomic level. Instead of typing "if (a == b)" the programmer will create an "if" element, and then specify that the objects a and b should be compared (we still need to make sure that the visual representation will prevent confusion with assignment or any other operation). 
+= Edit the Semantics, not the Syntax =
+In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
+Instead, a better model is to use a semantic editor that edits the semantic model directly. This has many implications.
 
-= Object references, not names =
+= Disadvantages of a semantic editor =
+A semantic editor would be specific to one language's semantics, while a normal text editor can edit all text and thus edit programs of all languages.
+In practice, though, editors are already semantic-aware in an attempt to help developers, using syntax highlighting and various aids that try to parse the program.  Virtually noone uses generic text-editors to edit programs anymore, and most use language-specific editors (like a language mode in emacs or vi) already.
+
+= A semantic editor is simpler =
+Since it does not have to parse and manipulate text in order to aid the programmer, it can actually be much simpler than today's code editors.  The writers of semantic editors can thus focus on adding features that aid the programmer rather than working on parsing and manipulating text.
+
+= The program is runnable at all times = 
+By editing the program semantics and not the syntax, the program can have correct semantics at all times. This means it is always runnable, and thus more informative feedback about the program can be given to the programmer. Real-time results of the current code can be shown to the programmer incrementally. This enables [ExampleBasedProgramming Example Based Programming].
+
+= References are real and not by names =
 Instead of refering to objects by their names, the programmer will choose an object from a list of existing objects - objects that he has already created. The programmer will see immediately the scope of the refered object, because lexical scope doesn't exist when there is no text. Instead, he will explicitly choose the exact object being refered to. If he wants to create a new object, he will do so explicitly.
 
+= Names are just comments =
 _this needs major expansion!_
 
 = Main references =
