@@ -7,7 +7,11 @@ Live programming is proposed as a solution to the [SyntaxProblems Problems of Sy
 = No text editing =
 The real solution to all these problems is to get rid of text-based programming. If the programmer were allowed to edit a higher level representation of code. Instead of editing characters that add up to syntax, which are sub-atomic, we should let the programmer edit at the atomic level. Instead of typing "if (a == b)" the programmer will create an "if" element, and then specify that the objects a and b should be compared (we still need to make sure that the visual representation will prevent confusion with assignment or any other operation). 
 
-== Object references, not names ==
+= Object references, not names =
 Instead of refering to objects by their names, the programmer will choose an object from a list of existing objects - objects that he has already created. The programmer will see immediately the scope of the refered object, because lexical scope doesn't exist when there is no text. Instead, he will explicitly choose the exact object being refered to. If he wants to create a new object, he will do so explicitly.
 
 _this needs major expansion!_
+
+= Additional resources =
+ * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
+ * [http://www.ni.com/labview/ LabView], a tool for "virtual instrumentation", including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos]
