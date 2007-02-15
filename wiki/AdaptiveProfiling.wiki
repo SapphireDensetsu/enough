@@ -123,6 +123,7 @@ In traditional systems, this is indeed a problematic issue.  However, as explain
   * The executables can only make requests via capabilities they have, and when they are transmitted across the network, they carry their capabilities with them.  While a compromised computer may freely forge capabilities to its own resources, it has no way of forging capabilities of another computer (As these will be cryptographically signed). Therefore, the only capabilities carried by the code component will be the exact same ones it had carried before migration. If it had no capabilities to any resources on the new hosting computer, but a few capabilities in the original hosting computer, then only requests to access objects on the original hosting computer will be possible. See [NetworkReferences].
 
 == Sending a code component to another computer ==
+_this section is (almost) a duplicate of the next section! remove either one_
 When sending a code component to another computer, we are in fact trusting that other computer to properly run that component. That computer may instead fail to run the code component or run a different component instead (see next item: Sending capabilities to another computer).  The implications would be similar to that of lack of CPU resources.
 
 Migrations of code objects would typically be:
@@ -139,7 +140,7 @@ Migrations of code objects would typically be:
   * To allow for distributed computing: In this case existing solutions already allow the receiving computer access to the same shared resources.
   * To improve the topology of the "proxy" components: In this case the code component is a "proxy" between code or data components in the sending computer and code or data components in the receiving computer.  The "proxy" does not typically hold special capabilities other than access to the receiving computer resources.
 
-This means that *no such new security concerns are added for distributed computing*, and that *no such security problem is introduced by migrating "proxy" components - as long as those do not hold [or are later given] special capabilities*.
+This means that *no such new security concerns are added for distributed computing*, and that *no such security problem is introduced by migrating "proxy" components - as long as those do not hold (or are later given) special capabilities*.
 In other cases, however, *this is indeed a legitimate concern and code components should only be sent to another computer if they do not have authority that might be compromised*.
 In a modular system, most code components will actually be "proxies" between other components without a lot of authority, so their migration should not be a problem.
 
