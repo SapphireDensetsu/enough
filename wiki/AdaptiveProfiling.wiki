@@ -144,7 +144,7 @@ This means that *no such new security concerns are added for distributed computi
 In other cases, however, *this is indeed a legitimate concern and code components should only be sent to another computer if they do not have authority that might be compromised*.
 In a modular system, most code components will actually be "proxies" between other components without a lot of authority, so their migration should not be a problem.
 
-This raises the question: how should the operating system to determine whether a code component has authority that must not be sent?
+This raises the question: how should the operating system determine whether a code component has authority that must not be sent?
 
   * All immutable data can be sent (unless bound as secret) and does not add authority
   * All objects for which the receiving computer already has capabilities can be sent. This includes:
