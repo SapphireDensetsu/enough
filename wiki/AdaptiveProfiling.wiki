@@ -25,7 +25,7 @@ A "component" is either code or data and has many properties:
 
 A component by itself is typically useless.  Its usefulness is usually a result of its inter-connection with other components. For example, a web browser is useless without its connection to the webpage data.  It is also useless without its connection to the screen, to display its data.
 
-= Desirability of nomad components =
+= Desirability of migrating components =
 The above-mentioned resources are all limited, and have differing availabilities on different hosts. If a component is movable or duplicate-able from one host to the next, then the differing resource requirements of the components can be satisfied in a better way.
 
 == Current examples of duplicated components ==
