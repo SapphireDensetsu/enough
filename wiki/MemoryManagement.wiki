@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This relates to [OrthogonalPersistency Orthogonal persistency].
+This relates to [OrthogonalPersistence Orthogonal persistence].
 
 = Details =
 
