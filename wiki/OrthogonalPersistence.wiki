@@ -103,13 +103,6 @@ Orthogonal Persistency has one large problem: If the log area (or current genera
 
 Either force an early checkpoint if the active log is filling up too fast, or allow dynamic increase of the log area (much like the swap space is enlarged when Virtual Memory is running low in existing systems).
 
- * Once in a (short) while, the operating system has a "checkpoint" where all the memory is stored on disk.
- * The user can always request a checkpoint to make sure his most recent data is saved.
- * The checkpoints are performed in an incremental manner: only portions (pages) of memory that have been modified need to be saved to disk.
- * Special algorithms make this operation efficient.
- * From application point of view, all data is stored only in the main memory.
- * Features such as heirachial organization of objects are still supplied by some service of the OS (probably a built-in application), but even this has nothing to do with persistenting data on disk. It is a database with data in memory. The OS deals with saving this data.
-
 === Advantages ===
 
 ==== Greatly simplified programs ====
