@@ -7,6 +7,8 @@ Network references typically assume network transparency.
 
 Network references are also Network Capabilities and are the natural extension of [Capabilities] into the scope of a Network.
 
+Other names for Network references include: URI (used in the E language).
+
 = Security =
 
 When using a safe language, object references are secure, because code cannot forge a reference to an object. It can only receive a reference to an existing object, or create a new object by which it can receive a reference to it.  However, a network reference to an object in another computer is more problematic. In order to use the reference, a request must be sent to the computer that hosts the object. While a computer can trust that local object references were not forged, because that is not possible in a safe language, the computer cannot trust an object identification from the network - where a computer may have been compromised and may forge any request it may see fit.
