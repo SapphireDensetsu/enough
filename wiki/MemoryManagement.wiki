@@ -1,0 +1,10 @@
+#summary Proper Memory Management
+
+= Introduction =
+
+This relates to [OrthogonalPersistency Orthogonal persistency].
+
+= Details =
+
+Write about non-running programs.
+Write about recalculating instead of swapping in/out.
