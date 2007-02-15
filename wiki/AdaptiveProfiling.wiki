@@ -66,10 +66,10 @@ Now that the operating system is capable of copying components between computers
 In order to figure whether the migration of a component is desirable, we must take into account all of the gains and costs of the move.
 
 === Costs ===
-  * Migrating a component entails:
-    * Serializing it
-    * Transmitting it over the network
-    * Deserializing it
+Migrating a component entails:
+  * Serializing it
+  * Transmitting it over the network
+  * Deserializing it
 
 Serializing and Deserializing are of negligible costs compared to the transmission over the network, and could thus be ignored.
 The Operating System must be able to evaluate the costs of the migration, by estimating the cost of tranmission over the network. This cost entails the time required for the transmission (based on the object size and network speed) and the cost associated with that specific network tranmissions (i.e: pay-per-kilobyte).
