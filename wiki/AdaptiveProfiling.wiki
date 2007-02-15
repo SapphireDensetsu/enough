@@ -92,7 +92,7 @@ The topography change means that some of the links between the components become
 === Profiling ===
 In order to make an informed decision, the operating system must know of all these factors.  To do this it must profile the components.
 
-  * Profiling Fast Space (RAM, low-level caches, etc) is not straightforward.  Applies only to code components (data components do not directly use or get stored in fast space). Fast Space is not explicitly requested by code components, but implicitly requested by "touching" (reading or writing) Slow Space.  What is interesting is not how much Fast Space was available to give the component, but how much it was implicitly asking for.  This is not a difficult problem, and it is easy to count the number of accessed and dirty pages of Slow Memory touched by a code component.
+  * Profiling Fast Space (RAM, low-level caches, etc) is not straightforward.  Applies only to code components (data components do not directly use or get stored in fast space). Fast Space is not explicitly requested by code components, but implicitly requested by "touching" (reading or writing) Slow Space.  What is interesting is not how much Fast Space was available to give the component, but how much it was implicitly asking for.  This is not a difficult problem, and it is easy to count the number of accessed and dirty pages of Slow Space touched by a code component.
 
   * Profiling Slow Space (Disk) is easy and consists of measuring the size of the component.  If it is a mutable data component, it can change in size, in which case a time-local (or time-global) maximum on the size of the component can be used.
 
