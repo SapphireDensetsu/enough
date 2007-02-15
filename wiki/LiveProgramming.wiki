@@ -19,10 +19,12 @@ Since it does not have to parse and manipulate text in order to aid the programm
 By editing the program semantics and not the syntax, the program can have correct semantics at all times. This means it is always runnable, and thus more informative feedback about the program can be given to the programmer. Real-time results of the current code can be shown to the programmer incrementally. This enables [ExampleBasedProgramming Example Based Programming].
 
 = References are real and not by names =
-Instead of refering to objects by their names, the programmer will choose an object from a list of existing objects - objects that he has already created. The programmer will see immediately the scope of the refered object, because lexical scope doesn't exist when there is no text. Instead, he will explicitly choose the exact object being refered to. If he wants to create a new object, he will do so explicitly.
+Instead of encoded programs storing cross-references between objects by names, the cross-references will be stored as real references, which are not broken as names are modified.  The programmer can choose an object from the existing objects via the environment's GUI interface (either by drag&drop, or by a semantic-aware name-based query). Due to semantic editing, lexical scopes are unnecessary and the reference to the actual object can be shown graphically and does not need to be resolved.
 
-= Names are just comments =
-_this needs major expansion!_
+= Editing vs Running =
+Traditionally, editing the program is done by editing its textual representation, while running the program is done by executing a resulting executable.
+Via semantic editing, the program is always executable while it is being edited, and does not need to be explicitly "run" as it is always running.  In order to "run" it with different inputs, one just changes the inputs and the outputs are updated accordingly.
+This, along with OrthogonalPersistence unifies 3 of the program's different representations ("source code", "executable" and "running form") into one form that is both editable and running. It also allows the developer and user of the program to share one UnifiedInterface to accessing the program. This UnifiedInterface makes every developer of a program a user, and every user of a program a developer of that program.
 
 = Main references =
  # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
