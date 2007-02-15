@@ -10,15 +10,13 @@ Fundamental ideas we wish to explore and implement.
    * [StaticAnalysis Static analysis] and [StaticVerification verification]
   * Integrated [MultipleSemantics Multiple Semantics]
   * [DependencySystem Dependency System]
-  * Program by example
-  * Dynamic viewing/editing
-  * Automatic invariants tracking
-  * Reversing functions automatically
- * [Capabilities]
+  * [ExampleCentricProgramming Program by example]
+ * [HighLevelProgramming Even higher-level languages]
+ * [Capabilities] and [NetworkReferences]
  * [OrthogonalPersistence Orthogonal Persistence]
+ * [AdaptiveProfiling Adaptive Profiling]
  * [LazyEvaluation Lazy Evaluation]
  * [Promises]
  * [UnifiedInterface Unified Interface]
- * [AdaptiveProfiling Adaptive Profiling]
  * [ZeroInstall Zero Install]
  * [DifferentialComputing Differential Computing]
