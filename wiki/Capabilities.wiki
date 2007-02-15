@@ -4,7 +4,11 @@
 
 Wikipedia seems to have a good entry (I didn't read it): [http://en.wikipedia.org/wiki/Capabilities]
 
-== Background: What's wrong with ACLs ==
+= Mainstream security =
+The mainstream in security these days is using ACLs to validate access to objects.
+[WhyACLsAreBad ACLs are a bad way to implement security].
+
+= Background: What's wrong with ACLs =
 === What is ACL? ===
 In short, an ACL (Access Control List) is a list that stores the permissions available to each user. They are the common way to manage security - used both in Unix-like systems and to a lesser degree, Microsoft Windows (where the concept of permission is even less developed). An ACL could be is a list of users, where for each user it specifies what he is allowed to access and what he isn't allowed to access. Or, for a given resource, it lists who is allowed to access the resource (and with what permissions - or what operations are allowed).
 
