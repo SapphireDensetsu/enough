@@ -48,3 +48,10 @@ Initial configuration should always be changable at a later time. This means tha
 == Downloading extra components ==
 
 This current feature of installers is less of a feature for the user, and more of a feature for program publishers to ease the distribution of the latest version to users. Instead, a [NetworkReferences NetworkReference] to the latest version of the component from its distributor can be copied, such that the most recent version is always copied (Note that _download_ and _copy_ are interchangable).
+
+= Summary =
+
+Using the above methods, the installer program is replaced by some metadata attributes that are attached to the objects being copied.  The author, version, name and other metadata attributes may be specified there so they are later searchable in the database.
+These metadata attributes would become searchable in the local database only if explicitly copied into the database by invoking its copying method, and not if the object is seamlessly copied when used from another computer. If it is seamlessly copied, then the copy is treated as merely a cache.
+
+Due to [AdaptiveProfiling seamless copying], many explicit installations in networked environments would not be necessary, as the OS would transparently "install" applications in an MRU fashion.
