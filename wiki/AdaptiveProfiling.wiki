@@ -1,7 +1,5 @@
 #summary Adaptive Profiling definition and applications
 
-_this sections needs better examples_
-
 = Summary =
 Adaptive profiling is the ability of a system to change dynamically in a way that improves it's performance. The method of change is the duplication or movement of components between host platforms. This is made possible by [Capabilities], [OrthogonalPersistence] and the ability of the operating system to transparentely serialize and move objects between hosts, while retaining their cross-references across a network, transparently.
 
