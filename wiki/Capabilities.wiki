@@ -2,46 +2,27 @@
 
 = What are Capability Systems? =
 
-Wikipedia seems to have a good entry (I didn't read it): [http://en.wikipedia.org/wiki/Capabilities]
+Wikipedia seems to have a good entry: [http://en.wikipedia.org/wiki/Capabilities]
 
 = Mainstream security =
 The mainstream in security these days is using ACLs to validate access to objects.
 [WhyACLsAreBad ACLs are a bad way to implement security].
 
-= Background: What's wrong with ACLs =
-=== What is ACL? ===
-In short, an ACL (Access Control List) is a list that stores the permissions available to each user. They are the common way to manage security - used both in Unix-like systems and to a lesser degree, Microsoft Windows (where the concept of permission is even less developed). An ACL could be is a list of users, where for each user it specifies what he is allowed to access and what he isn't allowed to access. Or, for a given resource, it lists who is allowed to access the resource (and with what permissions - or what operations are allowed).
-
-[http://en.wikipedia.org/wiki/Access_control_list Wikipedia on ACLs]
-
-When a user tries to access a resource, the OS checks with the ACL to decide whether or not the operation should be allowed. For example, if the user tries to read a file, the OS will check if the user has "read" permissions on that file. If the user does not have enough permissions, the operation will not occur and his program will receive some sort of error from the OS, such as "Access Denied".
-
-=== Problems ===
-Once studied, it is easy to see that there is a fundamental problem with ACLs. It manifests in several ways:
- * Resource control: it is very hard to control permissions to system-wide resources. For example, how do you prevent an application from accessing the disk altogether? Or the network? Or even the screen? And drive Q? For every new resource we need a new list.
- * Forgeability: it is possible (and sometimes easy) to forge a reference to a resource that's supposed to be hidden. If permissions for that resource were not correctly specified, any malicious program will be able to access it. For example, if a new file was not created with correct permissions, a malicious program that tries to open that file by simply guessing its name correctly, will be able to do so.
-
-=== Credit Card Tomfoolery ===
-Finally, the problem can be described with a metaphor: ACLs are akin to giving out your credit card number to everybody, and then having a list in the bank managing who is and who is not allowed to charge your credit card.
-Sounds stupid, right? Nevertheless, this is how all our operating systems work.
-
-
-
 = Security via Capabilities =
+Capability systems are systems in which an object can not perform operations on other objects without the proper "capability". This capability can be described as a reference. If you don't have a reference to an object, you can't do anything with that object.
 
-Capability systems are systems in which an object can not perform operations on other objects without the proper "capability". This capability can be described as a reference. If you don't have a reference to an object, you can't do anything with that object. You can't even be sure it exists (without further information). 
+With capabilities, no "security permission checks" are necessary. If you don't explicitly give the application references to internet connections and your secret documents, they can't even _express requests_ to operate on them.
 
-=== Back to the Credit Card Tomfoolery ===
-Capability systems mean that you simply never give away your credit card number. You only give it to someone if you want to let them charge your account. If you didn't give it to someone, they can't charge you, and this does not depend on the correctness of any list.
+= Unification of designation and authority =
+In today's world, objects are designated by programs via resource identifiers, which are overt and forgeable. A program designates an object, and the operating system verifies that access is allowed against the ACL.  With capabilities, the only way to designate an object is via a capability. A capability also represents the authority to access that object. Thus, the designation of an object and the authority to access that object are united into one artifact: The capability.  This way, a program only contains a list of objects it can access, without any reverse list to verify it.
+The consequences are:
+  * A simpler system that contains only designation, without extra mechanisms for verifying authority.
+  * A more powerful system that allows fine-grained control over which piece of code can access what objects.
+  * [NetworkReferences A natural way to extend this on to a network].
 
-With capabilities, no "security permission checks" are necessary. If you don't explicitly give the application references to internet connections and your secret documents, they can't express operations on them, or request them.
-
-== Advanced security control with capabilities ==
-In fact, with capabilities it is possible to control permissions on a much finer scale. One of these control methods are called _facets_. In a real credit card, once you give the number they can charge you much more than you meant them too. And they can give the number to someone else. Not so with capability systems. 
-
-Here, you can control the exact capability - for example, you may give someone a 'ticket' that lets him charge your account exactly 234$, at exactly 2 equal payments, on specific dates, thus enforcing your agreement. He cannot even _try_ to charge your account otherwise, because this 'ticket' is really his only reference to your credit card. Also, your 'ticket' may only be valid in his hands. 
-
-An implementation of this can be accomplished via digital signatures. For a party to pass this 'ticket' to someone else, he would need to give that other person his private signature, which is against his own interests (this implementation might have a weakness: what if he doesn't care about his digital signature? This could be the case if you gave your ticket to a fictitious, temporary identity. But this may be solved by verifying identities also with digital signatures)
+= Limited access to objects via capabilities =
+Capabilities also allow control of permissions with much finer granularity. One of these control methods are called _facets_. A facet is a proxy to an object, that only allows a subset of the functionality. Instead of giving a capability to an object, one can give a capability to a facet. The facet may later be nullified to revoke the capability, or the permissions may be changed dynamically.
+This allows any object holder to create a capability to a limited-subset of the object, without requiring any secure code in the operating system to be written for those specific restrictions.
 
 For more on capability patterns, see [http://wiki.erights.org/wiki/Walnut/Secure_Distributed_Computing/Capability_Patterns E in a walnut - Capability Patterns]
 
