@@ -32,5 +32,15 @@ With a Unified Interface, programs never specify their inputs and outputs direct
 
 Therefore, the user has complete control over the inputs and outputs of the program without the program's developer having to do a thing.
 
+= Examples =
+
+== The "playlist" ==
+Today, every media player contains a "playlist" feature, which is basically a list of inputs that should be played one by one through the main media player.
+With a Unified Interface, this feature is completely redundant, as the user can already use the generic GUI environment in order to pass multiple inputs through the media player input.
+
+== Media "rippers" ==
+Today, many media ripper programs (such as a CD-to-wav, or MP3-to-wav) as well as media capture programs exist. These programs are basically identical copies of the ordinary media players, except instead of writing their output to the sound or video device, they write it to a file.  Some programs use a special "output plugin" in the normal media player instead, but they still have to provide this plugin interface for this to be possible.
+In a Unified Interface, the output of every component is already under the complete control of the user, so these programs and plugins are unnecessary, as the user simply connects the media's output to a storage object, instead of the audio device.
+
 = Summary =
 LiveProgramming brings a Unified Interface to developers and users. This Unified Interface unburdens programmers from specifying much of the user interface, all the while making a huge increase in power of the users.
