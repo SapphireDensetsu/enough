@@ -34,7 +34,7 @@ Code meta-data is extra information about the code that does not directly affect
 Today, there is a trade-off between the kinds and amounts of meta-data code can contain (the verifiability and speed of the code), and the amount of clutter this adds to the textual representation of the program, as well as programmer effort in specifying this information textually.
 A lot of languages choose different points in this trade-off. Some, like Python, choose the far end of no meta-data, such that the syntax is uncluttered, but no meta-data to verify the program or make it run faster is possible.  Python decorators may change this to allow some optional meta-data to be specified, at a loss of some clutter.
 C++, as another example, chooses another point where all typing meta-data is specified explicitly in the textual representation. This point requires a lot of extra textual declarations and extra text in the code.
-Other languages choose a middle ground with less clutter where only some of the types are specific explicitly and others are inferred.
+Other languages choose a middle ground with less clutter where only some of the types are specified explicitly and others are inferred.
 
 Semantic Editing and Live Programming allow avoiding this trade-off altogether while gaining both the meta-data, and lack of clutter.  Programmer effort in specifying the meta-data may still exist, but due to the semantic awareness of the editor, this effort can also be significantly reduced. The Semantic Editor can show/hide the extra meta-data at the user's will, making the clutter a non-issue. Static typing information can be specified by the user but with extra inference and aid from the semantic editor, greatly reducing the work by the user.
 
