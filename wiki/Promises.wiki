@@ -3,7 +3,50 @@
 = Summary =
 Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. They greatly ease programming of concurrent systems. Instead of having to synchronize between concurrent processes using low-level primitives, with promises the synchronization is automatic at the lower-level. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
 
-= Concurrency =
+= Traditional concurrency =
 Many applications require or gain by dividing work into concurrent parts. Unfortunately, this entails a heavy cost of coordinating these parts (usually processes or threads) to work together. The coordination of concurrent (or synchronization of asynchronic) processes is hard because the abstract part of our mind is much better at analyzing serial situations. It is very hard to imagine more even two processes working at once, with all the possible combinations of states for each one.
 
-The traditional methods for synchronizing are mutexes and semaphores. These are low-level synchronization primitives because they do not "know about" the specific task that is being coordinated. Rather, they are at the level of protecting "critical sections" of code, or locking a resource at a particular point. It is a complicated (if not impossible) task to validate that the low-level primitives that used in a system protect against all possible 
+The traditional methods for synchronizing are mutexes and semaphores. These are low-level synchronization primitives because they do not "know about" the specific task that is being coordinated. Rather, they are at the level of protecting "critical sections" of code, or locking a resource at a particular point. It is a complicated (if not impossible) task to validate that the low-level primitives that are used in a system really cover all the asynchronous possibilities correctly.
+
+After a concurrent system is implemented, it is also very hard to test and debug it. To perform full tests on such a system means to reach all combinations of states between all concurrent processes. This is very hard and usually practically impossible. To debug a concurrency bug means to re-create the asynchronous state of the system, which is also very hard. It may be interesting to see statistics of bugs in multithreaded applications. It will be no surprise to find that these applications harbor many "unfixable" known bugs.
+
+= The promise of promises, the future of promises, or the promises of the future =
+The almost surprising fact is that we humans are generally concurrent coordinators. This does not refer to the ability to perform several tasks at once. The point here is the ability to _use_ many asynchronous objects in a coordinated way. We don't (usually) use semaphores or other low-level synchronization primitives. So how do we do it? 
+
+The human way of concurrency depends a lot on _assumptions_. We assume that a certain future state will occur, and plan our actions accordingly. This will be illustrated by an example:
+
+A person, Adam, may order an item from a vendor. He calls Zoro and tells him "please ship me this item". After he orders the item, he tells his friend Bob "when this items arrives, call me". He also tells another friend, Charlie, "when this item arrives, put it in that room". He may then even tell someone else, Dude, "when Bob calls my phone, ring that bell. Adam is interacting with many different, concurrent, people. They operate independently and don't synchronize with each other explicitly. And yet, the result of this situation is straightfoward.
+
+The cooridnation may be described in terms of events: Bob is registered to call Adam when the event "package X arrived" occurs. Similarly we can describe the other operations. This model means that each person has "event handlers" and "methods", a complicated implementation that requires two seperate primitives. The idea of promises is to unite these primitives in a way that makes the concurrency of the system transparent. Instead of having events and methods, we have only methods (or vice versa). A request that is concurrent will _immediately_ return an object that _looks like the real reault_. This returned object is actually a "promise" for the real result, which will be available at a later time. However, the promise is immediately usable and can be acted upon as if the real result has already arrived. Thus, we could describe the previous situation in the following terms: Adam requests the item shipped from Zoro, and immediately receives a "promise" for the package. He then tells Charlie: take this _promised_ item and place it in that room. Adam also requests from Bob: when this promise becomes real, call me. Bob gives Adam a "promise" to call him. Adam may use the fact that "Bob promised to call" with Dude: "when the promise to call becomes real, ring this bell". Finally, Adam can relax until he hears the bell ring.
+
+Using promises is like scheduling operations that will occur each after the previous one completes, without explicitly using a scheduling primitive. The scheduling is in the form of a tree, where each succesful "realization" of a promised result may trigger several new actions. Or, if viewed from the opposite direction, several operations may depend on a single result to become available. This allows us to construct complex event-handling trees in a very natural and simple way.
+
+= Implementation =
+To implement a promise-enable system we require some supporting environment:
+ * The side of "promises" as seen by the requested (or promise-disptaching) side. This includes the ability to return immediately a "promise" rather than a real result, and the ability to trigger a realization of the promise when the asynchronous operation has completed.
+ * A "promise" primitive for the requesting side. This is an object that remembers what operations were invoked on it, and performs them when the promise becomes "realized".
+
+There are other things that may be implemented to take better advantage of a "promising" system:
+ * It will be better to allow a "decoration" technique that allows asynchronous processes to be implemented without having to explicitly return promise objects. This "wrapping" level will automatically transform any asynchronous request into one that returns a promise.
+ * Further, we may then design and program the system (if it isn't too complex) in a way that is not dependant on which operations are asynchronous and which are not.
+
+= Realizing promises =
+Each tree of operations has a root - a "primeval" promise on which all other promises depend. When that root promise is realized, the whole tree begins to execute. Where I/O or other side effects depend on the promised result, the promise infrastructure will cause "blocking" on the side effect operation until the promise is realized. This will ensure that side effects will occur in the expected order, and not on the random order of promise realization. Compared to traditional systems, this ensures that blocking operations are used only when they are required.
+
+= Promises and Adaptive Profiling =
+Concurrency sometimes means that parts of the applications are distributed over a network. For [AdaptiveProfiling Adaptive Profiling] we may use promises to implement the feature of moving a part of the system to a remote host. The other parts of the system will continue using it and will now receive "promises" instead of immediate results. Because of the transparent nature of promises (they look like the real result) this will not affect the operation of the system.
+
+This can lead to much better performance in a system that performs several operations with the (newly) remote object and then a lot of unrelated operations on a local object. The system will not get "stuck" on the remote operations, waiting for the reply. Rather it will already begin the next unrelated local operations. When the remote operations will complete, the operations that depended on them (the operations performed on those promises) will be executed. If the system reaches a point where a local operation depends on a remote promise that has not been realized, it will proceed to "virtual work" by invoking operations on the promise. These operations will occur when the promise will be realized, i.e. when the remote operation completes and a reply arrives.
+
+= Promises and Lazy Evaluation =
+[LazyEvaluation Lazy Evaluation] is closely related to promises in that it does not really perform any operation on an object until we know that a side effect depends on it. This way, minimal calculation is performed. If we request a result from an asynchronous object, and receive a promise, with lazy evaluation we will NOT actually even send the request unless it is determined that the result will be used. This can lead to great performance improvements and resource savings.
+
+For example, we may request something from an asynchronous object, and get a promise for that result. Later in the code, we perform a different operation and depending on the result of that later operation, perform different tasks. If only one of the tasks require the original first promise, we can delay sending the request until the condition has been determined. This can lead to optimization if the _other_ task is to be performed, but also to a delay if the original result is in fact required. To cope with this we may implement a system that compensates by sending requests immediately but canceling them prematurely if it is later discovered that they are not actually needed (we will need to implement operation cancelling for the result which may be hard).
+
+The conclusion is that promises and lazy evaluation must be studied further, and that maybe profiling methods should be employed.
+
+= References =
+_todo complete this list_
+
+ * E in a Walnut
+ * Original paper on Active Objects by ??
