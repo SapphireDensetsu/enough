@@ -33,4 +33,4 @@ With a Unified Interface, programs never specify their inputs and outputs direct
 Therefore, the user has complete control over the inputs and outputs of the program without the program's developer having to do a thing.
 
 = Summary =
-LiveProgramming brings a Unified Interface to developers and users. This Unified Interface unburdens programmers from specifying much of the user interface, all the while making a huge increase in power to the users.
+LiveProgramming brings a Unified Interface to developers and users. This Unified Interface unburdens programmers from specifying much of the user interface, all the while making a huge increase in power of the users.
