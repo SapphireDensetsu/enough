@@ -3,12 +3,7 @@
 = Summary =
 Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. They greatly ease programming of concurrent systems. Instead of having to synchronize between concurrent processes using low-level primitives, with promises the synchronization is automatic at the lower-level. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
 
-= Traditional concurrency =
-Many applications require or gain by dividing work into concurrent parts. Unfortunately, this entails a heavy cost of coordinating these parts (usually processes or threads) to work together. The coordination of concurrent (or synchronization of asynchronic) processes is hard because the abstract part of our mind is much better at analyzing serial situations. It is very hard to imagine more even two processes working at once, with all the possible combinations of states for each one.
-
-The traditional methods for synchronizing are mutexes and semaphores. These are low-level synchronization primitives because they do not "know about" the specific task that is being coordinated. Rather, they are at the level of protecting "critical sections" of code, or locking a resource at a particular point. It is a complicated (if not impossible) task to validate that the low-level primitives that are used in a system really cover all the asynchronous possibilities correctly.
-
-After a concurrent system is implemented, it is also very hard to test and debug it. To perform full tests on such a system means to reach all combinations of states between all concurrent processes. This is very hard and usually practically impossible. To debug a concurrency bug means to re-create the asynchronous state of the system, which is also very hard. It may be interesting to see statistics of bugs in multithreaded applications. It will be no surprise to find that these applications harbor many "unfixable" known bugs.
+Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
 = The promise of promises, the future of promises, or the promises of the future =
 The almost surprising fact is that we humans are generally concurrent coordinators. This does not refer to the ability to perform several tasks at once. The point here is the ability to _use_ many asynchronous objects in a coordinated way. We don't (usually) use semaphores or other low-level synchronization primitives. So how do we do it? 
