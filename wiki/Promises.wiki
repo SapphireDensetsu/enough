@@ -6,7 +6,7 @@ Promises, (or _Futures_ in the original Active Object notation) are objects repr
 = Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
-= The promise of promises, the future of promises, or the promises of the future =
+= The promise of promises =
 The almost surprising fact is that we humans are generally concurrent coordinators. This does not refer to the ability to perform several tasks at once. The point here is the ability to _use_ many asynchronous objects in a coordinated way. We don't (usually) use semaphores or other low-level synchronization primitives. So how do we do it? 
 
 The human way of concurrency depends a lot on _assumptions_. We assume that a certain future state will occur, and plan our actions accordingly. This will be illustrated by an example:
