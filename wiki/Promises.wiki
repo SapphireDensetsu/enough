@@ -51,15 +51,16 @@ With promises, this looks simpler, and Rubin and Berko don't have to be describe
 {{{
 def Loktar():
    make_order.result.set_max_unrealized(MAX_ORDERS_WAITING)
+   play_solitaire()
    while True:
       order = make_order()
       pizza = make_pizza(order)
 }}}
-Here, make_order is a "function", or request, that returns a promise for a "order" object. Any request granter may have a "result" sub-object, which symbolizes the result of this request. Here we set the maximum number of concurrently unrealized results, that is - the number of requests that have not been granted (number of pizza orders that have requested but not created yet). This way, no more than MAX_ORDERS_WAITING orders will be pending in the system, and no more requests for getting new pizza orders will be sent until some orders are actually written down. This replaces the low-level mechanism used above.
+All "functions" here return immediately. play_solitaire begins a solitaire game and returns. make_order is a "function", or request granter, that returns a *promise* for a "order" object. Any request granter may have a "result" sub-object, which symbolizes the result of this request. Here we set the maximum number of concurrently unrealized results, that is - the number of requests that have not been granted (number of pizza orders that have requested but not created yet). This way, no more than MAX_ORDERS_WAITING orders will be pending in the system, and no more requests for getting new pizza orders will be sent until some orders are actually written down. This replaces the low-level mechanism used above.
 
-The concurren
+The concurrency in this case is somewhat implicit. By writing two independant request granters (make_order and make_pizza) we allow the system to automatically run these concurrently. The system will know that make_pizza requires a real order to "realize" the pizza promise, but that it may run independantely of new incoming orders. With AdaptiveProfiling, the system will automatically, dynamically decide how many threads to run (and on which machine).
  
-We could add more explicit control over how this is made concurrent, by using policy control for each request:
+We could add more explicit control over how this is made concurrent, by using policy control for each request. For example, if we want one thread for make_order, and one thread for make_pizza, we will write:
 {{{
    make_order.set_policy("one thread")
    make_pizza.set_policy("one thread")
