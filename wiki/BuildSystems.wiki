@@ -1,6 +1,6 @@
 #summary Build systems and their problems
 
-DependencySystems is an attempt to generalize this subject and solve the problems.
+DependencySystem is an attempt to generalize this subject and solve the problems.
 
 = Build systems =
 Most software projects (except very small ones) require a _build system_ to build correctly. A build system's main feature is the ability to decide what is the correct build order, based on the dependency tree given. For example, if module A requires module B to compile correctly, the programmer will tell the build system about that. When building A, the build system will make sure that B is built (and if not, build it first).
