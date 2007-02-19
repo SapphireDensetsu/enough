@@ -11,7 +11,63 @@ The almost surprising fact is that we humans are generally concurrent coordinato
 
 The human way of concurrency depends a lot on _assumptions_. We assume that a certain future state will occur, and plan our actions accordingly. This will be illustrated by an example:
 
-A person, Adam, may order an item from a vendor. He calls Zoro and tells him "please ship me this item". After he orders the item, he tells his friend Bob "when this items arrives, call me". He also tells another friend, Charlie, "when this item arrives, put it in that room". He may then even tell someone else, Dude, "when Bob calls my phone, ring that bell. Adam is interacting with many different, concurrent, people. They operate independently and don't synchronize with each other explicitly. And yet, the result of this situation is straightfoward.
+==== Loktar's pizza place ====
+Loktar is a manager of a pizza place. His workers are Rubin and Berko. Loktar wants to handle incoming pizza requests. For each incoming phonecall, Rubin should answer the phone and write down the order. Then, for every order, Berko should make a pizza. 
+
+With us humans, this isn't hard. Loktar tells Rubin: "When the phone rings, answer and write an order". He then goes to Berko and says: "When an order is ready, read it and make a pizza". Then Loktar goes to play Solitaire and has nothing to worry about.
+
+With current synchronization techniques, we will need to create two threads: one for Rubin and one for Berko:
+
+For Rubin:
+{{{
+def Rubin(orderlist):
+   while True:
+      if orderlist.length() > MAX_ORDERS_WAITING:
+         sleep(1)
+         continue
+      order = make_order()
+      orderlist.append(order)
+}}}
+For Berko:
+{{{
+def Berko(orderlist):
+   while True:
+      order = orderlist.pop(0)
+      make_pizza(order)
+}}}
+For Loktar:
+{{{
+def Loktar():
+   orderlist = ThreadSafeList()
+   new_thread(rubin)
+   new_thread(berko)
+   while True:
+      play_solitaire()
+}}}
+
+Of course, orderlist must be thread safe, or we will have bugs. Also, the infinite loop must be replaced by something that tells them when to stop.
+
+With promises, this looks simpler, and Rubin and Berko don't have to be described specifically:
+{{{
+def Loktar():
+   make_order.result.set_max_unrealized(MAX_ORDERS_WAITING)
+   while True:
+      order = make_order()
+      pizza = make_pizza(order)
+}}}
+Here, make_order is a "function", or request, that returns a promise for a "order" object. Any request granter may have a "result" sub-object, which symbolizes the result of this request. Here we set the maximum number of concurrently unrealized results, that is - the number of requests that have not been granted (number of pizza orders that have requested but not created yet). This way, no more than MAX_ORDERS_WAITING orders will be pending in the system, and no more requests for getting new pizza orders will be sent until some orders are actually written down. This replaces the low-level mechanism used above.
+
+The concurren
+ 
+We could add more explicit control over how this is made concurrent, by using policy control for each request:
+{{{
+   make_order.set_policy("one thread")
+   make_pizza.set_policy("one thread")
+}}}
+If we want to change the application so a new thread is created for every pizza, we would simply write:
+{{{
+   make_pizza.set_policy("new thread for each request")
+}}}
 
 The cooridnation may be described in terms of events: Bob is registered to call Adam when the event "package X arrived" occurs. Similarly we can describe the other operations. This model means that each person has "event handlers" and "methods", a complicated implementation that requires two seperate primitives. The idea of promises is to unite these primitives in a way that makes the concurrency of the system transparent. Instead of having events and methods, we have only methods (or vice versa). A request that is concurrent will _immediately_ return an object that _looks like the real reault_. This returned object is actually a "promise" for the real result, which will be available at a later time. However, the promise is immediately usable and can be acted upon as if the real result has already arrived. Thus, we could describe the previous situation in the following terms: Adam requests the item shipped from Zoro, and immediately receives a "promise" for the package. He then tells Charlie: take this _promised_ item and place it in that room. Adam also requests from Bob: when this promise becomes real, call me. Bob gives Adam a "promise" to call him. Adam may use the fact that "Bob promised to call" with Dude: "when the promise to call becomes real, ring this bell". Finally, Adam can relax until he hears the bell ring.
 
