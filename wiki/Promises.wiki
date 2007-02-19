@@ -3,6 +3,7 @@
 = Summary =
 Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. They greatly ease programming of concurrent systems. Instead of having to synchronize between concurrent processes using low-level primitives, with promises the synchronization is automatic at the lower-level. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
 
+= Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
 = The promise of promises, the future of promises, or the promises of the future =
