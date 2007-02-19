@@ -41,6 +41,8 @@ In [LiveProgramming Live Programming], we always work with objects that the syst
 
 First of all, in LiveProgramming, there is no need to "build" a program. The program is built incrementally as it is being edited. 
 
-Uses for automatic dependency tracking:
- * 
+==== Visualising the new way to engineer ====
+For the situation of requirements and testing described above, our vision is the following. The customers describe the initial system requirements using the UnifiedInterface, instead of writing a textual document. This can (and should) still be represented in natural language, but instead of typing letters on a page (which the computer will never understand), each requirement will be an object. It will be easy and intuitive to link related requirements and to specify dependencies between them, by a UnifiedInterface for representing dependency relationships between objects. The system designers will receive this initial requirement set and expand it with system requirements. Any new requirement will need to be assigned a "parent" to specify its origin (what does it depend on). Similarly, features will be defined.
+
+
 _expand this section!_ 
