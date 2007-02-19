@@ -39,4 +39,8 @@ The points are:
 == Dependency Systems and Live Programming ==
 In [LiveProgramming Live Programming], we always work with objects that the system recognizes. Therefore, it is possible for the system to know about dependencies between these objects. *The two concepts merge naturally*. Using a Live Programming system we don't have to re-implement dependency management for every new application: it is part of the system's powerful understanding of what you are doing.
 
+First of all, in LiveProgramming, there is no need to "build" a program. The program is built incrementally as it is being edited. 
+
+Uses for automatic dependency tracking:
+ * 
 _expand this section!_ 
