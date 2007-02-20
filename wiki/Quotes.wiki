@@ -6,4 +6,4 @@ Add quotes and references to them (or just references) about stuff related to Bu
 
  * "[[Rob]] Strom makes the point that the ability to have processes on the same machine run in a single address space makes the cost of a message exchange very low, comparable to the cost of a subroutine call, and also makes it possible to have larger numbers of smaller-grained processes." - from FBP by J. Paul Morrison, chapter 27, section about NIL.
 
-  * *even better*: "...Strom's group has since developed a follow-on to NIL, called Hermes (Strom et al. 1991) because Hermes was the "process-server of the gods"! _They are currently building a "global desktop" which will allow applications to be developed graphically_." (our italics)
+  * *even better*: "...Strom's group has since developed a follow-on to NIL, called Hermes (Strom et al. 1991) because Hermes was the "process-server of the gods"! *_They are currently building a "global desktop" which will allow applications to be developed graphically_*." (our bold-italics)
