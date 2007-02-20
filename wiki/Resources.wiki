@@ -1,0 +1,4 @@
+#summary Resources and Links related to Enough
+
+= List of related resources =
+ * http://lambda-the-ultimate.org/ - programming languages weblog
