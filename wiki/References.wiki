@@ -1,5 +1,7 @@
 #summary References and Credits - who we learned from
 
+For other stuff, see [Resources]
+
 = References and Credits =
  * A lot of the concepts in this project are drawn from the work of [http://www.eros-os.org/~shap Jonathan S. Shapiro] which worked on EROS and now on [http://www.coyotos.org/index.html Coyotos], a project that includes [http://www.coyotos.org/docs/bitc/spec.html BitC] - a programming language.
  * [http://subtextual.org/ Subtext] is an experimental programming language/environment with the idea of 'live code'.
