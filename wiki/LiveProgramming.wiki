@@ -47,6 +47,7 @@ This, along with OrthogonalPersistence unifies 3 of the program's different repr
 
 = Main references =
  # _[http://alarmingdevelopment.org/?p=5 Manifesto of the Programmer Liberation Front]_ Jonathan Edwards (June 16, 2004)
+ # [http://en.wikipedia.org/wiki/Flow-based_programming Flow-based programming on WikiPedia]
 
 = Additional resources =
  * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
