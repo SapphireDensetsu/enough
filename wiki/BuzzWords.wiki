@@ -3,6 +3,8 @@
 
 = Enough Buzzwords! :) =
 
+[Contemplations] - disorganized ideas junkyard
+
 Fundamental ideas we wish to explore and implement.
 
  * [LiveProgramming Live Programming]: Rich (non-textual) semantic representation: 
