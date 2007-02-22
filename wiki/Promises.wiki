@@ -11,6 +11,8 @@ Promises should address the [SynchronizationProblems issues of traditional synch
 = What is a promise? =
 In a programming task we can note "request granting" parts of the system. In concurrent systems the goal is to process indepedant requests in parallel. Normally, a request granter (such as an object with a method) is blocking - a method returns when the request is granted. For parallelization, we need to create threads in which we process independant requests. With promises, the concept of a thread is hidden from the programmer. A request granter *never* blocks and methods return immediately, and its immediate result is a *promise* for the fulfillment of the request.
 
+A promise is an object that looks exactly like the result. Every operation on the result can also be performed on the promise. Many such operations can be _invoked_ on the promise while the request is being processed concurrently. Once the result is really available, all the invoked operations on the promise are actually performed on the real result.
+
 Working with promises has it's methodologies. For example, sometimes a result is needed before the program can continue (such as printing the result on the screen so that the user can make a choice). For these cases, we have to wait for the promise to be fulfilled, and a special mechanism exists for this purpose (such as the "when" keyword in E). Obviously, many design patterns can be thought of for working with promises.
 
 === Example ===
