@@ -7,9 +7,11 @@ Some points:
  * A programming language should allow the most natural (easy to express and understand) description of the system.
  * For a general description of a system, natural language is the easiest to understand but lacks the exactness required for a program.
  * A system can be described in many different ways, and the best way is the one that is easiest for the programmer to use.
- * As humans we usually describe our tasks in an object oriented and procedural way. For example, to tie shoe laces one could use the following instructions:
-  * Put the shoe on your foot (the verb "put" is a method of you - an object, shoe is another object, and your foot is a third object).
-  * Grab the laces with your hands
-  * etc.
- * As humans we don't normally describe our actions in functional terms. We think of a car (a very complex system) as an object with parts, states and capabilities. We don't think of a car as set of highly-complex functions.
- * Functional programming is easy for the computer to "understand", reasons including the fact that side effects are concentrated in specific points.
+ * Many times, we think of a thing in many different ways. We may think of a table as a piece of wood (material), as an easy-to-reach place to put things (tool A), as a flat surface good for writing (tool B), or even as an obstruction (environment?), depending on the context.
+ * Any system or part of a system can also be described in several ways, depending on the context.
+ * As humans we usually describe *tasks* in an object oriented and procedural (order list of actions) way. For example, to tie shoe laces one could use the following instructions:
+  # Put the shoe on your foot (the verb "put" is a method of you - an object, shoe is another object, and your foot is a third object).
+  # Grab the laces with your hands
+  # etc.
+ * It is less intuitive to describe systems in functional terms. We think of a car (a very complex system) as an object with parts, states and capabilities. We don't think of a car as set of highly-complex functions.
+ * Functional programming is easy for the computer to "understand", because side effects are concentrated in specific points.
