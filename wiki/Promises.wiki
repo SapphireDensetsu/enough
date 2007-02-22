@@ -1,22 +1,27 @@
 #summary Promises or Futures: Concurrent systems should be natural
 
 = Summary =
-Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. They greatly ease programming of concurrent systems. Instead of having to synchronize between concurrent processes using low-level primitives, with promises the synchronization is automatic at the lower-level. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
+Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. Work is performed with requests, and a promise represents the fullfilment of a request. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
+
+Promises are related to [LazyEvaluation lazy evaluation] and [Capabilities capabilities].
 
 = Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
-= The promise of promises =
+= What is a promise? =
+In a programming task we can note "request granting" parts of the system. In concurrent systems the goal is to process indepedant requests in parallel. Normally, a request granter (such as an object with a method) is "blocking" - a method returns when the request is granted. For parallelization, we need to create "threads" in which we process independant requests. With promises, the concept of a thread is hidden from the programmer. A request granter *never* blocks and methods return immediately, and its immediate result is a "promise" for the fulfillment of the request.
+
+=== Example ===
 The almost surprising fact is that we humans are generally concurrent coordinators. This does not refer to the ability to perform several tasks at once. The point here is the ability to _use_ many asynchronous objects in a coordinated way. We don't (usually) use semaphores or other low-level synchronization primitives. So how do we do it? 
 
 The human way of concurrency depends a lot on _assumptions_. We assume that a certain future state will occur, and plan our actions accordingly. This will be illustrated by an example:
 
 ==== Loktar's pizza place ====
-Loktar is a manager of a pizza place. His workers are Rubin and Berko. Loktar wants to handle incoming pizza requests. For each incoming phonecall, Rubin should answer the phone and write down the order. Then, for every order, Berko should make a pizza. 
+Loktar is a manager of a pizza place. To speed up work, he decides to hire two workers, Rubin and Berko. Loktar wants to handle incoming pizza requests. For each incoming phonecall, Rubin should answer the phone and write down the order. Then, for every order, Berko should make a pizza. 
 
-With us humans, this isn't hard. Loktar tells Rubin: "When the phone rings, answer and write an order". He then goes to Berko and says: "When an order is ready, read it and make a pizza". Then Loktar goes to play Solitaire and has nothing to worry about.
+With us humans, this isn't hard. Loktar tells Rubin: "When the phone rings, answer and write an order". He then goes to Berko and says: "When an order is ready, read it and make a pizza". Then Loktar goes to play Solitaire and has nothing to worry about. For interest, we will add another requirement: no more than MAX_ORDERS_WAITING written orders should be waiting for Berko to handle, at any time. If more phonecalls arrive, Rubin should not answer the phone until Berko makes at least one pizza (handles at least one order).
 
-With current synchronization techniques, we will need to create two threads: one for Rubin and one for Berko:
+With current synchronization techniques, we will need to create two threads: one for Rubin and one for Berko (for clarity we will use textual pseudo-code to illustrate). In total we have three threads: Loktar is the "main" thread and he has two "worker" threads.
 
 For Rubin:
 {{{
@@ -70,12 +75,10 @@ If we want to change the application so a new thread is created for every pizza,
    make_pizza.set_policy("new thread for each request")
 }}}
 
-The cooridnation may be described in terms of events: Bob is registered to call Adam when the event "package X arrived" occurs. Similarly we can describe the other operations. This model means that each person has "event handlers" and "methods", a complicated implementation that requires two seperate primitives. The idea of promises is to unite these primitives in a way that makes the concurrency of the system transparent. Instead of having events and methods, we have only methods (or vice versa). A request that is concurrent will _immediately_ return an object that _looks like the real reault_. This returned object is actually a "promise" for the real result, which will be available at a later time. However, the promise is immediately usable and can be acted upon as if the real result has already arrived. Thus, we could describe the previous situation in the following terms: Adam requests the item shipped from Zoro, and immediately receives a "promise" for the package. He then tells Charlie: take this _promised_ item and place it in that room. Adam also requests from Bob: when this promise becomes real, call me. Bob gives Adam a "promise" to call him. Adam may use the fact that "Bob promised to call" with Dude: "when the promise to call becomes real, ring this bell". Finally, Adam can relax until he hears the bell ring.
-
-Using promises is like scheduling operations that will occur each after the previous one completes, without explicitly using a scheduling primitive. The scheduling is in the form of a tree, where each succesful "realization" of a promised result may trigger several new actions. Or, if viewed from the opposite direction, several operations may depend on a single result to become available. This allows us to construct complex event-handling trees in a very natural and simple way.
+Using promises is like scheduling operations that will occur each after the previous one completes, without explicitly using a scheduling primitive. The scheduling is in the form of a tree, where each succesful "realization" of a promised result may trigger several new actions to realize further results. Or, if viewed from the opposite direction, several operations may depend on a single result to become available. This allows us to construct complex event-handling trees in a very natural and simple way.
 
 = Implementation =
-To implement a promise-enable system we require some supporting environment:
+A promise system requires:
  * The side of "promises" as seen by the requested (or promise-disptaching) side. This includes the ability to return immediately a "promise" rather than a real result, and the ability to trigger a realization of the promise when the asynchronous operation has completed.
  * A "promise" primitive for the requesting side. This is an object that remembers what operations were invoked on it, and performs them when the promise becomes "realized".
 
