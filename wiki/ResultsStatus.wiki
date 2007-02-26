@@ -89,6 +89,9 @@ Web sites are trivial text/graphical objects that are referred by the central da
 Blogs may be lists of such, that also refer to comment trees (which are trees of such text/graphical objects).
 The method by which one has authority to create comments according to arbitrary rules should be discussed.
 
+==== Performance ====
+(Noam): We shouldn't ruin the web's greatest acheivement which is how quickly you can surf. We might need to have different "protocol sets" for surfing the global world of objects, because for many websites authorization/authentication is not neccesary and would just waste our time. Same for video/voice and any highly performance sensitive application that requires minimum protocol overhead. 
+
 === Editing shared textual/graphic information (i.e wikipedia) ===
 By having a full-access reference to the textual/graphic information (rather than a read-only one) from the central database, the data becomes editable.
 Versioning is already built-in and versioned data cannot be edited in any case, even by fully authorized access to an object.
