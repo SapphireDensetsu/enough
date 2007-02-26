@@ -18,5 +18,6 @@ Some points:
   # etc.
  * It is less intuitive to describe systems in functional terms. We think of a car (a very complex system) as an object with parts, states and capabilities. We don't think of a car as set of highly-complex functions.
    * I disagree about this (Eyal). I think it depends. In one-to-one processing, functional is just as understandable as any other description, perhaps more.
+   * (Noam) I agree that a "flow model" is also intuitive, where "actors" change input into output, with internal state. But globally stateless, mathematical, functions are hard to visualize and think about.
  * Functional programming is easy for the computer to "understand", because side effects are concentrated in specific points.
    * I would say its a higher-level/more declarative description of the program, that allows a lot of extra features than lower-level descriptions like stateful languages.
