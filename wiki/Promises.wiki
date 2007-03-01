@@ -1,4 +1,4 @@
-#summary Promises or Futures: Concurrent systems should be natural
+#summary Promises or Futures: working on future results
 
 = Summary =
 Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. Work is performed with requests, and a promise represents the fullfilment of a request. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
