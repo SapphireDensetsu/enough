@@ -5,6 +5,8 @@ Promises, (or _Futures_ in the original Active Object notation) are objects repr
 
 Promises are related to [LazyEvaluation lazy evaluation] and [Capabilities capabilities].
 
+See the Limitations section in the end of this page for final conclusions and how promises relate to LiveProgramming.
+
 = Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
