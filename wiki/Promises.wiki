@@ -105,6 +105,14 @@ For example, we may request something from an asynchronous object, and get a pro
 
 The conclusion is that promises and lazy evaluation must be studied further, and that maybe profiling methods should be employed.
 
+= Limitations =
+
+Promises are a solution of a problem in the domain of object-oriented programming. The solution is to use "future results" and to assume they will arrive. However, in different programming methods including actor-based programming and possibly functional programming, promises may not be neccesary in the first place. On the other hand, even in those models concurrency takes place and maybe a promise-like concept can be used. A possible additional use is system analysis where a "promise" will be the future state (or next state as in feedback systems) of the system.
+
+== Promises and Live Programming ==
+
+_Todo - describe this _
+
 = References =
 _todo complete this list_
 
