@@ -1,7 +1,7 @@
 #summary Multiple, complementary, models of abstraction for complex systems
 
 = What is Multiple Semantics? =
-_this needs to be developed further_
+_this needs to be developed further_ see discussion in [Contemplations]
 
 == Choosing semantics ==
 With every new programming language, new semantics are introduced. Naturally, most new programming languages use semantics similar or identical to a previous language's. Programming languages may even be categorized by their semantics into groups, as is often done (arguably). These categorizations are called "programming paradigms":
