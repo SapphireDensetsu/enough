@@ -7,6 +7,8 @@ Promises are related to [LazyEvaluation lazy evaluation] and [Capabilities capab
 
 See the Limitations section in the end of this page for final conclusions and how promises relate to LiveProgramming.
 
+See also ConcurrentSystems.
+
 = Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
 
