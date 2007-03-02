@@ -7,7 +7,9 @@ This page is meant to discuss various models of concurrent systems, and their re
 
 = Flow/actor based model =
 The flow or actor based model describes a system in terms of data flow between active components. Here is a simple example:
-[http://enough.googlecode.com/svn/wiki/images/simple_concurrent_system.jpg video processing system]
+
+http://enough.googlecode.com/svn/wiki/images/simple_concurrent_system.jpg A video processing system
+
 The system processed inputs from two cameras, and eventually performs some logic on it. To construct this system using traditional object oriented languages, one would have to waste time to define the basic, repeating building blocks (network of actors, what each actor is, etc.), and to define what is concurrent and how is synchronization performed.
 
 It would be much easier to program this system with a language (or environment...see LiveProgramming) that allows us simply to build each of the actors (processing blocks) and then connect them. The language will then supply the ability to automatically parallelize the system by finding parallel branches in the flow graph, and by analyzing the behaviour of the actors. Furthermore, with AdaptiveProfiling the system will auto-adjust itself to different resource conditions (such as running on a computer with less memory and more CPU) or different input conditions (such as when suddenly a given actor becomes much slower).
