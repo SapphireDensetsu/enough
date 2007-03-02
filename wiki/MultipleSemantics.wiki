@@ -1,4 +1,4 @@
-#summary Multiple Semantics definition and applications
+#summary Multiple, complementary, models of abstraction for complex systems
 
 = What is Multiple Semantics? =
 _this needs to be developed further_
