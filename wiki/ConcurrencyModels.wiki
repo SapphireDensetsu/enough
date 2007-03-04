@@ -10,7 +10,8 @@ In traditional imperative programming models, concurrency is represented as expl
 ==== Problems ====
 The main problem with this model is its engineerability. Threads can interact in exponentially large number of possible ways. Synchronization is explicit and depends on the good will of the programmer and on luck. Debugging and testing is extremely hard because so many different states are possible that it is sometimes impossible to re-create a bug.
 
-= Imperative with promises = 
+= Imperative with promises =
+
 See [Promises].
 
 ==== Problems ====
