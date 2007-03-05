@@ -1,4 +1,4 @@
-#summary Definition and applications
+#summary Automatic persistence for everything, no need for disk access
 #labels BuzzWord
 
 = Background =
