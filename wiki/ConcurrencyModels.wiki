@@ -27,7 +27,9 @@ The system processed inputs from two cameras, and eventually performs some logic
 It would be much easier to program this system with a language (or environment...see LiveProgramming) that allows us simply to build each of the actors (processing blocks) and then connect them. The language will then supply the ability to automatically parallelize the system by finding parallel branches in the flow graph, and by analyzing the behaviour of the actors. Furthermore, with AdaptiveProfiling the system will auto-adjust itself to different resource conditions (such as running on a computer with less memory and more CPU) or different input conditions (such as when suddenly a given actor becomes much slower).
 
 ==== Problems ====
-This model does not let the program deal with threads and low-level synchronization explicitly. The only synchronization required is on a high-level scale. However, the model does not give an explicit expression of the possibly stateful actors and the many combinations of states that are possible.
+On the good side, this model does not let the program deal with threads and low-level synchronization explicitly. The only synchronization required is on a high-level scale. The actors are stateful but because they are completely seperated and the only interaction is via the "pipes", the state of each actor has no implications on the concurrent system.
+
+However, not every system is easily modelled as a flow graph. (_Examples?_) Furthermore, the actors themselves are "atomic" and cannot be parallelized internally, because the model does not deal with non-flowing objects (the internal structure of an actor may be non-flowing, perhaps imperative).
 
 = Functional model =
 This model is related to, but not identical, to the flow model above. In the flow model, each actor may have an internal state. With a purely functional model, this is not possible. 
