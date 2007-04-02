@@ -3,6 +3,7 @@
 = Credit =
 
 First, credit where credit is due: This idea is taken from [http://en.wikipedia.org/wiki/Van_Jacobson Van Jacobson] (See Google Tech Talk about it in External References).
+It is re-described here (with many of the same examples used in the original Tech Talk) for convenience purposes of the Enough project, and to allow expanding with more associated ideas we find in the future.
 
 = Introduction =
 
