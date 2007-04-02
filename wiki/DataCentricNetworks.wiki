@@ -46,7 +46,7 @@ Data should be divided into small packets not only for transmission "on the wire
 = Storage as part of the network =
 
 Today, only "hot potatoes" (packets of data that are "on the wire", or in a transmission buffer/queue of a router/host) are considered data in the network. There is no long-term memory of these packets.
-In a data-centric network, long-term storage (i.e disk storage) of the data is also a part of the "network" and may serve requestors of that data in the future.
+In a data-centric network, long-term storage (e.g disk storage) of the data is also a part of the "network" and may serve requestors of that data in the future.
 VJ's example involves a large telcom refusal to route certain data packets over their backbone routers being worked-around by automatically sending the data to a nearby air-plane. This air-plane will store the data on its disk, and make it available again in its destination. (This is reminiscient of Tanenbaum's "Never underestimate the bandwidth of a truck full of backup tapes").
 
 = Rigidity of the TCP/IP addressing scheme =
@@ -55,7 +55,7 @@ The internet is famous for its ability to automatically update available routes 
 However, the internet is not so versatile when it comes to its addressing scheme. Its addressing scheme is much more rigid, as addresses must correspond to the network topography.  Any deviations from the topography are costly in the routing tables all over the internet - often to the point of impossibility.
 Even if an address (or address range) topographic location is to be updated, updating it is necessarily a slow and involved process as a limited number of such large-scale changes can occur in the entirety of the network.
 
-This means that changing your topographic location in the network (i.e moving and connecting to another Wi-Fi network) requires changing your address. Since today's network is only aware of the addresses of the endpoints to which it routes data, any change in geographic location, which thus requires a change in the network's topographic location, means that all communications must be re-established.
+This means that changing your topographic location in the network (e.g moving and connecting to another Wi-Fi network) requires changing your address. Since today's network is only aware of the addresses of the endpoints to which it routes data, any change in geographic location, which thus requires a change in the network's topographic location, means that all communications must be re-established.
 
 In a data-centric network, the endpoint topographic address to which data should be sent is a transparent artifact determined automatically by the network according to the data that needs to be exchanged.
 
