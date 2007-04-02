@@ -1,0 +1,56 @@
+#summary The definition and explanation of data-centric networks and their implications.
+
+= Introduction =
+
+First, credit where credit is due: This idea is taken from [http://en.wikipedia.org/wiki/Van_Jacobson Van Jacobson] (See Google Tech Talk about it in External References).
+Historically, communication networks achieved the goal of transmitting data between known endpoints.
+Both the telephony networks and the internet have worked towards achieving this goal in different ways (The difference between those is well explained in the Google Tech Talk).
+
+This model may fit in some cases: Namely when what the nodes really want is to communicate with other named nodes (for example, send a short message to a specific node in the network).  However, the vast majority of communication in the internet today (and most probably, in the future as well) does not fit this model.  What nodes really want most of the time is:
+ * To download a piece of named data.
+ * To "broadcast" or publish a piece of data.
+
+We don't care which end points we get the data from, we just want the data.
+Today, there is no way for the nodes to communicate their *intent* to the network ("I want today's New York Times") but instead, they must request to speak with www.newyorktimes.com, establish a pipe, and in that pipe request that piece of data.
+
+The result of this is that data is inefficiently and unnecessarily redistributed over the same network pipes again and again.
+If instead, we could communicate our intent, the closest router, or a nearby computer in the network could possibly say "Hey! I have today's New York Times!".
+
+= Security =
+
+Today, the authenticity of the data we receive is established by using secure pipes to the entities we trust have the authentic data.
+In a data-centric network, the data itself must carry the proof of authenticity, for example via a cryptographic signature.
+
+= Immutability =
+
+If this it to work efficiently, data must no longer have a "true location" (as it would using transparent proxies), but instead its validity must be the same wherever it is, and its source/authenticity must be carried within itself. This means that data put into the network must be "immutable". This implies that the data label must include something such as a version that must be updated if new data is to be re-distributed.
+
+= Data Labeling =
+
+In order to get the correct data we want, we must be able to:
+ * Find the appropriate unique label for the named data
+ * Find the correct data that's associated with the unique label
+
+Both the connection between the unique label according to the naming (VJ's current-day example is "www.newyorktimes.com/today" -> "www.newyorktimes.com/20070402/index.html"), and the connection between the label and the correct data, can be simple signed artifacts distributed as meta data items in the network themselves.
+
+= Data granularity =
+
+Data should be divided into small packets not only for transmission "on the wire", but also in its storage on the network. This allows:
+ * More effective distribution of the data via multiple pipes and from various sources.
+ * Allows prioritization and QoS between pieces of data, both in storage and transmission.
+
+= Storage as part of the network =
+
+Today, only "hot potatoes" (packets of data that are "on the wire", or in a transmission buffer/queue of a router/host) are considered data in the network. There is no long-term memory of these packets.
+In a data-centric network, long-term storage (i.e disk storage) of the data is also a part of the "network" and may serve requestors of that data in the future.
+VJ's example involves a large telcom refusal to route certain data packets over their backbone routers being worked-around by automatically sending the data to a nearby air-plane. This air-plane will store the data on its disk, and make it available again in its destination. (This is reminiscient of Tanenbaum's "Never underestimate the bandwidth of a truck full of backup tapes").
+
+= A potential slight improvement =
+
+A potential slight improvement to the idea (which may not be an improvement depending on the efficiency of the implementation of the algorithms involved and the requirements) would be to create a redundant set of "packets" for a given piece of data such that any subset of different packets of the original data size would be usable.
+
+*TBD refer to an explanation and the name of the mathematical technique*
+
+= External references =
+
+A Google TechTalk by Van Jacobson that explains this idea: http://video.stumbleupon.com/#p=17d2ylezm3
