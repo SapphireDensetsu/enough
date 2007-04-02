@@ -25,6 +25,8 @@ If instead, we could communicate our intent, the closest router, or a nearby com
 Today, the authenticity of the data we receive is established by using secure pipes to the entities we trust have the authentic data.
 In a data-centric network, the data itself must carry the proof of authenticity, for example via a cryptographic signature.
 
+Once incorrect signatures are discovered, the data can be invalidated and the invalidation can propagate throughout the network.
+
 = Immutability =
 
 If this it to work efficiently, data must no longer have a "true location" (as it would using transparent proxying caches), but instead its validity must be the same wherever it is, and its source/authenticity must be carried within itself. This means that data put into the network must be "immutable". This implies that the data label must include something such as a version that must be updated if a newer version of the data is to be distributed.
@@ -72,13 +74,19 @@ Having agreed that data awareness of the network allows for more efficiency - ho
 Many questions arise:
 
  * Should data be distributed and stored lazily and only in nodes through which it happened to pass or should it preemptively be sent to anticipated requestors to allow for network distribution?
- * How
+ * How long should data persist? Should data persist according to its' requests popularity?
+ * In case preemptive distribution is used, should it compete for network and storage resources of the network? Is it possible for it to be placed at a lower priority such that it only utilizes idle links and unused disk space?
+ * What kind of new security concerns may this arise, with regards to DoS attacks?
+
+== More Bogus Questions ==
+ * Does long-term memory of network packets raise privacy issues? (If this memory can be examined to determine the types of requests made by segments of the network)
+ * Routers have somehow been made exempt from copyright as they copy copyrighted content to each other on the wire.  Will this exemption be allowed for long-term storage of data as well? What is the copyright status of The Internet Archive?
 
 = Integration with Enough =
 
 I think Enough has a better basis for a data-centric network than today's computing world. Enough has got a high-level object model of which the platform is aware. The division between code and data components, down to the most fine-grained level is something the platform is aware. Versioning schemes of this data is also in the realm of the platform's understanding. This allows for the labeling of such components, their meaningful division into high-granularity "packets", their versioning to be done automatically and in a transparent uniform way, regardless of the type of data.
 
-Enough's main way of expressing network use is via a [NetworkReference]. Network References can be divided into multiple categories:
+Enough's main way of expressing network use is via [NetworkReferences]. Network References can be divided into multiple categories:
  * A reference to the newest version of an object (A Name and a signer [i.e Public Key of a provider of labels for this Name])
  * A reference to a specific immutable version of an object (A Label and a signer)
 
