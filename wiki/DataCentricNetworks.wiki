@@ -55,7 +55,7 @@ The internet is famous for its ability to automatically update available routes 
 However, the internet is not so versatile when it comes to its addressing scheme. Its addressing scheme is much more rigid, as addresses must correspond to the network topography.  Any deviations from the topography are costly in the routing tables all over the internet - often to the point of impossibility.
 Even if an address (or address range) topographic location is to be updated, updating it is necessarily a slow and involved process as a limited number of such large-scale changes can occur in the entirety of the network.
 
-This means that changing your topographic location in the network (i.e moving and connecting to another WiFi network) requires changing your address. Since today's network is only aware of the addresses of the endpoints through which it routes data, any change in geographic location, which thus requires a change in the network's topographic location, means that all communications must be re-established.
+This means that changing your topographic location in the network (i.e moving and connecting to another Wi-Fi network) requires changing your address. Since today's network is only aware of the addresses of the endpoints to which it routes data, any change in geographic location, which thus requires a change in the network's topographic location, means that all communications must be re-established.
 
 In a data-centric network, the endpoint topographic address to which data should be sent is a transparent artifact determined automatically by the network according to the data that needs to be exchanged.
 
