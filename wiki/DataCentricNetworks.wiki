@@ -27,7 +27,7 @@ In a data-centric network, the data itself must carry the proof of authenticity,
 
 = Immutability =
 
-If this it to work efficiently, data must no longer have a "true location" (as it would using transparent proxying caches), but instead its validity must be the same wherever it is, and its source/authenticity must be carried within itself. This means that data put into the network must be "immutable". This implies that the data label must include something such as a version that must be updated if new data is to be re-distributed.
+If this it to work efficiently, data must no longer have a "true location" (as it would using transparent proxying caches), but instead its validity must be the same wherever it is, and its source/authenticity must be carried within itself. This means that data put into the network must be "immutable". This implies that the data label must include something such as a version that must be updated if a newer version of the data is to be distributed.
 
 = Data Labeling =
 
