@@ -1,8 +1,11 @@
 #summary The definition and explanation of data-centric networks and their implications.
 
-= Introduction =
+= Credit =
 
 First, credit where credit is due: This idea is taken from [http://en.wikipedia.org/wiki/Van_Jacobson Van Jacobson] (See Google Tech Talk about it in External References).
+
+= Introduction =
+
 Historically, communication networks achieved the goal of transmitting data between known endpoints.
 Both the telephony networks and the internet have worked towards achieving this goal in different ways (The difference between those is well explained in the Google Tech Talk).
 
