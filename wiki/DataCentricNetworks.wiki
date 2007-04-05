@@ -1,4 +1,5 @@
 #summary The definition and explanation of data-centric networks and their implications.
+#labels Featured,BuzzWord
 
 = Credit =
 
