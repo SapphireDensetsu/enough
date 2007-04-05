@@ -91,6 +91,8 @@ Enough's main way of expressing network use is via [NetworkReferences]. Network 
  * A reference to the newest version of an object (A Name and a signer [i.e Public Key of a provider of labels for this Name])
  * A reference to a specific immutable version of an object (A Label and a signer)
 
+A reference to an immutable object and one to a mutable object are very different.  The first refers to a specific version of an object - and does not at all care where the object is (its a reference to the object - wherever it may be - like an emule file hash). The second is a reference to an object in a specific location - because it may need to mutate it.
+
 The use of references can then be divided into multiple categories:
  * Mutation/Active side effects
  * Read-only
