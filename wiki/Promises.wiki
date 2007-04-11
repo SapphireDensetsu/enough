@@ -3,7 +3,7 @@
 = Summary =
 Promises, (or _Futures_ in the original Active Object notation) are objects representing a future state, or result, of a concurrent operation. Work is performed with requests, and a promise represents the fullfilment of a request. Promises allow the programmer to concentrate on the higher-level synchronization of the system, thinking in terms of the tasks performed instead of in terms of low-level primitives.
 
-Promises are related to [LazyEvaluation lazy evaluation] and [Capabilities capabilities].
+Promises are related to [LazyEvaluation lazy evaluation] and [Capabilities capabilities]. 
 
 See the Limitations section in the end of this page for final conclusions and how promises relate to LiveProgramming.
 
@@ -11,6 +11,8 @@ See also ConcurrencyModels.
 
 = Background =
 Promises should address the [SynchronizationProblems issues of traditional synchronization techniques].
+
+For those who are familiar with Twisted, the Python asynchronous framework, the concept of Promises is similar to Deffered objects in Twisted. See [http://twistedmatrix.com/projects/core/documentation/howto/defer.html Twisted's Deferred objects].
 
 = What is a promise? =
 In a programming task we can note "request granting" parts of the system. In concurrent systems the goal is to process indepedant requests in parallel. Normally, a request granter (such as an object with a method) is blocking - a method returns when the request is granted. For parallelization, we need to create threads in which we process independant requests. With promises, the concept of a thread is hidden from the programmer. A request granter *never* blocks and methods return immediately, and its immediate result is a *promise* for the fulfillment of the request.
