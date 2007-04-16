@@ -20,7 +20,7 @@ A short list of fundamental terms in the new computing world:
  * *Mutable*: A stateful object. Typically a container, but can also be "built-in" (i.e implemented via a lower-level mechanism, e.g console). 
  The following mutable objects exist:
   * *Data*: e.g: Arrays, structures (containing fields) and other arbitrary data containers.
-  * *Function*: Transform values into new values, in a side-effect free way.
+  * *Function*: Transforms values into new values, in a side-effect free way. A function is mutable because it can be edited (modified to perform a different calculation).
   * *Action*: Modify a Mutable or use other Actions.
   * *Event*: Triggered when a Mutable modification or built-in event occurred, and can be used to invoke Actions.
   * *State*: The entire "world" (all the objects that exist, anywhere) in a certain exact moment.
