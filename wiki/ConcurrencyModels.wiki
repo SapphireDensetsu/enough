@@ -1,5 +1,4 @@
 #summary Models of concurrent systems
-#labels Featured
 
 = Purpose of this page =
 
