@@ -12,12 +12,24 @@ There is an inherent complexity in the relationship between side-effects and imm
 
  * *Reference*: A universal link to a value, mutable or function.
  * *Value*: An immutable thing like an integer or a string - these exist "out of" the computer, and will never change.
- * *Function*: Transform values into new values, in a side-effect free way.
- * *Mutable*: Typically a container, but can also be "built-in" (i.e implemented via a lower-level mechanism, e.g console).
- * *Action*: Modify a Mutable or use other Actions.
- * *Event*: Triggered when a Mutable modification or built-in event occurred, and can be used to invoke Actions.
+ * *Mutable*: Typically a container, but can also be "built-in" (i.e implemented via a lower-level mechanism, e.g console). The following mutable objects exist:
+  * *Data*: e.g: Arrays, structures (containing fields) and other arbitrary data containers.
+  * *Function*: Transform values into new values, in a side-effect free way.
+  * *Action*: Modify a Mutable or use other Actions.
+  * *Event*: Triggered when a Mutable modification or built-in event occurred, and can be used to invoke Actions.
+  * *State*: The entire "world" (all the objects that exist, anywhere) in a certain exact moment.
+ * *Now*: The current state (the newest state).
+ * *History*: The collection of all *Revisions*.
 
+= State =
 
+The entire "platform state" of *all* the computers in the world (or *State*) at a given moment is composed of all the Objects, Values, Functions, etc. and the inter-relations (i.e references) between them.
+
+*Mutables* only have state due to their part in the entire "world". When a *Mutable* is changed, a new *State* of the entire world is created in which that *Mutable* exists in its new state. This makes it possible to undo back to previous *States* in *History*.
+
+== Implementation ==
+
+There is no actual data structure that stores the entirety of the *State*. It is more of a logical construct to facilitate understanding of object versions. Every *Mutable* 
 
 
 = Details =
