@@ -3,7 +3,8 @@
 
 = Credits =
 
-This is heavily based on the work of *Jonathan Edwards* (See [http://www.subtextual.org *Subtext*]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
+== Jonathan Edwards' Subtext ==
+This is heavily based on the work of *Jonathan Edwards* (See [http://www.subtextual.org Subtext]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
 
 = Introduction =
 
@@ -26,7 +27,11 @@ A short list of fundamental terms in the new computing world:
   * *State*: The entire "world" (all the objects that exist, anywhere) in a certain exact moment.
  * *Now*: The current *State*. From this moment, any changes will be based on this State.
  * *History*: The collection of all *States*.
- * *Chain reaction*: The propagation from the root Event through all the Events and Actions that are triggered because of it.
+
+Additional terms:
+ * *World*: The new computing world in which all these objects are defined and exist. No other types of objects exist in this new world.
+ * *Root Event*: An Event that causes computations and invokations to occur. Without Root Events, the computer would be waiting indefinately.
+ * *Chain reaction*: The propagation from a Root Event through all the Events and Actions that are triggered because of it.
 
 = State =
 
