@@ -29,12 +29,11 @@ The entire "platform state" of *all* the computers in the world (or *State*) at 
 
 == Implementation ==
 
-There is no actual data structure that stores the entirety of the *State*. It is more of a logical construct to facilitate understanding of object versions. Every *Mutable* 
+There is no actual data structure that stores the entirety of the *State*. It is more of a logical construct to facilitate understanding of object versions.
 
+Every *Mutable* has an associated version number, that refers to the *State* it belongs to. A *State* is actually the collection of all *Mutables* of a certain version number or the latest one older than it.
+Modifications of remote *Mutables* (that live on other computers) are associated with a local version number so that a remote object version can be associated with a local *State*. The implementation of this TBD.
 
-= Details =
+= Values =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Immutable values exist in thin air, and are "fetched" from thin air by special 
