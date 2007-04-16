@@ -2,7 +2,7 @@
 
 = Purpose of this page =
 
-Update: _See the ObjectModel page for a much deeper examination of this topic._
+*Update*: _See the ObjectModel page for a much deeper examination of this topic._
 
 This page is meant to discuss various models of concurrent systems, and their relation to our BuzzWords.
 
