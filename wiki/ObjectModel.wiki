@@ -2,7 +2,7 @@
 
 = Credits =
 
-This is heavily based on the work of Jonathan Edwards (See [http://www.subtextual.org Subtext]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
+This is heavily based on the work of Jonathan Edwards (See [www.subtextual.org Subtext]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
 
 = Introduction =
 
@@ -20,6 +20,7 @@ There is an inherent complexity in the relationship between side-effects and imm
   * *State*: The entire "world" (all the objects that exist, anywhere) in a certain exact moment.
  * *Now*: The current state (the newest state).
  * *History*: The collection of all *Revisions*.
+ * *Chain reaction*: the propagation of an Event from the root causing Event through all the Actions that are triggered.
 
 = State =
 
@@ -27,9 +28,14 @@ The entire "platform state" of *all* the computers in the world (or *State*) at 
 
 *Mutables* only have state due to their part in the entire "world". When a *Mutable* is changed, a new *State* of the entire world is created in which that *Mutable* exists in its new state. This makes it possible to undo back to previous *States* in *History*.
 
-A new state of a Mutable (and therefore the entire world) is created when a the Mutable changes. The only cause for any change in any Mutable can be an Event. When an Event occurs it may trigger one or more Actions which by definition modify the state of Mutables. Furthermore, the mere occurance of an Event means that some Mutable has changed.
+A new state of a Mutable (and therefore the entire world) is created when a Mutable changes. The *root cause* for any change in State (change of any Mutable) is always an Event. When an Event occurs it may trigger one or more Actions which by definition modify the state of Mutables. Furthermore, the mere occurance of an Event means that some Mutable has changed.
 
-Any *State* must be coherent. This means that all Mutables in the State are from "matching versions". If an Event of Mutable "A" has triggered a chain reaction that caused some other Mutable "B" to change, the new State will contain the version of both Mutables, *after* the change.
+Any State must be *coherent*. All changes that have the same originating Event are part of a single State (the same version). For example, if an Event of Mutable "A" has triggered a chain reaction that caused some other Mutable "B" to change, the new State will contain the version of both Mutables *after* the change. (Recursive chain reactions are TBD).
+
+== Timing issues ==
+In theory, all Functions compute their results immediately, and all Actions take no time at all to invoke. In practice, Functions may take a long time to compute their values during which Events may arise. For example, the user may want to continue interacting with the system.
+
+When a Chain Reaction starts, *before* the Event is actually processed through the whole chain, all 
 
 == Implementation ==
 
@@ -42,6 +48,3 @@ Modifications of remote *Mutables* (that live on other computers) are associated
 = Values =
 
 Immutable values exist in thin air, and are referred to by other objects via 
-
-
-= 
