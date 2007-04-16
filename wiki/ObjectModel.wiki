@@ -35,6 +35,14 @@ Any State must be *coherent*. All changes that have the same originating Event a
 == Timing issues ==
 In theory, all Functions compute their results immediately, and all Actions take no time at all to invoke. In practice, Functions may take a long time to compute their values during which Events may arise. For example, the user may want to continue interacting with the system.
 
+It is important that the entire chain changes all of the objects and creates a single new State for all of these changes. The reason is that letting some of the changes occur in an earlier State than others would create an incoherent world state and may break assumptions about the relation between various computations of the same inputs.
+
+During long computations and action invocations, we would like to:
+ # Expose to the user that the objects affected by the chain are in the process of changing.
+ # Disallow or queue up further changes to the affected objects.
+
+In order to expose the user to the fact that the objects are being processed, a new version of each Mutable affected by the chain must be created immediately (before computation completes).
+
 When a Chain Reaction starts, *before* the Event is actually processed through the whole chain, all 
 
 == Implementation ==
