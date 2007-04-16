@@ -2,7 +2,7 @@
 
 = Goals =
 The current research goals are, in possible chronological order:
- * Research how all the various BuzzWords can come together, using Subtext as a main resource.
+ * Research how the various BuzzWords can come together, using Subtext as a main resource. Current work is in ObjectModel.
  * Read more of the related material (from Subtext(and source code)/EROS/Coyotos/BitC and E, especially)
  * Look for new concepts by finding more published material or related projects
 
