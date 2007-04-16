@@ -30,9 +30,9 @@ A short list of fundamental terms in the new computing world:
 
 = State =
 
-At any time, the (new computing world) will have a State. The entire "platform state" of *all* the computers in the world (or *State*) at a given moment is composed of all the Objects, Values, Functions, etc. and the inter-relations (i.e references) between them.
+At any time, the (new computing world) will have a State. The entire "platform state" of *all* the computers in the world (or State) at a given moment is composed of all the Objects, Values, Functions, etc. and the inter-relations (i.e references) between them.
 
-*Mutables* only have state due to their part in the entire "world". When a *Mutable* is changed, a new *State* of the entire world is created in which that *Mutable* exists in its new state. This makes it possible to undo back to previous *States* in *History*. If some Mutable exists in some other computer, and does not interact with any known Mutable, it's individual state is irrelevant for us (the local machine) and therefore not included in the State.
+*Mutables* only have state due to their part in the entire "world". When a Mutable is changed, a new State of the entire world is created in which that Mutable exists in its new state. This makes it possible to undo back to previous States in *History*. If some Mutable exists in some other computer, and does not interact with any known Mutable, it's individual state is irrelevant for us (the local machine) and therefore not included in the State.
 
 A new state of a Mutable (and therefore the entire world) is created when a Mutable changes. The *root cause* for any change in State (change of any Mutable) is always an Event. When an Event occurs it may trigger one or more Actions which by definition modify the state of Mutables. Furthermore, the mere occurance of an Event means that some Mutable has changed.
 
