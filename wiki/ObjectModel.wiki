@@ -27,13 +27,21 @@ The entire "platform state" of *all* the computers in the world (or *State*) at 
 
 *Mutables* only have state due to their part in the entire "world". When a *Mutable* is changed, a new *State* of the entire world is created in which that *Mutable* exists in its new state. This makes it possible to undo back to previous *States* in *History*.
 
+A new state of a Mutable (and therefore the entire world) is created when a the Mutable changes. The only cause for any change in any Mutable can be an Event. When an Event occurs it may trigger one or more Actions which by definition modify the state of Mutables. Furthermore, the mere occurance of an Event means that some Mutable has changed.
+
+Any *State* must be coherent. This means that all Mutables in the State are from "matching versions". If an Event of Mutable "A" has triggered a chain reaction that caused some other Mutable "B" to change, the new State will contain the version of both Mutables, *after* the change.
+
 == Implementation ==
 
 There is no actual data structure that stores the entirety of the *State*. It is more of a logical construct to facilitate understanding of object versions.
 
 Every *Mutable* has an associated version number, that refers to the *State* it belongs to. A *State* is actually the collection of all *Mutables* of a certain version number or the latest one older than it.
+
 Modifications of remote *Mutables* (that live on other computers) are associated with a local version number so that a remote object version can be associated with a local *State*. The implementation of this TBD.
 
 = Values =
 
-Immutable values exist in thin air, and are "fetched" from thin air by special 
+Immutable values exist in thin air, and are referred to by other objects via 
+
+
+= 
