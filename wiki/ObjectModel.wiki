@@ -2,7 +2,7 @@
 
 = Credits =
 
-This is heavily based on the work of Jonathan Edwards (See [www.subtextual.org Subtext]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
+This is heavily based on the work of Jonathan Edwards (See [http://www.subtextual.org Subtext]). The majority of the ideas presented here are actually directly taken from Edwards' work in Subtext (with some modifications).
 
 = Introduction =
 
