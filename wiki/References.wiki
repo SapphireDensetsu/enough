@@ -4,6 +4,7 @@ For other stuff, see [Resources]
 
 = References and Credits =
  * A lot of the concepts in this project are drawn from the work of [http://www.eros-os.org/~shap Jonathan S. Shapiro] which worked on EROS and now on [http://www.coyotos.org/index.html Coyotos], a project that includes [http://www.coyotos.org/docs/bitc/spec.html BitC] - a programming language.
+ * The same can be said about Jonathan Edwards' [http://www.subtextual.org Subtext].
  * [http://subtextual.org/ Subtext] is an experimental programming language/environment with the idea of 'live code'.
  * [http://www.python.org Python] is not groundbreaking in any way, but it is a very successful example of the importance of the *usability* of any project.
  * [http://www.wikipedia.org Wikipedia] is a great resource, especially for the informally educated (including us).
