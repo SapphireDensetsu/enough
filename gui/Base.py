@@ -1,0 +1,361 @@
+import pygame
+
+from Lib.Point import Point
+from Lib.AttrDict import AttrDict
+from Lib import Graph, Func
+
+import Layouts
+
+def mouse_pos():
+    x,y = pygame.mouse.get_pos()
+    return Point(x,y)
+
+def Event(name, **kw):
+    return pygame.event.Event(pygame.USEREVENT, name=name, **kw)
+
+# ________________________________________________________________________
+
+class Order(AttrDict):
+    allowed_fields = [('level',0),
+                      ('sublevel',0),
+                      ('ignore', False),
+                      ]
+    
+class Widget(object):
+    def __init__(self, size, pos = None, order=None):
+        if pos is None:
+            pos = Point(0,0)
+        if order is None:
+            order = Order()
+        self.target_pos = pos.shallow_copy()
+        self._size = size
+        self.order = order
+        self._pos = pos.shallow_copy()
+        self.target_scale = 1
+        self._scale = 1
+
+        self.speed = Point(0.1,0.1)
+        self.scale_speed = 0.1
+        self.autogrow_to_fit_text = True
+        self.rendered_text = None
+        self.text = None
+        self._target_size = self._size.shallow_copy()
+        
+        self.font_size = 12
+        
+        self.node = Graph.Node(self)
+        self.update_font()
+
+        self.hover_color = (120, 120, 250)
+        self.unhover_color = (20, 20, 150)
+        self.hover_out()
+        
+    def in_bounds(self, pos):
+        s = self._scaled_size()
+        if ((pos.x > self._pos.x)
+            and (pos.y > self._pos.y)
+            and (pos.x < self._pos.x + s.x)
+            and (pos.y < self._pos.y + s.y)):
+            return True
+        return False
+
+    def set_pos(self, pos):
+        self.target_pos = pos.shallow_copy()
+    def get_pos(self):
+        return self.target_pos
+    pos = property(get_pos, set_pos)
+
+    def set_scale(self, scale):
+        self.target_scale = scale
+        self.update_target_text_scale()
+    def get_scale(self):
+        return self.target_scale
+    scale = property(get_scale, set_scale)
+
+    def set_size(self, size):
+        self._size = size/self.target_scale
+    def get_size(self):
+        if self.text is None:
+            return self._size*self.target_scale
+        return self._target_size
+    size = property(get_size, set_size)
+    
+    def update_pos(self):
+        #print (self.target_pos - self._pos)*self.speed 
+        self._pos += (self.target_pos - self._pos)*self.speed
+        #print self._pos
+
+    def update_scale(self):
+        self._scale += (self.target_scale - self._scale)*self.scale_speed
+        self.update_font()
+        #print self._scale
+
+    def update_font(self):
+        if self.text is None:
+            return
+        self.font = self.get_font(int(self.font_size*self._scale*2))
+        self.rendered_text = self.font.render(self.text, True, (250,250,250,150))
+        if self.autogrow_to_fit_text:
+            width, height = self.font.size(self.text)
+            self._size = Point(width,height)
+            
+        
+    def _scaled_size(self):
+        if self.text is None:
+            return self._size*self._scale
+        return self._size
+    
+    def paint(self, surface):
+        #self.set_text(str(self.order.sublevel))
+        self.update_scale()
+        self.update_pos()
+        s = self._scaled_size()
+        pygame.draw.rect(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 3)
+        if self.rendered_text:
+            surface.blit(self.rendered_text, self._pos.as_tuple())
+        self.draw_connections(surface)
+
+    def draw_connections(self, surface):
+        s = self._scaled_size()
+        my_pos = self._pos + Point(s.x/2, s.y)
+        for widget_node in self.node.connections['out']:
+            widget = widget_node.value
+            other_pos = widget._pos + Point(widget._scaled_size().x/2, 0)
+            pygame.draw.aalines(surface, (200,220,250,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
+
+    @staticmethod
+    @Func.cached
+    def get_font(font_size):
+        return pygame.font.SysFont('serif',font_size)
+
+    def update_target_text_scale(self):
+        if self.text is None:
+            return
+        w,h = self.get_font(int(self.font_size*self.target_scale*2)).size(self.text)
+        self._target_size = Point(w,h)
+        
+    def set_text(self, text):
+        self.text = text
+        if self.text is None:
+            self.rendered_text = None
+            return
+        
+        self.update_target_text_scale()
+        self.update_font()
+
+    def hover_in(self):
+        self.color = self.hover_color
+
+    def hover_out(self):
+        self.color = self.unhover_color
+# ________________________________________________________________________
+
+def update_sublevel(node, val):
+    node.value.order.sublevel = val
+    nodes_left = [(i,other) for (i,other) in enumerate(node.connections['out'])]
+    i = 0
+    while nodes_left:
+        val, other = nodes_left.pop(0)
+        if other.value.order.ignore:
+            continue
+        other.value.order.sublevel = val
+        for subother in other.connections['out']:
+            nodes_left.append((i,subother))
+            i += 1
+
+            
+def update_topological_levels(widgets):
+    nodes = [widget.node for widget in widgets]
+    ordered = Graph.topological_sort(nodes)
+    for level, node in ordered:
+        node.value.order.level = level
+
+    # set the sublevel for each family of connected nodes so that drawing them together will be easier
+    for i, (level, node) in enumerate(ordered):
+        if level > 0:
+            break
+        update_sublevel(node, i)
+
+    
+class App(object):
+    def __init__(self, width=800, height=600, flags=0):
+        self.width = width
+        self.height = height
+        pygame.init()
+        pygame.font.init()
+        self.screen = pygame.display.set_mode((width,height),flags)
+        self.widgets = []
+        self.z_ordered = []
+        self.z = 0
+        self.stop = False
+        self.pygame_handlers = {}
+        self.scale = 1
+
+        self.hovered_widget = None
+        self._hover_only_on_motion = False
+
+
+        self.my_handlers = {'paint': [self._paint,]}
+        for pg_type, handler in ((pygame.KEYUP, self._key_up),
+                                 (pygame.MOUSEBUTTONDOWN, self._mouse_down),
+                                 (pygame.MOUSEBUTTONUP, self._mouse_up),
+                                 (pygame.MOUSEMOTION, self._mouse_motion),
+                                 (pygame.USEREVENT, self._handle_my_event),
+                                 ):
+            self.register_pygame_event(pg_type, handler)
+            
+        self._dont_layout = False
+        
+    def post_event(self, event):
+        pygame.event.post(event)
+        
+    def add_widget(self, widget, z = None):
+        if z is None: z = self.z
+        self.z += 1
+        self.widgets.append(widget)
+        self.z_ordered.append((z, widget))
+        self.z_ordered.sort()
+        self.post_event(Event('paint'))
+        self.relayout()
+
+    def remove_widget(self, widget):
+        self.widgets.remove(widget)
+        for i, (z, w) in enumerate(self.z_ordered[:]):
+            if w == widget:
+                self.z_ordered.pop(i)
+                break
+        
+    def relayout(self):
+        if self._dont_layout:
+            return
+        update_topological_levels(self.widgets)
+        widgets = [widget for widget in self.widgets if not widget.order.ignore]
+        Layouts.TableLayout(self.width, self.height, widgets, scale =self.scale, autoscale = True)
+
+    def register_pygame_event(self, pg_type, handler):
+        self.pygame_handlers.setdefault(pg_type, []).append(handler)
+
+    def register_event(self, name, handler):
+        self.my_handlers.setdefault(name, []).append(handler)
+
+    def _handle_my_event(self, e):
+        if e.name not in self.my_handlers:
+            return
+        for handler in self.my_handlers[e.name]:
+            handler(e)
+        
+    def handle_event(self, e):
+        if e.type is pygame.QUIT: self.quit()
+        elif e.type is pygame.KEYDOWN and e.key == pygame.K_ESCAPE: self.quit()
+
+        if e.type in self.pygame_handlers:
+            for handler in self.pygame_handlers[e.type]:
+                handler(e)
+
+    def quit(self):
+        self.stop = True
+
+    def run(self):
+        while not self.stop:
+            pygame.event.pump()
+            self.handle_events()
+
+    def handle_events(self):
+        events = pygame.event.get()
+        if not self._hover_only_on_motion:
+            self._update_hover()
+        self._paint(None)
+        for event in events:
+            self.handle_event(event)
+        #if not event or event == pygame.NOEVENT:
+        #    return
+
+    def connect_widgets(self, from_w, to_w):
+        from_w.node.connect_out(to_w.node)
+        self.relayout()
+
+    def disconnect_widgets(self, w1, w2):
+        w1.node.disconnect(w2.node)
+        self.relayout()
+
+    def widgets_connected(self, w1, w2):
+        return w1.node.is_connected(w2.node)
+    # ________________________________
+    
+    def _paint(self, event):
+        self.screen.fill((0,0,0))
+        for z_order, widget in self.z_ordered:
+            widget.paint(self.screen)
+        pygame.display.flip()
+
+
+    def _key_up(self, e):
+        if not (e.mod & pygame.KMOD_CTRL):
+            return
+        
+        if e.key == pygame.K_w:
+            self.scale += 0.3
+            self.relayout()
+        elif e.key == pygame.K_q:
+            self.scale -= 0.3
+            self.relayout()
+        
+    def _mouse_down(self, e):
+        pass
+
+    def _mouse_up(self, e):
+        pass
+
+    def _mouse_motion(self, e):
+        self._update_hover()
+        self.unlock_hover()
+        
+    def _update_hover(self):
+        p = mouse_pos()
+        for widget in self.widgets:
+            if widget.in_bounds(p):
+                self.unhover()
+                self.hover(widget)
+                return
+        
+        self.unhover()
+
+    def hover(self, widget):
+        self.hovered_widget = widget
+        widget.hover_in()
+        
+    def unhover(self):
+        if not self.hovered_widget:
+            return
+        self.hovered_widget.hover_out()
+        self.hovered_widget = None
+            
+    def lock_hover(self):
+        # Causes the hover to remain on the given widget until the mouse moves
+        # (even if widgets move around)
+        self._hover_only_on_motion = True
+
+    def unlock_hover(self):
+        if self._hover_only_on_motion:
+            self.relayout()
+        self._hover_only_on_motion = False
+
+    def lock_positions(self):
+        self._dont_layout = True
+    def unlock_positions(self):
+        self._dont_layout = False
+        
+# ________________________________________________________________________
+
+import random
+
+def test():
+    a = App()
+    for i in xrange(1):
+        w = Widget(Point(20-i,20+i), pos=Point(15*i,23*i), order=Order(i/3))
+        a.add_widget(w)
+    a.run()
+
+if __name__=='__main__':
+    test()
+    
