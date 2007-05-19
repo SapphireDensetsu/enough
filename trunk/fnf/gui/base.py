@@ -256,6 +256,7 @@ class App(object):
 
     def remove_widget(self, widget):
         self.widgets.remove(widget)
+        widget.node.disconnect_all()
         for i, (z, w) in enumerate(self.z_ordered[:]):
             if w == widget:
                 self.z_ordered.pop(i)
