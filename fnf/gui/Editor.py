@@ -11,7 +11,7 @@ class Editor(App):
         self.register_pygame_event(pygame.MOUSEBUTTONDOWN, self.mouse_down)
         self.register_pygame_event(pygame.MOUSEBUTTONUP, self.mouse_up)
         self.register_pygame_event(pygame.MOUSEMOTION, self.update_drag)
-        self.register_event('paint', self.update_drag)
+        #self.register_event('paint', self.update_drag)
         
         self.connecting_widget = None
         self.was_typing = False
@@ -27,10 +27,17 @@ class Editor(App):
         self.lock_positions()
         self.connecting_widget = self.hovered_widget
         self.drag_widget = Widget(Point(5,5))
+        self.drag_widget.pos = mouse_pos()
         self.drag_widget.speed *= 3
         self.drag_widget.order.ignore = True
         self.add_widget(self.drag_widget)
         self.connect_widgets(self.connecting_widget, self.drag_widget)
+
+    def connect_widgets_permanently(self, w1, w2):
+        # todo get rid of this silly func and find another way to tell
+        # the difference between real connection and connection of the
+        # drag widget
+        self.connect_widgets(w1, w2)
         
     def mouse_up(self, e):
         if not self.drag_widget:
@@ -44,7 +51,7 @@ class Editor(App):
             if self.widgets_connected(self.connecting_widget, self.hovered_widget):
                 self.disconnect_widgets(self.connecting_widget, self.hovered_widget)
             else:
-                self.connect_widgets(self.connecting_widget, self.hovered_widget)
+                self.connect_widgets_permanently(self.connecting_widget, self.hovered_widget)
         self.connecting_widget = None
 
     def key_up(self, e):

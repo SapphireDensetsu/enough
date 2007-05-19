@@ -8,4 +8,6 @@ class WeakCollection(object):
         self._d[id(item)] = item
     def remove(self, item):
         del self._id[id(item)]
-        
+    def __iter__(self):
+        for iid, item in self._d.iteritems():
+            yield item

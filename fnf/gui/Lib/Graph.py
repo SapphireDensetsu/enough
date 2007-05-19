@@ -28,6 +28,14 @@ class Node(object):
         if not was_connected:
             raise NodeWasntConnected(other)
 
+    def disconnect_all(self):
+        for other in self.connections['out']:
+            other.connections['in'].remove(self)
+            self.connections['out'].remove(other)
+        for other in self.connections['in']:
+            other.connections['out'].remove(self)
+            self.connections['in'].remove(other)
+            
     def is_connected(self, other):
         if ((other in self.connections['out'])
             or (other in self.connections['in'])):

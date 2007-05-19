@@ -16,25 +16,29 @@ def simple_binary_op_maker(name):
             meta = {'name': name}
             fields = binary_number_fields
             @staticmethod
-            def init(self):
+            def init(instance):
                 pass
 
             @staticmethod
-            def modified(self, field, self_modified):
-                if self_modified:
+            def modified(instance, field, old_instance, new_instance, modified_by):
+                if modified_by is instance:
                     return
-                #assert field in self.cls.fields, "unknown field modified in magic class"
-                mod_instance = self.get_subfield_instance((field,), False)
-                fields_by_name = self.fields_by_name()
-                f = self.field_instances_by_name()
+
+                #print 'modified', instance, field, old_instance, new_instance, modified_by
+                #assert field in instance.cls.fields, "unknown field modified in magic class"
+                mod_instance = instance.get_subfield_instance((field,), False)
+                fields_by_name = instance.fields_by_name()
+                f = instance.field_instances_by_name()
                 a,b,r = f['a'], f['b'], f['r']
 
                 if mod_instance in (a,b):
                     r_res = pyfunc(a.meta['value'], b.meta['value'], None)
-                    self.modify_field_by_name('r', fnf_number_of(r_res), True)
+                    r.meta['value'] = r_res
+                    r.self_modified(instance)
                 else:
                     b_res = pyfunc(a.meta['value'], None, r.meta['value'])
-                    self.modify_field_by_name('b', fnf_number_of(b_res), True)
+                    b.meta['value'] = b_res
+                    b.self_modified(instance)
         return make_magic_class(_temp)
     return simple_binary_op
 
@@ -51,7 +55,7 @@ def add(a, b, r):
         assert 0, "Unknown params"
         
 
-@simple_binary_op_maker('*')
+@simple_binary_op_maker('x')
 def mul(a, b, r):
     if r is None and None not in (a,b):
         return a*b
@@ -63,6 +67,7 @@ def mul(a, b, r):
         assert 0, "Unknown params"
         
 
+builtins = [fnf_number, fnf_bool, add, mul]
 
 if __name__=='__main__':
     try:
