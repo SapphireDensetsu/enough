@@ -37,6 +37,20 @@ class Node(object):
     def __repr__(self):
         return '<%s: value=%r, out=%r, in=%r>' % (self.__class__.__name__, self.value, len(self.connections['out']), len(self.connections['in']))
 
+    def number_of_outgoing_offspring(self):
+        # todo this is unoptimal
+        # Only works for tree, not for full graphs with cycles
+        offspring = list(self.connections['out'])
+        i = 0
+        while i < len(offspring):
+            child = offspring[i]
+            for subchild in child.connections['out']:
+                if subchild in offspring:
+                    raise HasCyclesError()
+                offspring.append(subchild)
+            i += 1
+        return len(offspring)
+        
 def copy(orig_nodes):
     nodes = []
     nodes_map = {}
