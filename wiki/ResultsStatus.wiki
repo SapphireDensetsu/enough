@@ -1,6 +1,9 @@
 #summary Results goals and status
 
-= Goals =
+= Current Results =
+*Coming soon* - a Subtext-like environment implemented in Python.
+
+= (old) Goals =
 == Near-future ==
  * Implement a programming environment akin to Subtext, in Python
  * Implement a similar program in Haskell (this is for us to learn Haskell)
