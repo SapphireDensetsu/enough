@@ -13,13 +13,14 @@ class CodeEditor(gui.Editor):
         super(CodeEditor, self).__init__(*args, **kw)
         self.widget_instance = {}
         self.widget_instance_reverse = {}
+        self.instance_is_field = {}
         
         self.create_builtins()
 
     def create_builtins(self):
         fields = []
         for cls in code.builtins.builtins:
-            fields.append(code.base.Field(cls, meta=dict(name='builtin_'+cls.meta['name'])))
+            fields.append(code.base.Field(cls, meta=dict(name=cls.meta['name'])))
             #self.create_instance(cls.create_instance())
         self.cls = code.base.Class(fields=fields, meta=dict(name='main'))
         self.instance = self.cls.create_instance()
@@ -29,25 +30,30 @@ class CodeEditor(gui.Editor):
         self.create_instance_widgets(instance)
         self.relayout()
 
-    def create_instance_widgets(self, instance, level=0):
+    def create_instance_widgets(self, instance, level=0, field=None):
         #print instance
+        if instance in self.widget_instance_reverse:
+            # Widget exists Already
+            return self.widget_instance_reverse[instance]
+        
         w = gui.Widget(Point(15,15))
         w.order.level = level
         field_instances_by_name = instance.field_instances_by_name()
 
-        self.add_instance_widget(instance, w)
-        self.update_widget(w, instance)
+        self.add_instance_widget(instance, w, field)
+        self.update_widget(w, instance, field)
         
         for field in instance.cls.fields:
             field_instance = field_instances_by_name[field.meta['name']]
-            field_widget = self.create_instance_widgets(field_instance, level+1)
+            field_widget = self.create_instance_widgets(field_instance, level+1, field)
             w.node.connect_out(field_widget.node)
 
         return w
     
-    def add_instance_widget(self, instance, widget):
+    def add_instance_widget(self, instance, widget, field=None):
         self.widget_instance[widget] = instance
         self.widget_instance_reverse[instance] = widget
+        self.instance_is_field[instance] = field
         try:
             instance.event_modified.register(self.instance_modified)
         except AssertionError:
@@ -58,10 +64,12 @@ class CodeEditor(gui.Editor):
     def replace_instance(self, old_instance, new_instance):
         if old_instance is new_instance:
             return
+            
         widget = self.widget_instance_reverse[old_instance]
         old_in_connections = list(widget.node.connections['in'])
         self.remove_instance(old_instance)
         new_widget = self.create_instance_widgets(new_instance, widget.order.level)
+        new_widget.pos = (widget.pos + new_widget.pos)*0.5
         for old_in in old_in_connections:
             new_widget.node.connect_in(old_in)
         
@@ -71,6 +79,7 @@ class CodeEditor(gui.Editor):
         self.remove_widget(widget)
         del self.widget_instance[widget]
         del self.widget_instance_reverse[instance]
+        del self.instance_is_field[instance]
         for field in instance.cls.fields:
             field_instance = field_instances_by_name[field.meta['name']]
             self.remove_instance(field_instance)
@@ -83,11 +92,17 @@ class CodeEditor(gui.Editor):
     def update_widgets(self):
         for w in self.widgets:
             i = self.widget_instance[w]
-            self.update_widget(w, i)
+            f = self.instance_is_field[i]
+            self.update_widget(w, i, f)
             
-    def update_widget(self, w, instance):
-        text = str(instance.meta.get('value', instance.cls.meta['name']))
-        w.set_text(text)
+    def update_widget(self, w, instance, field=None):
+        if field:
+            name = field.meta['name']
+        else:
+            name = instance.cls.meta['name']
+        value = str(instance.meta.get('value', ''))
+        w.set_text_line(0, name)
+        w.set_text_line(1, value)
 
     def connect_widgets_permanently(self, w1, w2):
         i1 = self.widget_instance[w1]
@@ -112,32 +127,32 @@ class CodeEditor(gui.Editor):
             self.printable_key_up(k)
 
     def printable_key_up(self, k):
-        t = self.hovered_widget.text
+        t = self.hovered_widget.text_lines[1]
         if t is None:
             t = ''
 
         ch = chr(k)
         if k == pygame.K_BACKSPACE:
             t = t[:-1]
-        elif ch in string.printable:
-            t += ch
-        else:
+        elif ch not in string.printable:
             return
+        else:
+            t += ch
         
         i = self.widget_instance[self.hovered_widget]
         if i.cls == code.builtins.fnf_number:
             if not t:
                 t = '0'
             try:
-                value = int(t)
-            except ValueError:
-                try:
-                    value = float(t)
-                except ValueError:
-                    return
+                value = float(t)
+            except:
+                return
+            if value == int(value):
+                value = int(value)
             i.meta['value'] = value
             i.self_modified(i)
-            
+        else:
+            self.hovered_widget.set_text_line(0, t)
         #self.update_widgets()
         #self.hovered_widget.set_text()
         
