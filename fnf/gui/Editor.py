@@ -73,10 +73,10 @@ class Editor(App):
                         self.printable_key_up(self.hovered_widget, k)
 
     def printable_key_up(self, widget, ch):
-        t = widget.text
+        t = widget.text_lines[0]
         if t is None:
             t = ''
-        self.hovered_widget.set_text(t + ch)
+        self.hovered_widget.set_text_line(0, t + ch)
         self.lock_hover()
 
     

@@ -71,10 +71,10 @@ class Instance(object):
     def subfield_linked(self, src_subfield_hierarchy, src_subfield_instance):
 ##         import pdb
 ##         pdb.set_trace()
-        print 'src len', self, len(src_subfield_hierarchy)
+        #print 'src len', self, len(src_subfield_hierarchy)
         # Replaces the instances of all subfields using the given one
         linked_subfields_hierarchies = self.cls.links.set_of(src_subfield_hierarchy)
-        print 'number of links', len(linked_subfields_hierarchies)
+        #print 'number of links', len(linked_subfields_hierarchies)
         for subfield_hierarchy in linked_subfields_hierarchies:
             subfield_parent_instance = self.get_subfield_instance(subfield_hierarchy, True)
             subfield_parent_instance.modify_field(subfield_hierarchy[-1], src_subfield_instance, self)

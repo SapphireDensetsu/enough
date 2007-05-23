@@ -37,11 +37,13 @@ class Widget(object):
         self.speed = Point(0.1,0.1)
         self.scale_speed = 0.1
         self.autogrow_to_fit_text = True
-        self.rendered_text = None
-        self.text = None
+        self.rendered_text_lines = None
+        self.text_lines = []
         self._target_size = self._size.shallow_copy()
         
         self.font_size = 12
+        self._prev_font_scale = 12
+        self._prev_text_lines = self.text_lines[:]
         
         self.node = Graph.Node(self)
         self.update_font()
@@ -75,7 +77,7 @@ class Widget(object):
     def set_size(self, size):
         self._size = size/self.target_scale
     def get_size(self):
-        if self.text is None:
+        if not self.text_lines:
             return self._size*self.target_scale
         return self._target_size
     size = property(get_size, set_size)
@@ -91,17 +93,31 @@ class Widget(object):
         #print self._scale
 
     def update_font(self):
-        if self.text is None:
+        if not self.text_lines:
             return
-        self.font = self.get_font(int(self.font_size*self._scale*2))
-        self.rendered_text = self.font.render(self.text, True, (250,250,250,150))
+        font_scale = int(self.font_size*self._scale*2)
+        if (self.text_lines == self._prev_text_lines) and (font_scale == self._prev_font_scale):
+            return
+        self._prev_text_lines = self.text_lines
+        self._prev_font_scale = font_scale
+        
+        self.font = self.get_font(font_scale)
+        self.rendered_text_lines = []
+        mw, mh = 0, 0
+        linesize = self.font.get_linesize()
+        
+        for i, line in enumerate(self.text_lines):
+            rendered_line = self.font.render(line, True, (250,250,250,150))
+            self.rendered_text_lines.append((rendered_line, linesize*i))
+            w,h = self.font.size(line)
+            mw = max(mw, w)
+            mh += linesize
         if self.autogrow_to_fit_text:
-            width, height = self.font.size(self.text)
-            self._size = Point(width,height)
+            self._size = Point(mw, mh)
             
         
     def _scaled_size(self):
-        if self.text is None:
+        if not self.text_lines:
             return self._size*self._scale
         return self._size
     
@@ -111,8 +127,9 @@ class Widget(object):
         self.update_pos()
         s = self._scaled_size()
         pygame.draw.rect(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 3)
-        if self.rendered_text:
-            surface.blit(self.rendered_text, self._pos.as_tuple())
+        if self.rendered_text_lines:
+            for rendered_text_line, y in self.rendered_text_lines:
+                surface.blit(rendered_text_line, (self._pos.x, self._pos.y+y))
         self.draw_connections(surface)
 
     def draw_connections(self, surface):
@@ -129,19 +146,29 @@ class Widget(object):
         return pygame.font.SysFont('serif',font_size)
 
     def update_target_text_scale(self):
-        if self.text is None:
+        if not self.text_lines:
             return
-        w,h = self.get_font(int(self.font_size*self.target_scale*2)).size(self.text)
-        self._target_size = Point(w,h)
+        mw,mh = 0,0
+        for line in self.text_lines:
+            w,h = self.get_font(int(self.font_size*self.target_scale*2)).size(line)
+            mw = max(mw, w)
+            mh += h
+        self._target_size = Point(mw,mh)
         
-    def set_text(self, text):
-        self.text = text
-        if self.text is None:
-            self.rendered_text = None
+    def set_text(self, text_lines):
+        self.text_lines = text_lines[:]
+        if not self.text_lines:
+            self.rendered_text_lines = []
             return
         
         self.update_target_text_scale()
         self.update_font()
+
+    def set_text_line(self, num, line):
+        if num >= len(self.text_lines):
+            self.text_lines.extend(['']*(num-len(self.text_lines)+1))
+        self.text_lines[num] = line
+        self.set_text(self.text_lines)
 
     def hover_in(self):
         self.color = self.hover_color
@@ -330,62 +357,59 @@ class App(object):
         # The user is editing with the keyboard, don't disturb by hovering out!
         self.lock_hover()
         
-        if not (e.mod & pygame.KMOD_CTRL):
-            return
-
-        if e.key == pygame.K_w:
-            self.scale += 0.3
-            self.relayout()
-        elif e.key == pygame.K_q:
-            self.scale -= 0.3
-            self.relayout()
-            
-        elif e.key == pygame.K_HOME:
-            if self.hovered_widget:
-                self.hovered_widget.order.sublevel -= 1.5
-            self.relayout()
-        elif e.key == pygame.K_END:
-            if self.hovered_widget:
-                self.hovered_widget.order.sublevel += 1.5
-            self.relayout()
-        elif e.key == pygame.K_PAGEUP:
-            if self.hovered_widget:
-                self.hovered_widget.order.level -= 1
-            self.lock_hover()
-            self.relayout()
-        elif e.key == pygame.K_PAGEDOWN:
-            if self.hovered_widget:
-                self.hovered_widget.order.level += 1
-            self.relayout()
-            
-        elif e.key == pygame.K_LEFT:
-            if self.hovered_widget:
-                self.hover(find_widget_of_near_order(self.widgets,
-                                                     self.hovered_widget.order.level,
-                                                     self.hovered_widget.order.sublevel - 1))
-            else:
-                self.hover_first()
-        elif e.key == pygame.K_RIGHT:
-            if self.hovered_widget:
-                self.hover(find_widget_of_near_order(self.widgets,
-                                                     self.hovered_widget.order.level,
-                                                     self.hovered_widget.order.sublevel + 1))
-            else:
-                self.hover_first()
-        elif e.key == pygame.K_UP:
-            if self.hovered_widget:
-                self.hover(find_widget_of_near_order(self.widgets,
-                                                     self.hovered_widget.order.level - 1,
-                                                     self.hovered_widget.order.sublevel))
-            else:
-                self.hover_first()
-        elif e.key == pygame.K_DOWN:
-            if self.hovered_widget:
-                self.hover(find_widget_of_near_order(self.widgets,
-                                                     self.hovered_widget.order.level + 1,
-                                                     self.hovered_widget.order.sublevel))
-            else:
-                self.hover_first()
+        if (e.mod & pygame.KMOD_CTRL):
+            if e.key == pygame.K_w:
+                self.scale += 0.3
+                self.relayout()
+            elif e.key == pygame.K_q:
+                self.scale -= 0.3
+                self.relayout()
+            elif e.key == pygame.K_LEFT:
+                if self.hovered_widget:
+                    self.hovered_widget.order.sublevel -= 1.5
+                self.relayout()
+            elif e.key == pygame.K_RIGHT:
+                if self.hovered_widget:
+                    self.hovered_widget.order.sublevel += 1.5
+                self.relayout()
+            elif e.key == pygame.K_UP:
+                if self.hovered_widget:
+                    self.hovered_widget.order.level -= 1
+                self.lock_hover()
+                self.relayout()
+            elif e.key == pygame.K_DOWN:
+                if self.hovered_widget:
+                    self.hovered_widget.order.level += 1
+                self.relayout()
+        else:
+            if e.key == pygame.K_LEFT:
+                if self.hovered_widget:
+                    self.hover(find_widget_of_near_order(self.widgets,
+                                                         self.hovered_widget.order.level,
+                                                         self.hovered_widget.order.sublevel - 1))
+                else:
+                    self.hover_first()
+            elif e.key == pygame.K_RIGHT:
+                if self.hovered_widget:
+                    self.hover(find_widget_of_near_order(self.widgets,
+                                                         self.hovered_widget.order.level,
+                                                         self.hovered_widget.order.sublevel + 1))
+                else:
+                    self.hover_first()
+            elif e.key == pygame.K_UP:
+                if self.hovered_widget:
+                    self.hover(find_widget_of_near_order(self.widgets,
+                                                         self.hovered_widget.order.level - 1,
+                                                         self.hovered_widget.order.sublevel))
+                else:
+                    self.hover_first()
+            elif e.key == pygame.K_DOWN:
+                if self.hovered_widget:
+                    self.hover(find_widget_of_near_order(self.widgets,
+                                                         self.hovered_widget.order.level + 1,
+                                                         self.hovered_widget.order.sublevel))
+                else:
+                    self.hover_first()
 
     def hover_first(self):
         self.hover(find_widget_of_near_order(self.widgets, 0, 0))
