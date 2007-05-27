@@ -126,7 +126,8 @@ class Widget(object):
         self.update_scale()
         self.update_pos()
         s = self._scaled_size()
-        pygame.draw.rect(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 3)
+        pygame.draw.rect(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 0)
+        #pygame.draw.ellipse(surface, self.color, (self._pos.x-6, self._pos.y-6, s.x+6, s.y+6), 3)
         if self.rendered_text_lines:
             for rendered_text_line, y in self.rendered_text_lines:
                 surface.blit(rendered_text_line, (self._pos.x, self._pos.y+y))
@@ -295,6 +296,7 @@ class App(object):
         reorder(self.widgets)
         widgets = [widget for widget in self.widgets if not widget.order.ignore]
         layouts.TableLayout(self.width, self.height, widgets, scale =self.scale, autoscale = True)
+        
 
     def register_pygame_event(self, pg_type, handler):
         self.pygame_handlers.setdefault(pg_type, []).append(handler)

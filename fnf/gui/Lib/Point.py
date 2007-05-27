@@ -2,6 +2,8 @@ import pygame
 
 from AttrDict import AttrDict
 
+from math import atan2, sqrt, sin, cos, pi
+
 class Point(AttrDict):
     allowed_fields = [('x',),
                       ('y',),
@@ -22,4 +24,9 @@ class Point(AttrDict):
         return (self.x,self.y)
     def angle(self):
         return atan2(self.y,self.x)
+    def norm(self):
+        return sqrt(self.x*self.x + self.y*self.y)
 
+    @classmethod
+    def from_polar(cls, angle, radius):
+        return cls(cos(angle), sin(angle))*radius

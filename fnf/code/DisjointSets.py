@@ -4,8 +4,9 @@ class DisjointSets(object):
 
     def _set_of(self, item):
         for s in self.sets:
-            if item in s:
-                return s
+            for s_item in s:
+                if item == s_item:
+                    return s
         return None
 
     def set_of(self, item):
