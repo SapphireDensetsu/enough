@@ -70,3 +70,26 @@ def TableLayout(width, height, widgets, scale=1, autoscale=True, offset = None):
         widget.pos += center_pos + offset
 
 
+from math import pi
+def SurroundLayout(width, height, source_widget, subwidgets_of, scale=1, subwidgets_center_offset=None):
+    if subwidgets_center_offset is None:
+        subwidgets_center_offset = Point(0,2*source_widget.size.norm()*scale)
+        span = pi
+    else:
+        span = pi
+    source_widget.scale = scale
+    subwidgets = reversed(sorted((widget.order.sublevel, widget) for widget in list(subwidgets_of(source_widget))))
+    subwidgets = list(subwidgets)
+    num = len(subwidgets)
+    if num <= 1:
+        return
+    center_angle = subwidgets_center_offset.angle() - (span/2)
+    radius = subwidgets_center_offset.norm()
+    angle_step = span/(num-1)
+    center = source_widget.pos
+    for i,(sublevel, subwidget) in enumerate(subwidgets):
+        angle = center_angle + angle_step*i
+        subwidget.pos = center + Point.from_polar(angle, radius)
+        new_offset = Point.from_polar(angle, radius/3.0)
+        SurroundLayout(width, height, subwidget, subwidgets_of, scale=scale, subwidgets_center_offset=new_offset)
+    

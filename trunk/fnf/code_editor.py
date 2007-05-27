@@ -4,9 +4,9 @@ import code
 
 
 import pygame
+
 import string
-
-
+from functools import partial
 
 class CodeEditor(gui.Editor):
     def __init__(self, *args, **kw):
@@ -30,6 +30,23 @@ class CodeEditor(gui.Editor):
         self.create_instance_widgets(instance)
         self.relayout()
 
+    def field_widgets_of_widget(self, widget):
+        instance = self.widget_instance[widget]
+        for field_instance in instance.field_instances():
+            if field_instance in self.widget_instance_reverse:
+                yield self.widget_instance_reverse[field_instance]
+        
+    def relayout(self):
+        if self._dont_layout:
+            return
+        gui.base.reorder(self.widgets)
+        #widgets = [widget for widget in self.widgets if not widget.order.ignore]
+        #gui.layouts.TableLayout(self.width, self.height, widgets, scale =self.scale, autoscale = True)
+        widget = self.widget_instance_reverse[self.instance]
+        widget.pos = Point(self.width/2, self.height/2)
+        gui.layouts.SurroundLayout(self.width, self.height, widget,
+                                   self.field_widgets_of_widget, scale=self.scale)
+        
     def create_instance_widgets(self, instance, level=0, field=None):
         #print instance
         if instance in self.widget_instance_reverse:
@@ -41,7 +58,7 @@ class CodeEditor(gui.Editor):
         field_instances_by_name = instance.field_instances_by_name()
 
         self.add_instance_widget(instance, w, field)
-        self.update_widget(w, instance, field)
+        self.update_widget(w, instance)
         
         for field in instance.cls.fields:
             field_instance = field_instances_by_name[field.meta['name']]
@@ -54,25 +71,26 @@ class CodeEditor(gui.Editor):
         self.widget_instance[widget] = instance
         self.widget_instance_reverse[instance] = widget
         self.instance_is_field[instance] = field
-        try:
-            instance.event_modified.register(self.instance_modified)
-        except AssertionError:
-            # todo fix
-            pass
+        
+        instance.event_field_instance_replaced.register(partial(self.instance_replaced, instance))
+        instance.event_modified.register(partial(self.instance_modified))
+        
         self.add_widget(widget)
         
     def replace_instance(self, old_instance, new_instance):
+        #print 'replacing', old_instance, new_instance
         if old_instance is new_instance:
             return
             
         widget = self.widget_instance_reverse[old_instance]
         old_in_connections = list(widget.node.connections['in'])
         self.remove_instance(old_instance)
-        new_widget = self.create_instance_widgets(new_instance, widget.order.level)
+        
+        field = self.instance_is_field.get(old_instance, None)
+        new_widget = self.create_instance_widgets(new_instance, level=widget.order.level, field=field)
         new_widget.pos = (widget.pos + new_widget.pos)*0.5
         for old_in in old_in_connections:
             new_widget.node.connect_in(old_in)
-        
         
     def remove_instance(self, instance):
         widget = self.widget_instance_reverse[instance]
@@ -84,18 +102,26 @@ class CodeEditor(gui.Editor):
             field_instance = field_instances_by_name[field.meta['name']]
             self.remove_instance(field_instance)
 
-    def instance_modified(self, instance, field, old_field_instance, new_field_instance, self_modified):
-        if old_field_instance is not None and new_field_instance is not None:
+    def instance_replaced(self, instance, field, old_field_instance, new_field_instance, modified_by):
+        if old_field_instance is None:
+            self.create_instance_widgets(new_field_instance, field=field)
+        else:
             self.replace_instance(old_field_instance, new_field_instance)
         self.update_widgets()
+
+    def instance_modified(self, instance, modified_by):
+        if instance not in self.widget_instance_reverse:
+            return
+        w = self.widget_instance_reverse[instance]
+        self.update_widget(w, instance)
 
     def update_widgets(self):
         for w in self.widgets:
             i = self.widget_instance[w]
-            f = self.instance_is_field[i]
-            self.update_widget(w, i, f)
+            self.update_widget(w, i)
             
-    def update_widget(self, w, instance, field=None):
+    def update_widget(self, w, instance):
+        field = self.instance_is_field.get(instance, None)
         if field:
             name = field.meta['name']
         else:
@@ -118,7 +144,13 @@ class CodeEditor(gui.Editor):
         
         
     def key_up(self, e):
-        if not e.mod & pygame.KMOD_CTRL:
+        if e.mod & pygame.KMOD_CTRL:
+            if e.key == pygame.K_BACKSPACE:
+                i = self.widget_instance[self.hovered_widget]
+                sf = self.instance.subfield_hierarchy_by_instance(i)
+                self.cls.split(sf)
+                
+        else:
             if not self.hovered_widget:
                 return
             k = e.key

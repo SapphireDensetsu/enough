@@ -42,6 +42,8 @@ class Editor(App):
     def mouse_up(self, e):
         if not self.drag_widget:
             return
+        if self.hovered_widget == self.drag_widget:
+            self.hovered_widget = None
         self.disconnect_widgets(self.connecting_widget, self.drag_widget)
         self.remove_widget(self.drag_widget)
         self.drag_widget = None

@@ -23,26 +23,48 @@ class Instance(object):
         # This is a map from field to instance of that field
         self._fields_instances = {}
         self.event_modified = Event()
+        self.event_field_instance_replaced = Event()
         
         for field in cls.fields:
             if field not in self._fields_instances:
-                field_instance = field.cls.create_instance()
-                self._fields_instances[field] = field_instance
-                self.subfield_linked((field,), field_instance)
-                field_instance.event_modified.register(partial(self.field_modified, self, field))
-
+                field_instance = self.create_field_instance(field)
+                self.event_field_instance_replaced.send(field, None, field_instance, self)
+                
         # TODO send this event somewhere when a new value propogates through us
         #self.event_modification_propogating = Event()
 
+    def create_field_instance(self, field):
+        if field in self._fields_instances:
+            assert 0, "trying to create same field twice!"
+        field_instance = field.cls.create_instance()
+        self.set_field_instance(field, field_instance)
+
+    def set_field_instance(self, field, field_instance):
+        self._fields_instances[field] = field_instance
+        #self.subfield_linked((field,), field_instance)
+        field_instance.event_modified.register(partial(self.field_modified, self, field_instance), key=self)
+        return field_instance
+
+    def remove_field_instance(self, field_instance):
+        field_instance.event_modified.unregister(self)
+        del self._fields_instances[self.field_of_field_instance(field_instance)]
+
+        
+##     def copy(self):
+##         new = self.cls.create_instance()
+##         new.meta.update(self.meta)
+##         return new
+    
     def __repr__(self):
-        return '<%s, cls=%r, meta=%r>' % (self.__class__.__name__, self.cls, self.meta)
+        return '<%s at 0x%X, cls=%r, meta=%r>' % (self.__class__.__name__, id(self), self.cls, self.meta)
 
     # todo is this normal?!
     @staticmethod
-    def field_modified(self, field, field_instance, subfield, old_instance, new_instance, modified_by):
+    def field_modified(self, field_instance, modified_instance, modified_by):
+        #print 'field modified', self, field_instance, modified_instance, modified_by
         if modified_by is self:
             return
-        self.event_modified.send(self, field, None, None, modified_by)
+        self.event_modified.send(field_instance, modified_by)
         
     def get_subfield_instance(self, subfield_hierarchy, stop_at_parent):
         # Returns the requested subfield's parent, the requested subfield (parent, subfield)
@@ -56,56 +78,46 @@ class Instance(object):
             subfield_instance = subfield_instance._fields_instances[subfield]
         return subfield_instance
 
-    def modify_field(self, field, new_instance, modified_by):
+    def replace_field_instance(self, field, new_instance, modified_by):
         # This is called when a new instance is placed for afield
         if field not in self.cls.fields:
             raise ValueError("Unknown field", field, self.cls.fields)
         old_instance = self._fields_instances[field]
-        self._fields_instances[field] = new_instance
+        
+        self.remove_field_instance(old_instance)
+
+        self.set_field_instance(field, new_instance)
+        
         # In this case we must send a 'modified' event because some magic function
         # might need to re-calculate because one of it's fields has changed it's instance
-        self.event_modified.send(self, field, old_instance, new_instance, modified_by)
+        self.event_field_instance_replaced.send(field, old_instance, new_instance, modified_by)
+        self.event_modified.send(new_instance, modified_by)
         
+        return new_instance
         
     # a subfield_hierarchy is a list of: field_A, subfield_B, subsubfield_C, etc...
     def subfield_linked(self, src_subfield_hierarchy, src_subfield_instance):
-##         import pdb
-##         pdb.set_trace()
         #print 'src len', self, len(src_subfield_hierarchy)
         # Replaces the instances of all subfields using the given one
         linked_subfields_hierarchies = self.cls.links.set_of(src_subfield_hierarchy)
         #print 'number of links', len(linked_subfields_hierarchies)
         for subfield_hierarchy in linked_subfields_hierarchies:
             subfield_parent_instance = self.get_subfield_instance(subfield_hierarchy, True)
-            subfield_parent_instance.modify_field(subfield_hierarchy[-1], src_subfield_instance, self)
-
-##             print 'dst len', len(subfield_hierarchy)
-##             if subfield_hierarchy == src_subfield_hierarchy:
-##                 print 'skipping self'
-##                 continue # skip the source hierarchy itself, it already has the new instance
-##             if len(subfield_hierarchy) == 1:
-##                 # no need to propogate , this is our own field (not any grandchild)
-##                 print 'modifying', self
-##                 self.modify_field(subfield_hierarchy[0], src_subfield_instance)
-##             else:
-##                 # This is a child of our child's, or even deeper
-##                 field_instance = self._fields_instances[subfield_hierarchy[0]]
-##                 # Invoke the same method on our child, passing the hierarchy to the field that is linked in (our context)
-##                 # to the source field which gives a new instance.
-##                 # That field may be linked to other internal fields, in the context of our child
-##                 field_instance.subfield_linked(subfield_hierarchy[1:], src_subfield_instance)
+            subfield_parent_instance.replace_field_instance(subfield_hierarchy[-1], src_subfield_instance, self)
 
 
     def subfield_unlinked(self, subfield_hierarchy):
         # in this case we can go straight to the depest level, and insert a new instance
         # TODO copy the instance instead of just creating new
         subfield_parent_instance = self.get_subfield_instance(subfield_hierarchy, True)
-        new_subfield_instance = subfield_hierarchy[-1].cls.create_instance()
-        subfield_parent_instance.modify_field(subfield_hierarchy[-1], new_subfield_instance, self)
+        
+        old_subfield_instance = subfield_parent_instance._fields_instances[subfield_hierarchy[-1]]
+        new_subfield_instance = subfield_parent_instance.create_field_instance(subfield_hierarchy[-1]) #old_subfield_instance.copy() #subfield_hierarchy[-1].cls.create_instance()
 
-##         # now notify our children instances (field instances) about this, so that if they
-##         # have internal links to this subfield they will get the updated instance
-##         self.subfield_linked(subfield_hierarchy, new_subfield_instance)
+        new_subfield_instance = subfield_parent_instance.create_field_instance(subfield_hierarchy[-1])
+
+        subfield_parent_instance.replace_field_instance(subfield_hierarchy[-1], new_subfield_instance, self)
+        
 
 
     # UTility functions
@@ -119,7 +131,16 @@ class Instance(object):
                 res.extend(f_res)
                 return res
         return []
-            
+
+    def field_of_field_instance(self, field_instance):
+        for field, fi in self._fields_instances.iteritems():
+            if fi == field_instance:
+                return field
+        raise ValueError("No such field instance")
+        
+    def field_instances(self):
+        return list(self._fields_instances.values())
+    
     def field_instances_by_name(self):
         # Utility func
         res = {}
@@ -132,12 +153,9 @@ class Instance(object):
         for field, field_instance in self._fields_instances.iteritems():
             res[field.meta['name']] = field
         return res
-    def modify_field_by_name(self, name, field_instance, self_modified=False):
-        self.modify_field(self.fields_by_name()[name], field_instance, self)
-
     def self_modified(self, modified_by):
         # todo if instances are immutable, this shouldn't exist!
-        self.event_modified.send(self, None, None, None, modified_by)
+        self.event_modified.send(self, modified_by)
     
     
 class Class(object):
@@ -151,7 +169,7 @@ class Class(object):
         self.links = DisjointSets()
         
     def __repr__(self):
-        return '<%s, cls=%r, meta=%r>' % (self.__class__.__name__, self.meta, self.fields)
+        return '<%s, meta=%r, fields=%r>' % (self.__class__.__name__, self.meta, len(self.fields))
 
     def create_instance(self, **kw):
         instance = Instance(self, **kw)
@@ -188,7 +206,7 @@ class MagicClass(Class):
     # A Basic, built-in, datatype
     def create_instance(self, **kw):
         instance = super(MagicClass, self).create_instance(**kw)
-        instance.event_modified.register(self.instance_modified)
+        instance.event_modified.register(partial(self.instance_modified, instance), key=self)
         self.event_instance_init.send(instance)
         return instance
 
@@ -199,8 +217,8 @@ class MagicClass(Class):
 def make_magic_class(cls):
     c = MagicClass(meta=cls.meta, fields=cls.fields)
     c.__name__ = cls.__name__
-    c.event_instance_init.register(cls.init)
-    c.event_instance_modified.register(cls.modified)
+    c.event_instance_init.register(cls.init, key=cls)
+    c.event_instance_modified.register(cls.modified, key=cls)
     return c
 
 def make_magic_value_class(name, default_value, **kw):

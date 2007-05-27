@@ -5,7 +5,7 @@ from base import make_magic_class, Field, MagicClass, make_magic_value_class
 fnf_number = make_magic_value_class('fnf_number', 0, meta={'name': 'number'})
 fnf_bool = make_magic_value_class('fnf_bool', False, meta={'name': 'bool'})
 
-binary_number_fields = (Field(fnf_number, dict(name='a')), Field(fnf_number, dict(name='b')), Field(fnf_number, dict(name='r')))
+binary_number_fields = (Field(fnf_number, dict(name='a')), Field(fnf_number, dict(name='b')), Field(fnf_number, dict(name='=')))
 
 def fnf_number_of(num):
     return fnf_number.create_instance(meta=dict(value=num))
@@ -20,16 +20,16 @@ def simple_binary_op_maker(name):
                 pass
 
             @staticmethod
-            def modified(instance, field, old_instance, new_instance, modified_by):
+            def modified(instance, mod_instance, modified_by):
                 if modified_by is instance:
                     return
 
                 #print 'modified', instance, field, old_instance, new_instance, modified_by
                 #assert field in instance.cls.fields, "unknown field modified in magic class"
-                mod_instance = instance.get_subfield_instance((field,), False)
                 fields_by_name = instance.fields_by_name()
                 f = instance.field_instances_by_name()
-                a,b,r = f['a'], f['b'], f['r']
+                #print instance, f.keys()
+                a,b,r = f['a'], f['b'], f['=']
 
                 if mod_instance in (a,b):
                     r_res = pyfunc(a.meta['value'], b.meta['value'], None)
@@ -60,9 +60,13 @@ def mul(a, b, r):
     if r is None and None not in (a,b):
         return a*b
     elif b is None and None not in (r,a):
-        return r/a
+        if a != 0:
+            return r/a
+        return 0
     elif a is None and None not in (r,b):
-        return r/b
+        if b != 0:
+            return r/b
+        return 0
     else:
         assert 0, "Unknown params"
         
@@ -72,8 +76,8 @@ builtins = [fnf_number, fnf_bool, add, mul]
 if __name__=='__main__':
     try:
         a = add.create_instance()
-        a.modify_field(a.fields_by_name()['a'], fnf_number.create_instance(meta={'value': 1}))
-        a.modify_field(a.fields_by_name()['b'], fnf_number.create_instance(meta={'value': 3}))
+        a.field_instances_by_name('a').meta['value'] = 1
+        a.field_instances_by_name('b').meta['value'] = 3
     except:
         import pdb
         #pdb.pm()
