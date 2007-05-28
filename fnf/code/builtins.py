@@ -1,5 +1,5 @@
 from __future__ import division
-from base import make_magic_class, Field, MagicClass, make_magic_value_class
+from base import make_magic_class, Field, MagicClass, make_magic_value_class, Class
 
 
 fnf_number = make_magic_value_class('fnf_number', 0, meta={'name': 'number'})
@@ -71,7 +71,12 @@ def mul(a, b, r):
         assert 0, "Unknown params"
         
 
-builtins = [fnf_number, fnf_bool, add, mul]
+def field_of_cls(cls):
+    return Field(cls, dict(name=cls.meta['name']))
+
+builtins_cls = Class(meta=dict(name='builtins'), fields=[field_of_cls(cls) for cls in (fnf_number, fnf_bool, add, mul)])
+
+
 
 if __name__=='__main__':
     try:

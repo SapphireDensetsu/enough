@@ -23,31 +23,41 @@ class Instance(object):
         # This is a map from field to instance of that field
         self._fields_instances = {}
         self.event_modified = Event()
-        self.event_field_instance_replaced = Event()
+        self.event_field_instance_set = Event()
+        self.event_field_instance_removed = Event()
+        self.event_field_instance_linked = Event()
         
         for field in cls.fields:
             if field not in self._fields_instances:
                 field_instance = self.create_field_instance(field)
-                self.event_field_instance_replaced.send(field, None, field_instance, self)
+                self.set_field_instance(field, field_instance)
+                self.event_field_instance_set.send(self, field, field_instance)
                 
         # TODO send this event somewhere when a new value propogates through us
         #self.event_modification_propogating = Event()
 
     def create_field_instance(self, field):
-        if field in self._fields_instances:
-            assert 0, "trying to create same field twice!"
         field_instance = field.cls.create_instance()
-        self.set_field_instance(field, field_instance)
+        return field_instance
 
     def set_field_instance(self, field, field_instance):
+        if field in self._fields_instances:
+            assert 0, "trying to set same field twice!"
         self._fields_instances[field] = field_instance
         #self.subfield_linked((field,), field_instance)
-        field_instance.event_modified.register(partial(self.field_modified, self, field_instance), key=self)
+        field_instance.event_modified.register(partial(self.field_modified, self, field_instance), key=(self, field))
+
+        # This should be called externally?
+        self.event_field_instance_set.send(self, field, field_instance)
+        
         return field_instance
 
     def remove_field_instance(self, field_instance):
-        field_instance.event_modified.unregister(self)
-        del self._fields_instances[self.field_of_field_instance(field_instance)]
+        field = self.field_of_field_instance(field_instance)
+        field_instance.event_modified.unregister((self, field))
+        del self._fields_instances[field]
+        # this should be called externally?
+        self.event_field_instance_removed.send(self, field, field_instance)
 
         
 ##     def copy(self):
@@ -83,17 +93,21 @@ class Instance(object):
         if field not in self.cls.fields:
             raise ValueError("Unknown field", field, self.cls.fields)
         old_instance = self._fields_instances[field]
-        
-        self.remove_field_instance(old_instance)
 
-        self.set_field_instance(field, new_instance)
+        if old_instance != new_instance:
+            self.remove_field_instance(old_instance)
+            self.set_field_instance(field, new_instance)
         
         # In this case we must send a 'modified' event because some magic function
         # might need to re-calculate because one of it's fields has changed it's instance
-        self.event_field_instance_replaced.send(field, old_instance, new_instance, modified_by)
         self.event_modified.send(new_instance, modified_by)
         
         return new_instance
+
+    def link_field_instance(self, field, new_instance, modified_by):
+        old_instance = self._fields_instances[field]
+        self.event_field_instance_linked.send(self, old_instance, new_instance)
+        self.replace_field_instance(field, new_instance, modified_by)
         
     # a subfield_hierarchy is a list of: field_A, subfield_B, subsubfield_C, etc...
     def subfield_linked(self, src_subfield_hierarchy, src_subfield_instance):
@@ -103,8 +117,8 @@ class Instance(object):
         #print 'number of links', len(linked_subfields_hierarchies)
         for subfield_hierarchy in linked_subfields_hierarchies:
             subfield_parent_instance = self.get_subfield_instance(subfield_hierarchy, True)
-            subfield_parent_instance.replace_field_instance(subfield_hierarchy[-1], src_subfield_instance, self)
-
+            
+            subfield_parent_instance.link_field_instance(subfield_hierarchy[-1], src_subfield_instance, self)
 
     def subfield_unlinked(self, subfield_hierarchy):
         # in this case we can go straight to the depest level, and insert a new instance
@@ -112,25 +126,27 @@ class Instance(object):
         subfield_parent_instance = self.get_subfield_instance(subfield_hierarchy, True)
         
         old_subfield_instance = subfield_parent_instance._fields_instances[subfield_hierarchy[-1]]
-        new_subfield_instance = subfield_parent_instance.create_field_instance(subfield_hierarchy[-1]) #old_subfield_instance.copy() #subfield_hierarchy[-1].cls.create_instance()
-
         new_subfield_instance = subfield_parent_instance.create_field_instance(subfield_hierarchy[-1])
+        # old_subfield_instance.copy() #subfield_hierarchy[-1].cls.create_instance()
 
         subfield_parent_instance.replace_field_instance(subfield_hierarchy[-1], new_subfield_instance, self)
         
 
 
     # UTility functions
-    def subfield_hierarchy_by_instance(self, subfield_instance):
+    def subfield_hierarchy_by_instance(self, subfield_instance, return_empty_list_if_none=False):
         for field, field_instance in self._fields_instances.iteritems():
             res = [field]
             if subfield_instance is field_instance:
                 return res
-            f_res = field_instance.subfield_hierarchy_by_instance(subfield_instance)
+            f_res = field_instance.subfield_hierarchy_by_instance(subfield_instance, return_empty_list_if_none=True)
             if f_res:
                 res.extend(f_res)
                 return res
-        return []
+        if return_empty_list_if_none:
+            return []
+        # This can happen if someone stupid requested the hierarchy to an instance that is not our subfield!
+        raise ValueError("No such subfield instance", subfield_instance)
 
     def field_of_field_instance(self, field_instance):
         for field, fi in self._fields_instances.iteritems():
@@ -186,6 +202,7 @@ class Class(object):
         for instance in self.instances:
             # Find the subfield's_instance for this instance (extract the instance from the deepest level)
             src_subfield_instance = instance.get_subfield_instance(src_subfield_hierarchy, False)
+            
             # Tell the instance that the subfield has changed, it will update all internally linked fields to point
             # to the new instance.
             instance.subfield_linked(src_subfield_hierarchy, src_subfield_instance)

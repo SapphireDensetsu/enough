@@ -34,6 +34,8 @@ class Widget(object):
         self.target_scale = 1
         self._scale = 1
 
+        self.visible = True
+        self.size_margin = 10
         self.speed = Point(0.1,0.1)
         self.scale_speed = 0.1
         self.autogrow_to_fit_text = True
@@ -44,13 +46,21 @@ class Widget(object):
         self.font_size = 12
         self._prev_font_scale = 12
         self._prev_text_lines = self.text_lines[:]
-        
+
+        # node for topology
         self.node = Graph.Node(self)
+        # node for layout hints
+        self.layout_hint_node = Graph.Node(self)
+        
         self.update_font()
 
         self.hover_color = hover_color
         self.unhover_color = unhover_color
+        self.border_color = hover_color
         self.hover_out()
+
+        self.accel = Point(0,0)
+        self.vel = Point(0,0)
         
     def in_bounds(self, pos):
         s = self._scaled_size()
@@ -83,9 +93,17 @@ class Widget(object):
     size = property(get_size, set_size)
     
     def update_pos(self):
-        #print (self.target_pos - self._pos)*self.speed 
-        self._pos += (self.target_pos - self._pos)*self.speed
-        #print self._pos
+        #self._pos += (self.target_pos - self._pos)*self.speed
+        self.accel = (self.target_pos - self._pos)*self.speed
+        for puller in self.layout_hint_node.connections['out']:
+            w = puller.value
+            self.accel += (w._pos - self._pos)*0.2
+        for puller in self.layout_hint_node.connections['in']:
+            w = puller.value
+            self.accel += (w._pos - self._pos)*0.2
+            
+        self.vel = self.accel # todo +=
+        self._pos += self.vel
 
     def update_scale(self):
         self._scale += (self.target_scale - self._scale)*self.scale_speed
@@ -122,24 +140,35 @@ class Widget(object):
         return self._size
     
     def paint(self, surface):
+        if not self.visible:
+            return
         #self.set_text(str(self.order.sublevel))
         self.update_scale()
         self.update_pos()
         s = self._scaled_size()
+
+        self.draw_connections(surface)
+
         pygame.draw.rect(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 0)
-        #pygame.draw.ellipse(surface, self.color, (self._pos.x-6, self._pos.y-6, s.x+6, s.y+6), 3)
+        pygame.draw.rect(surface, self.border_color, (self._pos.x, self._pos.y, s.x, s.y), 2)
+        #pygame.draw.ellipse(surface, self.color, (self._pos.x, self._pos.y, s.x, s.y), 3)
         if self.rendered_text_lines:
             for rendered_text_line, y in self.rendered_text_lines:
                 surface.blit(rendered_text_line, (self._pos.x, self._pos.y+y))
-        self.draw_connections(surface)
 
     def draw_connections(self, surface):
         s = self._scaled_size()
-        my_pos = self._pos + Point(s.x/2, s.y)
+        my_pos = self._pos + Point(s.x/2, s.y/2)
         for widget_node in self.node.connections['out']:
             widget = widget_node.value
-            other_pos = widget._pos + Point(widget._scaled_size().x/2, 0)
+            other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
             pygame.draw.aalines(surface, (200,220,250,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
+
+        for l in self.layout_hint_node.connections.values():
+            for widget_node in l:
+                widget = widget_node.value
+                other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
+                pygame.draw.aalines(surface, (200,20,50,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
 
     @staticmethod
     @Func.cached
@@ -214,18 +243,6 @@ class Widget(object):
 ##             break
 ##         update_sublevel(node, i)
 
-def reorder(widgets):
-    levels = {}
-    for widget in widgets:
-        levels.setdefault(widget.order.level, []).append((widget.order.sublevel, widget))
-
-
-    for i, level in enumerate(sorted(levels.keys())):
-        level_widgets = levels[level]
-        for j, (sublevel, widget) in enumerate(sorted(level_widgets)):
-            widget.order.level = i
-            widget.order.sublevel = j
-
 def find_widget_of_near_order(widgets, level, sublevel):
     for widget in widgets:
         if widget.order.level == level and widget.order.sublevel == sublevel:
@@ -289,11 +306,25 @@ class App(object):
             if w == widget:
                 self.z_ordered.pop(i)
                 break
+            
+    def reorder(self):
+        widgets = self.widgets
+        levels = {}
+        for widget in widgets:
+            levels.setdefault(widget.order.level, []).append((widget.order.sublevel, widget))
+
+
+        for i, level in enumerate(sorted(levels.keys())):
+            level_widgets = levels[level]
+            for j, (sublevel, widget) in enumerate(sorted(level_widgets)):
+                widget.order.level = i
+                widget.order.sublevel = j
+
         
     def relayout(self):
         if self._dont_layout:
             return
-        reorder(self.widgets)
+        self.reorder()
         widgets = [widget for widget in self.widgets if not widget.order.ignore]
         layouts.TableLayout(self.width, self.height, widgets, scale =self.scale, autoscale = True)
         
