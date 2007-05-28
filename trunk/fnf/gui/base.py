@@ -450,7 +450,7 @@ class App(object):
         for z_order, widget in self.z_ordered:
             widget.paint(self.screen)
         pygame.display.flip()
-        pygame.image.save(pygame.display.get_surface(), 'img%4.4d.BMP' % (self._frame_counter))
+        #pygame.image.save(pygame.display.get_surface(), 'img%4.4d.BMP' % (self._frame_counter))
         self._frame_counter+=1
 
 
