@@ -51,25 +51,33 @@ class InstanceWidget(gui.Widget):
         field_widget = type(self)(field_instance, self.order.level+1, is_field = field,
                                   add_widget_handler=self.add_widget_handler,
                                   del_widget_handler=self.del_widget_handler)
+        self.update_field_widget(field, field_instance, field_widget)
 
+    def update_field_widget(self, field, field_instance, field_widget):
         field_widget.order.sublevel = len(self.field_instance_widget_by_field.keys())
         
         self.field_instance_widget_by_field[field] = field_widget
         self.field_instances_by_field_widgets.setdefault(field_widget, []).append(field)
         self.node.connect_out(field_widget.node)
 
+        if not self.puller_node.is_connected(field_widget.puller_node):
+            self.puller_node.connect_out(field_widget.puller_node)
+        self.update()
 
     def delete_field(self, field, field_instance):
         field_instance_widget = self.field_instance_widget_by_field[field]
         self.field_instances_by_field_widgets[field_instance_widget].remove(field)
         del self.field_instance_widget_by_field[field]
-        self.node.disconnect(field_instance_widget.node)
 
-        field_instance_widget.layout_hint_node.disconnect_all()
+        field_instance_widget.node.disconnect_all()
+        field_instance_widget.puller_node.disconnect_all()
+        field_instance_widget.pusher_node.disconnect_all()
         
         if not self.field_instances_by_field_widgets[field_instance_widget]:
             del self.field_instances_by_field_widgets[field_instance_widget]
             self.del_widget_handler(field_instance_widget)
+
+        self.update()
 
 
     def handle_field_instance_set(self, instance, field, field_instance):
@@ -79,7 +87,9 @@ class InstanceWidget(gui.Widget):
         if field_widget:
             if field_widget.instance != field_instance:
                 field_widget.instance = field_instance
-                field_widget.layout_hint_node.disconnect_all()
+                field_widget.puller_node.disconnect_all()
+                self.update_field_widget(field, field_instance, field_widget)
+                self.update()
             return
         self.create_field(field, field_instance)
 
@@ -105,10 +115,16 @@ class InstanceWidget(gui.Widget):
             if subfield_widget1.instance == new_subfield_instance:
                 for subfield_widget2 in all_widgets:
                     if subfield_widget2.instance == removed_subfield_instance:
-                        subfield_widget1.layout_hint_node.connect_out(subfield_widget2.layout_hint_node)
+                        if not subfield_widget1.puller_node.is_connected(subfield_widget2.puller_node):
+                            subfield_widget1.puller_node.connect_out(subfield_widget2.puller_node)
                         subfield_widget2.instance = subfield_widget1.instance
         
     def update(self):
+        for field_widget1 in self.field_instances_by_field_widgets.keys():
+            for field_widget2 in self.field_instances_by_field_widgets.keys():
+                if not field_widget1.pusher_node.is_connected(field_widget2.pusher_node):
+                    field_widget1.pusher_node.connect_out(field_widget2.pusher_node)
+            
         if self.is_field:
             name = self.is_field.meta['name']
         else:
@@ -127,8 +143,6 @@ class InstanceWidget(gui.Widget):
 
         # This will cause all proper creation/removal events to occur
         self.instance.cls.union(sf1, sf2)
-
-        
 
     def disconnect_subfield(self, subfield_widget):
         sf = self.instance.subfield_hierarchy_by_instance(subfield_widget.instance)
@@ -158,7 +172,7 @@ class InstanceWidget(gui.Widget):
             i.meta['value'] = value
             i.self_modified(i)
         else:
-            self.hovered_widget.set_text_line(0, t)
+            self.set_text_line(0, t)
         
 
 class CodeEditor(gui.Editor):
@@ -184,22 +198,33 @@ class CodeEditor(gui.Editor):
             return
         
         # TODO fix reorder - probably need to change the way we do it..
-        self.reorder()
+        #self.reorder()
         #widgets = [widget for widget in self.widgets if not widget.order.ignore]
         #gui.layouts.TableLayout(self.width, self.height, widgets, scale =self.scale, autoscale = True)
 
         if self.main_widget is None:
             return
 
-        field_widgets = list(sorted((w.order.sublevel, w) for w in self.main_widget.iter_field_widgets()))
-        margin = 10
-        x = margin
-        step = self.width/float(len(field_widgets))
-        for sublevel, widget in field_widgets:
-            widget.pos = Point(x, 130)
-            x += step + margin
-            gui.layouts.SurroundLayout(step, self.height, widget,
-                                       self.field_widgets_of_widget, scale=self.scale)
+        self.main_widget.pos = Point(self.width/2, self.height/2)
+        self.main_widget._pos = self.main_widget.pos
+
+        for widget in self.widgets:
+            widget.scale = self.scale/(float(widget.order.level+1)/2)
+        #gui.layouts.SurroundLayout(self.width, self.height, self.main_widget,
+        #                           self.field_widgets_of_widget, scale=self.scale)
+        
+##         field_widgets = list(sorted((w.order.sublevel, w) for w in self.main_widget.iter_field_widgets()))
+##         if not field_widgets:
+##             return
+##         margin = 10
+##         x = margin
+##         step = self.width/float(len(field_widgets))
+##         for sublevel, widget in field_widgets:
+##             #widget.pos = Point(x, 130)
+##             widget.scale = self.scale
+##             x += step + margin
+##             gui.layouts.SurroundLayout(step, self.height, widget,
+##                                         self.field_widgets_of_widget, scale=self.scale)
         
     
     def update_widgets(self):

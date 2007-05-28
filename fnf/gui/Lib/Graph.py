@@ -58,6 +58,14 @@ class Node(object):
                 offspring.append(subchild)
             i += 1
         return len(offspring)
+
+
+    def iter_all_connections(self):
+        for other in self.connections['out']:
+            yield other
+        for other in self.connections['in']:
+            yield other
+            
         
 def copy(orig_nodes):
     nodes = []
