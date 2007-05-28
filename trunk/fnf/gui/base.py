@@ -22,6 +22,8 @@ class Order(AttrDict):
                       ]
     
 class Widget(object):
+    MAX_VEL = 20
+    
     def __init__(self, size, pos = None, order=None, hover_color=(120,120,250), unhover_color=(20,20,150)):
         if pos is None:
             pos = Point(0,0)
@@ -50,7 +52,8 @@ class Widget(object):
         # node for topology
         self.node = Graph.Node(self)
         # node for layout hints
-        self.layout_hint_node = Graph.Node(self)
+        self.puller_node = Graph.Node(self)
+        self.pusher_node = Graph.Node(self)
         
         self.update_font()
 
@@ -93,17 +96,45 @@ class Widget(object):
     size = property(get_size, set_size)
     
     def update_pos(self):
+        
         #self._pos += (self.target_pos - self._pos)*self.speed
-        self.accel = (self.target_pos - self._pos)*self.speed
-        for puller in self.layout_hint_node.connections['out']:
+        global_scale = 0.5
+        
+        self.accel = Point(0,0) #(self.target_pos - self._pos)*self.speed
+        for puller in self.puller_node.iter_all_connections():
             w = puller.value
-            self.accel += (w._pos - self._pos)*0.2
-        for puller in self.layout_hint_node.connections['in']:
-            w = puller.value
-            self.accel += (w._pos - self._pos)*0.2
+            if w in [n.value for n in self.node.connections['out']]:
+                continue # ignore child nodes
+            vec = (w.pos - self.pos)
+            r = vec.norm()
+            if r==0:
+                continue
+            vec = vec*r*(1/(self.scale*12.0*global_scale))
+            if vec.norm() > 15: # don't let them get too close!
+                self.accel += vec
+            else:
+                self.accel -= vec
+        for pusher in self.pusher_node.iter_all_connections():
+            w = pusher.value
+            vec = (w.pos - self.pos)
+            r = vec.norm()
+            if r==0:
+                continue
+            vec = vec*(1/r)*(self.scale*1500*global_scale)
+            if vec.norm() > 15: # don't let them get too close!
+                self.accel -= vec
+            else:
+                self.accel += vec
+
             
-        self.vel = self.accel # todo +=
-        self._pos += self.vel
+        self.vel += self.accel
+        self.vel *= 0.02 # "friction"
+        if (self.vel.norm() > self.MAX_VEL):
+            self.vel = Point.from_polar(self.vel.angle(), self.MAX_VEL)
+
+        
+        self.pos += self.vel
+        self._pos = self.pos
 
     def update_scale(self):
         self._scale += (self.target_scale - self._scale)*self.scale_speed
@@ -159,16 +190,25 @@ class Widget(object):
     def draw_connections(self, surface):
         s = self._scaled_size()
         my_pos = self._pos + Point(s.x/2, s.y/2)
+
+        # Draw "pull" connections
+        for widget_node in self.puller_node.iter_all_connections():
+            widget = widget_node.value
+            if not widget.visible:
+                continue
+            other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
+            pygame.draw.aalines(surface, (200,20,50,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
+
+        # draw topological connections
         for widget_node in self.node.connections['out']:
             widget = widget_node.value
             other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
             pygame.draw.aalines(surface, (200,220,250,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
 
-        for l in self.layout_hint_node.connections.values():
-            for widget_node in l:
-                widget = widget_node.value
-                other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
-                pygame.draw.aalines(surface, (200,20,50,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
+##         for widget_node in self.pusher_node.iter_all_connections():
+##             widget = widget_node.value
+##             other_pos = widget._pos + Point(widget._scaled_size().x/2, widget._scaled_size().y/2)
+##             pygame.draw.aalines(surface, (20,220,50,100), False, (my_pos.as_tuple(), other_pos.as_tuple()), True)
 
     @staticmethod
     @Func.cached
@@ -378,7 +418,7 @@ class App(object):
     def widgets_connected(self, w1, w2):
         return w1.node.is_connected(w2.node)
     # ________________________________
-    
+
     def _paint(self, event):
         self.screen.fill((0,0,0))
         for z_order, widget in self.z_ordered:
