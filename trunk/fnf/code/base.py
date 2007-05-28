@@ -29,13 +29,16 @@ class Instance(object):
         
         for field in cls.fields:
             if field not in self._fields_instances:
-                field_instance = self.create_field_instance(field)
-                self.set_field_instance(field, field_instance)
-                self.event_field_instance_set.send(self, field, field_instance)
+                self.new_field(field)
                 
         # TODO send this event somewhere when a new value propogates through us
         #self.event_modification_propogating = Event()
 
+    def new_field(self, field):
+        field_instance = self.create_field_instance(field)
+        self.set_field_instance(field, field_instance)
+        self.event_field_instance_set.send(self, field, field_instance)
+        
     def create_field_instance(self, field):
         field_instance = field.cls.create_instance()
         return field_instance
@@ -187,6 +190,11 @@ class Class(object):
     def __repr__(self):
         return '<%s, meta=%r, fields=%r>' % (self.__class__.__name__, self.meta, len(self.fields))
 
+    def add_field(self, field):
+        self.fields.append(field)
+        for instance in self.instances:
+            instance.new_field(field)
+        
     def create_instance(self, **kw):
         instance = Instance(self, **kw)
         self.instances.add(instance)

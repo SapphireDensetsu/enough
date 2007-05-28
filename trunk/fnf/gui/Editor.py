@@ -16,12 +16,21 @@ class Editor(App):
         self.connecting_widget = None
         self.was_typing = False
         self.drag_widget = None
+        self.moving_widget = None
 
     def update_drag(self, event):
         if self.drag_widget:
             self.drag_widget.pos = mouse_pos()
+        if self.moving_widget:
+            self.moving_widget.pos = mouse_pos()
 
     def mouse_down(self, e):
+        if e.button == 1:
+            self.moving_widget = self.hovered_widget
+        else:
+            self.mouse_connector_down(e)
+
+    def mouse_connector_down(self, e):
         if not self.hovered_widget:
             return
         self.lock_positions()
@@ -40,6 +49,12 @@ class Editor(App):
         self.connect_widgets(w1, w2)
         
     def mouse_up(self, e):
+        if e.button == 1:
+            self.moving_widget = None
+        else:
+            self.mouse_connector_up(e)
+
+    def mouse_connector_up(self, e):
         if not self.drag_widget:
             return
         if self.hovered_widget == self.drag_widget:

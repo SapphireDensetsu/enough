@@ -183,7 +183,9 @@ class CodeEditor(gui.Editor):
                                                                add_widget_handler=self.add_widget,
                                                                del_widget_handler=self.remove_widget)
 
+
         self.set_main_widget(self.top_level_widget)
+        self.clipboard_cls = None
 
     def set_main_widget(self, widget):
         self.main_widget = widget
@@ -240,6 +242,14 @@ class CodeEditor(gui.Editor):
         if e.mod & pygame.KMOD_CTRL:
             if e.key == pygame.K_BACKSPACE:
                 self.main_widget.disconnect_subfield(self.hovered_widget)
+            elif e.key == pygame.K_c:
+                if self.hovered_widget:
+                    self.clipboard_cls = self.hovered_widget.instance.cls
+            elif e.key == pygame.K_v:
+                if self.clipboard_cls:
+                    self.main_widget.instance.cls.add_field(code.base.Field(self.clipboard_cls,
+                                                                            meta=dict(name=self.clipboard_cls.meta['name'])))
+                
                 
         else:
             if not self.hovered_widget:

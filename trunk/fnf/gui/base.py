@@ -6,6 +6,8 @@ from Lib import Graph, Func
 
 import layouts
 
+import time
+
 def mouse_pos():
     x,y = pygame.mouse.get_pos()
     return Point(x,y)
@@ -103,13 +105,16 @@ class Widget(object):
         self.accel = Point(0,0) #(self.target_pos - self._pos)*self.speed
         for puller in self.puller_node.iter_all_connections():
             w = puller.value
+            this_scale = global_scale
             if w in [n.value for n in self.node.connections['out']]:
-                continue # ignore child nodes
+                # Decrease forces!
+                this_scale = global_scale*2.0
+                
             vec = (w.pos - self.pos)
             r = vec.norm()
             if r==0:
                 continue
-            vec = vec*r*(1/(self.scale*12.0*global_scale))
+            vec = vec*r*(1/(self.scale*12.0*this_scale))
             if vec.norm() > 15: # don't let them get too close!
                 self.accel += vec
             else:
@@ -296,7 +301,7 @@ def find_widget_of_near_order(widgets, level, sublevel):
         
     
 class App(object):
-    def __init__(self, width=800, height=600, flags=0):
+    def __init__(self, width=800, height=600, flags=0, read_event_log_file=None):
         self.width = width
         self.height = height
         pygame.init()
@@ -324,6 +329,14 @@ class App(object):
             
         self._dont_layout = False
         self._sublevel = 0
+
+        if not read_event_log_file:
+            self._log_start = time.time()
+            self._event_logfile = open('event.log', 'wb')
+        else:
+            self._log_start = None
+            self._event_logfile = None
+            self.read_log(open(read_event_log_file, 'rb'))
         
     def post_event(self, event):
         pygame.event.post(event)
@@ -397,8 +410,19 @@ class App(object):
             pygame.event.pump()
             self.handle_events()
 
+    def log_events(self, events):
+        pass
+##         if not self._event_logfile:
+##             return
+        
+##         import pickle
+##         pickle.dump(time.time() - self._log_start, self._event_logfile)
+##         pickle.dump(events, self._event_logfile)
+        
+        
     def handle_events(self):
         events = pygame.event.get()
+        self.log_events(events)
         if not self._hover_only_on_motion:
             self._update_hover()
         self._paint(None)
