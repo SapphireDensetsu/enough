@@ -313,7 +313,8 @@ class App(object):
         self.stop = False
         self.pygame_handlers = {}
         self.scale = 1
-
+        self._frame_counter = 0
+        
         self.hovered_widget = None
         self._hover_only_on_motion = False
 
@@ -412,6 +413,7 @@ class App(object):
 
     def log_events(self, events):
         pass
+
 ##         if not self._event_logfile:
 ##             return
         
@@ -448,6 +450,8 @@ class App(object):
         for z_order, widget in self.z_ordered:
             widget.paint(self.screen)
         pygame.display.flip()
+        pygame.image.save(pygame.display.get_surface(), 'img%4.4d.BMP' % (self._frame_counter))
+        self._frame_counter+=1
 
 
     def _key_up(self, e):
