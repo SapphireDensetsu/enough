@@ -16,11 +16,11 @@ class Node(object):
 
     def disconnect(self, other):
         was_connected=False
-        if other in self.connections['out']:
+        if other in self.connections['out'][:]:
             other.connections['in'].remove(self)
             self.connections['out'].remove(other)
             was_connected=True
-        if other in self.connections['in']:
+        if other in self.connections['in'][:]:
             other.connections['out'].remove(self)
             self.connections['in'].remove(other)
             was_connected=True
@@ -29,10 +29,10 @@ class Node(object):
             raise NodeWasntConnected(other)
 
     def disconnect_all(self):
-        for other in self.connections['out']:
+        for other in self.connections['out'][:]:
             other.connections['in'].remove(self)
             self.connections['out'].remove(other)
-        for other in self.connections['in']:
+        for other in self.connections['in'][:]:
             other.connections['out'].remove(self)
             self.connections['in'].remove(other)
             
