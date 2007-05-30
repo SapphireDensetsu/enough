@@ -43,6 +43,9 @@ class InstanceWidget(gui.Widget):
         # A class-wide list
         self.all_widgets.append(self)
 
+        # temp hack
+        self._making_float = False
+
     @classmethod
     def from_code_class(cls, code_class, **kw):
         return cls(code_class.create_instance(), **kw)
@@ -148,6 +151,12 @@ class InstanceWidget(gui.Widget):
         sf = self.instance.subfield_hierarchy_by_instance(subfield_widget.instance)
         self.instance.cls.split(sf)
 
+    def set_visible(self, visible):
+        self.visible = visible
+        for field_widget in self.field_instances_by_field_widgets.keys():
+            field_widget.set_visible(visible)
+        
+        
     def handle_key(self, key):
         i = self.instance
         if len(self.text_lines) < 2:
@@ -157,21 +166,41 @@ class InstanceWidget(gui.Widget):
 
         if key == pygame.K_BACKSPACE:
             t = t[:-1]
+            c = ''
         else:
-            t += chr(key)
-            
+            c = chr(key)
         if i.cls == code.builtins.fnf_number:
             if not t:
                 t = '0'
+            if c:
+                if c in '-.':
+                    pass
+                else:
+                    if self._making_float:
+                        self._making_float = False
+                        t += '.'
+                    t += c
+
             try:
                 value = float(t)
             except:
                 return
             if value == int(value):
                 value = int(value)
+
+            if c == '-':
+                value = -value
+            elif c == '.':
+                self._making_float = True
             i.meta['value'] = value
             i.self_modified(i)
+        elif i.cls == code.builtins.fnf_string:
+            if c in string.printable:
+                t += c
+                i.meta['value'] = t
+                i.self_modified(i)
         else:
+            t += c
             self.set_text_line(0, t)
         
 
@@ -184,13 +213,19 @@ class CodeEditor(gui.Editor):
                                                                del_widget_handler=self.remove_widget)
 
 
-        self.set_main_widget(self.top_level_widget)
+        self.reset_main_widget()
         self.clipboard_cls = None
 
     def set_main_widget(self, widget):
         self.main_widget = widget
-        widget.visible = False
+        for w in self.widgets:
+            w.set_visible(False)
+        self.main_widget.set_visible(True)
+        widget.visible = False # Not the children,only parent
 
+    def reset_main_widget(self):
+        self.set_main_widget(self.top_level_widget)
+        
     def field_widgets_of_widget(self, widget):
         for f in widget.iter_field_widgets():
             yield f
@@ -242,15 +277,34 @@ class CodeEditor(gui.Editor):
         if e.mod & pygame.KMOD_CTRL:
             if e.key == pygame.K_BACKSPACE:
                 self.main_widget.disconnect_subfield(self.hovered_widget)
+            elif e.key == pygame.K_RETURN:
+                if self.hovered_widget:
+                    self.set_main_widget(self.hovered_widget)
+##             elif e.key == pygame.K_ESCAPE:
+##                 if self.hovered_widget:
+##                     self.reset_main_widget()
+            elif e.key == pygame.K_n:
+                if self.hovered_widget:
+                    m = self.hovered_widget
+                else:
+                    m = self.main_widget
+                c = code.base.Class(meta=dict(name='Class'))
+                m.instance.cls.add_field(code.base.Field(c,
+                                                         meta=dict(name=c.meta['name'])))
             elif e.key == pygame.K_c:
                 if self.hovered_widget:
                     self.clipboard_cls = self.hovered_widget.instance.cls
             elif e.key == pygame.K_v:
                 if self.clipboard_cls:
-                    self.main_widget.instance.cls.add_field(code.base.Field(self.clipboard_cls,
-                                                                            meta=dict(name=self.clipboard_cls.meta['name'])))
+                    if self.hovered_widget:
+                        m = self.hovered_widget
+                    else:
+                        m = self.main_widget
+                    m.instance.cls.add_field(code.base.Field(self.clipboard_cls,
+                                                             meta=dict(name=self.clipboard_cls.meta['name'])))
                 
-                
+        elif e.key == pygame.K_ESCAPE:
+            self.reset_main_widget()
         else:
             if not self.hovered_widget:
                 return

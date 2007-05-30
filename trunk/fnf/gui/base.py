@@ -397,7 +397,7 @@ class App(object):
         
     def handle_event(self, e):
         if e.type is pygame.QUIT: self.quit()
-        elif e.type is pygame.KEYDOWN and e.key == pygame.K_ESCAPE: self.quit()
+        #elif e.type is pygame.KEYDOWN and e.key == pygame.K_ESCAPE: self.quit()
 
         if e.type in self.pygame_handlers:
             for handler in self.pygame_handlers[e.type]:
@@ -450,6 +450,7 @@ class App(object):
         for z_order, widget in self.z_ordered:
             widget.paint(self.screen)
         pygame.display.flip()
+
         #pygame.image.save(pygame.display.get_surface(), 'img%4.4d.BMP' % (self._frame_counter))
         self._frame_counter+=1
 
