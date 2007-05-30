@@ -4,6 +4,7 @@ from base import make_magic_class, Field, MagicClass, make_magic_value_class, Cl
 
 fnf_number = make_magic_value_class('fnf_number', 0, meta={'name': 'number'})
 fnf_bool = make_magic_value_class('fnf_bool', False, meta={'name': 'bool'})
+fnf_string = make_magic_value_class('fnf_string', '', meta={'name': 'string'})
 
 binary_number_fields = (Field(fnf_number, dict(name='a')), Field(fnf_number, dict(name='b')), Field(fnf_number, dict(name='=')))
 
@@ -74,7 +75,7 @@ def mul(a, b, r):
 def field_of_cls(cls):
     return Field(cls, dict(name=cls.meta['name']))
 
-builtins_cls = Class(meta=dict(name='builtins'), fields=[field_of_cls(cls) for cls in (fnf_number, fnf_bool, add, mul)])
+builtins_cls = Class(meta=dict(name='builtins'), fields=[field_of_cls(cls) for cls in (fnf_number, fnf_bool, fnf_string, add, mul)])
 
 
 
