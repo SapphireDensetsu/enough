@@ -1,3 +1,14 @@
+* When returning a new generated object, that depends on other
+   subobjects, the new obj is set locally. However, in the 'add'
+   example setting = sets it, but if we now request 'a' or 'b',
+   they will still return the old value because they have not been
+   replaced to reflect the new value of =
+  * Solutions:
+    1. objects are never stored locally as subobjects?
+    2. if a local subobject is "set" then we automatically call
+       request on all other subobjects?
+
+# FUTURE WORK
 * Only instances should exist, no such thing as class. A "class" is an
    instance maker that possibly keeps track of its instances. The new name for "instances" is objects. 
 
