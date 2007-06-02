@@ -1,0 +1,16 @@
+
+* make sure propogation works ok in Instances, up (out) and down (in)
+* decide whether changine an item's metadata is a good way to work,
+   maybe we should replace it's instnace instead (especially in
+   fnf_number and the like)?
+* implement the editing 'stack' of entering into widgets and exiting
+* BUGS:
+  * when creating a new class, and then "linking" some fields, copying
+   the class yields a copy where the fields are not linked. This
+   happens because the editor always links the context of the current
+   main widget. So to link inside a class we need to make that class
+   the main widget for the time being.
+  * when entering a widget (CTRL+RETURN) we should vanish away all
+   other widgets. This can be done by setting visible=False to ALL
+   widgets, and then making a recursive function for a InstanceWidget
+   that sets visible to true.
