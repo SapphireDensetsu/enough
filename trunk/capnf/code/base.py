@@ -40,6 +40,9 @@ class ModelObject(object):
             # depend on other subobjects of self
             return self.subobjects_by_name[name]
 
+        return self._request_subobject(name, requester)
+
+    def _request_subobject(self, name, requester):
         if name in self.request_suppliers:
             # TODO manage relation between request suppliers and generated object - when to use which?
             # Right now we always use the request supplier if he exists
@@ -79,7 +82,6 @@ class ModelObject(object):
         # TODO maybe we should prevent the set_object if a supplier eixsts
         if name in self.request_suppliers:
             self.remove_request_supplier(name)
-
 
     def remove_subobject(self, name, obj):
         # TODO send an event?
