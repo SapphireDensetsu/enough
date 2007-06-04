@@ -22,4 +22,4 @@ Fundamental ideas we wish to explore and implement.
  * [DifferentialComputing Differential Computing]
  * [UnifiedInterface Unified Interface]
  * [LazyEvaluation Lazy Evaluation] and [Promises]
- * [IntelligentSwapping] (recomputability)
+ * [IntelligentSwapping Intelligent Swapping] (recomputability)
