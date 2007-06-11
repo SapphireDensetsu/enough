@@ -1,10 +1,26 @@
-#summary Proper Memory Management
+#summary Memory Management
 
 = Introduction =
 
-This relates to [OrthogonalPersistence Orthogonal persistence].
+Traditionally, there were two main approaches to memory management:
+ o Manual memory management of a heap, and (semi-)automatic management of the stack.
+ o Automatic memory management of both heap and stack.
 
-= Details =
+== Manual Memory Management ==
 
+In "lower-level" languages (e.g C, C++, Assembly, etc) memory was managed manually. 
+
+Memory was typically divided into a "stack" and a "heap".
+
+The stack was used for allocations that use a LIFO-order.  LIFO allocations are much easier to manage, as you can just move a pointer forwards to allocate and backwards to free. Thus, each thread was allocated a stack, in which it could allocate data. The calls themselves (return addresses, local variables and arguments) were also allocated on this same stack, so all stack allocations had to be freed with a return from the allocating function.
+
+The heap was used for random-ordered allocations.  The heap could allocate any sized object at any time (resource constraints applied, ofcourse), and can free any allocated object at any time.  Freed objects theoretically allowed the space to be reused immediately, but objects could typically not be moved, so memory fragmentation often prevented use of freed space.
+
+Traditionally, memory was also allocated on disk, in the form of files, but this is not important for this discussion.
+
+== Automatic Memory Management ==
+
+
+= TODO =
 Write about non-running programs.
 Write about recalculating instead of swapping in/out.
