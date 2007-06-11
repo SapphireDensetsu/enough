@@ -38,10 +38,6 @@ When running out of real memory, or arbitrarily, actions can be purged from the 
 
 Note that the constants (Current Version and Action List) are stored in "Memory", but that does not mean RAM, which means much larger constraints are in effect.
 
-== Freeing memory ==
-
-Memory can be freed
-
 = Recomputation costs =
 
 Every item in the cache can be recomputed.  Recomputation costs CPU time and potentially other resources.  When each object is computed into the cache, measurements of the costs can be stored, and used as a good estimate for the costs of recomputing that object in the future.  Objects that are cheaper to recompute can be more cheaply purged from the cache.
