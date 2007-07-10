@@ -1,5 +1,8 @@
 #summary Various contemplations about programming
 
+== World Library ==
+* with LiveProgramming + theorem provers or other intelligent tools, we can use the internet to find similair code according to structure, types, requirements, input/output relations, etc.
+* use something like imagesynth (tm) (c) (etc) to find similar code to yours, and explore the world of software in many directions according to criterions (types, requirements, etc.)
 
 == Different models of abstractions ==
 This sections deals with MultipleSemantics (we should put the results of this discussion in that page).
