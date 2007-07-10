@@ -11,7 +11,7 @@ A common headache in software (or any other) engineering originates from depende
 
 The eventual outcome of a requirement is some feature of the system being created. Thus, requirements _depend_ on features.
 
-Obviously, *requirements are a dependency tree*. If this tree is not documented and managed, mistakes will happen. Someone might cancel a requirement without remembering to cancel all requirements that depend on it, leading to unneccesary work. A much worse scenario is the opposite - cancelling a requirement that is still caused by another existing one. 
+*Requirements are usually a dependency tree*, or a graph in a worse case. If this tree is not documented and managed, mistakes will happen. Someone might cancel a requirement without remembering to cancel all requirements that depend on it, leading to unneccesary work. A much worse scenario is the opposite - cancelling a requirement that is still caused by another existing one. 
 
 In critical systems the managers hopefully have enough sense to foresee this problem. To solve it, a software "requirements management system" is used (and it must be properly enforced). Such a system may supply features that are specific to requirements management such as easy documentation, collaboration, etc.
 
