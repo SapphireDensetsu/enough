@@ -1,4 +1,5 @@
-#summary Definition and applications
+#summary Letting programs do only what they're supposed to
+#labels BuzzWord
 
 = What are Capability Systems? =
 
@@ -49,3 +50,6 @@ Satisfying the above requirements, however, should not be difficult, as long as 
 See the [http://code.google.com/p/enough/ main project page] for more.
  * [http://www.erights.org/talks/thesis/index.html Robust Composition]: Towards a Unified Approach to Access Control and Concurrency Control, dissertation by Mark Samuel Miller, Johns Hopkins University, May 2006
  * [http://wiki.erights.org/wiki/Walnut E in a Walnut] by Marc Stiegler
+
+= More resources =
+ * [http://www.skyhunter.com/marcs/narratedIntros.html Narrated Intro] by Marc Steigler (from E)
