@@ -30,14 +30,19 @@ In a real-world system, that would mean that the user operation of designating a
 
 = Limited access to objects via capabilities =
 Capabilities also allow control of permissions with much finer granularity. One of these control methods are called _facets_. A facet is a proxy to an object, that only allows a subset of the functionality. Instead of giving a capability to an object, one can give a capability to a facet. The facet may later be nullified to revoke the capability, or the permissions may be changed dynamically.
+
 This allows any object holder to create a capability to a limited-subset of the object, without requiring any secure code in the operating system to be written for those specific restrictions.
+
+Here is a simple example. Assume you have a document. You wish to allow access to the document but only to a specific portion. With current security technologies that is impossible - you have to replicate the document and restrict the permissions on the copy or allow access to the full document, because the document is a single file. Capabilities do not place such artificial restrictions on the security management. With capabilities, you would simply create a _facet_ of the document that represents the part you want to allow. You pass that facet around to people and that portion of the document is all they can reference. Also, using proxies of facets, you may even modify _which_ part or even which document they will access. You can modify the facet's target, post-distribution, to point to a different document. Or cause it to be active only during specific hours. The important fact is that you don't have to worry about specific lists for each resource - instead of managing resources, you are managing authorities.
 
 For more on capability patterns, see [http://wiki.erights.org/wiki/Walnut/Secure_Distributed_Computing/Capability_Patterns E in a walnut - Capability Patterns]
 
 = Capabilities in Safe Languages =
 An interesting property of safe languages, is that forging references to objects is not possible. This means that object references are very similar to capabilities.
 However, various safe languages have various problems that prohibit their references from being real capabilities.
+
 For example, Java allows casting a reference up and down freely, which allows enhancing access to an object to the full subclass with all of the methods available. This is workaround-able by creating a _facet_.
+
 Another example is Python: It allows free access to the referred object, without limitation. This includes all of the object's internal implementation details. This makes facets impossible to implement in Python.
 
 == Requirements of a safe language ==
@@ -49,6 +54,7 @@ In order for a safe language to support capability security, it must support:
   * No global scopes from which to pry references to random objects.
 
 The above requirements are not satisfied by most safe languages, and therefore most are not suitable for implementing capability security.
+
 Satisfying the above requirements, however, should not be difficult, as long as it is taken as a design requirement through the entire design process of the language.
 
 = Primary references =
