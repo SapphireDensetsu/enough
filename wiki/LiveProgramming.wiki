@@ -1,5 +1,5 @@
 #summary Editing the live program instead of dead text
-#labels BuzzWord
+#labels BuzzWord,Featured
 
 = Background =
 Live programming is a *fundamental* idea in Enough.
