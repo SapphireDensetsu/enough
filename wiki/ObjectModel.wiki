@@ -1,5 +1,7 @@
 #summary The object model of the entire world.
-#labels Phase-Design,Featured,InProgress
+#labels Phase-Design,InProgress
+
+*This represents our old ideas. A new document will be written soon.*
 
 = Credits =
 
