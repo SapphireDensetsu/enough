@@ -1,6 +1,8 @@
 #summary Live Programming or Semantic Editing
+#labels BuzzWord
 
 = Background =
+Live programming is a *fundamental* idea in Enough.
 
 Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]. It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
 
