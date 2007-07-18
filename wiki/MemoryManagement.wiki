@@ -3,8 +3,8 @@
 = Introduction =
 
 Traditionally, there were two main approaches to memory management:
- o Manual memory management of a heap, and (semi-)automatic management of the stack.
- o Automatic memory management of both heap and stack.
+ * Manual memory management of a heap, and (semi-)automatic management of the stack.
+ * Automatic memory management of both heap and stack.
 
 == Manual Memory Management ==
 
