@@ -1,4 +1,5 @@
 #summary Short review of the concepts of syntax and semantics
+#labels GeneralArticle
 
 = Syntax and semantics =
 Every language (not just programming) has several seperate levels or layers, two of which are: syntax and semantics. The syntax layer is the "visible" part of the language: it defines how you write or say what you mean. The semantic layer is the part that determines the underlying structure of the language. 
