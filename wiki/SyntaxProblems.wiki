@@ -40,6 +40,9 @@ After a textual source is written, it is very hard to modify the structure of th
   * If we want to move a whole set of objects to a different module, we will have to cut and paste the source manually. The complex semantic model encoded by the text contains a lot of cross-referencing, and because of the textual representation, these references must be encoded as unique names within a [scope]. Both the uniqueness and the scope tend to break when textual representation of code is moved around.
   * If we want to change the name of an object, we will have to search and replace for a textual string, usually through many files, and make sure we only modify those cases where the name actually refers to our object and not to a different one with the same name. As mentioned, there are "refactoring" tools that can ease this task. They can't be perfect - they would need to parse the text in order to know where it is possibly correct to change the name and where it isn't, and even this wouldn't be entirely correct. The tool can not know if the name refers to the same object or to a semantically similar one. To make the problem worse, virtually all of the available source control/versioning tools are unaware of the semantics encoded by the text, so that even if the rename is done perfectly, it may still break when a marge occurs between the work of different programmers.
 
+= Current solutions are ad-hoc =
+The currently abundant solutions to the problems mentioned only scratch the surface. They usually treat problem seperately, and solve only one problem, and only partially. Also, because of the overhead - every developer of a new code tool has to solve these problems again - people develop less tools and less advanced tools.
+
 = Summary =
 Syntax imposes a lot of problems, and we believe they can be solved by what we call [LiveProgramming Live Programming or Semantic Editing].
 
