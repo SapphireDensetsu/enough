@@ -10,20 +10,18 @@ Live programming is proposed as a solution to the [SyntaxProblems Problems of Sy
 In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
 Instead, a better model is to use a semantic editor that edits the semantic model directly. This has many implications.
 
-= Disadvantages of a semantic editor =
-A semantic editor would be specific to one language's semantics, while a normal text editor can edit all text and thus edit programs of all languages.
-In practice, though, editors are already semantic-aware in an attempt to help developers, using syntax highlighting and various aids that try to parse the program.  Virtually noone uses generic text-editors to edit programs anymore, and most use language-specific editors (like a language mode in emacs or vi) already.
+= Advantages =
 
-= A semantic editor is simpler =
+== A semantic editor is simpler ==
 Since it does not have to parse and manipulate text in order to aid the programmer, it can actually be much simpler than today's code editors.  The writers of semantic editors can thus focus on adding features that aid the programmer rather than working on parsing and manipulating text.
 
-= The program is runnable at all times = 
+== The program is runnable at all times ==
 By editing the program semantics and not the syntax, the program can have correct semantics at all times. This means it is always runnable, and thus more informative feedback about the program can be given to the programmer. Real-time results of the current code can be shown to the programmer incrementally. This enables [ExampleBasedProgramming Example Based Programming].
 
-= References are real and not by names =
+== References are real and not by names ==
 Instead of encoded programs storing cross-references between objects by names, the cross-references will be stored as real references, which are not broken as names are modified.  The programmer can choose an object from the existing objects via the environment's GUI interface (either by drag&drop, or by a semantic-aware name-based query). Due to semantic editing, lexical scopes are unnecessary and the reference to the actual object can be shown graphically and does not need to be resolved.
 
-= Dynamic Representation =
+== Dynamic Representation ==
 One of the reasons there are so many different languages, many of which share their semantic models, is that multiple syntaxes are desirable in existing textual language. The reason is that different programs benefit from being represented in different ways.
 More evidence are the tools that try to parse programs and generate flow charts and other representations that help read the program.
 A big advantage of LiveProgramming is that the semantic model editor is a GUI, and as such it can expose the program's semantic model in many ways (as a flow chart, as nested expressions, etc). This not only allows to view the same program in multiple ways, according to the current need, but also to *edit* it within that view.
@@ -31,21 +29,35 @@ A big advantage of LiveProgramming is that the semantic model editor is a GUI, a
 For example, in order to review that the program has proper error handling, one might want to view it as a flow-chart that includes the error handling "jumps". After doing this, and perhaps fixing some of the elements, he can switch back to expression view to review that the expressions are correct. Later, the user may want to verify that the type restrictions of the function are correct, so he can choose to display/hide the types that clutter his view.
 Once a single specific syntax is no longer a requirement, one can view and edit the same program in a multitude of ways *at the same time*.
 
-= More powerful code meta-data =
+== More powerful code meta-data ==
 Code meta-data is extra information about the code that does not directly affect the way the program runs, but adds information about the program that helps to run it faster or verify assumptions about the code.
+
 Today, there is a trade-off between the kinds and amounts of meta-data code can contain (the verifiability and speed of the code), and the amount of clutter this adds to the textual representation of the program, as well as programmer effort in specifying this information textually.
+
 A lot of languages choose different points in this trade-off. Some, like Python, choose the far end of no meta-data, such that the syntax is uncluttered, but no meta-data to verify the program or make it run faster is possible.  Python decorators may change this to allow some optional meta-data to be specified, at a loss of some clutter.
 C++, as another example, chooses another point where all typing meta-data is specified explicitly in the textual representation. This point requires a lot of extra textual declarations and extra text in the code.
+
 Other languages choose a middle ground with less clutter where only some of the types are specified explicitly and others are inferred.
 
 Semantic Editing and Live Programming allow avoiding this trade-off altogether while gaining both the meta-data, and lack of clutter.  Programmer effort in specifying the meta-data may still exist, but due to the semantic awareness of the editor, this effort can also be significantly reduced. The Semantic Editor can show/hide the extra meta-data at the user's will, making the clutter a non-issue. Static typing information can be specified by the user but with extra inference and aid from the semantic editor, greatly reducing the work by the user.
 
 Once freed from the burden of having to represent the program via uncluttered syntax, unlimited extra meta-data can be added to the code. As an example, meta-data that proves the correctness of the code to the specifications can be added, allowing for code that is provably correct and allowing to eliminate some time-consuming run-time checks as well.
 
-= Editing vs Running =
+== Editing vs Running ==
 Traditionally, editing the program is done by editing its textual representation, while running the program is done by executing a resulting executable.
+
 Via semantic editing, the program is always executable while it is being edited, and does not need to be explicitly "run" as it is always running.  In order to "run" it with different inputs, one just changes the inputs and the outputs are updated accordingly.
 This, along with OrthogonalPersistence unifies 3 of the program's different representations ("source code", "executable" and "running form") into one form that is both editable and running. It also allows the developer and user of the program to share one UnifiedInterface to accessing the program. This UnifiedInterface makes every developer of a program a user, and every user of a program a developer of that program.
+
+= Disadvantages =
+A semantic editor would be specific to one language's semantics, while a normal text editor can edit all text and thus edit programs of all languages.
+
+In practice, though, editors are already semantics-aware (or syntax-aware) in an attempt to help developers, using syntax highlighting and various aids that try to parse the program.  Virtually no one uses generic text-editors to edit programs anymore, and most use language-specific editors (like a language mode in emacs or vi) already.
+
+= Live programming is a platform =
+Many people argue that visual programming is only "nice" and may be cumbersome, and that it does not represnt any fundamental change in the way we program. *Live* programming is not only (or even neccesarily) visual. It means that program is alive while it is being edited. The revolutionary power of live programming is that it serves as a *platform for many new capabilities that are otherwise impossible.* Only after we begin using live programming, will we begin to discover the full potential. But there are many ideas that are already apparent.
+
+
 
 = References =
 ==== Recent, informal, or reviewing references ====
