@@ -21,7 +21,6 @@ Here is a short list of ideas that harness live programming. Most of these are p
  * *Intelligent tools* such as automated theorem proving - the editor will prove things about your code. This includes compliance to certain requirements. Because the editor always understands the code, it is much easier to implement (but still hard). An even more advanced idea is that the coding environment will suggest modifications to the code (optimizations, minimizations, changes that increase coherence of the code) or even automatically find alternative implementations on the internet, compare them to yours, and suggest improvements.
  * *"Code surfing"* - the abilitiy to search the internet for code that has the same semantic structure or performs similar tasks. You may start by specifying the required interface, such as "takes picture, returns picture with different size". In addition you will supply "requirements" that can not be expressed today on textual code, such as "The new image contains data created using all the pixels of the input image." The "live code" search engine will generically be able to understand such requirements.
 
-=== Edit the Semantics, not the Syntax ===
 In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
 Instead, a better model is to use a semantic editor that edits the semantic model directly. This has many implications.
 
