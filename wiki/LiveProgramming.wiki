@@ -1,4 +1,4 @@
-#summary Live Programming or Semantic Editing
+#summary Editing the live program instead of dead text
 #labels BuzzWord
 
 = Background =
