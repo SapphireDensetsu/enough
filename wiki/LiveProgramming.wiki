@@ -8,10 +8,18 @@ Live programming is proposed as a solution to the [SyntaxProblems Problems of Sy
 
 = What is "Live Programming?" =
 Live programming refers to a new way to edit code.
- # You are editing the program itself and not text that represents it. Therefore syntax mistakes are impossible, and the program is always runnable.
- # The editor you are using, understands everything - because it has access to the semantic structure of the program.
- # The code can be represnted in multiple ways. Besides viewing the code as text, you can view it graphically in many different ways. Even for text you may view (and edit) the code
-in any "syntax language" you want. This is because the editor understands the meaning of the code and can express that meaning in any form, with minor effort.
+ # *Editing the program itself and not text* that represents it. Therefore syntax mistakes are impossible, and the program is always runnable.
+ # *The editing environment understands your program completely* - because it has access to the semantic structure of the program.
+ # *The code can be edited in multiple representations.* Besides viewing the code as text, you can view it graphically in many different ways. Even for text you may view (and edit) the code in any "syntax language" you want. This is because the editor understands the meaning of the code and can express that meaning in any form, with minor effort.
+
+Here is a short list of ideas that harness live programming. Most of these are possible also with today's "dead" programming, but are significantly easier with live programming.
+ * Example based programming - while you code, the environment shows you the result of your function. You supply example input and see the real-time output, which changes as you modify the code. Just this simple idea can help prevent many bugs.
+ * Increased modularity - refactoring will become an every-day activity, because it will be very easy. For example, all you will need to do is "grab" that function and pull it out of its current location. The environment will automatically show you what else needs to be changed, and change it. There is no performance hit because the enviornment does not have to perform a text-based search of the whole program. It just follows the existing live connections between objects in the program.
+ * Easier finding of relevant features or code - for example, to find where the keyboard shortcuts are controlled, you may start from a representation of the program's relation to I/O. Of the few input objects, you will select the keyboard and gradually zoom-in to find the code you want.
+ * Easier understanding of the code - the environment will display the code differently according to the level of abstractness you want. You may choose to see an outline of the data flow in the program, zoom-in to a specific region, view that code using different representations, etc.
+ * Smarter source control - merging code is much easier when you understand the meaning of each change. Today, source control systems only see the text, and barely understand the meaning of each textual change.
+ * Automated theorem proving - the editor will prove things about your code. This includes compliance to certain requirements. Because the editor always understands the code, it is much easier to implement (but still hard). An even more advanced idea is that the coding environment will suggest modifications to the code (optimizations, minimizations, changes that increase coherence of the code) or even automatically find alternative implementations on the internet, compare them to yours, and suggest improvements.
+ * "Code surfing" - in the new world of computing, you will be able to search the internet for code that has the same semantic structure or performs similar tasks.
 
 === Edit the Semantics, not the Syntax ===
 In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
@@ -34,6 +42,7 @@ More evidence are the tools that try to parse programs and generate flow charts 
 A big advantage of LiveProgramming is that the semantic model editor is a GUI, and as such it can expose the program's semantic model in many ways (as a flow chart, as nested expressions, etc). This not only allows to view the same program in multiple ways, according to the current need, but also to *edit* it within that view.
 
 For example, in order to review that the program has proper error handling, one might want to view it as a flow-chart that includes the error handling "jumps". After doing this, and perhaps fixing some of the elements, he can switch back to expression view to review that the expressions are correct. Later, the user may want to verify that the type restrictions of the function are correct, so he can choose to display/hide the types that clutter his view.
+
 Once a single specific syntax is no longer a requirement, one can view and edit the same program in a multitude of ways *at the same time*.
 
 == More powerful code meta-data ==
