@@ -7,7 +7,7 @@
 
 Fundamental ideas we wish to explore and implement.
 
- * [LiveProgramming Live Programming - *a cornerstone of Enough*
+ * [LiveProgramming Live Programming] - *a cornerstone of Enough*
   * [MultiMetaProgramming Multi-Meta Programming]
    * [StaticAnalysis Static analysis] and [StaticVerification verification]
   * Integrated [MultipleSemantics Multiple Semantics]
