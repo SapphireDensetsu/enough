@@ -1,4 +1,5 @@
 #summary Why textual programming is a bad thing
+#labels LameComputerWorld
 
 = Background =
 Before we start, it is recommended to read about [SyntaxAndSemantics Syntax and Semantics].
