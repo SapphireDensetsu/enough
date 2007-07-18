@@ -1,4 +1,5 @@
 #summary What's wrong with ACLs
+#labels LameComputerWorld
 
 = Background: What is ACL? =
 
@@ -22,7 +23,10 @@ There are fundamental problems with ACLs. Those manifests in several ways:
 
 = The Credit Card Metaphor =
 Finally, the problem can be described with a metaphor: ACLs are akin to giving out your credit card number to everybody, and then having a list in the bank managing who is and who is not allowed to charge your credit card.
+
 Sounds stupid, right? Nevertheless, this is how all our operating systems work.
+
+(In fact, the real credit card system _does_ work this way, because every time you buy something they get your credit card number and can charge you as much as they want, any time they want. This is why credit card fraud is possible.)
 
 == In a world of capabilities ==
 Capability systems mean that you simply never give away your credit card number. You only give it to someone if you want to let them charge your account. If you didn't give it to someone, they can't charge you, and this does not depend on the correctness of any list.
