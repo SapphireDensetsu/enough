@@ -3,6 +3,8 @@
 
 = What are Capability Systems? =
 
+In short: capabilities mean *granting authority for specific tasks* instead of the currently used opposite - preventing authority for everything else.
+
 Wikipedia seems to have a good entry: [http://en.wikipedia.org/wiki/Capabilities]
 
 = Mainstream security =
@@ -10,9 +12,12 @@ The mainstream in security these days is using ACLs to validate access to object
 [WhyACLsAreBad ACLs are a bad way to implement security].
 
 = Security via Capabilities =
-Capability systems are systems in which an object can not perform operations on other objects without the proper "capability". This capability can be described as a reference. If you don't have a reference to an object, you can't do anything with that object.
+As mentioned before, capabilities could be summarized as granting authority for specific tasks instead of preventing authority for everything else. This means that if someone (or a program) needs to do something, it will receive the authority to do only that, and no more. Today, most systems use the opposite - they start from allowing virtually everything and then they restrict specific things.
 
 With capabilities, no "security permission checks" are necessary. If you don't explicitly give the application references to internet connections and your secret documents, they can't even _express requests_ to operate on them.
+
+In terms of _references_, capability systems are systems in which an object can not perform operations on other objects because it can not know how to reference them. Thus, a capability can be described as a reference. If you don't have a reference to an object, you can't access it.
+
 
 = Unification of designation and authority =
 In today's world, objects are designated by programs via resource identifiers, which are overt and forgeable. A program designates an object, and the operating system verifies that access is allowed against the ACL.  With capabilities, the only way to designate an object is via a capability. A capability also represents the authority to access that object. Thus, the designation of an object and the authority to access that object are united into one artifact: The capability.  This way, a program only contains a list of objects it can access, without any reverse list to verify it.
