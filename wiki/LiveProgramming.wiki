@@ -6,7 +6,14 @@ Live programming is a *fundamental* idea in Enough.
 
 Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]. It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
 
-= Edit the Semantics, not the Syntax =
+= What is "Live Programming?" =
+Live programming refers to a new way to edit code.
+ # You are editing the program itself and not text that represents it. Therefore syntax mistakes are impossible, and the program is always runnable.
+ # The editor you are using, understands everything - because it has access to the semantic structure of the program.
+ # The code can be represnted in multiple ways. Besides viewing the code as text, you can view it graphically in many different ways. Even for text you may view (and edit) the code
+in any "syntax language" you want. This is because the editor understands the meaning of the code and can express that meaning in any form, with minor effort.
+
+=== Edit the Semantics, not the Syntax ===
 In most of today's languages, one edits text characters in a text file, that are later interpreted into semantic models (typically trees with a lot of cross-references).
 Instead, a better model is to use a semantic editor that edits the semantic model directly. This has many implications.
 
