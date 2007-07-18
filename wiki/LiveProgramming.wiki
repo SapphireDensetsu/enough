@@ -8,7 +8,7 @@ Live programming is proposed as a solution to the [SyntaxProblems Problems of Sy
 
 = What is "Live Programming?" =
 Live programming refers to a new way to edit code.
- # *Editing the program itself and not text* that represents it. Therefore syntax mistakes are impossible, and the program is always runnable.
+ # *Editing the program itself and not text* that represents it. Therefore syntax mistakes are impossible, and the program is always runnable. You may still edit a textual representation, if it is more convenient - but the editor understands your actions on the semantic level.
  # *The editing environment understands your program completely* - because it has access to the semantic structure of the program.
  # *The code can be edited in multiple representations.* Besides viewing the code as text, you can view it graphically in many different ways. Even for text you may view (and edit) the code in any "syntax language" you want. This is because the editor understands the meaning of the code and can express that meaning in any form, with minor effort.
 
