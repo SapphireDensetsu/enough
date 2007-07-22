@@ -131,7 +131,6 @@ def generate_dot(nodes, graph_params=None):
 def get_drawing_data(dot, nodes):
     d = generate_dot(nodes) # This should help but has no effect..., dict(splines='"polyline"'))
     g, n, e = dot.get_graph_data(d)
-    print e
     out_nodes = {}
     out_edges = {}
     ids_to_nodes = {}

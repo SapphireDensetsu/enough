@@ -11,7 +11,6 @@ def read_parse(f):
     edges = {} # by heads
     while True:
         line = f.readline()
-        print line
         words = line.split()
         if words[0] == 'graph':
             graph['scale'], graph['width'], graph['height'] = map(float, words[1:])
@@ -41,7 +40,6 @@ def read_parse(f):
             i = 4
             while (i - 4) / 2 < n:
                 points.append((float(words[i]), float(words[i+1])))
-                print i, words[i], words[i+1]
                 i += 2
             edge['points'] = points
             edge['style'] = words[-2]
