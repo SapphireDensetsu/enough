@@ -92,6 +92,7 @@ class App(object):
 
     def _paint(self, event):
         self.screen.fill(self.params.back_color)
+        self.update_drag()
         for widget in self.widgets:
             widget.paint(self.screen)
         pygame.display.flip()
@@ -121,14 +122,17 @@ class App(object):
 
     def _mouse_motion(self, e):
         self.update_focus()
+        self.update_drag()
+        
+    def _key_up(self, e):
+        self.lock_focus()
+
+    def update_drag(self):
         p = mouse_pos()
         if self.dragging:
             if self.focused_widget:
                 self.focused_widget.pos.final = p
         
-    def _key_up(self, e):
-        self.lock_focus()
-
 
     def lock_focus(self):
         self.update_focus()
