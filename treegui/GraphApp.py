@@ -23,7 +23,7 @@ class GraphWidget(Widget):
     NEAR_REPEL = 10
     FAR_REPEL  = 70
     NEAR_PULL  = 120
-    #force_distance_mul = 1
+    force_compression = 100
     force_power = 1
     
     def set_node(self, node):
@@ -56,7 +56,7 @@ class GraphWidget(Widget):
 
     def update_force_move(self, w):
         diff = w.pos.current - self.pos.current
-        force_distance_mul = ((self.size.current + w.size.current) * 0.5).norm() / 100.0
+        force_distance_mul = ((self.size.current + w.size.current) * 0.5).norm() / self.force_compression
         
         if diff.norm() < self.NEAR_REPEL*force_distance_mul:
             force = 0.5
@@ -85,9 +85,13 @@ class GraphApp(App):
             self.add_widget(w)
 
     def zoom(self, zoom):
-        print 'here'
         for widget in self.widgets:
             widget.font_size.final = widget.font_size.final * zoom
+        self._paint(None)
+
+    def compress(self, compression):
+        for widget in self.widgets:
+            widget.force_compression *= compression
         self._paint(None)
         
     def _key_up(self, e):
@@ -97,6 +101,10 @@ class GraphApp(App):
                 self.zoom(1.3)
             elif e.key == pygame.K_q:
                 self.zoom(1/(1.3))
+            if e.key == pygame.K_a:
+                self.compress(1.3)
+            elif e.key == pygame.K_s:
+                self.compress(1/(1.3))
 
 #---------------------------------------------
 
