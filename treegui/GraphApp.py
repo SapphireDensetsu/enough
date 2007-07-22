@@ -26,6 +26,10 @@ class NodeValue(object):
         self._widget.text = self.name
 
 class GraphWidget(Widget):
+    def __init__(self, *args, **kw):
+        super(GraphWidget, self).__init__(*args, **kw)
+        self.out_connection_lines = []
+        
     def set_node(self, node):
         self.node = node
         node.value.widget = self
@@ -34,6 +38,31 @@ class GraphWidget(Widget):
         y = self.size.current.y * 0.5
         return self.pos.current + Point(self.size.current.x * 0.5, y)
 
+    def iter_visible_nodes(self, nlist):
+        for out_node in nlist:
+            w = out_node.value.widget
+            if not w.params.visible:
+                continue
+            yield w
+    def iter_visible_connected(self, dir):
+        for w in self.iter_visible_nodes(self.node.connections[dir]):
+            yield w
+            
+    def paint_connections(self, surface):
+        if self.node is None:
+            return
+        
+        #for w in self.iter_visible_connected('in'):
+        #    pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
+        for line in self.out_connection_lines:
+            pygame.draw.aalines(surface, (200,20,50), False, line, True)
+            for p in line:
+                pygame.draw.circle(surface, (200,50,50), p, 2, 0)
+
+    def paint(self, surface):
+        if self.params.visible:
+            self.paint_connections(surface)
+        super(GraphWidget, self).paint(surface)
         
 class GraphApp(App):
     def __init__(self, *args, **kw):
@@ -73,9 +102,28 @@ class GraphApp(App):
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale/2
             node.value.widget.pos.final.y = n_layout['y'] * y_scale/2
+
+        for node, n_layout in n.iteritems():
+            lines = []
+            if node not in e:
+                continue
+            for edge in e[node]:
+                line = [(int(p[0]*x_scale/2), int(p[1]*y_scale/2)) for p in edge['points']]
+                from Lib.Bezier import Bezier
+                line = Bezier(line, 6)
+                
+                this = node.value.widget
+                other = edge['tail_node'].value.widget
+                #line.insert(0, (this.pos.final.x, this.pos.final.y))
+                #line.append((other.pos.final.x, other.pos.final.y))
+                
+                lines.append(line)
+            node.value.widget.out_connection_lines = lines
+            
             #print node.value.widget.pos.final
             #node.value.widget.size.final.x = n_layout['width']
             #node.value.widget.size.final.y = n_layout['height']
+        
             
 
 #---------------------------------------------
@@ -86,13 +134,13 @@ def test():
 
     import random
     nodes = []
-    for i in xrange(15):
+    for i in xrange(2):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
         n1 = Graph.Node(NodeValue(str(i), pos))
         if nodes:
             n1.connect_out(random.choice(nodes))
-            n1.connect_in(random.choice(nodes))
+            #n1.connect_in(random.choice(nodes))
         nodes.append(n1)
 
     a.add_nodes(nodes)
