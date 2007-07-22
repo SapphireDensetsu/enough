@@ -112,20 +112,36 @@ def topological_sort(orig_nodes):
     out = [(level, nodes_reverse_map[node]) for level, node in sorted(out)]
     return out
 
-def generate_dot(nodes):
+def generate_dot(nodes, graph_params=None):
     # Generates a DOT language description of the graph
     out = 'digraph G {\n'
+    if graph_params is not None:
+        out += 'graph ['
+        for k,v in graph_params.iteritems():
+            out+='%s=%s,' % (k,v)
+        out += '];\n'
     for node in nodes:
         for other in node.connections['out']:
             out += '%s -> %s;\n' % (id(node), id(other))
-        for other in node.connections['in']:
-            out += '%s -> %s;\n' % (id(other), id(node))
+        #for other in node.connections['in']:
+        #    out += '%s -> %s;\n' % (id(other), id(node))
     return out + '}\n'
 
 # This uses DOT to find the position of nodes in a graph
 def get_drawing_data(dot, nodes):
-    g, n, e = dot.get_graph_data(generate_dot(nodes))
+    d = generate_dot(nodes) # This should help but has no effect..., dict(splines='"polyline"'))
+    g, n, e = dot.get_graph_data(d)
+    print e
     out_nodes = {}
+    out_edges = {}
+    ids_to_nodes = {}
     for node in nodes:
-        out_nodes[node] = n[str(id(node))]
-    return g, out_nodes, e
+        sid = str(id(node))
+        ids_to_nodes[sid] = node
+        out_nodes[node] = n[sid]
+        if sid in e:
+            out_edges[node] = e[sid]
+    for out_node, edges in out_edges.iteritems():
+        for edge in edges:
+            edge['tail_node'] = ids_to_nodes[edge['tail']]
+    return g, out_nodes, out_edges
