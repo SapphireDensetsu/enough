@@ -21,6 +21,8 @@ class App(object):
 
         self.widgets = []
         self.focused_widget = None
+        self.focus_locked = False
+        self.dragging = False
         
         self.set_size(width, height, flags)
         self.params = ParamHolder(["back_color"], "AppParams")
@@ -61,7 +63,7 @@ class App(object):
         events = pygame.event.get()
         self._paint(None)
         if not events:
-            time.sleep(0.1)
+            time.sleep(0.03)
         for event in events:
             self.handle_event(event)
         
@@ -110,12 +112,34 @@ class App(object):
     #______________________________________#
     
     def _mouse_down(self, e):
-        pass
-
+        self.lock_focus()
+        self.dragging = True
+        
     def _mouse_up(self, e):
-        pass
+        self.unlock_focus()
+        self.dragging = False
 
     def _mouse_motion(self, e):
+        self.update_focus()
+        p = mouse_pos()
+        if self.dragging:
+            if self.focused_widget:
+                self.focused_widget.pos.final = p
+        
+    def _key_up(self, e):
+        self.lock_focus()
+
+
+    def lock_focus(self):
+        self.update_focus()
+        self.focus_locked = True
+    def unlock_focus(self):
+        self.focus_locked = False
+        self.update_focus()
+        
+    def update_focus(self):
+        if self.focus_locked:
+            return
         p = mouse_pos()
         for widget in self.widgets:
             if widget.in_bounds(p):
@@ -123,17 +147,13 @@ class App(object):
                 return
         self.unset_focus()
         
-    def _key_up(self, e):
-        pass
-
-
     def set_focus(self, widget):
         self.unset_focus()
         self.focused_widget = widget
-        self.focused_widget.in_focus = True
+        self.focused_widget.params.in_focus = True
 
     def unset_focus(self):
         if self.focused_widget is None:
             return
-        self.focused_widget.in_focus = False
+        self.focused_widget.params.in_focus = False
         self.focused_widget = None

@@ -7,7 +7,7 @@ from guilib import get_default, MovingValue, ParamHolder
 class Widget(object):
     def __init__(self, text = '', pos=None):
         self.size = MovingValue(Point(0,0), Point(0,0))
-        self.pos = MovingValue(Point(0,0), Point(0,0))
+        self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
         
         self.font_size = MovingValue(14,14)
         
@@ -34,7 +34,7 @@ class Widget(object):
     @staticmethod
     @Func.cached
     def get_font(font_size):
-        return pygame.font.SysFont('serif',font_size)
+        return pygame.font.SysFont('serif',int(font_size))
     
     def update_moving(self):
         self.font_size.update()
@@ -60,9 +60,9 @@ class Widget(object):
 
         self.update_moving()
         if self.params.in_focus:
-            back_color = self.params.back_color
-        else:
             back_color = self.params.focus_back_color
+        else:
+            back_color = self.params.back_color
         pygame.draw.rect(surface, back_color, self.get_current_rect(), 0)
         pygame.draw.rect(surface, self.params.fore_color, self.get_current_rect(), 2)
         surface.blit(self.rendered_text, (self.pos.current.x, self.pos.current.y))
