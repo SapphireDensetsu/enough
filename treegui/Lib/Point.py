@@ -27,6 +27,16 @@ class Point(AttrDict):
     def norm(self):
         return sqrt(self.x*self.x + self.y*self.y)
 
+    def update_from_tuple(self, (x,y)):
+        self.x = x
+        self.y = y
+        
     @classmethod
     def from_polar(cls, angle, radius):
         return cls(cos(angle), sin(angle))*radius
+
+    @classmethod
+    def from_tuple(cls, (x, y)):
+        return cls(x, y)
+
+    
