@@ -125,7 +125,7 @@ class App(object):
         self.update_drag()
         
     def _key_up(self, e):
-        self.lock_focus()
+        pass
 
     def update_drag(self):
         p = mouse_pos()

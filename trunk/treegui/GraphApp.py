@@ -20,6 +20,12 @@ class NodeValue(object):
         self._widget.text = self.name
     
 class GraphWidget(Widget):
+    NEAR_REPEL = 10
+    FAR_REPEL  = 70
+    NEAR_PULL  = 120
+    #force_distance_mul = 1
+    force_power = 1
+    
     def set_node(self, node):
         self.params.user = node
         node.value.widget = self
@@ -50,15 +56,17 @@ class GraphWidget(Widget):
 
     def update_force_move(self, w):
         diff = w.pos.current - self.pos.current
-        if diff.norm() < 10:
+        force_distance_mul = ((self.size.current + w.size.current) * 0.5).norm() / 100.0
+        
+        if diff.norm() < self.NEAR_REPEL*force_distance_mul:
             force = 0.5
-        elif diff.norm() < 50:
+        elif diff.norm() < self.FAR_REPEL*force_distance_mul:
             force = 0.2
-        elif diff.norm() < 100:
+        elif diff.norm() < self.NEAR_PULL*force_distance_mul:
             force = 0
         else:
-            force = -0.2
-        w.pos.final += diff*force
+            force = -diff.norm() / 100.0 / 10
+        w.pos.final += diff*force*self.force_power
         
     def update_moving(self):
         # calculate repulsion/attraction to other nodes
@@ -76,6 +84,19 @@ class GraphApp(App):
             w.set_node(node)
             self.add_widget(w)
 
+    def zoom(self, zoom):
+        print 'here'
+        for widget in self.widgets:
+            widget.font_size.final = widget.font_size.final * zoom
+        self._paint(None)
+        
+    def _key_up(self, e):
+        super(GraphApp, self)._key_up(e)
+        if (e.mod & pygame.KMOD_CTRL):
+            if e.key == pygame.K_w:
+                self.zoom(1.3)
+            elif e.key == pygame.K_q:
+                self.zoom(1/(1.3))
 
 #---------------------------------------------
 
