@@ -9,7 +9,7 @@ class Widget(object):
         self.size = MovingValue(Point(0,0), Point(0,0))
         self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
         
-        self.font_size = MovingValue(14,14)
+        self.font_size = MovingValue(1,24)
         
         self.font = None
         self.text = text
@@ -23,13 +23,15 @@ class Widget(object):
                                    "back_color",
                                    "text_color",
                                    "in_focus",
-                                   "focus_back_color"], "WidgetParams")
+                                   "focus_back_color",
+                                   "user"], "WidgetParams")
         self.params.visible = True
         self.params.fore_color = (100,100,200)
         self.params.back_color = (20,  20,25)
         self.params.text_color = (210,210,255)
         self.params.in_focus = False
         self.params.focus_back_color = (50,50,100)
+        self.params.user = None
         
     @staticmethod
     @Func.cached
@@ -66,7 +68,6 @@ class Widget(object):
         pygame.draw.rect(surface, back_color, self.get_current_rect(), 0)
         pygame.draw.rect(surface, self.params.fore_color, self.get_current_rect(), 2)
         surface.blit(self.rendered_text, (self.pos.current.x, self.pos.current.y))
-
 
     def in_bounds(self, pos):
         p = self.pos.current
