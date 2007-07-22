@@ -24,101 +24,39 @@ class NodeValue(object):
     
     def update_widget_text(self):
         self._widget.text = self.name
-    
+
 class GraphWidget(Widget):
-    NEAR_REPEL = 10
-    FAR_REPEL  = 20
-    NEAR_PULL  = 20
-    force_compression = 10
-    force_power = 1
-    
     def set_node(self, node):
         self.node = node
         node.value.widget = self
-    def set_repel_list(self, l):
-        self.repelled_widgets = l
-    def paint(self, surface):
-        if self.params.visible:
-            self.paint_connections(surface)
-        super(GraphWidget, self).paint(surface)
 
     def connect_pos(self, upper=False):
         y = self.size.current.y * 0.5
         return self.pos.current + Point(self.size.current.x * 0.5, y)
 
-    def iter_visible_nodes(self, nlist):
-        for out_node in nlist:
-            w = out_node.value.widget
-            if not w.params.visible:
-                continue
-            yield w
-    def iter_visible_connected(self, dir):
-        for w in self.iter_visible_nodes(self.node.connections[dir]):
-            yield w
-            
-    def paint_connections(self, surface):
-        if self.node is None:
-            return
-
-        for w in self.iter_visible_connected('in'):
-            pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
-        
-
-    def update_force_move(self, w, repel, pull):
-        diff = w.pos.current - self.pos.current
-        force_distance_mul = ((self.font_size.current + w.font_size.current) * 0.5) / self.force_compression 
-        force = 0
-        d = diff.norm()
-        if repel:
-            if d < self.NEAR_REPEL*force_distance_mul:
-                force = 0.5
-            elif d < self.FAR_REPEL*force_distance_mul:
-                force = 0.2
-                
-        if pull:
-            if d < self.NEAR_PULL*force_distance_mul:
-                force = 0
-            else:
-                force = -d / 100.0 / 10
-        w.pos.final += diff*force*self.force_power
-        
-    def update_moving(self):
-        # calculate repulsion/attraction to other nodes
-        for w in self.iter_visible_connected('out'):
-            self.update_force_move(w, False, True)
-        for w in self.iter_visible_connected('in'):
-            self.update_force_move(w, False, True)
-        for w in self.repelled_widgets:
-            self.update_force_move(w, True, False)
-        super(GraphWidget, self).update_moving()
         
 class GraphApp(App):
-    forces = True
+    def __init__(self, *args, **kw):
+        super(GraphApp, self).__init__(*args, **kw)
+        from Lib.Dot import Dot
+        self.dot = Dot()
+        
     def add_nodes(self, nodes):
         for node in nodes:
             w = GraphWidget()
             w.set_node(node)
             self.add_widget(w)
-            w.set_repel_list(self.widgets)
+        self.update_layout()            
 
     def zoom(self, zoom):
         for widget in self.widgets:
             widget.font_size.final = widget.font_size.final * zoom
         self._paint(None)
 
-    def compress(self, compression):
-        for widget in self.widgets:
-            widget.force_compression *= compression
-        self._paint(None)
-
-    def update_forces(self):
-        if self.forces:
-            force_power = 1
-        else:
-            force_power = 0
-        for widget in self.widgets:
-            widget.force_power = force_power
-            
+    def _paint(self, surface):
+        #self.update_layout()
+        super(GraphApp, self)._paint(surface)
+        
     def _key_up(self, e):
         super(GraphApp, self)._key_up(e)
         if (e.mod & pygame.KMOD_CTRL):
@@ -126,22 +64,18 @@ class GraphApp(App):
                 self.zoom(1.3)
             elif e.key == pygame.K_q:
                 self.zoom(1/(1.3))
-            elif e.key == pygame.K_a:
-                self.compress(1.3)
-            elif e.key == pygame.K_s:
-                self.compress(1/(1.3))
-            elif e.key == pygame.K_x:
-                if self.focused_widget:
-                    self.focused_widget.force_power = 1
-                if (e.mod & pygame.KMOD_SHIFT):
-                    self.forces = True
-                    self.update_forces()
-            elif e.key == pygame.K_c:
-                if self.focused_widget:
-                    self.focused_widget.force_power = 0
-                if (e.mod & pygame.KMOD_SHIFT):
-                    self.forces = False
-                    self.update_forces()
+
+    def update_layout(self):
+        nodes = [widget.node for widget in self.widgets]
+        g, n, e = Graph.get_drawing_data(self.dot, nodes)
+        x_scale = self.width / float(g['width'])
+        y_scale = self.height / float(g['height'])
+        for node, n_layout in n.iteritems():
+            node.value.widget.pos.final.x = n_layout['x'] * x_scale/2
+            node.value.widget.pos.final.y = n_layout['y'] * y_scale/2
+            #print node.value.widget.pos.final
+            #node.value.widget.size.final.x = n_layout['width']
+            #node.value.widget.size.final.y = n_layout['height']
             
 
 #---------------------------------------------
