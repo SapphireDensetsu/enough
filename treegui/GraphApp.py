@@ -28,7 +28,7 @@ class NodeValue(object):
 class GraphWidget(Widget):
     NEAR_REPEL = 10
     FAR_REPEL  = 20
-    NEAR_PULL  = 80
+    NEAR_PULL  = 20
     force_compression = 10
     force_power = 1
     
