@@ -111,3 +111,21 @@ def topological_sort(orig_nodes):
 
     out = [(level, nodes_reverse_map[node]) for level, node in sorted(out)]
     return out
+
+def generate_dot(nodes):
+    # Generates a DOT language description of the graph
+    out = 'digraph G {\n'
+    for node in nodes:
+        for other in node.connections['out']:
+            out += '%s -> %s;\n' % (id(node), id(other))
+        for other in node.connections['in']:
+            out += '%s -> %s;\n' % (id(other), id(node))
+    return out + '}\n'
+
+# This uses DOT to find the position of nodes in a graph
+def get_drawing_data(dot, nodes):
+    g, n, e = dot.get_graph_data(generate_dot(nodes))
+    out_nodes = {}
+    for node in nodes:
+        out_nodes[node] = n[str(id(node))]
+    return g, out_nodes, e

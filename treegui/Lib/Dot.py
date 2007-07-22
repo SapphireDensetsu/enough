@@ -7,7 +7,7 @@
   
 def read_parse(f):
     graph = {}
-    nodes = []
+    nodes = {}
     edges = []
     while True:
         line = f.readline()
@@ -28,7 +28,7 @@ def read_parse(f):
                                     'fillcolor')):
                 node[attr] = (words[i+start])
             
-            nodes.append(node)
+            nodes[node['name']] = node
             continue
 
         if words[0] == 'edge':
@@ -52,7 +52,7 @@ def read_parse(f):
     return graph, nodes, edges
             
 
-class DOT(object):
+class Dot(object):
     def __init__(self, command_line='dot'):
         import subprocess
         self.popen = subprocess.Popen((command_line, '-Tplain'),
