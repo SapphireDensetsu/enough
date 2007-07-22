@@ -29,7 +29,9 @@ class ModelObject(object):
     
     # -------------------------------------------------------
     # Model-level code
-    
+    def activate(self):
+        raise NotImplementedError()
+        
     def request_subobject(self, name, requester):
         # Causes lazy evaluation of the subobject if it doesnt exist
 
