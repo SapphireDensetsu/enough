@@ -9,7 +9,7 @@ class Widget(object):
         self.size = MovingValue(Point(0,0), Point(0,0))
         self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
         
-        self.font_size = MovingValue(1,24)
+        self.font_size = MovingValue(1,28)
         
         self.font = None
         self.text = text
@@ -24,13 +24,15 @@ class Widget(object):
                                    "text_color",
                                    "in_focus",
                                    "focus_back_color",
+                                   "focus_text_color",
                                    "user"], "WidgetParams")
         self.params.visible = True
         self.params.fore_color = (100,100,200)
-        self.params.back_color = (20,  20,25)
-        self.params.text_color = (210,210,255)
+        self.params.back_color = (10,  10,15)
+        self.params.text_color = (200,200,210)
         self.params.in_focus = False
         self.params.focus_back_color = (50,50,100)
+        self.params.focus_text_color = (230,230,255)
         self.params.user = None
         
     @staticmethod
@@ -49,7 +51,11 @@ class Widget(object):
         self.font = self.get_font(self.font_size.current)
         if self.font == prev_font:
             return
-        self.rendered_text = self.font.render(self.text, True, self.params.text_color)
+        if self.params.in_focus:
+            text_color = self.params.focus_text_color
+        else:
+            text_color = self.params.text_color
+        self.rendered_text = self.font.render(self.text, True, text_color)
         self.size.final.x,self.size.final.y  = self.font.size(self.text)
         self.size.current.x,self.size.current.y  = self.font.size(self.text)
 
