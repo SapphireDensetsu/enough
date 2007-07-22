@@ -6,16 +6,16 @@ class MagicObject(ModelObject):
     builtin_meta = dict(magic=True)
     
 class ObjectMaker(MagicObject):
-    def generate_subobject(self, name):
+    def activate(self):
         return ModelObject(meta=dict(maker=self))
 
 # The root maker of all objects
 root_object_maker = ObjectMaker(meta=dict(name='root object maker'))
 
 
-def create_obj(name):
+def create_root_obj(name):
     # Create a new object using the root object maker
-    obj = root_object_maker.request_subobject(name)
+    obj = root_object_maker.activate()
     obj.meta['name'] = metaname
     return obj
 
@@ -30,9 +30,9 @@ def magic_obj(pyfunc, name=None):
     return _TempMagicObject_(meta=dict(name=name))
 
 def create_obj_maker(maker_name):
-    def temp(self, name):
-        return ModelObject(meta=dict(name=name, maker=self))
-    return magic_obj(temp, maker_name)
+    maker = root_object_maker.activate()
+    maker.set_subobject('root_object_maker', root_object_maker)
+    
     
 number_maker = create_obj_maker('number maker')
 bool_maker   = create_obj_maker('bool maker')
