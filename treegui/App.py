@@ -63,7 +63,7 @@ class App(object):
         events = pygame.event.get()
         self._paint(None)
         if not events:
-            time.sleep(0.03)
+            time.sleep(0.01)
         for event in events:
             self.handle_event(event)
         
@@ -145,7 +145,7 @@ class App(object):
         if self.focus_locked:
             return
         p = mouse_pos()
-        for widget in self.widgets:
+        for widget in reversed(self.widgets):
             if widget.in_bounds(p):
                 self.set_focus(widget)
                 return
