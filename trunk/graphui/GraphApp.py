@@ -99,6 +99,12 @@ class GraphApp(App):
             elif e.key == pygame.K_q:
                 self.zoom(1/(1.3))
 
+            elif e.key == pygame.K_r:
+                if self.record:
+                    self.start_record()
+                else:
+                    self.stop_record()
+
             elif e.key == pygame.K_a:
                 n = []
                 for i in xrange(2):
@@ -164,7 +170,7 @@ def test():
         nodes.append(n1)
 
     a.add_nodes(nodes)
-    
+    a.start_record()
     a.run()
 
 if __name__=='__main__':
