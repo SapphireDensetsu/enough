@@ -120,10 +120,10 @@ class GraphApp(App):
                 n = []
                 for i in xrange(1):
                     n1 = Graph.Node(NodeValue(str('new')))
-                    if random.random() > 0.5:
-                        random.choice(self.widgets).node.connect_out(n1)
-                    else:
-                        random.choice(self.widgets).node.connect_in(n1)
+##                     if random.random() > 0.5:
+##                         random.choice(self.widgets).node.connect_out(n1)
+##                     else:
+##                         random.choice(self.widgets).node.connect_in(n1)
                     n.append(n1)
                 self.add_nodes(n)
 
@@ -208,7 +208,7 @@ def test():
     import random
     random.seed(0)
     nodes = []
-    for i in xrange(2):
+    for i in xrange(1):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
         n1 = Graph.Node(NodeValue(str(i), pos))
