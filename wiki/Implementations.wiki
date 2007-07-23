@@ -12,4 +12,4 @@ Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The
 
 === Some stuff that may be useful ===
 This includes even trivial stuff that we haven't seen in many other places.
- * *Bezier curves in Python* - the Graphui gui includes an implementation of n-order bezier curves in Python.
+ * *Bezier curves in Python* - the Graphui gui includes an implementation of n-order bezier curves in Python. See the file Bezier.py under graphui/Lib in the svn trunk.
