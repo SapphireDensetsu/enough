@@ -118,6 +118,8 @@ class App(object):
     def _mouse_down(self, e):
         self.lock_focus()
         self.dragging = True
+        if self.focused_widget:
+            self.drag_start_pos = mouse_pos() - self.focused_widget.pos.current
         
     def _mouse_up(self, e):
         self.unlock_focus()
@@ -134,7 +136,7 @@ class App(object):
         p = mouse_pos()
         if self.dragging:
             if self.focused_widget:
-                self.focused_widget.pos.final = p
+                self.focused_widget.pos.final = p - self.drag_start_pos
         
 
     def lock_focus(self):

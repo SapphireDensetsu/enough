@@ -7,7 +7,7 @@ from Lib import Graph
 
 from Lib.Point import Point
 
-from guilib import get_default
+from guilib import get_default, MovingLine
 
 class NodeValue(object):
     def __init__(self, name, start_pos=None):
@@ -28,7 +28,7 @@ class NodeValue(object):
 class GraphWidget(Widget):
     def __init__(self, *args, **kw):
         super(GraphWidget, self).__init__(*args, **kw)
-        self.out_connection_lines = []
+        self.out_connection_lines = {}
         
     def set_node(self, node):
         self.node = node
@@ -54,8 +54,12 @@ class GraphWidget(Widget):
         
         #for w in self.iter_visible_connected('in'):
         #    pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
-        for line in self.out_connection_lines:
-            pygame.draw.aalines(surface, (200,20,50), False, line, True)
+        for other, line in self.out_connection_lines.iteritems():
+            line.update()
+            if len(line.current) > 1:
+                line.current[0] = self.center_pos()
+                line.current[-1] = other.center_pos()
+            pygame.draw.aalines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], True)
             #for p in line:
             #    pygame.draw.circle(surface, (200,50,50), p, 2, 0)
 
@@ -95,13 +99,13 @@ class GraphApp(App):
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
-        x_scale = self.width / float(g['width'])
-        y_scale = self.height / float(g['height'])
+        x_scale = self.width / float(g['width'])/1.2
+        y_scale = self.height / float(g['height'])/1.2
         for node, n_layout in n.iteritems():
-            node.value.widget.pos.final.x = n_layout['x'] * x_scale/1.2
-            node.value.widget.pos.final.y = n_layout['y'] * y_scale/1.2
-            node.value.widget.size.final.x = n_layout['width'] * x_scale/1.2
-            node.value.widget.size.final.y = n_layout['height'] * y_scale/1.2
+            node.value.widget.pos.final.x = n_layout['x'] * x_scale
+            node.value.widget.pos.final.y = n_layout['y'] * y_scale
+            node.value.widget.size.final.x = n_layout['width'] * x_scale
+            node.value.widget.size.final.y = n_layout['height'] * y_scale
             node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5
 
         for node, n_layout in n.iteritems():
@@ -112,18 +116,15 @@ class GraphApp(App):
                 this = node.value.widget
                 other = edge['tail_node'].value.widget
                 
-                line = [Point(int(p[0]*x_scale/1.2), int(p[1]*y_scale/1.2)) for p in edge['points']]
+                line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
                 line.reverse() # the direction is always tail->head, so we reverse it
 
                 from Lib.Bezier import Bezier
-                curves = [p.as_tuple() for p in Bezier(line, 10)]
+                curve = Bezier(line, 10)
+                curve.insert(0, (this.center_pos(False)))
+                curve.append((other.center_pos(False)))
                 
-                
-                curves.insert(0, (this.pos.final+this.size.final*0.5).as_tuple())
-                curves.append((other.pos.final+other.size.final*0.5).as_tuple())
-                
-                lines.append(curves)
-            node.value.widget.out_connection_lines = lines
+                node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[])).final = curve
             
             #print node.value.widget.pos.final
             #node.value.widget.size.final.x = n_layout['width']
@@ -140,7 +141,7 @@ def test():
     import random
     random.seed(0)
     nodes = []
-    for i in xrange(15):
+    for i in xrange(10):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
         n1 = Graph.Node(NodeValue(str(i), pos))

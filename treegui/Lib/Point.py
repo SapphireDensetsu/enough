@@ -11,8 +11,18 @@ class Point(AttrDict):
                       ]
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y, self.z+other.z)
+    def __iadd__(self, other):
+        self.x+=other.x
+        self.y+=other.y
+        self.z+=other.z
+        return self
     def __sub__(self, other):
         return Point(self.x-other.x, self.y-other.y, self.z-other.z)
+    def __isub__(self, other):
+        self.x-=other.x
+        self.y-=other.y
+        self.z-=other.z
+        return self
     def __mul__(self, value):
         if isinstance(value, self.__class__):
             other = value
@@ -39,4 +49,5 @@ class Point(AttrDict):
     def from_tuple(cls, (x, y)):
         return cls(x, y)
 
-    
+    def copy(self):
+        return Point(self.x, self.y, self.z)
