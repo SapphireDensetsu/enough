@@ -121,6 +121,7 @@ def generate_dot(nodes, graph_params=None):
             out+='%s=%s,' % (k,v)
         out += '];\n'
     for node in nodes:
+        out += '%s;\n' % (id(node),)
         for other in node.connections['out']:
             out += '%s -> %s;\n' % (id(node), id(other))
         #for other in node.connections['in']:
