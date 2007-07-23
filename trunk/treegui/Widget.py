@@ -77,7 +77,9 @@ class Widget(object):
             back_color = self.params.back_color
 
         pygame.draw.ellipse(surface, back_color, self.get_current_rect(), 0)
-        pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
+        if self.size.current.x > 5 and self.size.current.y > 5:
+            # otherwise we get a pygame error for using a width that's larger than the elipse radius
+            pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
         text_size = Point(*self.font.size(self.text))
         surface.blit(self.rendered_text, (self.center_pos()-text_size*0.5).as_tuple())
 
