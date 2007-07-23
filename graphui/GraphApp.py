@@ -54,14 +54,15 @@ class GraphWidget(Widget):
         
         #for w in self.iter_visible_connected('in'):
         #    pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
-        for other, line in self.out_connection_lines.iteritems():
-            line.update()
-            if len(line.current) > 1:
-                line.current[0] = self.center_pos()
-                line.current[-1] = other.center_pos()
-            pygame.draw.aalines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], True)
-            #for p in line:
-            #    pygame.draw.circle(surface, (200,50,50), p, 2, 0)
+        for other, lines in self.out_connection_lines.iteritems():
+            for line in lines:
+                line.update()
+                if len(line.current) > 1:
+                    line.current[0] = self.center_pos()
+                    line.current[-1] = other.center_pos()
+                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
+                #for p in line:
+                #    pygame.draw.circle(surface, (200,50,50), p, 2, 0)
 
         
 class GraphApp(App):
@@ -174,6 +175,7 @@ class GraphApp(App):
             lines = []
             previously_connected = list(node.value.widget.out_connection_lines.keys())
             if node in e:
+                last_indices = {}
                 for edge in e[node]:
                     this = node.value.widget
                     other = edge['tail_node'].value.widget
@@ -188,7 +190,13 @@ class GraphApp(App):
                     curve.insert(0, (this.center_pos(False)))
                     curve.append((other.center_pos(False)))
 
-                    node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[], step=0.5)).final = curve
+                    connections = node.value.widget.out_connection_lines.setdefault(other, [])
+                    # if there is more than one connection, we don't care to animate the correct one.
+                    last_index = last_indices.setdefault(other, 0)
+                    if len(connections) <= last_index:
+                        connections.append(MovingLine([],[], step=0.5))
+                    connections[last_index].final = curve
+                    last_indices[other] += 1
                 
             for other in previously_connected:
                 del node.value.widget.out_connection_lines[other]
@@ -219,7 +227,7 @@ def test():
         nodes.append(n1)
 
     a.add_nodes(nodes)
-    #a.start_record()
+    a.start_record()
     a.run()
 
 if __name__=='__main__':
