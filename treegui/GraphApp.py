@@ -96,6 +96,12 @@ class GraphApp(App):
             elif e.key == pygame.K_q:
                 self.zoom(1/(1.3))
 
+            elif e.key == pygame.K_a:
+                w = random.choice(self.widgets)
+                n = Graph.Node(NodeValue(str('new')))
+                w.node.connect_out(n)
+                self.add_nodes([n])
+
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
@@ -124,7 +130,7 @@ class GraphApp(App):
                 curve.insert(0, (this.center_pos(False)))
                 curve.append((other.center_pos(False)))
                 
-                node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[])).final = curve
+                node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[], step=0.5)).final = curve
             
             #print node.value.widget.pos.final
             #node.value.widget.size.final.x = n_layout['width']
