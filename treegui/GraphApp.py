@@ -79,7 +79,10 @@ class GraphApp(App):
 
     def zoom(self, zoom):
         for widget in self.widgets:
-            widget.font_size.final = widget.font_size.final * zoom
+            widget.pos.final = widget.center_pos(False)
+            widget.size.final = widget.size.final * zoom
+            widget.pos.final -= widget.size.final * 0.5
+            
         self._paint(None)
 
     def paint_widgets(self, event):
@@ -108,8 +111,8 @@ class GraphApp(App):
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
-        x_scale = self.width / float(g['width'])/1.01
-        y_scale = self.height / float(g['height'])/1.01
+        x_scale = self.width / float(g['width'])
+        y_scale = self.height / float(g['height'])
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale
             node.value.widget.pos.final.y = n_layout['y'] * y_scale
