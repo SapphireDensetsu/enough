@@ -75,9 +75,11 @@ class Widget(object):
             back_color = self.params.focus_back_color
         else:
             back_color = self.params.back_color
-        pygame.draw.rect(surface, back_color, self.get_current_rect(), 0)
-        pygame.draw.rect(surface, self.params.fore_color, self.get_current_rect(), 2)
-        surface.blit(self.rendered_text, (self.pos.current.x, self.pos.current.y))
+
+        pygame.draw.ellipse(surface, back_color, self.get_current_rect(), 0)
+        pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
+        text_size = Point(*self.font.size(self.text))
+        surface.blit(self.rendered_text, (self.center_pos()-text_size*0.5).as_tuple())
 
     def in_bounds(self, pos):
         p = self.pos.current
@@ -88,4 +90,9 @@ class Widget(object):
             and (pos.y < p.y + s.y)):
             return True
         return False
+        
+    def center_pos(self, current=True):
+        if current:
+            return self.pos.current+self.size.current*0.5
+        return self.pos.final+self.size.final*0.5
         

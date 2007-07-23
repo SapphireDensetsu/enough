@@ -39,18 +39,18 @@ def rec_point_on_curve(cp, t):
 
 from Func import cached
 
-@cached
+#@cached
 def factorial(n):
     r = 1
     for i in xrange(2,n+1):
         r *= i
     return r
 
-@cached
+#@cached
 def choose(k, n):
     assert k <= n, "K must be < N"
     return factorial(n)/(factorial(k)*factorial(n-k))
-    
+
 def nonrec_point_on_curve(cp, t):
     # Non-recursive implementation, also according to formula from wikipedia
     n = len(cp) - 1

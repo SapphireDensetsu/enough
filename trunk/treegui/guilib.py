@@ -35,4 +35,20 @@ class ParamHolder(object):
         self.verify_exists(name)
         self.__dict__['_params'][name] = value
 
-
+class MovingLine(MovingValue):
+    # like MovingValue but for a list of points the represent a line
+    def update(self):
+        if not self.current:
+            self.current = [Point(0,0) for p in self.final]
+        else:
+            len_diff = len(self.final) - len(self.current)
+            if len_diff > 0:
+                # delete intermediate points until they are the same length
+                for i in xrange(len_diff):
+                    self.current.pop(1)
+            elif len_diff < 0:
+                for i in xrange(len_diff):
+                    self.current.insert(1, self.current[0].copy())
+                    
+        for current_p, final_p in zip (self.current, self.final):
+            current_p += (final_p - current_p) * self.step
