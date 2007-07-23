@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from App import App
+from App import App, mouse_pos
 from Widget import Widget
 from Lib import Graph
 
@@ -69,6 +69,9 @@ class GraphApp(App):
         super(GraphApp, self).__init__(*args, **kw)
         from Lib.Dot import Dot
         self.dot = Dot()
+        self.dragging_enabled = False
+        self.connecting = False
+        self.disconnecting = False
         
     def add_nodes(self, nodes):
         for node in nodes:
@@ -85,8 +88,16 @@ class GraphApp(App):
             
         self._paint(None)
 
+    def paint_connector(self, color):
+        pygame.draw.aalines(self.screen, color, False,
+                            [self.focused_widget.center_pos().as_tuple(), mouse_pos().as_tuple()], True)
+        
     def paint_widgets(self, event):
-        #self.update_layout()
+        if self.connecting:
+            self.paint_connector((150,250,150))
+        if self.disconnecting:
+            self.paint_connector((250,150,150))
+            
         for w in self.widgets:
             w.paint_connections(self.screen)
         super(GraphApp, self).paint_widgets(event)
@@ -107,12 +118,45 @@ class GraphApp(App):
 
             elif e.key == pygame.K_a:
                 n = []
-                for i in xrange(2):
+                for i in xrange(1):
                     n1 = Graph.Node(NodeValue(str('new')))
-                    random.choice(self.widgets).node.connect_out(n1)
-                    random.choice(self.widgets).node.connect_in(n1)
+                    if random.random() > 0.5:
+                        random.choice(self.widgets).node.connect_out(n1)
+                    else:
+                        random.choice(self.widgets).node.connect_in(n1)
                     n.append(n1)
                 self.add_nodes(n)
+
+
+    def _mouse_down(self, e):
+        super(GraphApp, self)._mouse_down(e)
+        if self.focused_widget:
+            if e.button == 1:
+                self.connecting = True
+                self.connecting_source = self.focused_widget.node
+            elif e.button == 3:
+                self.disconnecting = True
+                self.disconnecting_source = self.focused_widget.node
+                
+    def _mouse_up(self, e):
+        super(GraphApp, self)._mouse_up(e)
+        if self.connecting:
+            self.connecting = False
+            target = self.focused_widget
+            if target:
+                self.connecting_source.connect_out(target.node)
+                self.update_layout()
+            self.connecting_source = None
+        elif self.disconnecting:
+            self.disconnecting = False
+            target = self.focused_widget
+            if target:
+                if self.disconnecting_source.is_connected(target.node):
+                    self.disconnecting_source.disconnect(target.node)
+                    self.update_layout()
+            self.disconnecting_source = None
+            
+            
 
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
@@ -128,21 +172,26 @@ class GraphApp(App):
 
         for node, n_layout in n.iteritems():
             lines = []
-            if node not in e:
-                continue
-            for edge in e[node]:
-                this = node.value.widget
-                other = edge['tail_node'].value.widget
-                
-                line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
-                line.reverse() # the direction is always tail->head, so we reverse it
+            previously_connected = list(node.value.widget.out_connection_lines.keys())
+            if node in e:
+                for edge in e[node]:
+                    this = node.value.widget
+                    other = edge['tail_node'].value.widget
+                    if other in previously_connected:
+                        previously_connected.remove(other)
 
-                from Lib.Bezier import Bezier
-                curve = Bezier(line, 10)
-                curve.insert(0, (this.center_pos(False)))
-                curve.append((other.center_pos(False)))
+                    line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
+                    line.reverse() # the direction is always tail->head, so we reverse it
+
+                    from Lib.Bezier import Bezier
+                    curve = Bezier(line, 10)
+                    curve.insert(0, (this.center_pos(False)))
+                    curve.append((other.center_pos(False)))
+
+                    node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[], step=0.5)).final = curve
                 
-                node.value.widget.out_connection_lines.setdefault(other, MovingLine([],[], step=0.5)).final = curve
+            for other in previously_connected:
+                del node.value.widget.out_connection_lines[other]
             
             #print node.value.widget.pos.final
             #node.value.widget.size.final.x = n_layout['width']
@@ -170,7 +219,7 @@ def test():
         nodes.append(n1)
 
     a.add_nodes(nodes)
-    a.start_record()
+    #a.start_record()
     a.run()
 
 if __name__=='__main__':

@@ -23,6 +23,7 @@ class App(object):
         self.focused_widget = None
         self.focus_locked = False
         self.dragging = False
+        self.dragging_enabled = True
         
         self.set_size(width, height, flags)
         self.params = ParamHolder(["back_color"], "AppParams")
@@ -132,9 +133,10 @@ class App(object):
     
     def _mouse_down(self, e):
         self.lock_focus()
-        self.dragging = True
-        if self.focused_widget:
-            self.drag_start_pos = mouse_pos() - self.focused_widget.pos.current
+        if self.dragging_enabled:
+            self.dragging = True
+            if self.focused_widget:
+                self.drag_start_pos = mouse_pos() - self.focused_widget.pos.current
         
     def _mouse_up(self, e):
         self.unlock_focus()

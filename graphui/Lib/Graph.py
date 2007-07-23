@@ -129,6 +129,7 @@ def generate_dot(nodes, graph_params=None):
 
 # This uses DOT to find the position of nodes in a graph
 def get_drawing_data(dot, nodes):
+    # TODO Fix bug when no nodes connected in graph!!
     d = generate_dot(nodes) # This should help but has no effect..., dict(splines='"polyline"'))
     g, n, e = dot.get_graph_data(d)
     out_nodes = {}
@@ -137,7 +138,8 @@ def get_drawing_data(dot, nodes):
     for node in nodes:
         sid = str(id(node))
         ids_to_nodes[sid] = node
-        out_nodes[node] = n[sid]
+        if sid in n:
+            out_nodes[node] = n[sid]
         if sid in e:
             out_edges[node] = e[sid]
     for out_node, edges in out_edges.iteritems():
