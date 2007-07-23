@@ -38,7 +38,7 @@ class Widget(object):
         self.params.autosize = "by size"
         
     @staticmethod
-    @Func.cached
+    #@Func.cached # causes "default font not found"?
     def get_font(font_size):
         return pygame.font.SysFont('serif',int(font_size))
     
