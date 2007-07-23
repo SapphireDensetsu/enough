@@ -29,6 +29,7 @@ class App(object):
         self.params.back_color = (0,0,0)
         
         self.init_events()
+        self.record = False
 
     #______________________________________#
     
@@ -98,8 +99,22 @@ class App(object):
         self.screen.fill(self.params.back_color)
         self.update_drag()
         self.paint_widgets(event)
+        
         pygame.display.flip()
 
+        if self.record:
+            pygame.image.save(pygame.display.get_surface(), self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
+            self._frame_counter+=1
+
+    def start_record(self):
+        self._frame_counter = 0
+        import os, time
+        self.record_dir = '/tmp/record_%s' % (time.time())
+        os.makedirs(self.record_dir)
+        self.record = True
+    def stop_record(self):
+        self.record = False
+        
     #______________________________________#
 
     def init_events(self):
