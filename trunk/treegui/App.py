@@ -90,11 +90,14 @@ class App(object):
 
     #______________________________________#
 
+    def paint_widgets(self, event):
+        for widget in self.widgets:
+            widget.paint(self.screen)
+        
     def _paint(self, event):
         self.screen.fill(self.params.back_color)
         self.update_drag()
-        for widget in self.widgets:
-            widget.paint(self.screen)
+        self.paint_widgets(event)
         pygame.display.flip()
 
     #______________________________________#

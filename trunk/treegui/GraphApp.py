@@ -59,10 +59,6 @@ class GraphWidget(Widget):
             #for p in line:
             #    pygame.draw.circle(surface, (200,50,50), p, 2, 0)
 
-    def paint(self, surface):
-        if self.params.visible:
-            self.paint_connections(surface)
-        super(GraphWidget, self).paint(surface)
         
 class GraphApp(App):
     def __init__(self, *args, **kw):
@@ -82,9 +78,11 @@ class GraphApp(App):
             widget.font_size.final = widget.font_size.final * zoom
         self._paint(None)
 
-    def _paint(self, surface):
+    def paint_widgets(self, event):
         #self.update_layout()
-        super(GraphApp, self)._paint(surface)
+        for w in self.widgets:
+            w.paint_connections(self.screen)
+        super(GraphApp, self).paint_widgets(event)
         
     def _key_up(self, e):
         super(GraphApp, self)._key_up(e)
@@ -102,6 +100,9 @@ class GraphApp(App):
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale/1.2
             node.value.widget.pos.final.y = n_layout['y'] * y_scale/1.2
+            node.value.widget.size.final.x = n_layout['width'] * x_scale/1.2
+            node.value.widget.size.final.y = n_layout['height'] * y_scale/1.2
+            node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5
 
         for node, n_layout in n.iteritems():
             lines = []
@@ -111,16 +112,17 @@ class GraphApp(App):
                 this = node.value.widget
                 other = edge['tail_node'].value.widget
                 
-                line = [(int(p[0]*x_scale/1.2), int(p[1]*y_scale/1.2)) for p in edge['points']]
-                if (Point.from_tuple(line[0]) - this.pos.final).norm() > (Point.from_tuple(line[-1]) - this.pos.final).norm():
-                    line.reverse()
+                line = [Point(int(p[0]*x_scale/1.2), int(p[1]*y_scale/1.2)) for p in edge['points']]
+                line.reverse() # the direction is always tail->head, so we reverse it
+
                 from Lib.Bezier import Bezier
-                line = Bezier(line, 16)
+                curves = [p.as_tuple() for p in Bezier(line, 10)]
                 
-                line.insert(0, (this.pos.final.x, this.pos.final.y))
-                line.append((other.pos.final.x, other.pos.final.y))
                 
-                lines.append(line)
+                curves.insert(0, (this.pos.final+this.size.final*0.5).as_tuple())
+                curves.append((other.pos.final+other.size.final*0.5).as_tuple())
+                
+                lines.append(curves)
             node.value.widget.out_connection_lines = lines
             
             #print node.value.widget.pos.final
@@ -136,6 +138,7 @@ def test():
     a = GraphApp()
 
     import random
+    random.seed(0)
     nodes = []
     for i in xrange(15):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
@@ -143,7 +146,7 @@ def test():
         n1 = Graph.Node(NodeValue(str(i), pos))
         if nodes:
             n1.connect_out(random.choice(nodes))
-            if (random.random() > 0.8):
+            if (random.random() > 0.1):
                 n1.connect_in(random.choice(nodes))
         nodes.append(n1)
 
