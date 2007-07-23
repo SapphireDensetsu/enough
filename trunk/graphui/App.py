@@ -100,7 +100,10 @@ class App(object):
         self.screen.fill(self.params.back_color)
         self.update_drag()
         self.paint_widgets(event)
-        
+
+        if self.record:
+            pygame.draw.circle(self.screen, (255,100,100), (self.width-11, 11), 10, 0)
+            
         pygame.display.flip()
 
         if self.record:

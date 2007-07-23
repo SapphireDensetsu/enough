@@ -112,7 +112,7 @@ class GraphApp(App):
                 self.zoom(1/(1.3))
 
             elif e.key == pygame.K_r:
-                if self.record:
+                if not self.record:
                     self.start_record()
                 else:
                     self.stop_record()
@@ -227,7 +227,7 @@ def test():
         nodes.append(n1)
 
     a.add_nodes(nodes)
-    a.start_record()
+    #a.start_record()
     a.run()
 
 if __name__=='__main__':
