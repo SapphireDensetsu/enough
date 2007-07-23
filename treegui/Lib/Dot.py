@@ -57,7 +57,7 @@ def read_parse(f):
 class Dot(object):
     def __init__(self, command_line='dot'):
         import subprocess
-        self.popen = subprocess.Popen((command_line, '-Tplain'),
+        self.popen = subprocess.Popen((command_line, '-Tplain', '-y'),
                                       stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def get_graph_data(self, dot_graph_text):

@@ -25,6 +25,7 @@ class Widget(object):
                                    "in_focus",
                                    "focus_back_color",
                                    "focus_text_color",
+                                   "autosize",
                                    "user"], "WidgetParams")
         self.params.visible = True
         self.params.fore_color = (100,100,200)
@@ -34,6 +35,7 @@ class Widget(object):
         self.params.focus_back_color = (50,50,100)
         self.params.focus_text_color = (230,230,255)
         self.params.user = None
+        self.params.autosize = False
         
     @staticmethod
     @Func.cached
@@ -56,8 +58,10 @@ class Widget(object):
         else:
             text_color = self.params.text_color
         self.rendered_text = self.font.render(self.text, True, text_color)
-        self.size.final.x,self.size.final.y  = self.font.size(self.text)
-        self.size.current.x,self.size.current.y  = self.font.size(self.text)
+        
+        if self.params.autosize:
+            self.size.final.x,self.size.final.y  = self.font.size(self.text)
+            self.size.current.x,self.size.current.y  = self.font.size(self.text)
 
     def get_current_rect(self):
         return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
