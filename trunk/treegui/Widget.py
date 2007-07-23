@@ -35,7 +35,7 @@ class Widget(object):
         self.params.focus_back_color = (50,50,100)
         self.params.focus_text_color = (230,230,255)
         self.params.user = None
-        self.params.autosize = False
+        self.params.autosize = "by size"
         
     @staticmethod
     @Func.cached
@@ -43,12 +43,27 @@ class Widget(object):
         return pygame.font.SysFont('serif',int(font_size))
     
     def update_moving(self):
-        self.font_size.update()
         self.render_text()
         self.size.update()
         self.pos.update()
 
     def render_text(self):
+        if self.params.autosize == "by size":
+            new_size = self.font_size.final
+            while True:
+                w,h = self.get_font(new_size).size(self.text)
+                if (w > self.size.final.x or h > self.size.final.y):
+                    break
+                new_size += 1
+            while True:
+                w,h = self.get_font(new_size).size(self.text)
+                if (w < self.size.final.x and h < self.size.final.y):
+                    break
+                new_size -= 1
+            self.font_size.final = new_size 
+            
+        self.font_size.update()
+        
         prev_font = self.font
         self.font = self.get_font(self.font_size.current)
         if self.font == prev_font:
@@ -59,7 +74,7 @@ class Widget(object):
             text_color = self.params.text_color
         self.rendered_text = self.font.render(self.text, True, text_color)
         
-        if self.params.autosize:
+        if self.params.autosize == "by text":
             self.size.final.x,self.size.final.y  = self.font.size(self.text)
             self.size.current.x,self.size.current.y  = self.font.size(self.text)
 
