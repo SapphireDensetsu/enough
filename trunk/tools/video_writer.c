@@ -1,3 +1,5 @@
+/* build like this: gcc video_writer.c -I /usr/include/opencv -lcv -lhighgui */
+
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
@@ -6,7 +8,7 @@
 
 #define VERIFY_NOT_NULL_GOTO(_var) do { \
         if (NULL == _var) {                       \
-            printf("Error: " #_var " is NULL\n"); \
+            printf("Error: " #_var " is NULL at %d\n", __LINE__);        \
             goto NULL_ERROR;                      \
         }                                         \
     } while (0)
@@ -18,18 +20,25 @@ int main(const int argc, const char const *argv[])
     IplImage *img = NULL;
     IplImage *converted = NULL;
     int i = 0;
+    double fps = 0;
 
     CvSize target_size;
     float resize_factor;
     
-    if (argc < 3) {
-        printf("Usage: %s <out file> <inimage1> [inimage2] ...\n", argv[0]);
+    if (argc < 4) {
+        printf("Usage: %s <out file> <fps> <inimage1> [inimage2] ...\n", argv[0]);
         return 1;
     }
 
     cvInitSystem(0, NULL);
 
-    img = cvLoadImage(argv[2], CV_LOAD_IMAGE_COLOR);
+    fps = strtod(argv[2], NULL);
+    if (0 == fps) {
+        printf("Please specify an fps > 0. Not '%s'\n", argv[3]);
+        return 1;
+    }
+
+    img = cvLoadImage(argv[3], CV_LOAD_IMAGE_COLOR);
     VERIFY_NOT_NULL_GOTO(img);
 
     target_size = cvGetSize(img);
@@ -38,11 +47,12 @@ int main(const int argc, const char const *argv[])
     target_size.height = target_size.height * resize_factor;
 
     converted = cvCreateImage(target_size, IPL_DEPTH_8U, 3);
-    
-    writer = cvCreateVideoWriter(argv[1], CV_FOURCC('D','I','V','X'), 20, target_size, 1);
+
+    /* The fourcc seems to have no effect, at least on linux. */
+    writer = cvCreateVideoWriter(argv[1], CV_FOURCC('D','I','V','X'), fps, target_size, 1);
     VERIFY_NOT_NULL_GOTO(writer);
 
-    for (i = 2; i < argc; i++) {
+    for (i = 3; i < argc; i++) {
         printf("Loading %s...", argv[i]);
         
         img = cvLoadImage(argv[i], CV_LOAD_IMAGE_COLOR);
