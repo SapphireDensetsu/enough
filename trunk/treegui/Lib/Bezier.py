@@ -29,7 +29,7 @@ def PointOnCubicBezier(cp, t):
 
     return Point(x,y)
 
-def point_on_curve(cp, t):
+def rec_point_on_curve(cp, t):
     # From wikipedia - recursive definition for n-degree bezier curve
     # B(t) = Bp0..pn(t) = (1-t)Bp0..pn-1(t) + t*Bp1..pn(t)
     assert len(cp) >= 4, "I implemented only 4-degree or higher...you can do the rest."
@@ -37,6 +37,30 @@ def point_on_curve(cp, t):
         return PointOnCubicBezier(cp, t)
     return point_on_curve(cp[:-1], t)*(1-t) + point_on_curve(cp[1:], t)*t
 
+from Func import cached
+
+@cached
+def factorial(n):
+    r = 1
+    for i in xrange(2,n+1):
+        r *= i
+    return r
+
+@cached
+def choose(k, n):
+    assert k <= n, "K must be < N"
+    return factorial(n)/(factorial(k)*factorial(n-k))
+    
+def nonrec_point_on_curve(cp, t):
+    # Non-recursive implementation, also according to formula from wikipedia
+    n = len(cp) - 1
+    p = Point(0,0)
+    for i in xrange(n+1):
+        p += cp[i]*float(choose(i, n)) * ((1-t)**(n-i)) * (t**i)
+    return p
+
+# It is not clear which is faster. I didn't check.
+point_on_curve = nonrec_point_on_curve
     
 def Bezier(cp, numberOfPoints):
     dt = 1.0 / ( numberOfPoints - 1 )
