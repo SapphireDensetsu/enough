@@ -97,16 +97,19 @@ class GraphApp(App):
                 self.zoom(1/(1.3))
 
             elif e.key == pygame.K_a:
-                w = random.choice(self.widgets)
-                n = Graph.Node(NodeValue(str('new')))
-                w.node.connect_out(n)
-                self.add_nodes([n])
+                n = []
+                for i in xrange(2):
+                    n1 = Graph.Node(NodeValue(str('new')))
+                    random.choice(self.widgets).node.connect_out(n1)
+                    random.choice(self.widgets).node.connect_in(n1)
+                    n.append(n1)
+                self.add_nodes(n)
 
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
-        x_scale = self.width / float(g['width'])/1.2
-        y_scale = self.height / float(g['height'])/1.2
+        x_scale = self.width / float(g['width'])/1.01
+        y_scale = self.height / float(g['height'])/1.01
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale
             node.value.widget.pos.final.y = n_layout['y'] * y_scale
@@ -147,7 +150,7 @@ def test():
     import random
     random.seed(0)
     nodes = []
-    for i in xrange(10):
+    for i in xrange(2):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
         n1 = Graph.Node(NodeValue(str(i), pos))
