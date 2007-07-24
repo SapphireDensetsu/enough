@@ -75,11 +75,10 @@ class GraphWidget(Widget):
         for other, lines in self.out_connection_lines.iteritems():
             for line in lines:
                 line.update()
-##                 if len(line.current) > 1:
-##                     line.current[0] = self.center_pos()
-##                     line.current[-1] = other.center_pos()
-                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current] + [other.center_pos().as_tuple()], 2)
-                paint_arrowhead_by_direction(surface, (200,60,60), line.current[-2], line.current[-1])
+                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
+                l = len(line.current)*1/4
+                if l < 1: l = 1
+                paint_arrowhead_by_direction(surface, (200,60,60), line.current[-l-1], line.current[-l])
 
         
 class GraphApp(App):
@@ -155,8 +154,8 @@ class GraphApp(App):
                 self.update_layout()
             elif e.key == pygame.K_MINUS:
                 self.bezier_points -= 3
-                if self.bezier_points < 1:
-                    self.bezier_points = 2
+                if self.bezier_points < 4:
+                    self.bezier_points = 4
                 self.update_layout()
 
     def _mouse_down(self, e):
@@ -217,7 +216,7 @@ class GraphApp(App):
                     
                     from Lib.Bezier import Bezier
                     line.insert(0, (this.center_pos(False)))
-                    #line.append((other.center_pos(False)))
+                    line.append((other.center_pos(False)))
                     curve = Bezier(line, self.bezier_points)
 
                     connections = node.value.widget.out_connection_lines.setdefault(other, [])
@@ -231,10 +230,6 @@ class GraphApp(App):
             for other in previously_connected:
                 del node.value.widget.out_connection_lines[other]
             
-            #print node.value.widget.pos.final
-            #node.value.widget.size.final.x = n_layout['width']
-            #node.value.widget.size.final.y = n_layout['height']
-        
             
 
 #---------------------------------------------
