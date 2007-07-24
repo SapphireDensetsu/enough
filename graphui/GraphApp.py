@@ -25,7 +25,7 @@ from Lib import Graph
 
 from Lib.Point import Point
 
-from guilib import get_default, MovingLine
+from guilib import get_default, MovingLine, paint_arrowhead_by_direction
 
 class NodeValue(object):
     def __init__(self, name, start_pos=None):
@@ -75,12 +75,11 @@ class GraphWidget(Widget):
         for other, lines in self.out_connection_lines.iteritems():
             for line in lines:
                 line.update()
-                if len(line.current) > 1:
-                    line.current[0] = self.center_pos()
-                    line.current[-1] = other.center_pos()
-                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
-                #for p in line:
-                #    pygame.draw.circle(surface, (200,50,50), p, 2, 0)
+##                 if len(line.current) > 1:
+##                     line.current[0] = self.center_pos()
+##                     line.current[-1] = other.center_pos()
+                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current] + [other.center_pos().as_tuple()], 2)
+                paint_arrowhead_by_direction(surface, (200,60,60), line.current[-2], line.current[-1])
 
         
 class GraphApp(App):
@@ -91,6 +90,9 @@ class GraphApp(App):
         self.dragging_enabled = False
         self.connecting = False
         self.disconnecting = False
+        self.pos_zoom = 1
+        self.size_zoom = 0.9
+        self.bezier_points = 30
         
     def add_nodes(self, nodes):
         for node in nodes:
@@ -100,26 +102,26 @@ class GraphApp(App):
         self.update_layout()            
 
     def zoom(self, zoom):
-        for widget in self.widgets:
-            widget.pos.final = widget.center_pos(False)
-            widget.size.final = widget.size.final * zoom
-            widget.pos.final -= widget.size.final * 0.5
-            
-        self._paint(None)
+        self.pos_zoom *= zoom
+        self.size_zoom *= zoom
+        self.update_layout()
 
     def paint_connector(self, color):
+        mpos = mouse_pos()
+        cpos = self.focused_widget.center_pos()
+        paint_arrowhead_by_direction(self.screen, color, cpos, mpos)
         pygame.draw.aalines(self.screen, color, False,
-                            [self.focused_widget.center_pos().as_tuple(), mouse_pos().as_tuple()], True)
+                            [cpos.as_tuple(), mpos.as_tuple()], True)
         
     def paint_widgets(self, event):
+        for w in self.widgets:
+            w.paint_connections(self.screen)
+        super(GraphApp, self).paint_widgets(event)
         if self.connecting:
             self.paint_connector((150,250,150))
         if self.disconnecting:
             self.paint_connector((250,150,150))
             
-        for w in self.widgets:
-            w.paint_connections(self.screen)
-        super(GraphApp, self).paint_widgets(event)
         
     def _key_up(self, e):
         super(GraphApp, self)._key_up(e)
@@ -139,13 +141,23 @@ class GraphApp(App):
                 n = []
                 for i in xrange(1):
                     n1 = Graph.Node(NodeValue(str('new')))
-##                     if random.random() > 0.5:
-##                         random.choice(self.widgets).node.connect_out(n1)
-##                     else:
-##                         random.choice(self.widgets).node.connect_in(n1)
                     n.append(n1)
                 self.add_nodes(n)
 
+            elif e.key == pygame.K_s:
+                nodes = [widget.node for widget in self.widgets]
+                print '\n'
+                print Graph.generate_dot(nodes)
+                print '\n'
+
+            elif e.key == pygame.K_EQUALS:
+                self.bezier_points += 3
+                self.update_layout()
+            elif e.key == pygame.K_MINUS:
+                self.bezier_points -= 3
+                if self.bezier_points < 1:
+                    self.bezier_points = 2
+                self.update_layout()
 
     def _mouse_down(self, e):
         super(GraphApp, self)._mouse_down(e)
@@ -180,13 +192,14 @@ class GraphApp(App):
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
-        x_scale = self.width / float(g['width'])
-        y_scale = self.height / float(g['height'])
+        x_scale = self.width / float(g['width']) * self.pos_zoom
+        y_scale = self.height / float(g['height']) * self.pos_zoom
+        
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale
             node.value.widget.pos.final.y = n_layout['y'] * y_scale
-            node.value.widget.size.final.x = n_layout['width'] * x_scale
-            node.value.widget.size.final.y = n_layout['height'] * y_scale
+            node.value.widget.size.final.x = n_layout['width'] * x_scale * self.size_zoom
+            node.value.widget.size.final.y = n_layout['height'] * y_scale * self.size_zoom
             node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5
 
         for node, n_layout in n.iteritems():
@@ -196,17 +209,16 @@ class GraphApp(App):
                 last_indices = {}
                 for edge in e[node]:
                     this = node.value.widget
-                    other = edge['tail_node'].value.widget
+                    other = edge['head_node'].value.widget
                     if other in previously_connected:
                         previously_connected.remove(other)
 
                     line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
-                    line.reverse() # the direction is always tail->head, so we reverse it
-
+                    
                     from Lib.Bezier import Bezier
-                    curve = Bezier(line, 10)
-                    curve.insert(0, (this.center_pos(False)))
-                    curve.append((other.center_pos(False)))
+                    line.insert(0, (this.center_pos(False)))
+                    #line.append((other.center_pos(False)))
+                    curve = Bezier(line, self.bezier_points)
 
                     connections = node.value.widget.out_connection_lines.setdefault(other, [])
                     # if there is more than one connection, we don't care to animate the correct one.

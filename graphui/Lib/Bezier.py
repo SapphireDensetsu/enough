@@ -81,10 +81,11 @@ def nonrec_point_on_curve(cp, t):
 # It is not clear which is faster. I didn't check.
 point_on_curve = nonrec_point_on_curve
     
-def Bezier(cp, numberOfPoints):
+def Bezier(cp, numberOfPoints, min_t = 0, max_t = 1):
     dt = 1.0 / ( numberOfPoints - 1 )
     curve = []
     for i in xrange(numberOfPoints):
-        curve.append(point_on_curve( cp, i*dt ))
+        t = (max_t - min_t)*i*dt + min_t
+        curve.append(point_on_curve( cp, t ))
     return curve
 
