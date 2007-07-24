@@ -165,5 +165,5 @@ def get_drawing_data(dot, nodes):
             out_edges[node] = e[sid]
     for out_node, edges in out_edges.iteritems():
         for edge in edges:
-            edge['tail_node'] = ids_to_nodes[edge['tail']]
+            edge['head_node'] = ids_to_nodes[edge['head']]
     return g, out_nodes, out_edges

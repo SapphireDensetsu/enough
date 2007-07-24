@@ -59,13 +59,42 @@ class MovingLine(MovingValue):
             self.current = [Point(0,0) for p in self.final]
         else:
             len_diff = len(self.final) - len(self.current)
-            if len_diff > 0:
+            if len_diff < 0:
                 # delete intermediate points until they are the same length
-                for i in xrange(len_diff):
-                    self.current.pop(1)
-            elif len_diff < 0:
+                for i in xrange(-len_diff):
+                    self.current.pop(len(self.current)/2)
+            elif len_diff > 0:
                 for i in xrange(len_diff):
                     self.current.insert(1, self.current[0].copy())
                     
         for current_p, final_p in zip (self.current, self.final):
             current_p += (final_p - current_p) * self.step
+
+import pygame
+
+def paint_arrowhead(surface, color, pos, angle, size=7, width=0):
+    pygame.draw.polygon(surface, color, [p.as_tuple() for p in n_point_regular_polygon(3, size, pos, angle)], width)
+
+def paint_arrowhead_by_direction(surface, color, pos, target_pos, size=7, width=0):
+    direction = target_pos - pos
+    ldir = direction.norm()
+    normalized = direction * (1/ldir)
+    radius = size
+    angle = direction.angle()
+    center = target_pos - normalized * 0.5 * size
+    return paint_arrowhead(surface, color, center, angle, size=radius, width=width)
+    
+def n_point_regular_polygon(n, radius, center=None, phase=0):
+    import math
+    twopi = 2*math.pi
+    if center is None:
+        center = Point(0,0)
+    points = []
+    for i in xrange(n):
+        angle = twopi/n*i + phase
+        points.append(Point.from_polar(angle, radius) + center)
+
+    return points
+    
+
+                        

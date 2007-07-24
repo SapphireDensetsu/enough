@@ -62,7 +62,7 @@ def read_parse(f):
             edge['points'] = points
             edge['style'] = words[-2]
             edge['color'] = words[-1]
-            edges.setdefault(edge['head'], []).append(edge)
+            edges.setdefault(edge['tail'], []).append(edge)
             continue
 
         if words[0] == 'stop':
