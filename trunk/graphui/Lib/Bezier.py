@@ -1,4 +1,25 @@
-# Hitched from WikiPedia
+## /* Copyright 2007, Noam Lewis, enoughmail@googlegroups.com */
+## /*
+##     This file is part of Enough.
+
+##     Enough is free software; you can redistribute it and/or modify
+##     it under the terms of the GNU General Public License as published by
+##     the Free Software Foundation; either version 3 of the License, or
+##     (at your option) any later version.
+
+##     Enough is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     GNU General Public License for more details.
+
+##     You should have received a copy of the GNU General Public License
+##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+## */
+
+from Point import Point
+
+
+# Algorithm & some code Hitched from WikiPedia
 ## /*
 ## cp is a 4 element array where:
 ## cp[0] is the starting point, or P0 in the above diagram
@@ -7,8 +28,6 @@
 ## cp[3] is the end point, or P3 in the above diagram
 ## t is the parameter value, 0 <= t <= 1
 ## */
-from Point import Point
-
 def PointOnCubicBezier(cp, t):
     #/* calculate the polynomial coefficients */
     cx = 3.0 * (cp[1].x - cp[0].x)
