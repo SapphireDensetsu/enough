@@ -223,7 +223,7 @@ class GraphApp(App):
                     # if there is more than one connection, we don't care to animate the correct one.
                     last_index = last_indices.setdefault(other, 0)
                     if len(connections) <= last_index:
-                        connections.append(MovingLine([this.center_pos(False).copy()],[], step=0.5))
+                        connections.append(MovingLine([this.center_pos().copy(),other.center_pos().copy()],[], step=0.5))
                     connections[last_index].final = curve
                     last_indices[other] += 1
                 
@@ -241,7 +241,7 @@ def test():
     import random
     random.seed(0)
     nodes = []
-    for i in xrange(5):
+    for i in xrange(1):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
         n1 = Graph.Node(NodeValue(str(i), pos))
