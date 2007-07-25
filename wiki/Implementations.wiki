@@ -7,6 +7,8 @@ NF is a gui for live programming. Still waiting for a first release.
 == Graphui ==
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. There is a *[http://enough.googlecode.com/svn/trunk/media/graphui_sneak1.avi sneak preview]* available. The code is in the svn under graphui.
 
+[http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_1.jpg Screenshot]
+
 == Tools ==
  * *videowriter* is a tiny program for *creating a video out of a sequence of images*. Available in the SVN under tools. *Requires*: OpenCV library. Or you can try the [http://enough.googlecode.com/svn/trunk/tools/video_writer linux binary].
 
