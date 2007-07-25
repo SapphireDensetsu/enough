@@ -147,7 +147,8 @@ class GraphApp(App):
         self.pos_zoom *= zoom
         self.size_zoom *= zoom
         self.update_layout()
-        return partial(self.zoom, 1/zoom)
+        if zoom != 0:
+            return partial(self.zoom, 1.0/zoom)
 
     def paint_connector(self, color, widgets):
         mpos = mouse_pos()
