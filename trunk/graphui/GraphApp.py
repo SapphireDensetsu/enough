@@ -18,7 +18,7 @@
 
 from functools import partial
 import pygame
-import random
+import time
 
 from App import App, mouse_pos
 from Widget import Widget
@@ -120,8 +120,12 @@ class GraphApp(App):
         self.undoing = False
         self.max_undo = 25
 
+        self.status_font = pygame.font.SysFont('serif',20)
+        self.rendered_status_text = None
+        
     @undoable_method
     def add_nodes(self, nodes):
+        self.set_status_text("Add %d nodes" % (len(nodes),))
         for node in nodes:
             w = GraphWidget()
             w.set_node(node)
@@ -130,6 +134,7 @@ class GraphApp(App):
         return partial(self.remove_nodes, nodes)
     @undoable_method
     def remove_nodes(self, nodes):
+        self.set_status_text("Remove %d nodes" % (len(nodes),))
         for node in nodes:
             node.disconnect_all()
             self.remove_widget(node.value.widget)
@@ -138,6 +143,7 @@ class GraphApp(App):
 
     @undoable_method
     def zoom(self, zoom):
+        self.set_status_text("Zoom %d" % (zoom,))
         self.history.append(Zoomed(zoom))
         self.pos_zoom *= zoom
         self.size_zoom *= zoom
@@ -161,6 +167,8 @@ class GraphApp(App):
         if self.disconnecting:
             self.paint_connector((250,150,150), [n.value.widget for n in self.disconnecting_sources])
             
+        self.paint_status_text()
+        
         
     def _key_up(self, e):
         super(GraphApp, self)._key_up(e)
@@ -169,9 +177,9 @@ class GraphApp(App):
         else:
             if self.focused_widgets and len(self.focused_widgets) == 1:
                 self.focused_widgets[0].node.value.entered_text(e.key)
-                
 
     def undo(self):
+        self.set_status_text("Undo")
         if not self.history:
             return
         doer, undoer, args, kw = self.history.pop()
@@ -180,6 +188,7 @@ class GraphApp(App):
         self.undoing = False
 
     def redo(self):
+        self.set_status_text("Redo")
         if not self.history_redo:
             return
         doer, undoer, args, kw = self.history_redo.pop()
@@ -272,6 +281,7 @@ class GraphApp(App):
 
     @undoable_method
     def connect_nodes(self, sources, target):
+        self.set_status_text("Connect")
         for source in sources:
             source.connect_out(target)
         self.update_layout()
@@ -279,6 +289,7 @@ class GraphApp(App):
     
     @undoable_method
     def disconnect_nodes(self, sources, target):
+        self.set_status_text("Disconnect")
         for source in sources:
             if source.is_connected(target):
                 source.disconnect(target)
@@ -334,6 +345,20 @@ class GraphApp(App):
                     
             for other in previously_connected:
                 del node.value.widget.out_connection_lines[other]
+
+    def paint_status_text(self):
+        if self.rendered_status_text:
+            if time.time() > self.status_text_timeout:
+                self.rendered_status_text = None
+                return
+            self.screen.blit(self.rendered_status_text, (0,self.height-32))
+        
+    def set_status_text(self, text):
+        if self.undoing:
+            return
+        self.rendered_status_text = self.status_font.render(text, True, (255,100,100))
+        self.status_text_timeout = time.time() + 4
+
 
 #---------------------------------------------
 
