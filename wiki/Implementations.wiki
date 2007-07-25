@@ -7,6 +7,15 @@ NF is a gui for live programming. Still waiting for a first release.
 == Graphui ==
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. There is a *[http://enough.googlecode.com/svn/trunk/media/graphui_sneak1.avi sneak preview]* available. The code is in the svn under graphui.
 
+Here are the current "features":
+ * Connect, disconnect, add and remove nodes, zoom in & out
+ * Automatic layout using [http://www.graphviz.org Dot] (Graphviz).
+ * Animation between layouts 
+ * Undo/redo
+ * Record animation - makes a series of BMP files you can later turn into a movie using videowriter or some other tool.
+
+More coming soon!
+
 http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_1.jpg
 
 == Tools ==
