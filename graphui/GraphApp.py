@@ -144,7 +144,6 @@ class GraphApp(App):
     @undoable_method
     def zoom(self, zoom):
         self.set_status_text("Zoom %d" % (zoom,))
-        self.history.append(Zoomed(zoom))
         self.pos_zoom *= zoom
         self.size_zoom *= zoom
         self.update_layout()
