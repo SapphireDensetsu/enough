@@ -244,7 +244,13 @@ class GraphApp(App):
                         connections.append(MovingLine([this.center_pos().copy(),other.center_pos().copy()],[], step=0.5))
                     connections[last_index].final = curve
                     last_indices[other] += 1
-                
+
+                # IF we had MORE lines than now, remove the extra ones.
+                for other, last_index in last_indices.iteritems():
+                    connections = node.value.widget.out_connection_lines[other]
+                    while len(connections) > last_index:
+                        connections.pop(len(connections) - 1)
+                    
             for other in previously_connected:
                 del node.value.widget.out_connection_lines[other]
 
