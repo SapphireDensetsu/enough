@@ -92,6 +92,7 @@ class GraphApp(App):
         self.pos_zoom = 1
         self.size_zoom = 0.9
         self.bezier_points = 30
+        self.modal_nodes = None
         
     def add_nodes(self, nodes):
         for node in nodes:
@@ -105,21 +106,22 @@ class GraphApp(App):
         self.size_zoom *= zoom
         self.update_layout()
 
-    def paint_connector(self, color):
+    def paint_connector(self, color, widgets):
         mpos = mouse_pos()
-        cpos = self.focused_widget.center_pos()
-        paint_arrowhead_by_direction(self.screen, color, cpos, mpos)
-        pygame.draw.aalines(self.screen, color, False,
-                            [cpos.as_tuple(), mpos.as_tuple()], True)
+        for w in widgets:
+            cpos = w.center_pos()
+            paint_arrowhead_by_direction(self.screen, color, cpos, mpos)
+            pygame.draw.aalines(self.screen, color, False,
+                                [cpos.as_tuple(), mpos.as_tuple()], True)
         
     def paint_widgets(self, event):
         for w in self.widgets:
             w.paint_connections(self.screen)
         super(GraphApp, self).paint_widgets(event)
         if self.connecting:
-            self.paint_connector((150,250,150))
+            self.paint_connector((150,250,150), [n.value.widget for n in self.connecting_sources])
         if self.disconnecting:
-            self.paint_connector((250,150,150))
+            self.paint_connector((250,150,150), [n.value.widget for n in self.disconnecting_sources])
             
         
     def _key_up(self, e):
@@ -159,31 +161,47 @@ class GraphApp(App):
                 self.update_layout()
 
     def _mouse_down(self, e):
-        super(GraphApp, self)._mouse_down(e)
-        if self.focused_widget:
+        mods = pygame.key.get_mods()
+        connect_modifier_used = (mods & pygame.KMOD_SHIFT)
+        multiselect = (mods & self.multiselect_modifier)
+        if not multiselect or (self.focused_widgets and self.hovered_widget not in self.focused_widgets):
+            # The or part is to allow people to use a first click-drag
+            # on the last widget of a multiselect group to
+            # connect. Otherwise, the connection group would not
+            # include that last widget.
+            super(GraphApp, self)._mouse_down(e)
+        if self.focused_widgets and connect_modifier_used:
             if e.button == 1:
                 self.connecting = True
-                self.connecting_source = self.focused_widget.node
+                self.connecting_sources = [w.node for w in self.focused_widgets]
             elif e.button == 3:
                 self.disconnecting = True
-                self.disconnecting_source = self.focused_widget.node
+                self.disconnecting_sources = [w.node for w in self.focused_widgets]
+            self.unset_focus()
+        if multiselect:
+            super(GraphApp, self)._mouse_down(e)
+            
                 
     def _mouse_up(self, e):
         super(GraphApp, self)._mouse_up(e)
         if self.connecting:
             self.connecting = False
-            target = self.focused_widget
+            target = self.hovered_widget
             if target:
-                self.connecting_source.connect_out(target.node)
+                target = target.node
+                for source in self.connecting_sources:
+                    source.connect_out(target)
                 self.update_layout()
             self.connecting_source = None
         elif self.disconnecting:
             self.disconnecting = False
-            target = self.focused_widget
+            target = self.hovered_widget
             if target:
-                if self.disconnecting_source.is_connected(target.node):
-                    self.disconnecting_source.disconnect(target.node)
-                    self.update_layout()
+                target = target.node
+                for source in self.disconnecting_sources:
+                    if source.is_connected(target):
+                        source.disconnect(target)
+                self.update_layout()
             self.disconnecting_source = None
             
             
@@ -229,8 +247,6 @@ class GraphApp(App):
                 
             for other in previously_connected:
                 del node.value.widget.out_connection_lines[other]
-            
-            
 
 #---------------------------------------------
 

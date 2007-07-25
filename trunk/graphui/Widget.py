@@ -36,22 +36,29 @@ class Widget(object):
         self.init_params()
 
     def init_params(self):
-        self.params = ParamHolder(["visible",
+        self.params = ParamHolder(["visible", "enabled",
                                    "fore_color",
                                    "back_color",
                                    "text_color",
                                    "in_focus",
+                                   "in_hover",
                                    "focus_back_color",
                                    "focus_text_color",
+                                   "hover_back_color",
+                                   "hover_text_color",
                                    "autosize",
                                    "user"], "WidgetParams")
+        self.params.enabled = True
         self.params.visible = True
         self.params.fore_color = (100,100,200)
         self.params.back_color = (10,  10,15)
-        self.params.text_color = (200,200,210)
+        self.params.text_color = (150,150,150)
         self.params.in_focus = False
+        self.params.in_hover = False
         self.params.focus_back_color = (50,50,100)
         self.params.focus_text_color = (230,230,255)
+        self.params.hover_back_color = (20,20,60)
+        self.params.hover_text_color = (200,200,215)
         self.params.user = None
         self.params.autosize = "by size"
         
@@ -88,6 +95,8 @@ class Widget(object):
             return
         if self.params.in_focus:
             text_color = self.params.focus_text_color
+        elif self.params.in_hover:
+            text_color = self.params.hover_text_color
         else:
             text_color = self.params.text_color
         self.rendered_text = self.font.render(self.text, True, text_color)
@@ -106,6 +115,8 @@ class Widget(object):
         self.update_moving()
         if self.params.in_focus:
             back_color = self.params.focus_back_color
+        elif self.params.in_hover:
+            back_color = self.params.hover_back_color
         else:
             back_color = self.params.back_color
 

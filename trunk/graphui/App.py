@@ -32,13 +32,16 @@ def Event(name, **kw):
 
 
 class App(object):
+    multiselect_modifier = pygame.KMOD_CTRL
+    
     def __init__(self, width=800, height=600, flags=0):
         pygame.init()
         pygame.font.init()
         self.stop = False
 
         self.widgets = []
-        self.focused_widget = None
+        self.focused_widgets = None
+        self.hovered_widget = None
         self.focus_locked = False
         self.dragging = False
         self.dragging_enabled = True
@@ -153,18 +156,19 @@ class App(object):
     #______________________________________#
     
     def _mouse_down(self, e):
-        self.lock_focus()
-        if self.dragging_enabled:
-            self.dragging = True
-            if self.focused_widget:
-                self.drag_start_pos = mouse_pos() - self.focused_widget.pos.current
+        self.lock_focus(toggle=True)
+        if not self.dragging_enabled:
+            return
+        self.dragging = True
+        if self.focused_widgets:
+            self.drag_start_positions = [mouse_pos() - w.pos.current for w in self.focused_widgets]
         
     def _mouse_up(self, e):
         self.unlock_focus()
         self.dragging = False
 
     def _mouse_motion(self, e):
-        self.update_focus()
+        self.update_hover()
         self.update_drag()
         
     def _key_up(self, e):
@@ -173,34 +177,61 @@ class App(object):
     def update_drag(self):
         p = mouse_pos()
         if self.dragging:
-            if self.focused_widget:
-                self.focused_widget.pos.final = p - self.drag_start_pos
-        
+            if self.focused_widgets:
+                for w, d in zip(self.focused_widgets, self.drag_start_positions):
+                    w.pos.final = p - d
 
-    def lock_focus(self):
-        self.update_focus()
+    def lock_focus(self, toggle=False):
+        self.update_focus(toggle=toggle)
         self.focus_locked = True
     def unlock_focus(self):
         self.focus_locked = False
-        self.update_focus()
+        #self.update_focus()
         
-    def update_focus(self):
+    def update_focus(self, toggle=False):
         if self.focus_locked:
             return
         p = mouse_pos()
         for widget in reversed(self.widgets):
-            if widget.in_bounds(p):
-                self.set_focus(widget)
+            if widget.in_bounds(p) and widget.params.enabled:
+                if not (pygame.key.get_mods() & self.multiselect_modifier):
+                    self.unset_focus()
+                self.set_focus(widget, toggle = toggle)
                 return
         self.unset_focus()
         
-    def set_focus(self, widget):
-        self.unset_focus()
-        self.focused_widget = widget
-        self.focused_widget.params.in_focus = True
+    def update_hover(self):
+        p = mouse_pos()
+        for widget in reversed(self.widgets):
+            if widget.in_bounds(p) and widget.params.enabled:
+                self.set_hover(widget)
+                return
+        self.unset_hover()
+        
+    def set_focus(self, widget, toggle = False):
+        if self.focused_widgets is None:
+            self.focused_widgets = []
+        if widget in self.focused_widgets:
+            if toggle:
+                widget.params.in_focus = False
+                self.focused_widgets.remove(widget)
+        else:
+            self.focused_widgets.append(widget)
+            widget.params.in_focus = True
 
     def unset_focus(self):
-        if self.focused_widget is None:
+        if self.focused_widgets is None:
             return
-        self.focused_widget.params.in_focus = False
-        self.focused_widget = None
+        for w in self.focused_widgets:
+            w.params.in_focus = False
+        self.focused_widgets = None
+
+    def unset_hover(self):
+        if self.hovered_widget:
+            self.hovered_widget.params.in_hover = False
+        self.hovered_widget = None
+    def set_hover(self, widget):
+        self.unset_hover()
+        self.hovered_widget = widget
+        self.hovered_widget.params.in_hover = True
+        
