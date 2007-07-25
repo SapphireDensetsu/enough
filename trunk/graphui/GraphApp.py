@@ -16,6 +16,7 @@
 ##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## */
 
+from functools import partial
 import pygame
 import random
 
@@ -42,6 +43,14 @@ class NodeValue(object):
     
     def update_widget_text(self):
         self._widget.text = self.name
+
+    def entered_text(self, key):
+        import string
+        if key == pygame.K_BACKSPACE:
+            self.name = self.name[:-1]
+        elif key < 256 and chr(key) in string.printable:
+            self.name += chr(key)
+        self.update_widget_text()
 
 class GraphWidget(Widget):
     def __init__(self, *args, **kw):
@@ -80,7 +89,19 @@ class GraphWidget(Widget):
                 if l < 1: l = 1
                 paint_arrowhead_by_direction(surface, (200,60,60), line.current[-l-1], line.current[-l])
 
-        
+
+
+def undoable_method(func):
+    def new_func(self, *args, **kw):
+        undoer = func(self, *args, **kw)
+        if self.undoing:
+            l = self.history_redo
+        else:
+            l = self.history
+        if len(l) < self.max_undo:
+            l.append((func, undoer, args, kw))
+    return new_func
+    
 class GraphApp(App):
     def __init__(self, *args, **kw):
         super(GraphApp, self).__init__(*args, **kw)
@@ -94,17 +115,34 @@ class GraphApp(App):
         self.bezier_points = 30
         self.modal_nodes = None
         
+        self.history = []
+        self.history_redo = []
+        self.undoing = False
+        self.max_undo = 25
+
+    @undoable_method
     def add_nodes(self, nodes):
         for node in nodes:
             w = GraphWidget()
             w.set_node(node)
             self.add_widget(w)
-        self.update_layout()            
+        self.update_layout()
+        return partial(self.remove_nodes, nodes)
+    @undoable_method
+    def remove_nodes(self, nodes):
+        for node in nodes:
+            node.disconnect_all()
+            self.remove_widget(node.value.widget)
+        self.update_layout()
+        return partial(self.add_nodes, nodes)
 
+    @undoable_method
     def zoom(self, zoom):
+        self.history.append(Zoomed(zoom))
         self.pos_zoom *= zoom
         self.size_zoom *= zoom
         self.update_layout()
+        return partial(self.zoom, 1/zoom)
 
     def paint_connector(self, color, widgets):
         mpos = mouse_pos()
@@ -127,38 +165,71 @@ class GraphApp(App):
     def _key_up(self, e):
         super(GraphApp, self)._key_up(e)
         if (e.mod & pygame.KMOD_CTRL):
-            if e.key == pygame.K_w:
-                self.zoom(1.3)
-            elif e.key == pygame.K_q:
-                self.zoom(1/(1.3))
+            self.handle_control_key(e)
+        else:
+            if self.focused_widgets and len(self.focused_widgets) == 1:
+                self.focused_widgets[0].node.value.entered_text(e.key)
+                
 
-            elif e.key == pygame.K_r:
-                if not self.record:
-                    self.start_record()
-                else:
-                    self.stop_record()
+    def undo(self):
+        if not self.history:
+            return
+        doer, undoer, args, kw = self.history.pop()
+        self.undoing = True
+        undoer()
+        self.undoing = False
 
-            elif e.key == pygame.K_a:
-                n = []
-                for i in xrange(1):
-                    n1 = Graph.Node(NodeValue(str('new')))
-                    n.append(n1)
-                self.add_nodes(n)
+    def redo(self):
+        if not self.history_redo:
+            return
+        doer, undoer, args, kw = self.history_redo.pop()
+        self.undoing = False
+        undoer()
+        #self.undoing = False
+        
+    def handle_control_key(self, e):
+        if e.key == pygame.K_w:
+            self.zoom(1.3)
+        elif e.key == pygame.K_q:
+            self.zoom(1/(1.3))
 
-            elif e.key == pygame.K_s:
-                nodes = [widget.node for widget in self.widgets]
-                print '\n'
-                print Graph.generate_dot(nodes)
-                print '\n'
+        elif e.key == pygame.K_z:
+            self.undo()
+        elif e.key == pygame.K_y:
+            self.redo()
+            
+        elif e.key == pygame.K_r:
+            if not self.record:
+                self.start_record()
+            else:
+                self.stop_record()
 
-            elif e.key == pygame.K_EQUALS:
-                self.bezier_points += 3
-                self.update_layout()
-            elif e.key == pygame.K_MINUS:
-                self.bezier_points -= 3
-                if self.bezier_points < 4:
-                    self.bezier_points = 4
-                self.update_layout()
+        elif e.key == pygame.K_a:
+            n = []
+            for i in xrange(1):
+                n1 = Graph.Node(NodeValue(str('new')))
+                n.append(n1)
+            self.add_nodes(n)
+
+        elif e.key == pygame.K_DELETE or e.key == pygame.K_d:
+            if self.focused_widgets:
+                self.remove_nodes([w.node for w in self.focused_widgets])
+                self.unset_focus()
+
+        elif e.key == pygame.K_s:
+            nodes = [widget.node for widget in self.widgets]
+            print '\n'
+            print Graph.generate_dot(nodes)
+            print '\n'
+
+        elif e.key == pygame.K_EQUALS:
+            self.bezier_points += 3
+            self.update_layout()
+        elif e.key == pygame.K_MINUS:
+            self.bezier_points -= 3
+            if self.bezier_points < 4:
+                self.bezier_points = 4
+            self.update_layout()
 
     def _mouse_down(self, e):
         mods = pygame.key.get_mods()
@@ -189,26 +260,36 @@ class GraphApp(App):
             target = self.hovered_widget
             if target:
                 target = target.node
-                for source in self.connecting_sources:
-                    source.connect_out(target)
-                self.update_layout()
+                self.connect_nodes(self.connecting_sources, target)
             self.connecting_source = None
         elif self.disconnecting:
             self.disconnecting = False
             target = self.hovered_widget
             if target:
                 target = target.node
-                for source in self.disconnecting_sources:
-                    if source.is_connected(target):
-                        source.disconnect(target)
-                self.update_layout()
+                self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
-            
-            
+
+    @undoable_method
+    def connect_nodes(self, sources, target):
+        for source in sources:
+            source.connect_out(target)
+        self.update_layout()
+        return partial(self.disconnect_nodes, sources, target)
+    
+    @undoable_method
+    def disconnect_nodes(self, sources, target):
+        for source in sources:
+            if source.is_connected(target):
+                source.disconnect(target)
+        self.update_layout()
+        return partial(self.connect_nodes, sources, target)
 
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
         g, n, e = Graph.get_drawing_data(self.dot, nodes)
+        if not n:
+            return
         x_scale = self.width / float(g['width']) * self.pos_zoom
         y_scale = self.height / float(g['height']) * self.pos_zoom
         
