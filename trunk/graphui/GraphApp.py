@@ -364,7 +364,7 @@ class GraphApp(App):
 
 
 def test():
-    a = GraphApp()
+    a = GraphApp(320,240)
 
     import random
     random.seed(0)
