@@ -98,3 +98,11 @@ def n_point_regular_polygon(n, radius, center=None, phase=0):
     
 
                         
+pygame_reverse_key_map = {}
+def build_reverse_pygame_key_map():
+    import pygame
+    global pygame_reverse_key_map
+    for name in pygame.__dict__:
+        if name.startswith("K_"):
+            pygame_reverse_key_map[pygame.__dict__[name]] = name
+build_reverse_pygame_key_map()

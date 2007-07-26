@@ -26,7 +26,7 @@ from Lib import Graph
 
 from Lib.Point import Point
 
-from guilib import get_default, MovingLine, paint_arrowhead_by_direction
+from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map
 
 class NodeValue(object):
     def __init__(self, name, start_pos=None):
@@ -107,6 +107,8 @@ class GraphApp(App):
         super(GraphApp, self).__init__(*args, **kw)
         from Lib.Dot import Dot
         self.dot = Dot()
+        self.init_control_map()
+        
         self.dragging_enabled = False
         self.connecting = False
         self.disconnecting = False
@@ -121,8 +123,27 @@ class GraphApp(App):
         self.max_undo = 25
 
         self.status_font = pygame.font.SysFont('serif',20)
-        self.rendered_status_text = None
+        self.rendered_status_texts = []
+        self.show_help()
         
+    def init_control_map(self):
+        zoom_amount = 1.3
+        self.control_map = {pygame.K_w: ("Zoom in", partial(self.zoom, zoom_amount)),
+                            pygame.K_q: ("Zoom out", partial(self.zoom, 1.0/zoom_amount)),
+                            pygame.K_z: ("Undo", self.undo),
+                            pygame.K_y: ("Redo", self.redo),
+                            pygame.K_r: ("Record (toggle)", self.toggle_record),
+                            pygame.K_a: ("Create new node", self.create_new_node),
+                            pygame.K_d: ("Delete selected nodes", self.delete_selected_nodes),
+                            pygame.K_s: ("Output DOT description", self.output_dot_description),
+                            pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
+                                                                                 3)),
+                            pygame.K_MINUS: ("Lower curve resolution", partial(self.change_curve_resolution,
+                                                                               -3)),
+                            pygame.K_h: ("Show help", self.show_help),
+                            pygame.K_F1:("Show help", self.show_help),
+                            }
+
     @undoable_method
     def add_nodes(self, nodes):
         self.set_status_text("Add %d nodes" % (len(nodes),))
@@ -195,50 +216,42 @@ class GraphApp(App):
         self.undoing = False
         undoer()
         #self.undoing = False
-        
+
+    def toggle_record(self):
+        if not self.record:
+            self.start_record()
+        else:
+            self.stop_record()
+
+    def create_new_node(self):
+        n = []
+        for i in xrange(1):
+            n1 = Graph.Node(NodeValue(str('new')))
+            n.append(n1)
+        self.add_nodes(n)
+
+    def delete_selected_nodes(self):
+        if self.focused_widgets:
+            self.remove_nodes([w.node for w in self.focused_widgets])
+            self.unset_focus()
+
+    def output_dot_description(self):
+        nodes = [widget.node for widget in self.widgets]
+        print '\n'
+        print Graph.generate_dot(nodes)
+        print '\n'
+
+    def change_curve_resolution(self, amount_to_add):
+        self.bezier_points += amount_to_add
+        if self.bezier_points < 4:
+            self.bezier_points = 4
+        self.update_layout()
+
     def handle_control_key(self, e):
-        if e.key == pygame.K_w:
-            self.zoom(1.3)
-        elif e.key == pygame.K_q:
-            self.zoom(1/(1.3))
-
-        elif e.key == pygame.K_z:
-            self.undo()
-        elif e.key == pygame.K_y:
-            self.redo()
+        if e.key in self.control_map:
+            name, handler = self.control_map[e.key]
+            handler()
             
-        elif e.key == pygame.K_r:
-            if not self.record:
-                self.start_record()
-            else:
-                self.stop_record()
-
-        elif e.key == pygame.K_a:
-            n = []
-            for i in xrange(1):
-                n1 = Graph.Node(NodeValue(str('new')))
-                n.append(n1)
-            self.add_nodes(n)
-
-        elif e.key == pygame.K_DELETE or e.key == pygame.K_d:
-            if self.focused_widgets:
-                self.remove_nodes([w.node for w in self.focused_widgets])
-                self.unset_focus()
-
-        elif e.key == pygame.K_s:
-            nodes = [widget.node for widget in self.widgets]
-            print '\n'
-            print Graph.generate_dot(nodes)
-            print '\n'
-
-        elif e.key == pygame.K_EQUALS:
-            self.bezier_points += 3
-            self.update_layout()
-        elif e.key == pygame.K_MINUS:
-            self.bezier_points -= 3
-            if self.bezier_points < 4:
-                self.bezier_points = 4
-            self.update_layout()
 
     def _mouse_down(self, e):
         mods = pygame.key.get_mods()
@@ -347,24 +360,30 @@ class GraphApp(App):
                 del node.value.widget.out_connection_lines[other]
 
     def paint_status_text(self):
-        if self.rendered_status_text:
-            if time.time() > self.status_text_timeout:
-                self.rendered_status_text = None
-                return
-            self.screen.blit(self.rendered_status_text, (0,self.height-32))
+        new_list = []
+        for i, (timeout, rendered) in enumerate(self.rendered_status_texts[:]):
+            if time.time() > timeout:
+                continue
+            new_list.append((timeout, rendered))
+            self.screen.blit(rendered, (0,self.height-24*(i+1)))
+
+        self.rendered_status_texts = new_list
         
-    def set_status_text(self, text):
+    def set_status_text(self, text, timeout=6):
         if self.undoing:
             return
-        self.rendered_status_text = self.status_font.render(text, True, (255,100,100))
-        self.status_text_timeout = time.time() + 4
+        for line in reversed(text.split('\n')):
+            self.rendered_status_texts.append((time.time() + timeout, self.status_font.render(line, True, (255,100,100))))
 
-
+    def show_help(self):
+        for key, (name, func) in sorted(self.control_map.iteritems()):
+            self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 15)
+        
 #---------------------------------------------
 
 
 def test():
-    a = GraphApp(320,240)
+    a = GraphApp(640,480)
 
     import random
     random.seed(0)
