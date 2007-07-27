@@ -129,6 +129,13 @@ class _GraphParser(object):
                 points.append((float(words[i]), float(words[i+1])))
                 i += 2
             edge['points'] = points
+            if len(words) == 6+n*2:
+                edge['label'] = edge['lx'] = edge['ly'] = None
+            elif len(words) == 9+n*2:
+                edge['label'] = edge[-5]
+                edge['lx'], edge['ly'] = edge[-4], edge[-3]
+            else:
+                assert False, "Cannot understand %r" % (line,)
             edge['style'] = words[-2]
             edge['color'] = words[-1]
             edges.setdefault(edge['tail'], []).append(edge)

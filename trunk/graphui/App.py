@@ -18,6 +18,7 @@
 
 import time
 import pygame
+import twisted.python.log
 
 from Lib.Point import Point
 
@@ -81,6 +82,7 @@ class App(object):
 
     def run(self):
         self._lc.start(1./self.fps)
+        self._lc.deferred.addErrback(twisted.python.log.err)
         from twisted.internet import reactor
         reactor.run()
 

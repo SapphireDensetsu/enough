@@ -17,6 +17,7 @@
 ## */
 
 from Lib.Point import Point
+import math
 
 def get_default(val, default):
     if val is None:
@@ -86,7 +87,6 @@ def paint_arrowhead(surface, color, center, angle, size=7, width=0):
     pygame.draw.polygon(surface, color, [p.as_tuple() for p in triangle], width)
 
 def n_point_regular_polygon(n, radius, center, phase=0):
-    import math
     twopi = 2*math.pi
     for i in xrange(n):
         angle = twopi/n*i + phase
@@ -100,3 +100,21 @@ def build_reverse_pygame_key_map():
         if name.startswith("K_"):
             pygame_reverse_key_map[pygame.__dict__[name]] = name
 build_reverse_pygame_key_map()
+
+def rotate_surface(surface, angle):
+    rt = pygame.transform.rotate(surface, -math.degrees(angle))
+
+    coors = [Point(0, 0),
+             Point(surface.get_width(), 0),
+             Point(0, surface.get_height()),
+             Point(surface.get_width(), surface.get_height())]
+    coors = [p.rotate(angle) for p in coors]
+
+    leftmost = min(p.x for p in coors)
+    topmost = min(p.y for p in coors)
+
+    # pygame.transform.rotate makes a larger adjusted surface where
+    # leftmost/topmost are 0,0:
+    adjust = Point(-leftmost, -topmost)
+    coors = [p + adjust for p in coors]
+    return rt, coors
