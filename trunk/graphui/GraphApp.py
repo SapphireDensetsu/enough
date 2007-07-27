@@ -26,7 +26,7 @@ from App import App, mouse_pos
 from Widget import Widget
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
-
+from Lib.Font import get_font
 from Lib.Point import Point
 
 from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface
@@ -47,12 +47,12 @@ class NodeValue(object):
     def update_widget_text(self):
         self._widget.text = self.name
 
-    def entered_text(self, key):
+    def entered_text(self, event):
         import string
-        if key == pygame.K_BACKSPACE:
+        if event.key == pygame.K_BACKSPACE:
             self.name = self.name[:-1]
-        elif key < 256 and chr(key) in string.printable:
-            self.name += chr(key)
+        elif event.unicode in string.printable:
+            self.name += event.unicode.replace('\r', '\n')
         self.update_widget_text()
 
 class GraphWidget(Widget):
@@ -101,7 +101,7 @@ class GraphWidget(Widget):
                     break
 
                 text = 'test text'
-                t = self.get_font(35).render(text, True, (255, 0, 0))
+                t = get_font(35).render(text, True, (255, 0, 0))
                 
                 angle = (c[1] - c[0]).angle()
 
@@ -233,7 +233,7 @@ class GraphApp(App):
             self.handle_control_key(e)
         else:
             if self.focused_widgets and len(self.focused_widgets) == 1:
-                self.focused_widgets[0].node.value.entered_text(e.key)
+                self.focused_widgets[0].node.value.entered_text(e)
 
     def undo(self):
         self.set_status_text("Undo")
@@ -426,7 +426,7 @@ class GraphApp(App):
 
 def test():
     pygame.init()
-    a = GraphApp(640,480)
+    a = GraphApp(640, 480)
 
     import random
     random.seed(0)

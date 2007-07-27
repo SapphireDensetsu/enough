@@ -19,15 +19,15 @@
 import pygame
 
 from Lib.Point import Point
-from Lib import Func 
+from Lib import Func
+from Lib.Font import find_font, get_font, lines_size
 from guilib import get_default, MovingValue, ParamHolder
 
 class Widget(object):
+    default_font = get_font(40)
     def __init__(self, text = '', pos=None):
         self.size = MovingValue(Point(20,20), Point(20,20))
         self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
-        
-        self.font_size = MovingValue(1,28)
         
         self.font = None
         self.text = text
@@ -62,48 +62,32 @@ class Widget(object):
         self.params.user = None
         self.params.autosize = "by size"
         
-    @staticmethod
-    #@Func.cached # causes "default font not found"?
-    def get_font(font_size):
-        return pygame.font.SysFont('serif',int(font_size))
-    
     def update_moving(self):
         self.render_text()
         self.size.update()
         self.pos.update()
 
     def render_text(self):
+        lines = self.text.split('\n')
         if self.params.autosize == "by size":
-            new_size = self.font_size.final
-            while True:
-                w,h = self.get_font(new_size).size(self.text)
-                if (w > self.size.final.x or h > self.size.final.y):
-                    break
-                new_size += 1
-            while True:
-                w,h = self.get_font(new_size).size(self.text)
-                if (w < self.size.final.x and h < self.size.final.y):
-                    break
-                new_size -= 1
-            self.font_size.final = new_size 
+            does_fit, self.font = find_font(lines, (self.size.final*(2./3)).as_tuple())
+        else:
+            self.font = self.default_font
             
-        self.font_size.update()
-        
-        prev_font = self.font
-        self.font = self.get_font(self.font_size.current)
-        if self.font == prev_font:
-            return
         if self.params.in_focus:
             text_color = self.params.focus_text_color
         elif self.params.in_hover:
             text_color = self.params.hover_text_color
         else:
             text_color = self.params.text_color
-        self.rendered_text = self.font.render(self.text, True, text_color)
+        
+        self.rendered_text = [self.font.render(line, True, text_color)
+                              for line in lines]
         
         if self.params.autosize == "by text":
-            self.size.final.x,self.size.final.y  = self.font.size(self.text)
-            self.size.current.x,self.size.current.y  = self.font.size(self.text)
+            width, height = lines_size(self.default_font, lines)
+            self.size.final.x = self.size.current.x = width
+            self.size.final.y = self.size.current.y = height
 
     def get_current_rect(self):
         return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
@@ -124,8 +108,12 @@ class Widget(object):
         if self.size.current.x > 5 and self.size.current.y > 5:
             # otherwise we get a pygame error for using a width that's larger than the elipse radius
             pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
-        text_size = Point(*self.font.size(self.text))
-        surface.blit(self.rendered_text, (self.center_pos()-text_size*0.5).as_tuple())
+
+        lines = self.text.split('\n')
+        text_size = Point(*lines_size(self.font, lines))
+        line_height = Point(0, self.font.get_height())
+        for i, rendered_line in enumerate(self.rendered_text):
+            surface.blit(rendered_line, (self.center_pos()-text_size*0.5 + line_height*i).as_tuple())
 
     def in_bounds(self, pos):
         p = self.pos.current
