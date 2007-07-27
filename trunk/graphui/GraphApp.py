@@ -88,7 +88,8 @@ class GraphWidget(Widget):
             for line in lines:
                 line.update()
                 pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
-                for a, b in zip(line.current, line.current[1:]):
+                c = line.current[len(line.current)/2:]
+                for a, b in zip(c, c[1:]):
                     for intersection in shape.intersections(a, b):
                         break
                     else:
