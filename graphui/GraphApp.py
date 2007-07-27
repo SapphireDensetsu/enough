@@ -29,7 +29,7 @@ from Lib.Dot import Dot, OutOfDate
 
 from Lib.Point import Point
 
-from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map
+from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface
 
 class NodeValue(object):
     def __init__(self, name, start_pos=None):
@@ -100,6 +100,33 @@ class GraphWidget(Widget):
                     paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
                     break
 
+                text = 'test text'
+                t = self.get_font(35).render(text, True, (255, 0, 0))
+                
+                angle = (c[1] - c[0]).angle()
+
+                import math
+                if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
+                    angle += math.pi
+                    angle %= 2*math.pi
+
+                text_centering_vector = Point(-t.get_width()/2, -t.get_height())
+                text_centering_length = text_centering_vector.norm()
+                text_centering_angle = text_centering_vector.angle()
+
+
+                    
+                rt, coors = rotate_surface(t, angle)
+
+                # coors[0] is where the original topleft is in the
+                # rotated surface:
+                topleft = coors[0]
+
+                desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
+                                                          text_centering_length)
+                
+                pos = (desired_topleft - topleft).as_tuple()
+                surface.blit(rt, map(int, pos))
 
 def undoable_method(func):
     def new_func(self, *args, **kw):
@@ -233,11 +260,7 @@ class GraphApp(App):
             self.stop_record()
 
     def create_new_node(self):
-        n = []
-        for i in xrange(1):
-            n1 = Graph.Node(NodeValue(str('new')))
-            n.append(n1)
-        self.add_nodes(n)
+        self.add_nodes([Graph.Node(NodeValue(str('new')))])
 
     def delete_selected_nodes(self):
         if self.focused_widgets:
@@ -353,6 +376,7 @@ class GraphApp(App):
                         previously_connected.remove(other)
 
                     line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
+                    label = edge['label']
                     
                     from Lib.Bezier import Bezier
                     line.insert(0, (this.center_pos(False)))
@@ -363,7 +387,8 @@ class GraphApp(App):
                     # if there is more than one connection, we don't care to animate the correct one.
                     last_index = last_indices.setdefault(other, 0)
                     if len(connections) <= last_index:
-                        connections.append(MovingLine([this.center_pos().copy(),other.center_pos().copy()],[], step=0.5))
+                        connections.append(MovingLine([this.center_pos().copy(),
+                                                       other.center_pos().copy()], [], step=0.5))
                     connections[last_index].final = curve
                     last_indices[other] += 1
 

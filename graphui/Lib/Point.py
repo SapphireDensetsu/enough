@@ -34,6 +34,8 @@ class Point(AttrDict):
         self.y+=other.y
         self.z+=other.z
         return self
+    def __neg__(self):
+        return Point(-self.x, -self.y, -self.z)
     def __sub__(self, other):
         return Point(self.x-other.x, self.y-other.y, self.z-other.z)
     def __isub__(self, other):
@@ -58,7 +60,10 @@ class Point(AttrDict):
     def update_from_tuple(self, (x,y)):
         self.x = x
         self.y = y
-        
+
+    def rotate(self, angle):
+        return self.__class__.from_polar(self.angle()+angle, self.norm())
+
     @classmethod
     def from_polar(cls, angle, radius):
         return cls(cos(angle), sin(angle))*radius
