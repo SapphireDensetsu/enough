@@ -20,9 +20,12 @@ from functools import partial
 import pygame
 import time
 
+import twisted.python.log
+
 from App import App, mouse_pos
 from Widget import Widget
 from Lib import Graph
+from Lib.Dot import Dot, OutOfDate
 
 from Lib.Point import Point
 
@@ -112,7 +115,6 @@ def undoable_method(func):
 class GraphApp(App):
     def __init__(self, *args, **kw):
         super(GraphApp, self).__init__(*args, **kw)
-        from Lib.Dot import Dot
         self.dot = Dot()
         self.init_control_map()
         
@@ -316,9 +318,17 @@ class GraphApp(App):
         self.update_layout()
         return partial(self.connect_nodes, sources, target)
 
+    def _out_of_date(self, failure):
+        failure.trap(OutOfDate)
+        return None
+
     def update_layout(self):
         nodes = [widget.node for widget in self.widgets]
-        g, n, e = Graph.get_drawing_data(self.dot, nodes)
+        d = Graph.get_drawing_data(self.dot, nodes)
+        d.addCallbacks(self._layout, self._out_of_date)
+        d.addErrback(twisted.python.log.err)
+
+    def _layout(self, (g, n, e)):
         if not n:
             return
         x_scale = self.width / float(g['width']) * self.pos_zoom
@@ -390,6 +400,7 @@ class GraphApp(App):
 
 
 def test():
+    pygame.init()
     a = GraphApp(640,480)
 
     import random

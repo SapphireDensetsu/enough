@@ -34,10 +34,10 @@ def Event(name, **kw):
 class App(object):
     multiselect_modifier = pygame.KMOD_CTRL
     
-    def __init__(self, width=800, height=600, flags=0):
-        pygame.init()
-        pygame.font.init()
-        self.stop = False
+    def __init__(self, width=800, height=600, flags=0, fps=40):
+        self.fps = fps
+        from twisted.internet.task import LoopingCall
+        self._lc = LoopingCall(self._iteration)
 
         self.widgets = []
         self.focused_widgets = None
@@ -75,19 +75,21 @@ class App(object):
     #______________________________________#
     
     def quit(self):
-        self.stop = True
+        self._lc.stop()
+        from twisted.internet import reactor
+        reactor.stop()
 
     def run(self):
-        while not self.stop:
-            pygame.event.pump()
-            self.handle_events()
+        self._lc.start(1./self.fps)
+        from twisted.internet import reactor
+        reactor.run()
+
+    def _iteration(self):
+        self.handle_events()
+        self._paint(None)
 
     def handle_events(self):
-        events = pygame.event.get()
-        self._paint(None)
-        if not events:
-            time.sleep(0.01)
-        for event in events:
+        for event in pygame.event.get():
             self.handle_event(event)
         
         
@@ -125,7 +127,7 @@ class App(object):
         if self.record:
             pygame.draw.circle(self.screen, (255,100,100), (self.width-11, 11), 10, 0)
             
-        pygame.display.flip()
+        pygame.display.update()
 
         if self.record:
             pygame.image.save(pygame.display.get_surface(), self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
