@@ -78,17 +78,23 @@ class GraphWidget(Widget):
     def paint_connections(self, surface):
         if self.node is None:
             return
-        
+
         #for w in self.iter_visible_connected('in'):
         #    pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
         for other, lines in self.out_connection_lines.iteritems():
+            # TODO: This should be other.shape:
+            from Ellipse import Ellipse
+            shape = Ellipse(pygame.Rect(other.get_current_rect()))
             for line in lines:
                 line.update()
                 pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
-                l = len(line.current)*1/4
-                if l < 1: l = 1
-                paint_arrowhead_by_direction(surface, (200,60,60), line.current[-l-1], line.current[-l])
-
+                for a, b in zip(line.current, line.current[1:]):
+                    for intersection in shape.intersections(a, b):
+                        break
+                    else:
+                        continue
+                    paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
+                    break
 
 
 def undoable_method(func):
