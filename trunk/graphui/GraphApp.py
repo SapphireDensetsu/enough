@@ -200,8 +200,8 @@ class GraphApp(App):
         self.paint_status_text()
         
         
-    def _key_up(self, e):
-        super(GraphApp, self)._key_up(e)
+    def _key_down(self, e):
+        super(GraphApp, self)._key_down(e)
         if (e.mod & pygame.KMOD_CTRL):
             self.handle_control_key(e)
         else:

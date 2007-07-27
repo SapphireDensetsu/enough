@@ -147,7 +147,7 @@ class App(object):
     def init_events(self):
         self.pygame_handlers = {}
         self.my_handlers = {'paint': [self._paint,]}
-        for pg_type, handler in ((pygame.KEYUP, self._key_up),
+        for pg_type, handler in ((pygame.KEYDOWN, self._key_down),
                                  (pygame.MOUSEBUTTONDOWN, self._mouse_down),
                                  (pygame.MOUSEBUTTONUP, self._mouse_up),
                                  (pygame.MOUSEMOTION, self._mouse_motion),
@@ -173,7 +173,7 @@ class App(object):
         self.update_hover()
         self.update_drag()
         
-    def _key_up(self, e):
+    def _key_down(self, e):
         pass
 
     def update_drag(self):
