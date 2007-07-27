@@ -22,17 +22,86 @@
 #   node name x y width height label style shape color fillcolor
 #   edge tail head n x1 y1 .. xn yn [label xl yl] style color
 #   stop
-  
-def read_parse(f):
-    graph = {}
-    nodes = {}
-    edges = {} # by heads
-    while True:
-        line = f.readline()
+
+from twisted.internet import protocol, defer
+from twisted.protocols.basic import LineReceiver
+
+class OutOfDate(Exception): pass
+
+class _ProtocolWrapper(protocol.ProcessProtocol):
+    """
+    This class wraps a L{Protocol} instance in a L{ProcessProtocol} instance.
+    """
+    def __init__(self, proto):
+        self.proto = proto
+
+    def connectionMade(self):
+        self.proto.connectionMade()
+
+    def outReceived(self, data):
+        self.proto.dataReceived(data)
+
+    def errReceived(self, data):
+        import sys
+        sys.stderr.write(data)
+
+    def processEnded(self, reason):
+        self.proto.connectionLost(reason)
+
+
+class _DotProtocol(LineReceiver):
+    delimiter = '\n'
+    def __init__(self):
+        self.waiting = None
+        self._current_graph_parser = None
+        self._process = None
+
+    def set_process(self, process):
+        self._process = process
+
+    def lineReceived(self, line):
+        if self._current_graph_parser is None:
+            raise Error("Dot outputs stuff, we're not expecting it", line)
+        self._current_graph_parser.lineReceived(line)
+
+    def _completed_current(self, result):
+        self._current_graph_parser = None
+        if self.waiting:
+            dot_graph_text, d = self.waiting
+            self.waiting = None
+            self._start(dot_graph_text, d)
+        return result
+
+    def get_graph_data(self, dot_graph_text):
+        d = defer.Deferred()
+        d.addBoth(self._completed_current)
+        if self._current_graph_parser:
+            # Let the current result finish computing, "queue" this
+            # one.
+            if self.waiting:
+                self.waiting[1].errback(OutOfDate())
+            self.waiting = dot_graph_text, d
+        else:
+            self._start(dot_graph_text, d)
+        return d
+
+    def _start(self, dot_graph_text, d):
+        self._process.write(dot_graph_text + '\n')
+        self._current_graph_parser = _GraphParser(d)
+
+class _GraphParser(object):
+    def __init__(self, dresult):
+        self.dresult = dresult
+        self.graph = {}
+        self.nodes = {}
+        self.edges = {} # by heads
+
+    def lineReceived(self, line):
+        graph, nodes, edges = self.graph, self.nodes, self.edges
         words = line.split()
         if words[0] == 'graph':
             graph['scale'], graph['width'], graph['height'] = map(float, words[1:])
-            continue
+            return
 
         if words[0] == 'node':
             node = {}
@@ -45,9 +114,9 @@ def read_parse(f):
                                     'shape', 'color',
                                     'fillcolor')):
                 node[attr] = (words[i+start])
-            
+
             nodes[node['name']] = node
-            continue
+            return
 
         if words[0] == 'edge':
             edge = {}
@@ -63,22 +132,22 @@ def read_parse(f):
             edge['style'] = words[-2]
             edge['color'] = words[-1]
             edges.setdefault(edge['tail'], []).append(edge)
-            continue
+            return
 
         if words[0] == 'stop':
-            break
+            self.dresult.callback((graph, nodes, edges))
+            return
 
-        raise ValueError("Unexpected statement", line)
-    return graph, nodes, edges
+        self.dresult.errback(ValueError("Unexpected statement", line))
             
 
 class Dot(object):
     def __init__(self, command_line='dot'):
-        import subprocess
-        self.popen = subprocess.Popen((command_line, '-Tplain', '-y'),
-                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        from twisted.internet import reactor
+        self.protocol = _DotProtocol()
+        self.process = reactor.spawnProcess(_ProtocolWrapper(self.protocol),
+                                            command_line, [command_line, '-Tplain', '-y'])
+        self.protocol.set_process(self.process)
 
     def get_graph_data(self, dot_graph_text):
-        self.popen.stdin.write(dot_graph_text + '\n')
-        return read_parse(self.popen.stdout)
-        
+        return self.protocol.get_graph_data(dot_graph_text)

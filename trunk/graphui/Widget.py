@@ -24,7 +24,7 @@ from guilib import get_default, MovingValue, ParamHolder
 
 class Widget(object):
     def __init__(self, text = '', pos=None):
-        self.size = MovingValue(Point(0,0), Point(0,0))
+        self.size = MovingValue(Point(20,20), Point(20,20))
         self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
         
         self.font_size = MovingValue(1,28)
