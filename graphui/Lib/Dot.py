@@ -53,7 +53,7 @@ class _ProtocolWrapper(protocol.ProcessProtocol):
 class _DotProtocol(LineReceiver):
     delimiter = '\n'
     def __init__(self):
-        self.waiting = None
+        self._waiting = None
         self._current_graph_parser = None
         self._process = None
 
@@ -67,27 +67,27 @@ class _DotProtocol(LineReceiver):
 
     def _completed_current(self, result):
         self._current_graph_parser = None
-        if self.waiting:
-            dot_graph_text, d = self.waiting
-            self.waiting = None
+        if self._waiting:
+            dot_graph_text, d = self._waiting
+            self._waiting = None
             self._start(dot_graph_text, d)
         return result
 
     def get_graph_data(self, dot_graph_text):
         d = defer.Deferred()
-        d.addBoth(self._completed_current)
         if self._current_graph_parser:
             # Let the current result finish computing, "queue" this
             # one.
-            if self.waiting:
-                self.waiting[1].errback(OutOfDate())
-            self.waiting = dot_graph_text, d
+            if self._waiting:
+                self._waiting[1].errback(OutOfDate())
+            self._waiting = dot_graph_text, d
         else:
             self._start(dot_graph_text, d)
         return d
 
     def _start(self, dot_graph_text, d):
         self._process.write(dot_graph_text + '\n')
+        d.addBoth(self._completed_current)
         self._current_graph_parser = _GraphParser(d)
 
 class _GraphParser(object):
