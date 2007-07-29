@@ -1,0 +1,7 @@
+* Persistency (Save/load)
+* Feed dot with information such as text (it needs it to create proper node sizes)
+* Add some nice way to use the graph backend in Python (for example, every new node creation or connection calls a callback or something)
+* Labels on edges (Label drawing is commented out there, but label storing and editing is missing)
+* Full keyboard control, focus changing with the mouse only is annoying!
+* Play around with attributes such as color, fillcolor, etc.
+* Containing subgraphs in squares (dot supports this) so you can show state groups and do state machines.
