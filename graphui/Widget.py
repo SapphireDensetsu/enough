@@ -70,7 +70,7 @@ class Widget(object):
     def render_text(self):
         lines = self.text.split('\n')
         if self.params.autosize == "by size":
-            does_fit, self.font = find_font(lines, (self.size.final*0.9).as_tuple())
+            does_fit, self.font = find_font(lines, (self.size.final*(3./4)).as_tuple())
         else:
             self.font = self.default_font
             
