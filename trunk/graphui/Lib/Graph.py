@@ -132,7 +132,7 @@ def topological_sort(orig_nodes):
     out = [(level, nodes_reverse_map[node]) for level, node in sorted(out)]
     return out
 
-def generate_dot(nodes, graph_params=None):
+def generate_dot(groups, graph_params=None):
     # Generates a DOT language description of the graph
     out = 'digraph G {\n'
     if graph_params is not None:
@@ -140,32 +140,39 @@ def generate_dot(nodes, graph_params=None):
         for k,v in graph_params.iteritems():
             out+='%s=%s,' % (k,v)
         out += '];\n'
-    for node in nodes:
-        out += '%s;\n' % (id(node),)
-        for other in node.connections['out']:
-            out += '%s -> %s;\n' % (id(node), id(other))
-        #for other in node.connections['in']:
-        #    out += '%s -> %s;\n' % (id(other), id(node))
+    for group_name, nodes in groups.iteritems():
+        out += 'subgraph "%s" {\n' % (group_name,)
+        for node in nodes:
+            
+            props_str = ','.join('%s=%s,' % (prop_name, value)
+                                 for prop_name, value in node.value.get_node_properties().iteritems())
+                
+            out += '%s [%s];\n' % (id(node), props_str)
+            for other in node.connections['out']:
+                out += '%s -> %s;\n' % (id(node), id(other))
+                
+        out += '}\n'
     return out + '}\n'
 
 # This uses DOT to find the position of nodes in a graph
-def get_drawing_data(dot, nodes):
-    data = generate_dot(nodes)
+def get_drawing_data(dot, groups):
+    data = generate_dot(groups)
     d = dot.get_graph_data(data)
-    d.addCallback(_data_received, nodes)
+    d.addCallback(_data_received, groups)
     return d
 
-def _data_received((g, n, e), nodes):
+def _data_received((g, n, e), groups):
     out_nodes = {}
     out_edges = {}
     ids_to_nodes = {}
-    for node in nodes:
-        sid = str(id(node))
-        ids_to_nodes[sid] = node
-        if sid in n:
-            out_nodes[node] = n[sid]
-        if sid in e:
-            out_edges[node] = e[sid]
+    for group_name, nodes in groups.iteritems():
+        for node in nodes:
+            sid = str(id(node))
+            ids_to_nodes[sid] = node
+            if sid in n:
+                out_nodes[node] = n[sid]
+            if sid in e:
+                out_edges[node] = e[sid]
     for out_node, edges in out_edges.iteritems():
         for edge in edges:
             edge['head_node'] = ids_to_nodes[edge['head']]
