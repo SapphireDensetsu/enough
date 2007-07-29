@@ -5,3 +5,7 @@
 * Full keyboard control, focus changing with the mouse only is annoying!
 * Play around with attributes such as color, fillcolor, etc.
 * Containing subgraphs in squares (dot supports this) so you can show state groups and do state machines.
+
+Known bugs:
+* Right-button drag from self to self removes 2 self-links.
+* Some undo/redo bugs.
