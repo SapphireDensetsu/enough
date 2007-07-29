@@ -2,7 +2,7 @@
 #labels Featured
 
 = Graphui =
-Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under graphui.
+Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
 
 Here are the current "features":
  * Cross-platform - tested on Linux (ubuntu) and Windows
