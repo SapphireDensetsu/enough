@@ -1,5 +1,4 @@
 #summary Implementations + some tools we wrote for Enough
-#labels Featured
 
 == NF ==
 NF is a gui for live programming. Still waiting for a first release.
