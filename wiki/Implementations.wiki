@@ -5,24 +5,7 @@
 NF is a gui for live programming. Still waiting for a first release.
 
 == Graphui ==
-Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. There is a *[http://enough.googlecode.com/svn/trunk/media/graphui_sneak1.avi sneak preview]* available. The code is in the svn under graphui.
-
-Here are the current "features":
- * Cross-platform - tested on Linux (ubuntu) and Windows
- * Connect, disconnect, add and remove nodes, zoom in & out
- * Automatic layout using [http://www.graphviz.org Dot, Neato & Twopi] (Graphviz). You can switch layout engines in real time.
- * Animation between layouts 
- * Undo/redo
- * Multi-line text labels for nodes
- * Record animation - makes a series of BMP files you can later turn into a movie using videowriter or some other tool.
-
-More coming soon!
-
-*Requirements*: [http://www.python.org Python] 2.5, [http://www.pygame.org Pygame], [http://www.twistedmatrix.com Twisted], and [http://www.graphviz.org Graphviz] (aka dot).
-
-Here is an animation showing switching layout engines:
-
-http://enough.googlecode.com/svn/trunk/media/graphui_switch_layouts.gif
+See here: [Graphui]
 
 == Tools ==
  * *videowriter* is a tiny program for *creating a video out of a sequence of images*. Available in the SVN under tools. *Requires*: OpenCV library. Or you can try the [http://enough.googlecode.com/svn/trunk/tools/video_writer linux binary].
