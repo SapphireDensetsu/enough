@@ -26,27 +26,15 @@ class Node(object):
         self.value = value
         self.connections = {'in': [], 'out': []}
 
-    def connect_out(self, other):
+    def connect(self, other):
         self.connections['out'].append(other)
         other.connections['in'].append(self)
 
-    def connect_in(self, other):
-        other.connections['out'].append(self)
-        self.connections['in'].append(other)
-
     def disconnect(self, other):
-        was_connected=False
-        if other in self.connections['out'][:]:
-            other.connections['in'].remove(self)
-            self.connections['out'].remove(other)
-            was_connected=True
-        if other in self.connections['in'][:]:
-            other.connections['out'].remove(self)
-            self.connections['in'].remove(other)
-            was_connected=True
-
-        if not was_connected:
+        if other not in self.connections['out']:
             raise NodeWasntConnected(other)
+        self.connections['out'].remove(other)
+        other.connections['in'].remove(self)
 
     def disconnect_all(self):
         for other in self.connections['out'][:]:
@@ -57,10 +45,7 @@ class Node(object):
             self.connections['in'].remove(other)
             
     def is_connected(self, other):
-        if ((other in self.connections['out'])
-            or (other in self.connections['in'])):
-            return True
-        return False
+        return other in self.connections['out']
         
     def __repr__(self):
         return '<%s: value=%r, out=%r, in=%r>' % (self.__class__.__name__, self.value, len(self.connections['out']), len(self.connections['in']))
