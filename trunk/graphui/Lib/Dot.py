@@ -27,6 +27,7 @@ from twisted.internet import protocol, defer
 from twisted.protocols.basic import LineReceiver
 
 class OutOfDate(Exception): pass
+class Error(Exception): pass
 
 class _ProtocolWrapper(protocol.ProcessProtocol):
     """
