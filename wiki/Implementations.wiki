@@ -22,8 +22,7 @@ More coming soon!
 
 Here are two screenshots, first using DOT layout, second using NEATO:
 
-http://enough.googlecode.com/svn/trunk/media/graphui_dot.jpg
-http://enough.googlecode.com/svn/trunk/media/graphui_neato.jpg
+http://enough.googlecode.com/svn/trunk/media/graphui_switch_layouts.gif
 
 == Tools ==
  * *videowriter* is a tiny program for *creating a video out of a sequence of images*. Available in the SVN under tools. *Requires*: OpenCV library. Or you can try the [http://enough.googlecode.com/svn/trunk/tools/video_writer linux binary].
