@@ -21,6 +21,7 @@ More coming soon!
 *Requirements*: [http://www.python.org Python] 2.5, [http://www.pygame.org Pygame], [http://www.twistedmatrix.com Twisted], and [http://www.graphviz.org Graphviz] (aka dot).
 
 Here are two screenshots, first using DOT layout, second using NEATO:
+
 http://enough.googlecode.com/svn/trunk/media/graphui_dot.jpg
 http://enough.googlecode.com/svn/trunk/media/graphui_neato.jpg
 
