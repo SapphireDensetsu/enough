@@ -20,7 +20,9 @@ More coming soon!
 
 *Requirements*: [http://www.python.org Python] 2.5, [http://www.pygame.org Pygame], [http://www.twistedmatrix.com Twisted], and [http://www.graphviz.org Graphviz] (aka dot).
 
-http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_1.jpg
+Here are two screenshots, first using DOT layout, second using NEATO:
+http://enough.googlecode.com/svn/trunk/media/graphui_dot.jpg
+http://enough.googlecode.com/svn/trunk/media/graphui_neato.jpg
 
 == Tools ==
  * *videowriter* is a tiny program for *creating a video out of a sequence of images*. Available in the SVN under tools. *Requires*: OpenCV library. Or you can try the [http://enough.googlecode.com/svn/trunk/tools/video_writer linux binary].
