@@ -344,7 +344,7 @@ class GraphApp(App):
     def connect_nodes(self, sources, target):
         self.set_status_text("Connect")
         for source in sources:
-            source.connect_out(target)
+            source.connect(target)
             self._add_connection_line(source.value.widget, target.value.widget)
         self.update_layout()
         return partial(self.disconnect_nodes, sources, target)
@@ -464,22 +464,6 @@ class GraphApp(App):
 def test():
     pygame.init()
     a = GraphApp(800, 600)
-
-    import random
-    random.seed(0)
-    nodes = []
-    for i in xrange(1):
-        pos = Point(10*random.random() - 5, 10*random.random() - 5)
-        pos = pos + Point(a.width, a.height)*0.5
-        n1 = Graph.Node(NodeValue(str(i), start_pos = pos))
-        if nodes:
-            n1.connect_out(random.choice(nodes))
-            if (random.random() > 0.1):
-                n1.connect_in(random.choice(nodes))
-        nodes.append(n1)
-
-    a.add_nodes(nodes)
-    #a.start_record()
     a.run()
 
 if __name__=='__main__':
