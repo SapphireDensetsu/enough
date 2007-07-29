@@ -32,8 +32,9 @@ from Lib.Point import Point
 from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface
 
 class NodeValue(object):
-    def __init__(self, name, start_pos=None):
+    def __init__(self, name, group_name = None, start_pos=None):
         self.name = name
+        self.group_name = group_name
         self.start_pos = get_default(start_pos, Point(0,0))
 
     def set_widget(self, widget):
@@ -54,6 +55,11 @@ class NodeValue(object):
         elif event.unicode in string.printable:
             self.name += event.unicode.replace('\r', '\n')
         self.update_widget_text()
+
+    def get_node_properties(self):
+        name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
+        return {'label': '"%s"' % (name_text,),
+                }
 
 class GraphWidget(Widget):
     def __init__(self, *args, **kw):
@@ -270,7 +276,7 @@ class GraphApp(App):
             self.stop_record()
 
     def create_new_node(self):
-        self.add_nodes([Graph.Node(NodeValue(str('new')))])
+        self.add_nodes([Graph.Node(NodeValue('new'))])
 
     def delete_selected_nodes(self):
         if self.focused_widgets:
@@ -278,9 +284,9 @@ class GraphApp(App):
             self.unset_focus()
 
     def output_dot_description(self):
-        nodes = [widget.node for widget in self.widgets]
+        nodes, groups = self._get_nodes_and_groups()
         print '\n'
-        print Graph.generate_dot(nodes)
+        print Graph.generate_dot(groups)
         print '\n'
 
     def change_curve_resolution(self, amount_to_add):
@@ -356,9 +362,17 @@ class GraphApp(App):
         failure.trap(OutOfDate)
         return None
 
-    def update_layout(self):
+    def _get_nodes_and_groups(self):
         nodes = [widget.node for widget in self.widgets]
-        d = Graph.get_drawing_data(self.dot, nodes)
+        groups = {}
+        for node in nodes:
+            group_name = node.value.group_name
+            groups.setdefault(group_name, []).append(node)
+        return nodes, groups
+        
+    def update_layout(self):
+        nodes, groups = self._get_nodes_and_groups()
+        d = Graph.get_drawing_data(self.dot, groups)
         d.addCallbacks(self._layout, self._out_of_date)
         d.addErrback(twisted.python.log.err)
 
@@ -457,7 +471,7 @@ def test():
     for i in xrange(1):
         pos = Point(10*random.random() - 5, 10*random.random() - 5)
         pos = pos + Point(a.width, a.height)*0.5
-        n1 = Graph.Node(NodeValue(str(i), pos))
+        n1 = Graph.Node(NodeValue(str(i), start_pos = pos))
         if nodes:
             n1.connect_out(random.choice(nodes))
             if (random.random() > 0.1):

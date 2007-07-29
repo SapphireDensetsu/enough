@@ -45,6 +45,7 @@ class _ProtocolWrapper(protocol.ProcessProtocol):
     def errReceived(self, data):
         import sys
         sys.stderr.write(data)
+        sys.stderr.flush()
 
     def processEnded(self, reason):
         self.proto.connectionLost(reason)
