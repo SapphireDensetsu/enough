@@ -148,13 +148,46 @@ class _GraphParser(object):
         self.dresult.errback(ValueError("Unexpected statement", line))
             
 
+
 class Dot(object):
-    def __init__(self, command_line='dot'):
+    layout_programs = ('dot', 'neato', 'twopi')
+    
+    def __init__(self):
         from twisted.internet import reactor
         self.protocol = _DotProtocol()
-        self.process = reactor.spawnProcess(_ProtocolWrapper(self.protocol),
-                                            command_line, [command_line, '-Tplain', '-y'])
-        self.protocol.set_process(self.process)
+        self.processes = {}
+        for prog, command_line in find_dot(self.layout_programs).iteritems():
+            process = reactor.spawnProcess(_ProtocolWrapper(self.protocol),
+                                           command_line, [command_line, '-Tplain', '-y'])
+            self.processes[prog] = process
 
+        self.set_process('dot')
+        
+    def set_process(self, prog):
+        self.protocol.set_process(self.processes[prog])
+        
     def get_graph_data(self, dot_graph_text):
         return self.protocol.get_graph_data(dot_graph_text)
+
+
+def find_dot(layout_programs):
+    import sys
+    import os
+    if sys.platform == 'win32':
+        DOT_PATH = r'\program files\att\graphviz\bin'
+        DOT_SUFFIX = '.exe'
+        for drive in ('c', 'd'):
+            if os.path.isdir(drive + ':' + DOT_PATH):
+                break
+        else:
+            raise Exception("Couldn't find DOT installation path")
+        DOT_PATH = drive + ':' + DOT_PATH
+    else:
+        # Assume dot programs have no suffix and are in the PATH
+        DOT_PATH = ''
+        DOT_SUFFIX = ''
+
+    res_paths = {}
+    for prog in layout_programs:
+        res_paths[prog] = os.path.join(DOT_PATH, prog+DOT_SUFFIX)
+    return res_paths

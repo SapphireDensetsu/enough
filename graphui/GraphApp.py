@@ -100,33 +100,31 @@ class GraphWidget(Widget):
                     paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
                     break
 
-                text = 'test text'
-                t = get_font(35).render(text, True, (255, 0, 0))
+##                text = 'test text'
+##                t = get_font(35).render(text, True, (255, 0, 0))
                 
-                angle = (c[1] - c[0]).angle()
+##                angle = (c[1] - c[0]).angle()
 
-                import math
-                if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
-                    angle += math.pi
-                    angle %= 2*math.pi
+##                import math
+##                if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
+##                    angle += math.pi
+##                    angle %= 2*math.pi
 
-                text_centering_vector = Point(-t.get_width()/2, -t.get_height())
-                text_centering_length = text_centering_vector.norm()
-                text_centering_angle = text_centering_vector.angle()
+##                text_centering_vector = Point(-t.get_width()/2, -t.get_height())
+##                text_centering_length = text_centering_vector.norm()
+##                text_centering_angle = text_centering_vector.angle()
 
+##                rt, coors = rotate_surface(t, angle)
 
-                    
-                rt, coors = rotate_surface(t, angle)
+##                # coors[0] is where the original topleft is in the
+##                # rotated surface:
+##                topleft = coors[0]
 
-                # coors[0] is where the original topleft is in the
-                # rotated surface:
-                topleft = coors[0]
-
-                desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
-                                                          text_centering_length)
+##                desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
+##                                                          text_centering_length)
                 
-                pos = (desired_topleft - topleft).as_tuple()
-                surface.blit(rt, map(int, pos))
+##                pos = (desired_topleft - topleft).as_tuple()
+##                surface.blit(rt, map(int, pos))
 
 def undoable_method(func):
     def new_func(self, *args, **kw):
@@ -149,7 +147,7 @@ class GraphApp(App):
         self.connecting = False
         self.disconnecting = False
         self.pos_zoom = 1
-        self.size_zoom = 0.9
+        self.size_zoom = 0.8
         self.bezier_points = 30
         self.modal_nodes = None
         
@@ -157,7 +155,9 @@ class GraphApp(App):
         self.history_redo = []
         self.undoing = False
         self.max_undo = 25
-
+        
+        self.dot_prog_num = 0
+        
         self.status_font = pygame.font.SysFont('serif',20)
         self.rendered_status_texts = []
         self.show_help()
@@ -178,6 +178,7 @@ class GraphApp(App):
                                                                                -3)),
                             pygame.K_h: ("Show help", self.show_help),
                             pygame.K_F1:("Show help", self.show_help),
+                            pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
                             }
 
     @undoable_method
@@ -207,6 +208,15 @@ class GraphApp(App):
         if zoom != 0:
             return partial(self.zoom, 1.0/zoom)
 
+    #@undoable_method it's not so useful to undo this...
+    def toggle_layout_engine(self, dirc):
+        self.dot_prog_num = (self.dot_prog_num + dirc) % len(self.dot.layout_programs)
+        prog = self.dot.layout_programs[self.dot_prog_num]
+        self.set_status_text("Layout engine: %r" % (prog,))
+        self.dot.set_process(prog)
+        self.update_layout()
+        #return partial(self.toggle_layout_engine, -dirc)
+        
     def paint_connector(self, color, widgets):
         mpos = mouse_pos()
         for w in widgets:
@@ -329,6 +339,7 @@ class GraphApp(App):
         self.set_status_text("Connect")
         for source in sources:
             source.connect_out(target)
+            self._add_connection_line(source.value.widget, target.value.widget)
         self.update_layout()
         return partial(self.disconnect_nodes, sources, target)
     
@@ -350,6 +361,17 @@ class GraphApp(App):
         d = Graph.get_drawing_data(self.dot, nodes)
         d.addCallbacks(self._layout, self._out_of_date)
         d.addErrback(twisted.python.log.err)
+
+    def _get_connection_lines_list(self, widget, other_widget):
+        return widget.out_connection_lines.setdefault(other_widget, [])
+        
+    def _add_connection_line(self, widget, other_widget):
+        connections = self._get_connection_lines_list(widget, other_widget)
+        connections.append(MovingLine([widget.center_pos().copy(),
+                                       other_widget.center_pos().copy()],
+                                      [widget.center_pos(False).copy(),
+                                       other_widget.center_pos(False).copy()],
+                                      step=0.5))
 
     def _layout(self, (g, n, e)):
         if not n:
@@ -383,12 +405,12 @@ class GraphApp(App):
                     line.append((other.center_pos(False)))
                     curve = Bezier(line, self.bezier_points)
 
-                    connections = node.value.widget.out_connection_lines.setdefault(other, [])
+                    connections = self._get_connection_lines_list(this, other)
                     # if there is more than one connection, we don't care to animate the correct one.
                     last_index = last_indices.setdefault(other, 0)
                     if len(connections) <= last_index:
-                        connections.append(MovingLine([this.center_pos().copy(),
-                                                       other.center_pos().copy()], [], step=0.5))
+                        self._add_connection_line(this, other)
+                        
                     connections[last_index].final = curve
                     last_indices[other] += 1
 
@@ -426,7 +448,7 @@ class GraphApp(App):
 
 def test():
     pygame.init()
-    a = GraphApp(640, 480)
+    a = GraphApp(800, 600)
 
     import random
     random.seed(0)
