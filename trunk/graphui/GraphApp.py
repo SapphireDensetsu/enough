@@ -158,7 +158,7 @@ class GraphApp(App):
         
         self.dot_prog_num = 0
         
-        self.status_font = pygame.font.SysFont('serif',20)
+        self.status_font = pygame.font.SysFont('serif',self.height/20)
         self.rendered_status_texts = []
         self.show_help()
         
@@ -425,11 +425,12 @@ class GraphApp(App):
 
     def paint_status_text(self):
         new_list = []
+        h = self.status_font.get_height() + 2
         for i, (timeout, rendered) in enumerate(self.rendered_status_texts[:]):
             if time.time() > timeout:
                 continue
             new_list.append((timeout, rendered))
-            self.screen.blit(rendered, (0,self.height-24*(i+1)))
+            self.screen.blit(rendered, (0,self.height-h*(i+1)))
 
         self.rendered_status_texts = new_list
         
