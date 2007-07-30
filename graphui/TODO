@@ -1,3 +1,4 @@
+* Shift+Drag should connect and not unmark multi-selection
 * Persistency (Save/load)
 * Feed dot with information such as text (it needs it to create proper node sizes)
 * Add some nice way to use the graph backend in Python (for example, every new node creation or connection calls a callback or something)
