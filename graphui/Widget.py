@@ -32,6 +32,7 @@ class Widget(object):
         self.font = None
         self.text = text
         self.rendered_text = None
+        self.rendered_params = None
 
         self.init_params()
 
@@ -73,6 +74,10 @@ class Widget(object):
             does_fit, self.font = find_font(lines, (self.size.final*(3./4)).as_tuple())
         else:
             self.font = self.default_font
+            if self.params.autosize == "by text":
+                width, height = lines_size(self.font, lines)
+                self.size.final.x = self.size.current.x = width
+                self.size.final.y = self.size.current.y = height
             
         if self.params.in_focus:
             text_color = self.params.focus_text_color
@@ -80,14 +85,13 @@ class Widget(object):
             text_color = self.params.hover_text_color
         else:
             text_color = self.params.text_color
-        
+
+        if self.rendered_params == (self.font, lines, text_color):
+            return
+            
         self.rendered_text = [self.font.render(line, True, text_color)
                               for line in lines]
-        
-        if self.params.autosize == "by text":
-            width, height = lines_size(self.default_font, lines)
-            self.size.final.x = self.size.current.x = width
-            self.size.final.y = self.size.current.y = height
+        self.rendered_params = (self.font, lines, text_color)
 
     def get_current_rect(self):
         return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
