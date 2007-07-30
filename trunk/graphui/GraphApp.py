@@ -29,7 +29,7 @@ from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font
 from Lib.Point import Point
 
-from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface
+from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface, point_near_polyline
 
 class NodeValue(object):
     def __init__(self, name, group_name = None, start_pos=None):
@@ -97,6 +97,13 @@ class NodeWidget(Widget):
         edge_widget = EdgeWidget(other_widget, line)
         self.get_connection_lines_to(other_widget).append(edge_widget)
         return edge_widget
+
+    def remove_edge(self, other_widget):
+        edges = self.get_connection_lines_to(other_widget)
+        if not edges:
+            raise ValueError("No edges exist from this widget (%r) to other widget (%r)" % (self, other_widget))
+
+        return edges.pop()
         
 ##    def paint_connections(self, surface):
 ##        if self.node is None:
@@ -133,13 +140,25 @@ class EdgeWidget(Widget):
     def __init__(self, target, line, *args, **kw):
         super(EdgeWidget, self).__init__(*args, **kw)
 
+        #self.size = Point(0,0)
+        #self.pos = Point(0,0)
         self.target = target
         self.line = line # A MovingLine
         
+        self.params.back_color = (160, 10,10)
+        self.params.text_color = (160, 10,10)
+        self.params.focus_back_color = (250,80,80)
+        self.params.focus_text_color = (250,80,80)
+        self.params.hover_back_color = (220,30,30)
+        self.params.hover_text_color = (220,30,30)
+
+    def in_bounds(self, pos):
+        return point_near_polyline(pos, self.line.current, 8)
+    
     def paint_shape(self, surface, back_color):
         shape = self.target.get_shape()
         self.line.update()
-        pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in self.line.current], 2)
+        pygame.draw.lines(surface, back_color, False, [p.as_tuple() for p in self.line.current], 2)
         c = self.line.current[len(self.line.current)/2:]
         for a, b in zip(c, c[1:]):
             for intersection in shape.intersections(a, b):
@@ -182,7 +201,7 @@ class GraphApp(App):
         
         self.dot_prog_num = 0
         
-        self.status_font = pygame.font.SysFont('serif',self.height/20)
+        self.status_font = pygame.font.SysFont('serif',min(self.height/20, 14))
         self.rendered_status_texts = []
         self.show_help()
         
@@ -265,8 +284,9 @@ class GraphApp(App):
             self.handle_control_key(e)
         else:
             if self.focused_widgets and len(self.focused_widgets) == 1:
-                self.focused_widgets[0].node.value.entered_text(e)
-                self.update_layout()
+                if isinstance(self.focused_widgets[0], NodeWidget):
+                    self.focused_widgets[0].node.value.entered_text(e)
+                    self.update_layout()
 
     def undo(self):
         self.set_status_text("Undo")
@@ -331,10 +351,10 @@ class GraphApp(App):
         if self.focused_widgets and connect_modifier_used:
             if e.button == 1:
                 self.connecting = True
-                self.connecting_sources = [w.node for w in self.focused_widgets]
+                self.connecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
             elif e.button == 3:
                 self.disconnecting = True
-                self.disconnecting_sources = [w.node for w in self.focused_widgets]
+                self.disconnecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
             self.unset_focus()
         if multiselect:
             super(GraphApp, self)._mouse_down(e)
@@ -345,14 +365,14 @@ class GraphApp(App):
         if self.connecting:
             self.connecting = False
             target = self.hovered_widget
-            if target:
+            if isinstance(target, NodeWidget):
                 target = target.node
                 self.connect_nodes(self.connecting_sources, target)
             self.connecting_source = None
         elif self.disconnecting:
             self.disconnecting = False
             target = self.hovered_widget
-            if target:
+            if isinstance(target, NodeWidget):
                 target = target.node
                 self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
@@ -373,6 +393,8 @@ class GraphApp(App):
         for source in sources:
             if source.is_connected(target):
                 source.disconnect(target)
+                ew = source.value.widget.remove_edge(target.value.widget)
+                self.remove_widget(ew)
         self.update_layout()
         return partial(self.connect_nodes, sources, target)
 

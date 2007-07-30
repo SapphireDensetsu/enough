@@ -116,9 +116,11 @@ class App(object):
         self.my_handlers.setdefault(name, []).append(handler)
 
     #______________________________________#
+    def _z_ordered_widgets(self):
+        return sorted((w.painting_z_order, w) for w in self.widgets)
 
     def paint_widgets(self, event):
-        for z, widget in sorted((w.painting_z_order, w) for w in self.widgets):
+        for z, widget in self._z_ordered_widgets():
             # Paint by the painting_z_order attribute order
             widget.paint(self.screen)
         
@@ -197,7 +199,7 @@ class App(object):
         if self.focus_locked:
             return
         p = mouse_pos()
-        for widget in reversed(self.widgets):
+        for z, widget in reversed(self._z_ordered_widgets()):
             if widget.in_bounds(p) and widget.params.enabled:
                 if not (pygame.key.get_mods() & self.multiselect_modifier):
                     self.unset_focus()
@@ -207,7 +209,7 @@ class App(object):
         
     def update_hover(self):
         p = mouse_pos()
-        for widget in reversed(self.widgets):
+        for z, widget in reversed(self._z_ordered_widgets()):
             if widget.in_bounds(p) and widget.params.enabled:
                 self.set_hover(widget)
                 return
