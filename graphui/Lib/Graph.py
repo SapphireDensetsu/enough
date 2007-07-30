@@ -42,14 +42,14 @@ class Node(object):
         self.connections['out'].append(e)
         e.target.connections['in'].append(e)
 
-    def _edges_connected_to(self, other):
+    def edges_connected_to(self, other):
         for e in self.connections['out']:
             if e.target == other:
                 yield e
         
     def disconnect_node(self, other):
         edges = []
-        for e in self._edges_connected_to(other):
+        for e in self.edges_connected_to(other):
             self.disconnect_edge(e)
             edges.append(e)
         return edges
