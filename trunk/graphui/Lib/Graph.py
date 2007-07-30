@@ -134,7 +134,8 @@ def generate_dot(groups, graph_params=None):
                 
             out += '%s [%s];\n' % (id(node), props_str)
             for other in node.connections['out']:
-                out += '%s -> %s;\n' % (id(node), id(other))
+                out += '%s -> %s [' % (id(node), id(other))
+                out += '];\n'
                 
         out += '}\n'
     return out + '}\n'

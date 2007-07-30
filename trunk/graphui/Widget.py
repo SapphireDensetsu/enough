@@ -89,8 +89,16 @@ class Widget(object):
         if self.rendered_params == (self.font, lines, text_color):
             return
             
-        self.rendered_text = [self.font.render(line, True, text_color)
-                              for line in lines]
+        rendered_lines = [self.font.render(line, True, text_color)
+                          for line in lines]
+        size = (max(t.get_width() for t in rendered_lines),
+                sum(t.get_height() for t in rendered_lines))
+        self.rendered_text = pygame.Surface(size, pygame.SWSURFACE|pygame.SRCALPHA|pygame.SRCCOLORKEY, 32)
+        # TODO: Support centering and stuff?
+        y = 0
+        for rline in rendered_lines:
+            self.rendered_text.blit(rline, (0, y))
+            y += rline.get_height()
         self.rendered_params = (self.font, lines, text_color)
 
     def get_current_rect(self):
@@ -127,9 +135,7 @@ class Widget(object):
     def paint_text(self, surface):
         lines = self.text.split('\n')
         text_size = Point(*lines_size(self.font, lines))
-        line_height = Point(0, self.font.get_height())
-        for i, rendered_line in enumerate(self.rendered_text):
-            surface.blit(rendered_line, (self.center_pos()-text_size*0.5 + line_height*i).as_tuple())
+        surface.blit(self.rendered_text, (self.center_pos()-text_size*0.5).as_tuple())
 
     def in_bounds(self, pos):
         p = self.pos.current

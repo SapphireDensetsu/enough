@@ -59,7 +59,7 @@ class NodeValue(object):
         self.update_widget_text()
 
     def get_node_properties(self):
-        name_text = self.name.encode('utf8') # Str translates unicode to regular strings
+        name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
                 }
 
@@ -68,6 +68,9 @@ class NodeWidget(Widget):
     def __init__(self, *args, **kw):
         super(NodeWidget, self).__init__(*args, **kw)
         self.out_connection_lines = {}
+
+    def entered_text(self, e):
+        self.node.value.entered_text(e)
         
     def set_node(self, node):
         self.node = node
@@ -109,10 +112,6 @@ class EdgeWidget(Widget):
         self.params.hover_back_color = (220,30,30)
         self.params.hover_text_color = (220,30,30)
 
-    def set_text(self, text):
-        self.text = text
-        self.rendered_text = get_font(35).render(text, True, (255, 0, 0))
-        
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
     
@@ -130,34 +129,36 @@ class EdgeWidget(Widget):
             break
 
     def paint_text(self, surface):
-        pass
-#         c = self.line.current[len(self.line.current)/2:]
-# ???? WHAT TO DO HERE?!?!??!
-#         angle = (c[1] - c[0]).angle()
+        mid = len(self.line.current)/2
+        midvalues = self.line.current[mid:mid+2]
+        if len(midvalues) < 2:
+            # not enough control points to figure out where to put text
+            return
+        midsrc, middst = midvalues
+        angle = (middst - midsrc).angle()
 
-#         import math
-#         if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
-#             angle += math.pi
-#             angle %= 2*math.pi
+        import math
+        if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
+            angle += math.pi
+            angle %= 2*math.pi
 
-#         text_centering_vector = Point(-t.get_width()/2, -t.get_height())
-#         text_centering_length = text_centering_vector.norm()
-#         text_centering_angle = text_centering_vector.angle()
+        t = self.rendered_text
+        text_centering_vector = Point(-t.get_width()/2, -t.get_height())
+        text_centering_length = text_centering_vector.norm()
+        text_centering_angle = text_centering_vector.angle()
 
-#         rt, coors = rotate_surface(t, angle)
+        rt, coors = rotate_surface(t, angle)
 
-#         # coors[0] is where the original topleft is in the
-#         # rotated surface:
-#         topleft = coors[0]
+        # coors[0] is where the original topleft is in the
+        # rotated surface:
+        topleft = coors[0]
 
-#         desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
-#                                                   text_centering_length)
+        desired_topleft = midsrc + Point.from_polar(text_centering_angle+angle,
+                                                    text_centering_length)
                 
-#         pos = (desired_topleft - topleft).as_tuple()
-#         surface.blit(rt, map(int, pos))
+        pos = (desired_topleft - topleft).as_tuple()
+        surface.blit(rt, map(int, pos))
 
-        
-    
 class GraphApp(App):
     def __init__(self, *args, **kw):
         super(GraphApp, self).__init__(*args, **kw)
@@ -256,10 +257,9 @@ class GraphApp(App):
             self.handle_control_key(e)
         else:
             if self.focused_widgets and len(self.focused_widgets) == 1:
-                if isinstance(self.focused_widgets[0], NodeWidget):
-                    self.focused_widgets[0].node.value.entered_text(e)
-                    self.update_layout()
-
+                widget, = self.focused_widgets
+                widget.entered_text(e)
+                self.update_layout()
 
     def toggle_record(self):
         if not self.record:
@@ -397,7 +397,7 @@ class GraphApp(App):
 
         for node, n_layout in n.iteritems():
             lines = []
-            previously_connected = list(node.value.widget.out_connection_lines.keys())
+            previously_connected = node.value.widget.out_connection_lines.keys()
             if node in e:
                 last_indices = {}
                 for edge in e[node]:
