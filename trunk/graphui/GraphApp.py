@@ -303,7 +303,8 @@ class GraphApp(App):
         mods = pygame.key.get_mods()
         connect_modifier_used = (mods & pygame.KMOD_SHIFT)
         multiselect = (mods & self.multiselect_modifier)
-        if not multiselect or (self.focused_widgets and self.hovered_widget not in self.focused_widgets):
+        if (not multiselect
+            or (self.focused_widgets and self.hovered_widget not in self.focused_widgets)):
             # The or part is to allow people to use a first click-drag
             # on the last widget of a multiselect group to
             # connect. Otherwise, the connection group would not
