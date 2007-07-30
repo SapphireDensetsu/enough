@@ -31,6 +31,35 @@ from Lib.Point import Point
 
 from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface, point_near_polyline
 
+scancode_map = {
+    24 : pygame.K_q,
+    25 : pygame.K_w,
+    26 : pygame.K_e,
+    27 : pygame.K_r,
+    28 : pygame.K_t,
+    29 : pygame.K_y,
+    30 : pygame.K_u,
+    31 : pygame.K_i,
+    32 : pygame.K_o,
+    33 : pygame.K_p,
+    38 : pygame.K_a,
+    39 : pygame.K_s,
+    40 : pygame.K_d,
+    41 : pygame.K_f,
+    42 : pygame.K_g,
+    43 : pygame.K_h,
+    44 : pygame.K_j,
+    45 : pygame.K_k,
+    46 : pygame.K_l,
+    52 : pygame.K_z,
+    53 : pygame.K_x,
+    54 : pygame.K_c,
+    55 : pygame.K_v,
+    56 : pygame.K_b,
+    57 : pygame.K_n,
+    58 : pygame.K_m,
+}
+
 class NodeValue(object):
     def __init__(self, name, group_name = None, start_pos=None):
         self.name = name
@@ -52,12 +81,12 @@ class NodeValue(object):
         import string
         if event.key == pygame.K_BACKSPACE:
             self.name = self.name[:-1]
-        elif event.unicode in string.printable:
+        elif True: #event.unicode in string.printable:
             self.name += event.unicode.replace('\r', '\n')
         self.update_widget_text()
 
     def get_node_properties(self):
-        name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
+        name_text = self.name.encode('utf8') # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
                 }
 
@@ -194,7 +223,6 @@ class GraphApp(App):
                             pygame.K_F1:("Show help", self.show_help),
                             pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
                             }
-
     @undoable_method
     def add_nodes(self, nodes):
         self.set_status_text("Add %d nodes" % (len(nodes),))
@@ -287,10 +315,16 @@ class GraphApp(App):
         self.update_layout()
 
     def handle_control_key(self, e):
-        if e.key in self.control_map:
-            name, handler = self.control_map[e.key]
+        scancode = getattr(e, 'scancode', None)
+
+        key = e.key
+        if scancode is not None:
+            if scancode not in scancode_map:
+                print 'Unknown scancode', scancode, 'key=', e.key, 'unicode=', e.unicode
+            key = scancode_map.get(scancode, e.key)
+        if key in self.control_map:
+            name, handler = self.control_map[key]
             handler()
-            
 
     def _mouse_down(self, e):
         mods = pygame.key.get_mods()
