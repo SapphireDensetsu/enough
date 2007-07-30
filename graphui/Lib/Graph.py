@@ -59,12 +59,16 @@ class Node(object):
         edge.target.connections['in'].remove(edge)
         
     def disconnect_all(self):
+        removed_edges = set()
         for e in self.connections['out'][:]:
-            other.connections['in'].remove(e)
+            removed_edges.add(e)
+            e.target.connections['in'].remove(e)
             self.connections['out'].remove(e)
         for e in self.connections['in'][:]:
-            other.connections['out'].remove(e)
+            removed_edges.add(e)
+            e.target.connections['out'].remove(e)
             self.connections['in'].remove(e)
+        return removed_edges
             
     def is_connected_node(self, other):
         return other in (e.target for e in self.connections['out'])

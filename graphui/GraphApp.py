@@ -215,7 +215,11 @@ class GraphApp(App):
     def remove_nodes(self, nodes):
         self.set_status_text("Remove %d nodes" % (len(nodes),))
         for node in nodes:
-            node.disconnect_all()
+            removed_edges = node.disconnect_all()
+            for edge in removed_edges:
+                # The edge itself has been removed from the graph
+                # already, remove only the widget
+                self._remove_edge_widget_of_edge(edge)
             self.remove_widget(node.value.widget)
         self.update_layout()
         return partial(self.add_nodes, nodes)
@@ -367,10 +371,13 @@ class GraphApp(App):
         self.update_layout()
         return partial(self.disconnect_nodes, sources, target)
 
-    def _remove_edge(self, edge):
+    def _remove_edge_widget_of_edge(self, edge):
         ew = edge.value.widget
         self.remove_widget(ew)
         edge.source.value.widget.remove_edge(ew)
+
+    def _remove_edge(self, edge):
+        self._remove_edge_widget_of_edge(edge)
         edge.source.disconnect_edge(edge)
         
     @undoable_method
