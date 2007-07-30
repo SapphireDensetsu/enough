@@ -22,7 +22,7 @@ import time
 
 import twisted.python.log
 
-from App import App, mouse_pos
+from App import App, mouse_pos, undoable_method
 from Widget import Widget
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
@@ -71,20 +71,6 @@ class NodeWidget(Widget):
         self.node = node
         node.value.widget = self
 
-    def connect_pos(self, upper=False):
-        y = self.size.current.y * 0.5
-        return self.pos.current + Point(self.size.current.x * 0.5, y)
-
-    def iter_visible_nodes(self, nlist):
-        for out_node in nlist:
-            w = out_node.value.widget
-            if not w.params.visible:
-                continue
-            yield w
-    def iter_visible_connected(self, dir):
-        for w in self.iter_visible_nodes(self.node.connections[dir]):
-            yield w
-
     def get_connection_lines_to(self, other_widget):
         return self.out_connection_lines.setdefault(other_widget, [])
     
@@ -105,43 +91,12 @@ class NodeWidget(Widget):
 
         return edges.pop()
         
-##    def paint_connections(self, surface):
-##        if self.node is None:
-##            return
-
-##                text = 'test text'
-##                t = get_font(35).render(text, True, (255, 0, 0))
-                
-##                angle = (c[1] - c[0]).angle()
-
-##                import math
-##                if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
-##                    angle += math.pi
-##                    angle %= 2*math.pi
-
-##                text_centering_vector = Point(-t.get_width()/2, -t.get_height())
-##                text_centering_length = text_centering_vector.norm()
-##                text_centering_angle = text_centering_vector.angle()
-
-##                rt, coors = rotate_surface(t, angle)
-
-##                # coors[0] is where the original topleft is in the
-##                # rotated surface:
-##                topleft = coors[0]
-
-##                desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
-##                                                          text_centering_length)
-                
-##                pos = (desired_topleft - topleft).as_tuple()
-##                surface.blit(rt, map(int, pos))
 
 class EdgeWidget(Widget):
     painting_z_order = 0
     def __init__(self, target, line, *args, **kw):
         super(EdgeWidget, self).__init__(*args, **kw)
 
-        #self.size = Point(0,0)
-        #self.pos = Point(0,0)
         self.target = target
         self.line = line # A MovingLine
         
@@ -152,6 +107,10 @@ class EdgeWidget(Widget):
         self.params.hover_back_color = (220,30,30)
         self.params.hover_text_color = (220,30,30)
 
+    def set_text(self, text):
+        self.text = text
+        self.rendered_text = get_font(35).render(text, True, (255, 0, 0))
+        
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
     
@@ -167,18 +126,35 @@ class EdgeWidget(Widget):
                 continue
             paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
             break
+
+    def paint_text(self, surface):
+        pass
+#         c = self.line.current[len(self.line.current)/2:]
+# ???? WHAT TO DO HERE?!?!??!
+#         angle = (c[1] - c[0]).angle()
+
+#         import math
+#         if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
+#             angle += math.pi
+#             angle %= 2*math.pi
+
+#         text_centering_vector = Point(-t.get_width()/2, -t.get_height())
+#         text_centering_length = text_centering_vector.norm()
+#         text_centering_angle = text_centering_vector.angle()
+
+#         rt, coors = rotate_surface(t, angle)
+
+#         # coors[0] is where the original topleft is in the
+#         # rotated surface:
+#         topleft = coors[0]
+
+#         desired_topleft = c[0] + Point.from_polar(text_centering_angle+angle,
+#                                                   text_centering_length)
+                
+#         pos = (desired_topleft - topleft).as_tuple()
+#         surface.blit(rt, map(int, pos))
+
         
-    
-def undoable_method(func):
-    def new_func(self, *args, **kw):
-        undoer = func(self, *args, **kw)
-        if self.undoing:
-            l = self.history_redo
-        else:
-            l = self.history
-        if len(l) < self.max_undo:
-            l.append((func, undoer, args, kw))
-    return new_func
     
 class GraphApp(App):
     def __init__(self, *args, **kw):
@@ -193,11 +169,6 @@ class GraphApp(App):
         self.size_zoom = 0.8
         self.bezier_points = 30
         self.modal_nodes = None
-        
-        self.history = []
-        self.history_redo = []
-        self.undoing = False
-        self.max_undo = 25
         
         self.dot_prog_num = 0
         
@@ -288,23 +259,6 @@ class GraphApp(App):
                     self.focused_widgets[0].node.value.entered_text(e)
                     self.update_layout()
 
-    def undo(self):
-        self.set_status_text("Undo")
-        if not self.history:
-            return
-        doer, undoer, args, kw = self.history.pop()
-        self.undoing = True
-        undoer()
-        self.undoing = False
-
-    def redo(self):
-        self.set_status_text("Redo")
-        if not self.history_redo:
-            return
-        doer, undoer, args, kw = self.history_redo.pop()
-        self.undoing = False
-        undoer()
-        #self.undoing = False
 
     def toggle_record(self):
         if not self.record:

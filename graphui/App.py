@@ -32,6 +32,18 @@ def Event(name, **kw):
     return pygame.event.Event(pygame.USEREVENT, name=name, **kw)
 
 
+def undoable_method(func):
+    def new_func(self, *args, **kw):
+        undoer = func(self, *args, **kw)
+        if self.undoing:
+            l = self.history_redo
+        else:
+            l = self.history
+        if len(l) < self.max_undo:
+            l.append((func, undoer, args, kw))
+    return new_func
+    
+
 class App(object):
     multiselect_modifier = pygame.KMOD_CTRL
     
@@ -54,6 +66,11 @@ class App(object):
         self.init_events()
         self.record = False
 
+        self.history = []
+        self.history_redo = []
+        self.undoing = False
+        self.max_undo = 25
+        
     #______________________________________#
     
     def set_size(self, width, height, flags=0):
@@ -241,4 +258,20 @@ class App(object):
         self.unset_hover()
         self.hovered_widget = widget
         self.hovered_widget.params.in_hover = True
-        
+
+    #_______________________________
+    
+    def undo(self):
+        if not self.history:
+            return
+        doer, undoer, args, kw = self.history.pop()
+        self.undoing = True
+        undoer()
+        self.undoing = False
+
+    def redo(self):
+        if not self.history_redo:
+            return
+        doer, undoer, args, kw = self.history_redo.pop()
+        self.undoing = False
+        undoer()
