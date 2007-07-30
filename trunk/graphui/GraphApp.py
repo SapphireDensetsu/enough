@@ -378,8 +378,7 @@ class GraphApp(App):
         self.set_status_text("Disconnect")
         for source in sources:
             if source.is_connected_node(target):
-                edges_removed = source.disconnect_node(target)
-                for edge in edges_removed:
+                for edge in source.edges_connected_to(target):
                     self._remove_edge(edge)
         self.update_layout()
         return partial(self.connect_nodes, sources, target)
