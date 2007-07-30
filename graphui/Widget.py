@@ -104,11 +104,23 @@ class Widget(object):
         else:
             back_color = self.params.back_color
 
+        self.paint_shape(surface, back_color)
+        self.paint_text(surface)
+
+    def get_shape(self):
+        # TODO make the shape a mutable attribute of self?
+        from Ellipse import Ellipse
+        return Ellipse(pygame.Rect(self.get_current_rect()))
+    
+    def paint_shape(self, surface, back_color):
+        # TODO use self.get_shape to paint our shape?
         pygame.draw.ellipse(surface, back_color, self.get_current_rect(), 0)
         if self.size.current.x > 5 and self.size.current.y > 5:
             # otherwise we get a pygame error for using a width that's larger than the elipse radius
             pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
 
+
+    def paint_text(self, surface):
         lines = self.text.split('\n')
         text_size = Point(*lines_size(self.font, lines))
         line_height = Point(0, self.font.get_height())

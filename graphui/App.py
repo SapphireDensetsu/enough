@@ -118,7 +118,8 @@ class App(object):
     #______________________________________#
 
     def paint_widgets(self, event):
-        for widget in self.widgets:
+        for z, widget in sorted((w.painting_z_order, w) for w in self.widgets):
+            # Paint by the painting_z_order attribute order
             widget.paint(self.screen)
         
     def _paint(self, event):

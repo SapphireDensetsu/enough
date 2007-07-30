@@ -61,9 +61,10 @@ class NodeValue(object):
         return {'label': '"%s"' % (name_text,),
                 }
 
-class GraphWidget(Widget):
+class NodeWidget(Widget):
+    painting_z_order = 1 # these should always be painted AFTER edges
     def __init__(self, *args, **kw):
-        super(GraphWidget, self).__init__(*args, **kw)
+        super(NodeWidget, self).__init__(*args, **kw)
         self.out_connection_lines = {}
         
     def set_node(self, node):
@@ -83,28 +84,23 @@ class GraphWidget(Widget):
     def iter_visible_connected(self, dir):
         for w in self.iter_visible_nodes(self.node.connections[dir]):
             yield w
-            
-    def paint_connections(self, surface):
-        if self.node is None:
-            return
 
-        #for w in self.iter_visible_connected('in'):
-        #    pygame.draw.aalines(surface, (200,20,50), False, (self.connect_pos().as_tuple(), w.connect_pos().as_tuple()), True)
-        for other, lines in self.out_connection_lines.iteritems():
-            # TODO: This should be other.shape:
-            from Ellipse import Ellipse
-            shape = Ellipse(pygame.Rect(other.get_current_rect()))
-            for line in lines:
-                line.update()
-                pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in line.current], 2)
-                c = line.current[len(line.current)/2:]
-                for a, b in zip(c, c[1:]):
-                    for intersection in shape.intersections(a, b):
-                        break
-                    else:
-                        continue
-                    paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
-                    break
+    def get_connection_lines_to(self, other_widget):
+        return self.out_connection_lines.setdefault(other_widget, [])
+    
+    def add_edge(self, other_widget):
+        line = MovingLine([self.center_pos().copy(),
+                           other_widget.center_pos().copy()],
+                          [self.center_pos(False).copy(),
+                           other_widget.center_pos(False).copy()],
+                          step=0.5)
+        edge_widget = EdgeWidget(other_widget, line)
+        self.get_connection_lines_to(other_widget).append(edge_widget)
+        return edge_widget
+        
+##    def paint_connections(self, surface):
+##        if self.node is None:
+##            return
 
 ##                text = 'test text'
 ##                t = get_font(35).render(text, True, (255, 0, 0))
@@ -132,6 +128,28 @@ class GraphWidget(Widget):
 ##                pos = (desired_topleft - topleft).as_tuple()
 ##                surface.blit(rt, map(int, pos))
 
+class EdgeWidget(Widget):
+    painting_z_order = 0
+    def __init__(self, target, line, *args, **kw):
+        super(EdgeWidget, self).__init__(*args, **kw)
+
+        self.target = target
+        self.line = line # A MovingLine
+        
+    def paint_shape(self, surface, back_color):
+        shape = self.target.get_shape()
+        self.line.update()
+        pygame.draw.lines(surface, (200,20,50), False, [p.as_tuple() for p in self.line.current], 2)
+        c = self.line.current[len(self.line.current)/2:]
+        for a, b in zip(c, c[1:]):
+            for intersection in shape.intersections(a, b):
+                break
+            else:
+                continue
+            paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
+            break
+        
+    
 def undoable_method(func):
     def new_func(self, *args, **kw):
         undoer = func(self, *args, **kw)
@@ -191,7 +209,7 @@ class GraphApp(App):
     def add_nodes(self, nodes):
         self.set_status_text("Add %d nodes" % (len(nodes),))
         for node in nodes:
-            w = GraphWidget()
+            w = NodeWidget()
             w.set_node(node)
             self.add_widget(w)
         self.update_layout()
@@ -232,8 +250,6 @@ class GraphApp(App):
                                 [cpos.as_tuple(), mpos.as_tuple()], True)
         
     def paint_widgets(self, event):
-        for w in self.widgets:
-            w.paint_connections(self.screen)
         super(GraphApp, self).paint_widgets(event)
         if self.connecting:
             self.paint_connector((150,250,150), [n.value.widget for n in self.connecting_sources])
@@ -250,6 +266,7 @@ class GraphApp(App):
         else:
             if self.focused_widgets and len(self.focused_widgets) == 1:
                 self.focused_widgets[0].node.value.entered_text(e)
+                self.update_layout()
 
     def undo(self):
         self.set_status_text("Undo")
@@ -345,7 +362,8 @@ class GraphApp(App):
         self.set_status_text("Connect")
         for source in sources:
             source.connect(target)
-            self._add_connection_line(source.value.widget, target.value.widget)
+            ew = source.value.widget.add_edge(target.value.widget)
+            self.add_widget(ew)
         self.update_layout()
         return partial(self.disconnect_nodes, sources, target)
     
@@ -362,8 +380,13 @@ class GraphApp(App):
         failure.trap(OutOfDate)
         return None
 
+    def iter_node_widgets(self):
+        for widget in self.widgets:
+            if isinstance(widget, NodeWidget):
+                yield widget
+                
     def _get_nodes_and_groups(self):
-        nodes = [widget.node for widget in self.widgets]
+        nodes = [widget.node for widget in self.iter_node_widgets()]
         groups = {}
         for node in nodes:
             group_name = node.value.group_name
@@ -375,17 +398,6 @@ class GraphApp(App):
         d = Graph.get_drawing_data(self.dot, groups)
         d.addCallbacks(self._layout, self._out_of_date)
         d.addErrback(twisted.python.log.err)
-
-    def _get_connection_lines_list(self, widget, other_widget):
-        return widget.out_connection_lines.setdefault(other_widget, [])
-        
-    def _add_connection_line(self, widget, other_widget):
-        connections = self._get_connection_lines_list(widget, other_widget)
-        connections.append(MovingLine([widget.center_pos().copy(),
-                                       other_widget.center_pos().copy()],
-                                      [widget.center_pos(False).copy(),
-                                       other_widget.center_pos(False).copy()],
-                                      step=0.5))
 
     def _layout(self, (g, n, e)):
         if not n:
@@ -419,13 +431,14 @@ class GraphApp(App):
                     line.append((other.center_pos(False)))
                     curve = Bezier(line, self.bezier_points)
 
-                    connections = self._get_connection_lines_list(this, other)
+                    connections = this.get_connection_lines_to(other)
                     # if there is more than one connection, we don't care to animate the correct one.
                     last_index = last_indices.setdefault(other, 0)
                     if len(connections) <= last_index:
-                        self._add_connection_line(this, other)
+                        ew = this.add_edge(other)
+                        self.add_widget(ew)
                         
-                    connections[last_index].final = curve
+                    connections[last_index].line.final = curve
                     last_indices[other] += 1
 
                 # IF we had MORE lines than now, remove the extra ones.
