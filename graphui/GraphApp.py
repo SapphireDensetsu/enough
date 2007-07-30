@@ -33,7 +33,7 @@ from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame
 
 from scancodes import scancode_map
 
-class NodeValue(object):
+class GraphElementValue(object):
     def __init__(self, name, group_name = None, start_pos=None):
         self.name = name
         self.group_name = group_name
@@ -58,7 +58,7 @@ class NodeValue(object):
             self.name += event.unicode.replace('\r', '\n')
         self.update_widget_text()
 
-    def get_node_properties(self):
+    def dot_properties(self):
         name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
                 }
@@ -67,7 +67,7 @@ class NodeWidget(Widget):
     painting_z_order = 1 # these should always be painted AFTER edges
     def __init__(self, *args, **kw):
         super(NodeWidget, self).__init__(*args, **kw)
-        self.out_connection_lines = {}
+        self.out_edges = {}
 
     def entered_text(self, e):
         self.node.value.entered_text(e)
@@ -76,34 +76,36 @@ class NodeWidget(Widget):
         self.node = node
         node.value.widget = self
 
-    def get_connection_lines_to(self, other_widget):
-        return self.out_connection_lines.setdefault(other_widget, [])
+    def get_edges_to(self, other_widget):
+        return self.out_edges.setdefault(other_widget, [])
     
-    def add_edge(self, other_widget):
+    def add_edge(self, edge):
+        other_widget = edge.target.value.widget
         line = MovingLine([self.center_pos().copy(),
                            other_widget.center_pos().copy()],
                           [self.center_pos(False).copy(),
                            other_widget.center_pos(False).copy()],
                           step=0.5)
-        edge_widget = EdgeWidget(other_widget, line)
-        self.get_connection_lines_to(other_widget).append(edge_widget)
+        edge_widget = EdgeWidget(edge, line)
+        self.get_edges_to(other_widget).append(edge_widget)
         return edge_widget
 
-    def remove_edge(self, other_widget):
-        edges = self.get_connection_lines_to(other_widget)
-        if not edges:
-            raise ValueError("No edges exist from this widget (%r) to other widget (%r)" % (self, other_widget))
-
-        return edges.pop()
+    def remove_edge(self, edge_widget):
+        self.get_edges_to(edge_widget.target_widget).remove(edge_widget)
         
 
 class EdgeWidget(Widget):
     painting_z_order = 0
-    def __init__(self, target, line, *args, **kw):
+    def __init__(self, edge, line, *args, **kw):
         super(EdgeWidget, self).__init__(*args, **kw)
 
-        self.target = target
+        self.edge = edge
+        self.target_widget = edge.target.value.widget
         self.line = line # A MovingLine
+
+        # TODO fix this. this is here only because of text
+        # size.....calculated by render_text from self.size
+        self.size.final = Point(40,40)
         
         self.params.back_color = (160, 10,10)
         self.params.text_color = (160, 10,10)
@@ -114,9 +116,12 @@ class EdgeWidget(Widget):
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
-    
+
+    def entered_text(self, e):
+        self.edge.value.entered_text(e)
+        
     def paint_shape(self, surface, back_color):
-        shape = self.target.get_shape()
+        shape = self.target_widget.get_shape()
         self.line.update()
         pygame.draw.lines(surface, back_color, False, [p.as_tuple() for p in self.line.current], 2)
         c = self.line.current[len(self.line.current)/2:]
@@ -187,7 +192,6 @@ class GraphApp(App):
                             pygame.K_y: ("Redo", self.redo),
                             pygame.K_r: ("Record (toggle)", self.toggle_record),
                             pygame.K_a: ("Create new node", self.create_new_node),
-                            pygame.K_d: ("Delete selected nodes", self.delete_selected_nodes),
                             pygame.K_s: ("Output DOT description", self.output_dot_description),
                             pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
                                                                                  3)),
@@ -196,6 +200,7 @@ class GraphApp(App):
                             pygame.K_h: ("Show help", self.show_help),
                             pygame.K_F1:("Show help", self.show_help),
                             pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
+                            pygame.K_d: ("Delete selected node/edge", self.delete_focused),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -224,6 +229,19 @@ class GraphApp(App):
         if zoom != 0:
             return partial(self.zoom, 1.0/zoom)
 
+    def delete_focused(self):
+        nodes = []
+        for w in self.focused_widgets:
+            if isinstance(w, NodeWidget):
+                nodes.append(w.node)
+            elif isinstance(w, EdgeWidget):
+                self._remove_edge(w.edge)
+        if nodes:
+            self.remove_nodes(nodes)
+        self.unset_focus()
+        self.update_layout()
+
+            
     #@undoable_method it's not so useful to undo this...
     def toggle_layout_engine(self, dirc):
         self.dot_prog_num = (self.dot_prog_num + dirc) % len(self.dot.layout_programs)
@@ -268,12 +286,7 @@ class GraphApp(App):
             self.stop_record()
 
     def create_new_node(self):
-        self.add_nodes([Graph.Node(NodeValue('new'))])
-
-    def delete_selected_nodes(self):
-        if self.focused_widgets:
-            self.remove_nodes([w.node for w in self.focused_widgets])
-            self.unset_focus()
+        self.add_nodes([Graph.Node(GraphElementValue('new'))])
 
     def output_dot_description(self):
         nodes, groups = self._get_nodes_and_groups()
@@ -339,24 +352,35 @@ class GraphApp(App):
                 self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
 
+    def _add_edge(self, source, target):
+        edge = Graph.Edge(source, target, GraphElementValue("edge"))
+        source.connect_edge(edge)
+        edge_widget = source.value.widget.add_edge(edge)
+        edge.value.set_widget(edge_widget)
+        self.add_widget(edge_widget)
+        
     @undoable_method
     def connect_nodes(self, sources, target):
         self.set_status_text("Connect")
         for source in sources:
-            source.connect(target)
-            ew = source.value.widget.add_edge(target.value.widget)
-            self.add_widget(ew)
+            self._add_edge(source, target)
         self.update_layout()
         return partial(self.disconnect_nodes, sources, target)
-    
+
+    def _remove_edge(self, edge):
+        ew = edge.value.widget
+        self.remove_widget(ew)
+        edge.source.value.widget.remove_edge(ew)
+        edge.source.disconnect_edge(edge)
+        
     @undoable_method
     def disconnect_nodes(self, sources, target):
         self.set_status_text("Disconnect")
         for source in sources:
-            if source.is_connected(target):
-                source.disconnect(target)
-                ew = source.value.widget.remove_edge(target.value.widget)
-                self.remove_widget(ew)
+            if source.is_connected_node(target):
+                edges_removed = source.disconnect_node(target)
+                for edge in edges_removed:
+                    self._remove_edge(edge)
         self.update_layout()
         return partial(self.connect_nodes, sources, target)
 
@@ -398,41 +422,23 @@ class GraphApp(App):
 
         for node, n_layout in n.iteritems():
             lines = []
-            previously_connected = node.value.widget.out_connection_lines.keys()
+            previously_connected = node.value.widget.out_edges.keys()
             if node in e:
                 last_indices = {}
-                for edge in e[node]:
-                    this = node.value.widget
-                    other = edge['head_node'].value.widget
-                    if other in previously_connected:
-                        previously_connected.remove(other)
+                for edge, dot_edge in e[node].iteritems():
+                    this_widget = node.value.widget
+                    other_widget = dot_edge['head_node'].value.widget
+                    if other_widget in previously_connected:
+                        previously_connected.remove(other_widget)
 
-                    line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in edge['points']]
-                    label = edge['label']
+                    line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in dot_edge['points']]
                     
                     from Lib.Bezier import Bezier
-                    line.insert(0, (this.center_pos(False)))
-                    line.append((other.center_pos(False)))
+                    line.insert(0, (this_widget.center_pos(False)))
+                    line.append((other_widget.center_pos(False)))
                     curve = Bezier(line, self.bezier_points)
 
-                    connections = this.get_connection_lines_to(other)
-                    # if there is more than one connection, we don't care to animate the correct one.
-                    last_index = last_indices.setdefault(other, 0)
-                    if len(connections) <= last_index:
-                        ew = this.add_edge(other)
-                        self.add_widget(ew)
-                        
-                    connections[last_index].line.final = curve
-                    last_indices[other] += 1
-
-                # IF we had MORE lines than now, remove the extra ones.
-                for other, last_index in last_indices.iteritems():
-                    connections = node.value.widget.out_connection_lines[other]
-                    while len(connections) > last_index:
-                        connections.pop(len(connections) - 1)
-                    
-            for other in previously_connected:
-                del node.value.widget.out_connection_lines[other]
+                    edge.value.widget.line.final = curve
 
     def paint_status_text(self):
         new_list = []

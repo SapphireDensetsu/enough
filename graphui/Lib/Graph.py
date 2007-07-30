@@ -20,32 +20,57 @@
 
 class HasCyclesError(Exception): pass
 class NodeWasntConnected(Exception): pass
+class EdgeWasntConnected(Exception): pass
 
+class Edge(object):
+    def __init__(self, source, target, value):
+        self.source = source
+        self.target = target
+        self.value = value
+        
 class Node(object):
     def __init__(self, value):
         self.value = value
         self.connections = {'in': [], 'out': []}
 
-    def connect(self, other):
-        self.connections['out'].append(other)
-        other.connections['in'].append(self)
+    def connect_node(self, other, edge_value=None):
+        e = Edge(self, other, edge_value)
+        self.connect_edge(e)
+        return e
 
-    def disconnect(self, other):
-        if other not in self.connections['out']:
-            raise NodeWasntConnected(other)
-        self.connections['out'].remove(other)
-        other.connections['in'].remove(self)
+    def connect_edge(self, e):
+        self.connections['out'].append(e)
+        e.target.connections['in'].append(e)
 
+    def _edges_connected_to(self, other):
+        for e in self.connections['out']:
+            if e.target == other:
+                yield e
+        
+    def disconnect_node(self, other):
+        edges = []
+        for e in self._edges_connected_to(other):
+            self.disconnect_edge(e)
+            edges.append(e)
+        return edges
+
+    def disconnect_edge(self, edge):
+        self.connections['out'].remove(edge)
+        edge.target.connections['in'].remove(edge)
+        
     def disconnect_all(self):
-        for other in self.connections['out'][:]:
-            other.connections['in'].remove(self)
-            self.connections['out'].remove(other)
-        for other in self.connections['in'][:]:
-            other.connections['out'].remove(self)
-            self.connections['in'].remove(other)
+        for e in self.connections['out'][:]:
+            other.connections['in'].remove(e)
+            self.connections['out'].remove(e)
+        for e in self.connections['in'][:]:
+            other.connections['out'].remove(e)
+            self.connections['in'].remove(e)
             
-    def is_connected(self, other):
-        return other in self.connections['out']
+    def is_connected_node(self, other):
+        return other in (e.target for e in self.connections['out'])
+        
+    def is_connected_edge(self, edge):
+        return edge in self.connections['out']
         
     def __repr__(self):
         return '<%s: value=%r, out=%r, in=%r>' % (self.__class__.__name__, self.value, len(self.connections['out']), len(self.connections['in']))
@@ -53,11 +78,12 @@ class Node(object):
     def number_of_outgoing_offspring(self):
         # todo this is unoptimal
         # Only works for tree, not for full graphs with cycles
-        offspring = list(self.connections['out'])
+        offspring = [e.target for e in self.connections['out']]
         i = 0
         while i < len(offspring):
             child = offspring[i]
-            for subchild in child.connections['out']:
+            for sub_edge in child.connections['out']:
+                subchild = sub_edge.target
                 if subchild in offspring:
                     raise HasCyclesError()
                 offspring.append(subchild)
@@ -66,18 +92,18 @@ class Node(object):
 
 
     def iter_all_connections(self):
-        for other in self.connections['out']:
-            yield other
-        for other in self.connections['in']:
-            yield other
+        for e in self.connections['out']:
+            yield e
+        for e in self.connections['in']:
+            yield e
             
         
-def copy(orig_nodes):
+def copy(orig_nodes, node_value_copier=lambda x:x, edge_value_copier=lambda x:x):
     nodes = []
     nodes_map = {}
     nodes_reverse_map = {}
     for node in orig_nodes:
-        new = Node(node.value)
+        new = Node(node_value_copier(node.value))
         for con_type, others in node.connections.iteritems():
             new.connections[con_type] = others[:]
         nodes.append(new)
@@ -87,7 +113,7 @@ def copy(orig_nodes):
     for node in nodes:
         for con_type, others in node.connections.iteritems():
             for i in xrange(len(others)):
-                others[i] = nodes_map[others[i]]
+                others[i] = Edge(node, nodes_map[others[i].target], edge_value_copier(others[i].value))
         
     return nodes, nodes_map, nodes_reverse_map
         
@@ -104,9 +130,9 @@ def topological_sort(orig_nodes):
     while cur:
         level, node = cur.pop(0)
         out.append((level, node))
-        out_nodes = node.connections['out'][:]
+        out_nodes = [e.target for e in node.connections['out']]
         for out_node in out_nodes:
-            node.disconnect(out_node)
+            node.disconnect_node(out_node)
             if not out_node.connections['in']:
                 cur.append((level+1, out_node))
 
@@ -117,8 +143,19 @@ def topological_sort(orig_nodes):
     out = [(level, nodes_reverse_map[node]) for level, node in sorted(out)]
     return out
 
+
+# ------------------------------------------------------------
+# TODO move this to Dot.py?
+
+def _repr_properties(props_dict):
+    props_str = ','.join('%s=%s' % (prop_name, value)
+                         for prop_name, value in props_dict.iteritems())
+    return props_str
+
+
 def generate_dot(groups, graph_params=None):
     # Generates a DOT language description of the graph
+    # Expects each node and edge instance, to have a .value.dot_properties() method
     out = 'digraph G {\n'
     if graph_params is not None:
         out += 'graph ['
@@ -128,14 +165,17 @@ def generate_dot(groups, graph_params=None):
     for group_name, nodes in groups.iteritems():
         out += 'subgraph "%s" {\n' % (group_name,)
         for node in nodes:
-            
-            props_str = ','.join('%s=%s,' % (prop_name, value)
-                                 for prop_name, value in node.value.get_node_properties().iteritems())
+            props_str = _repr_properties(node.value.dot_properties())
                 
             out += '%s [%s];\n' % (id(node), props_str)
-            for other in node.connections['out']:
-                out += '%s -> %s [' % (id(node), id(other))
-                out += '];\n'
+            for edge in node.connections['out']:
+                other = edge.target
+                edge_props = edge.value.dot_properties()
+                # OVERRIDE the real label with the id(edge), so we can
+                # later correlate in dot's plain output which edge is
+                # which.
+                edge_props['label'] = id(edge) 
+                out += '%s -> %s [%s];\n' % (id(node), id(other), _repr_properties(edge_props))
                 
         out += '}\n'
     return out + '}\n'
@@ -151,15 +191,42 @@ def _data_received((g, n, e), groups):
     out_nodes = {}
     out_edges = {}
     ids_to_nodes = {}
+    ids_to_edges = {}
     for group_name, nodes in groups.iteritems():
         for node in nodes:
             sid = str(id(node))
+
+            assert sid not in ids_to_edges
+            assert sid not in ids_to_nodes
             ids_to_nodes[sid] = node
+            
+            for edge in node.connections['out']:
+                edge_sid = str(id(edge))
+                assert edge_sid not in ids_to_edges
+                assert edge_sid not in ids_to_nodes
+                ids_to_edges[edge_sid] = edge
+                
             if sid in n:
                 out_nodes[node] = n[sid]
             if sid in e:
                 out_edges[node] = e[sid]
-    for out_node, edges in out_edges.iteritems():
-        for edge in edges:
-            edge['head_node'] = ids_to_nodes[edge['head']]
+    for out_node, dot_edges in out_edges.iteritems():
+        edges = {}
+        for dot_edge in dot_edges:
+            dot_edge['head_node'] = ids_to_nodes[dot_edge['head']]
+            # in the "label" we actually save the id of the edge
+            # object, see above in generate_dot
+            edge_sid = dot_edge['label']
+            try:
+                edge = ids_to_edges[edge_sid]
+            except KeyError:
+                # This can happen if we receive a DOT output for a
+                # graph that has JUST been modified to NOT include
+                # this edge. In that case, ignore the edge.
+                continue
+            
+            assert edge not in edges
+            edges[edge] = dot_edge
+            
+        out_edges[out_node] = edges # replace dot edges with real edges dict
     return g, out_nodes, out_edges
