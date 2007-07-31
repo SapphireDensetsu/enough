@@ -19,17 +19,17 @@
 from __future__ import division
 import pygame
 
-from AttrDict import AttrDict
 
 from math import atan2, sqrt, sin, cos, pi
 
 class VectorsNotColinear(Exception): pass
 
-class Point(AttrDict):
-    allowed_fields = [('x',),
-                      ('y',),
-                      ('z',0),
-                      ]
+class Point(object):
+    def __init__(self, x,y,z=0):
+        self.x = x
+        self.y = y
+        self.z = z
+        
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y, self.z+other.z)
     def __iadd__(self, other):
