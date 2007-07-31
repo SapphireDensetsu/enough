@@ -123,7 +123,7 @@ class EdgeWidget(Widget):
         
     def update_moving(self, *a, **k):
         line_len = (self.line.final[-1] - self.line.final[0])
-        n = line_len.norm()
+        n = max(min(line_len.norm(), 250), 150)
         does_fit, self.default_font = find_font(self.text, (n/3, n/2))
         super(EdgeWidget, self).update_moving(*a, **k)
         
@@ -472,7 +472,7 @@ class GraphApp(App):
 
     def show_help(self):
         for key, (name, func) in sorted(self.control_map.iteritems()):
-            self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 15)
+            self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
         
 #---------------------------------------------
 
