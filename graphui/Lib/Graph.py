@@ -176,7 +176,12 @@ def generate_dot(groups, graph_params=None):
                 # OVERRIDE the real label with the id(edge), so we can
                 # later correlate in dot's plain output which edge is
                 # which.
-                edge_props['label'] = id(edge) 
+                edge_props['label'] = id(edge)
+                # Also, set the font size for the edge to something
+                # small so that the fictive label will not disrupt the
+                # layout.
+                edge_props['fontsize'] = 1
+                
                 out += '%s -> %s [%s];\n' % (id(node), id(other), _repr_properties(edge_props))
                 
         out += '}\n'
