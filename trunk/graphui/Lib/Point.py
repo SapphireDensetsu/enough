@@ -122,3 +122,30 @@ class Point(AttrDict):
                 raise VectorsNotColinear()
         return res[0]
         
+
+
+
+def find_vect_from_point_to_line(point, src, dest):
+    # src and dest are two points on the line
+    # Finds the vector pointing from point to the nearest point on the line
+    u = src
+    v = dest - src
+    w = point
+    t = (((u-w).dot_product(v))/(v.dot_product(v)))
+    e = u - w - v * t
+    return e
+
+    
+def point_in_line_segment(point, src, dest, delta=0.1**15):
+    if src == dest:
+        raise ValueError("Line can't be defined by a single point")
+    v = dest - src
+    u = point - src
+    try:
+        t = u.find_linear_coefficient(v)
+    except VectorsNotColinear:
+        return False
+    if t is None or (t >= 0 and t <= 1):
+        return True
+    return False
+
