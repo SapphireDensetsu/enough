@@ -473,14 +473,3 @@ class GraphApp(App):
     def show_help(self):
         for key, (name, func) in sorted(self.control_map.iteritems()):
             self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
-        
-#---------------------------------------------
-
-
-def test():
-    pygame.init()
-    a = GraphApp(800, 600)
-    a.run()
-
-if __name__=='__main__':
-    test()
