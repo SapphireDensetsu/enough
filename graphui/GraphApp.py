@@ -54,7 +54,7 @@ class GraphElementValue(object):
         import string
         if event.key == pygame.K_BACKSPACE:
             self.name = self.name[:-1]
-        elif True: #event.unicode in string.printable:
+        elif event.unicode in (string.letters + string.digits + string.hexdigits + ' \r' + string.punctuation):
             self.name += event.unicode.replace('\r', '\n')
         self.update_widget_text()
 

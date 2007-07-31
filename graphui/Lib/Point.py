@@ -58,7 +58,7 @@ class Point(AttrDict):
         return abs(self.as_complex()) #sqrt(self.x*self.x + self.y*self.y)
 
     def as_complex(self):
-        return self.x + 1j * self.y
+        return self.x + self.y * 1j
     
     def update_from_tuple(self, (x,y)):
         self.x = x
