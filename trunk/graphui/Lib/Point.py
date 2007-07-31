@@ -55,8 +55,11 @@ class Point(AttrDict):
     def angle(self):
         return atan2(self.y,self.x)
     def norm(self):
-        return sqrt(self.x*self.x + self.y*self.y)
+        return abs(self.as_complex()) #sqrt(self.x*self.x + self.y*self.y)
 
+    def as_complex(self):
+        return self.x + 1j * self.y
+    
     def update_from_tuple(self, (x,y)):
         self.x = x
         self.y = y
