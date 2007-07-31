@@ -25,6 +25,8 @@ def approximate_binary_search(items, cmp):
         return item
 
 def lines_size(font, lines):
+    if not lines:
+        return (0, 0)
     height = font.get_height() * len(lines)
     width = max(font.size(line)[0] for line in lines)
     return width, height
