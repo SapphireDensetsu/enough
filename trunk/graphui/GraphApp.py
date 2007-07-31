@@ -26,7 +26,7 @@ from App import App, mouse_pos, undoable_method
 from Widget import Widget
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
-from Lib.Font import get_font
+from Lib.Font import get_font, find_font
 from Lib.Point import Point
 
 from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface, point_near_polyline
@@ -103,9 +103,6 @@ class EdgeWidget(Widget):
         self.target_widget = edge.target.value.widget
         self.line = line # A MovingLine
 
-        # TODO fix this. this is here only because of text
-        # size.....calculated by render_text from self.size
-        self.size.final = Point(40,40)
         
         self.params.back_color = (160, 10,10)
         self.params.text_color = (160, 10,10)
@@ -114,11 +111,21 @@ class EdgeWidget(Widget):
         self.params.hover_back_color = (220,30,30)
         self.params.hover_text_color = (220,30,30)
 
+        # this is just to prevent the text size from changing. we
+        # don't really care about the self.size NOR about self.pos
+        self.params.autosize = "by text" 
+
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
 
     def entered_text(self, e):
         self.edge.value.entered_text(e)
+        
+    def update_moving(self, *a, **k):
+        line_len = (self.line.final[-1] - self.line.final[0])
+        n = line_len.norm()
+        does_fit, self.default_font = find_font(self.text, (n/3, n/2))
+        super(EdgeWidget, self).update_moving(*a, **k)
         
     def paint_shape(self, surface, back_color):
         shape = self.target_widget.get_shape()
