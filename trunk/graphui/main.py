@@ -1,5 +1,5 @@
-import psyco
-psyco.full()
+#import psyco
+#psyco.full()
 
 import sys
 import pygame
