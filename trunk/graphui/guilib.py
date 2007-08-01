@@ -26,7 +26,7 @@ def get_default(val, default):
 
 
 class MovingValue(object):
-    def __init__(self, current, final, step=0.1):
+    def __init__(self, current, final, step=0.3):
         self.current = current
         self.final = final
         self.step = step

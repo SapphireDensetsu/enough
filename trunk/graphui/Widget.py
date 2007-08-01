@@ -27,7 +27,7 @@ class Widget(object):
     default_font = get_font(40)
     def __init__(self, text = '', pos=None):
         self.size = MovingValue(Point(20,20), Point(20,20))
-        self.pos = MovingValue(Point(0,0), Point(0,0), step=0.4)
+        self.pos = MovingValue(Point(0,0), Point(0,0), step=0.3)
         
         self.font = None
         self.text = text
