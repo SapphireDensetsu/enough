@@ -26,13 +26,37 @@ def get_default(val, default):
 
 
 class MovingValue(object):
-    def __init__(self, current, final, step=0.3):
-        self.current = current
-        self.final = final
+    def __init__(self, current, final, step=0.3, delta=0.1):
+        self._current = current
+        self._final = final
         self.step = step
+        self.done = False
+        self.delta = delta
 
+    def get_final(self):
+        return self._final
+    def set_final(self, value):
+        self._final = value
+        self.done = False
+    final = property(get_final, set_final)
+    def get_current(self):
+        return self._current
+    def set_current(self, value):
+        self._current = value
+        self.done = False
+    current = property(get_current, set_current)
+
+    def reset(self):
+        self.done = False
+        
     def update(self):
-        self.current += (self.final - self.current) * self.step
+        if self.done:
+            return
+        diff = (self._final - self._current)
+        if abs(diff) < self.delta:
+            self.done = True
+            return
+        self.current += diff * self.step
         
         
 class ParamHolder(object):
