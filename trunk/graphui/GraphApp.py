@@ -61,6 +61,7 @@ class GraphElementValue(object):
     def dot_properties(self):
         name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
+                'fontsize': self.widget.default_font.get_height(),
                 }
 
 class NodeWidget(Widget):
@@ -103,7 +104,6 @@ class EdgeWidget(Widget):
         self.target_widget = edge.target.value.widget
         self.line = line # A MovingLine
 
-        
         self.params.back_color = (160, 10,10)
         self.params.text_color = (160, 10,10)
         self.params.focus_back_color = (250,80,80)
@@ -113,19 +113,24 @@ class EdgeWidget(Widget):
 
         # this is just to prevent the text size from changing. we
         # don't really care about the self.size NOR about self.pos
-        self.params.autosize = "by text" 
+        self.params.autosize = "by text"
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
 
     def entered_text(self, e):
         self.edge.value.entered_text(e)
+
+    def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, bezier_points=30):
+        line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in dot_edge['points']]
+
+        from Lib.Bezier import Bezier
+        line.insert(0, (self.edge.source.value.widget.center_pos(False)))
+        line.append((self.edge.target.value.widget.center_pos(False)))
+
+        curve = Bezier(line, bezier_points)
+        self.line.final = curve
         
-    def update_moving(self, *a, **k):
-        line_len = (self.line.final[-1] - self.line.final[0])
-        n = max(min(line_len.norm(), 250), 150)
-        does_fit, self.default_font = find_font(self.text, (n/3, n/2))
-        super(EdgeWidget, self).update_moving(*a, **k)
         
     def paint_shape(self, surface, back_color):
         shape = self.target_widget.get_shape()
@@ -208,6 +213,8 @@ class GraphApp(App):
                             pygame.K_F1:("Show help", self.show_help),
                             pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
                             pygame.K_d: ("Delete selected node/edge", self.delete_focused),
+                            pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.5)),
+                            pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.5)),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -435,23 +442,12 @@ class GraphApp(App):
 
         for node, n_layout in n.iteritems():
             lines = []
-            previously_connected = node.value.widget.out_edges.keys()
             if node in e:
                 last_indices = {}
                 for edge, dot_edge in e[node].iteritems():
-                    this_widget = node.value.widget
-                    other_widget = dot_edge['head_node'].value.widget
-                    if other_widget in previously_connected:
-                        previously_connected.remove(other_widget)
-
-                    line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in dot_edge['points']]
-                    
-                    from Lib.Bezier import Bezier
-                    line.insert(0, (this_widget.center_pos(False)))
-                    line.append((other_widget.center_pos(False)))
-                    curve = Bezier(line, self.bezier_points)
-
-                    edge.value.widget.line.final = curve
+                    edge.value.widget.update_from_dot(dot_edge,
+                                                      x_scale=x_scale, y_scale=y_scale,
+                                                      bezier_points=self.bezier_points)
 
     def paint_status_text(self):
         new_list = []
@@ -473,3 +469,10 @@ class GraphApp(App):
     def show_help(self):
         for key, (name, func) in sorted(self.control_map.iteritems()):
             self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
+
+    def focused_font_size(self, dir):
+        if not self.focused_widgets:
+            return
+        for w in self.focused_widgets:
+            w.change_font_size(mul=dir)
+        self.update_layout()
