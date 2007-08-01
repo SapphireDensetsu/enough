@@ -24,86 +24,81 @@ from math import atan2, sqrt, sin, cos, pi
 
 class VectorsNotColinear(Exception): pass
 
-class Point(object):
-    def __init__(self, (x, y)):
-        self.x = x
-        self.y = y
+cdef class Point:
+    cdef public double x, y
+    def __init__(self, t):
+        self.x, self.y = t
     def __repr__(self):
-        return '%s(%r, %r)' % (self.__class__.__name__, self.x, self.y)
+        return '%s(x=%r, y=%r)' % (self.__class__.__name__, self.x, self.y)
     
-    def __add__(self, other):
-        return self.__class__((self.x+other.x, self.y+other.y))
-    def __iadd__(self, other):
-        self.x += other.x
-        self.y += other.y
+    def __add__(self, Point other):
+        return Point((self.x+other.x, self.y+other.y))
+    def __iadd__(self, Point other):
+        self.x = self.x + other.x
+        self.y = self.y + other.y
         return self
     def __neg__(self):
-        return self.__class__((-self.x, -self.y))
-    def __sub__(self, other):
-        return self.__class__((self.x-other.x, self.y-other.y))
-    def __isub__(self, other):
-        self.x-=other.x
-        self.y-=other.y
+        return Point((-self.x, -self.y))
+    def __sub__(self, Point other):
+        return Point((self.x-other.x, self.y-other.y))
+    def __isub__(self, Point other):
+        self.x = self.x - other.x
+        self.y = self.y - other.y
         return self
     def __mul__(self, value):
         if isinstance(value, self.__class__):
             other = value
-            return self.__class__((self.x*other.x, self.y*other.y))
+            return Point((self.x*other.x, self.y*other.y))
         else:
             num = value
-            return self.__class__((self.x*num, self.y*num))
+            return Point((self.x*num, self.y*num))
         
     def __div__(self, value):
+        cdef Point other
         if isinstance(value, self.__class__):
             other = value
-            return self.__class__((self.x/other.x, self.y/other.y))
+            return Point((self.x/other.x, self.y/other.y))
         else:
-            return self.__class__((self.x/value, self.y/value))
-
-    def __eq__(self, other):
-        return other.x == self.x and other.y == self.y
-
-    def __ne__(self, other):
-        return not (self == other)
+            return Point((self.x/value, self.y/value))
 
     def __cmp__(self, other):
-        raise ValueError("Can't compare vectors")
+        return cmp(tuple(self), tuple(other))
 
     def __abs__(self):
         return sqrt(self.x*self.x + self.y*self.y)
-    norm = __abs__
-    
-    def dot_product(self, other):
-        return self.x*other.x + self.y*other.y
-    
-    def __getitem__(self, index):
+    def norm(self):
+        return abs(self)
+
+    def __hash__(self):
+        raise TypeError("%s objects are unhashable" % (self.__class__.__name__,))
+
+    def __getitem__(self, int index):
         if index == 0:
             return self.x
         elif index == 1:
             return self.y
         else:
             raise IndexError(index)
-        
+    
+    def dot_product(self, Point other):
+        return self.x*other.x + self.y*other.y
+    
     def angle(self):
         return atan2(self.y, self.x)
 
-    def rotate(self, angle):
-        return self.__class__.from_polar(self.angle()+angle, self.norm())
-
-    @classmethod
-    def from_polar(cls, angle, radius):
-        return cls((cos(angle), sin(angle)))*radius
+    def rotate(self, double angle):
+        return from_polar(self.angle()+angle, abs(self))
 
     def copy(self):
-        return self.__class__((self.x, self.y))
+        return Point((self.x, self.y))
     
     def find_linear_coefficient(self, other, delta=0.1**10):
         # Finds scalar t such that self = other*t
         # returns None if ANY number is good (could happen if both points = 0,0,0)
         # If one coordinate is off by delta, ignore and find near coefficient
         res = []
-        for my_coord, other_coord in zip(tuple(self),
-                                         tuple(other)):
+        for my_coord, other_coord in zip(self.as_tuple(dimensions=3),
+                                         other.as_tuple(dimensions=3)):
             if abs(other_coord) < delta:
                 if abs(my_coord) < delta:
                     continue
@@ -120,10 +115,8 @@ class Point(object):
                 raise VectorsNotColinear()
         return res[0]
         
-
-# compatibility with Pyrex limitations
-from_polar = Point.from_polar
-
+def from_polar(angle, radius):
+    return Point((cos(angle), sin(angle)))*radius
 
 def find_vect_from_point_to_line(point, src, dest):
     # src and dest are two points on the line

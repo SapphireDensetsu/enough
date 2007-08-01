@@ -16,7 +16,7 @@
 ##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## */
 
-from Lib.Point import Point
+from Lib.Point import Point, from_polar
 import math
 
 def get_default(val, default):
@@ -81,7 +81,7 @@ class MovingLine(MovingValue):
     # like MovingValue but for a list of points the represent a line
     def update(self):
         if not self.current:
-            self.current = [Point(0,0) for p in self.final]
+            self.current = [Point((0,0)) for p in self.final]
         else:
             len_diff = len(self.final) - len(self.current)
             if len_diff < 0:
@@ -108,13 +108,13 @@ def paint_arrowhead_by_direction(surface, color, src, target_pos, size=7, width=
     
 def paint_arrowhead(surface, color, center, angle, size=7, width=0):
     triangle = n_point_regular_polygon(3, size, center, angle)
-    pygame.draw.polygon(surface, color, [p.as_tuple() for p in triangle], width)
+    pygame.draw.polygon(surface, color, [tuple(p) for p in triangle], width)
 
 def n_point_regular_polygon(n, radius, center, phase=0):
     twopi = 2*math.pi
     for i in xrange(n):
         angle = twopi/n*i + phase
-        yield Point.from_polar(angle, radius) + center
+        yield from_polar(angle, radius) + center
 
 pygame_reverse_key_map = {}
 def build_reverse_pygame_key_map():
@@ -128,10 +128,10 @@ build_reverse_pygame_key_map()
 def rotate_surface(surface, angle):
     rt = pygame.transform.rotate(surface, -math.degrees(angle))
 
-    coors = [Point(0, 0),
-             Point(surface.get_width(), 0),
-             Point(0, surface.get_height()),
-             Point(surface.get_width(), surface.get_height())]
+    coors = [Point((0, 0)),
+             Point((surface.get_width(), 0)),
+             Point((0, surface.get_height())),
+             Point((surface.get_width(), surface.get_height()))]
     coors = [p.rotate(angle) for p in coors]
 
     leftmost = min(p.x for p in coors)
@@ -139,7 +139,7 @@ def rotate_surface(surface, angle):
 
     # pygame.transform.rotate makes a larger adjusted surface where
     # leftmost/topmost are 0,0:
-    adjust = Point(-leftmost, -topmost)
+    adjust = Point((-leftmost, -topmost))
     coors = [p + adjust for p in coors]
     return rt, coors
 
@@ -156,8 +156,8 @@ def point_near_polyline(point, line_points, delta=3):
     if len(line_points) < 2:
         return False
     i = 0
-    p = Point(0,0)
-    s = Point(0,0)
+    p = Point((0,0))
+    s = Point((0,0))
     while i < len(line_points) - 1:
         p1 = line_points[i]
         p2 = line_points[i+1]

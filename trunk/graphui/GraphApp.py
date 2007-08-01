@@ -28,7 +28,7 @@ from Widget import Widget
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font, find_font
-from Lib.Point import Point
+from Lib.Point import Point, from_polar
 
 from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface, point_near_polyline
 
@@ -38,7 +38,7 @@ class GraphElementValue(object):
     def __init__(self, name, group_name = None, start_pos=None):
         self.name = name
         self.group_name = group_name
-        self.start_pos = get_default(start_pos, Point(0,0))
+        self.start_pos = get_default(start_pos, Point((0,0)))
 
     def set_widget(self, widget):
         self._widget = widget
@@ -124,8 +124,9 @@ class EdgeWidget(Widget):
         self.edge.value.entered_text(e)
 
     def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, bezier_points=30):
-        self.text_pos = Point(dot_edge['lx']*x_scale, dot_edge['ly']*y_scale)
-        line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in dot_edge['points']]
+        self.text_pos = Point((dot_edge['lx']*x_scale, dot_edge['ly']*y_scale))
+        line = [Point((int(p[0]*x_scale),
+                       int(p[1]*y_scale))) for p in dot_edge['points']]
 
         from Lib.Bezier import Bezier
         line.insert(0, (self.edge.source.value.widget.center_pos(False)))
@@ -138,7 +139,7 @@ class EdgeWidget(Widget):
     def paint_shape(self, surface, back_color):
         shape = self.target_widget.get_shape()
         self.line.update()
-        pygame.draw.lines(surface, back_color, False, [p.as_tuple() for p in self.line.current], 2)
+        pygame.draw.lines(surface, back_color, False, [tuple(p) for p in self.line.current], 2)
         c = self.line.current[len(self.line.current)/2:]
         for a, b in zip(c, c[1:]):
             for intersection in shape.intersections(a, b):
@@ -167,7 +168,7 @@ class EdgeWidget(Widget):
             angle %= 2*math.pi
 
         t = self.rendered_text
-        text_centering_vector = Point(-t.get_width()/2, -t.get_height())
+        text_centering_vector = Point((-t.get_width()/2, -t.get_height()))
         text_centering_length = text_centering_vector.norm()
         text_centering_angle = text_centering_vector.angle()
 
@@ -177,10 +178,10 @@ class EdgeWidget(Widget):
         # rotated surface:
         topleft = coors[0]
 
-        desired_topleft = midsrc + Point.from_polar(text_centering_angle+angle,
-                                                    text_centering_length)
+        desired_topleft = midsrc + from_polar(text_centering_angle+angle,
+                                              text_centering_length)
                 
-        pos = (desired_topleft - topleft).as_tuple()
+        pos = tuple(desired_topleft - topleft)
         surface.blit(rt, map(int, pos))
 
 class GraphApp(App):
@@ -282,7 +283,7 @@ class GraphApp(App):
             cpos = w.center_pos()
             paint_arrowhead_by_direction(self.screen, color, cpos, mpos)
             pygame.draw.aalines(self.screen, color, False,
-                                [cpos.as_tuple(), mpos.as_tuple()], True)
+                                [tuple(cpos), tuple(mpos)], True)
         
     def paint_widgets(self, event):
         super(GraphApp, self).paint_widgets(event)

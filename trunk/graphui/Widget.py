@@ -26,8 +26,8 @@ from guilib import get_default, MovingValue, ParamHolder
 class Widget(object):
     default_font = get_font(40)
     def __init__(self, text = '', pos=None):
-        self.size = MovingValue(Point(20,20), Point(20,20))
-        self.pos = MovingValue(Point(0,0), Point(0,0), step=0.3)
+        self.size = MovingValue(Point((20,20)), Point((20,20)))
+        self.pos = MovingValue(Point((0,0)), Point((0,0)), step=0.3)
         
         self.font = None
         self.text = text
@@ -76,12 +76,12 @@ class Widget(object):
         else:
             text_color = self.params.text_color
 
-        if self.rendered_params == (self.params.autosize, self.size.final.as_tuple(), self.text, text_color):
+        if self.rendered_params == (self.params.autosize, tuple(self.size.final), self.text, text_color):
             return
             
         lines = self.text.split('\n')
         if self.params.autosize == "by size":
-            does_fit, self.font = find_font(lines, (self.size.final*(3./4)).as_tuple())
+            does_fit, self.font = find_font(lines, tuple(self.size.final*(3./4)))
         else:
             self.font = self.default_font
             if self.params.autosize == "by text":
@@ -94,7 +94,7 @@ class Widget(object):
         size = (max(t.get_width() for t in rendered_lines),
                 sum(t.get_height() for t in rendered_lines))
         self.rendered_text = pygame.Surface(size, pygame.SWSURFACE|pygame.SRCALPHA|pygame.SRCCOLORKEY, 32)
-        self.rendered_params = (self.params.autosize, self.size.final.as_tuple(), self.text, text_color)
+        self.rendered_params = (self.params.autosize, tuple(self.size.final), self.text, text_color)
         
         # TODO: Support centering and stuff?
         y = 0
@@ -135,8 +135,8 @@ class Widget(object):
 
     def paint_text(self, surface):
         lines = self.text.split('\n')
-        text_size = Point(*lines_size(self.font, lines))
-        surface.blit(self.rendered_text, (self.center_pos()-text_size*0.5).as_tuple())
+        text_size = Point(lines_size(self.font, lines))
+        surface.blit(self.rendered_text, tuple(self.center_pos()-text_size*0.5))
 
     def in_bounds(self, pos):
         p = self.pos.current

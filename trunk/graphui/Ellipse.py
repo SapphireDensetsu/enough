@@ -32,8 +32,8 @@ class Ellipse(object):
             xexpr = 2.*(w**2)*n+2*cx*(h**2)*(m**2)+2*cy*(w**2)*m
             yexpr = 2.*(h**2)*m*n-2*cx*(h**2)*m-2*cy*(w**2)
             
-            i1 = Point(-(m*sq-xexpr)/div, -(sq+yexpr)/div)
-            i2 = Point(-(-m*sq-xexpr)/div, -(-sq+yexpr)/div)
+            i1 = Point((-(m*sq-xexpr)/div, -(sq+yexpr)/div))
+            i2 = Point((-(-m*sq-xexpr)/div, -(-sq+yexpr)/div))
         else:
             # y = mx + n
             m = (y2-y1)/(x2-x1)
@@ -47,8 +47,8 @@ class Ellipse(object):
             xexpr = 2.*(w**2)*m*n-2*cy*(w**2)*m-2*cx*(h**2)
             yexpr1 = 2.*cx*(h**2)
             yexpr2 = 2.*(h**2)*n+2*cy*(w**2)*(m**2)
-            i1 = Point(-(sq+xexpr)/div, (m*(yexpr1-sq)+yexpr2)/div)
-            i2 = Point(-(-sq+xexpr)/div,(m*(yexpr1+sq)+yexpr2)/div)
+            i1 = Point((-(sq+xexpr)/div, (m*(yexpr1-sq)+yexpr2)/div))
+            i2 = Point((-(-sq+xexpr)/div,(m*(yexpr1+sq)+yexpr2)/div))
 
         margin_error = 0.0001
         for i in [i1, i2]:
@@ -69,10 +69,11 @@ def _test_speed(num=10):
     import pygame
     import random
     def rand_point(n=5):
-        return Point(random.random()*n*2-n, random.random()*n*2-n)
+        return Point((random.random()*n*2-n,
+                      random.random()*n*2-n))
     es = []
     for i in xrange(200):
-        es.append(Ellipse(pygame.Rect(rand_point().as_tuple(), rand_point().as_tuple())))
+        es.append(Ellipse(pygame.Rect(tuple(rand_point()), tuple(rand_point()))))
 
     import time
     t = time.time()
