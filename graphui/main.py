@@ -1,3 +1,6 @@
+import psyco
+psyco.full()
+
 import sys
 import pygame
 from GraphApp import GraphApp
