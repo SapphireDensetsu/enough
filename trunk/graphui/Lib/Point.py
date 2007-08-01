@@ -66,6 +66,9 @@ class Point(object):
     def __eq__(self, other):
         return other.x == self.x and other.y == self.y and other.z == self.z
 
+    def __ne__(self, other):
+        return not (self == other)
+
     def __cmp__(self, other):
         raise ValueError("Can't compare vectors")
 
