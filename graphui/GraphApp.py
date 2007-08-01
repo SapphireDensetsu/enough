@@ -86,7 +86,7 @@ class NodeWidget(Widget):
                            other_widget.center_pos().copy()],
                           [self.center_pos(False).copy(),
                            other_widget.center_pos(False).copy()],
-                          step=0.5)
+                          step=0.3)
         edge_widget = EdgeWidget(edge, line)
         self.get_edges_to(other_widget).append(edge_widget)
         return edge_widget

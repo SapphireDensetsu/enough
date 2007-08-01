@@ -47,7 +47,7 @@ def undoable_method(func):
 class App(object):
     multiselect_modifier = pygame.KMOD_CTRL
     
-    def __init__(self, width=800, height=600, flags=0, fps=40):
+    def __init__(self, width=800, height=600, flags=0, fps=25):
         self.fps = fps
         from twisted.internet.task import LoopingCall
         self._lc = LoopingCall(self._iteration)
@@ -70,6 +70,10 @@ class App(object):
         self.history_redo = []
         self.undoing = False
         self.max_undo = 25
+
+        from Lib.Font import get_font
+        self._fps_font = get_font(30)
+        self._count = 0
         
     #______________________________________#
     
@@ -98,14 +102,32 @@ class App(object):
         reactor.stop()
 
     def run(self):
-        self._lc.start(1./self.fps)
-        self._lc.deferred.addErrback(twisted.python.log.err)
+        self._prev_iteration_time = time.time()
+        self._rendered_fps_text = None
+        d = self._lc.start(1./self.fps)
+        d.addErrback(twisted.python.log.err)
         from twisted.internet import reactor
         reactor.run()
 
     def _iteration(self):
+        cur_time = time.time()
+        timedelta = (cur_time - self._prev_iteration_time)
+        if timedelta == 0:
+            self._cur_fps = None
+        else:
+            self._cur_fps = 1 / timedelta
+        self._prev_iteration_time = cur_time
         self.handle_events()
         self._paint(None)
+
+    def _draw_fps(self):
+        self._count += 1
+        if self._count % 4 == 0 or self._rendered_fps_text is None:
+            self._rendered_fps_text = self._fps_font.render('FPS: ' + str(int(self._cur_fps)), True, (255, 0, 0))
+        # TODO: Only render text in some of the iterations...
+        fps = self._rendered_fps_text
+        self.screen.blit(fps, (self.screen.get_width() - fps.get_width(),
+                               self.screen.get_height() - fps.get_height()))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -148,6 +170,8 @@ class App(object):
 
         if self.record:
             pygame.draw.circle(self.screen, (255,100,100), (self.width-11, 11), 10, 0)
+
+        self._draw_fps()
             
         pygame.display.update()
 
