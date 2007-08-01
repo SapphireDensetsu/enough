@@ -68,6 +68,9 @@ class Point(object):
 
     def __cmp__(self, other):
         raise ValueError("Can't compare vectors")
+
+    def __abs__(self):
+        return abs(self.as_complex()) #sqrt(self.x*self.x + self.y*self.y)
     
     def dot_product(self, other):
         return self.x*other.x + self.y*other.y + self.z*other.z
@@ -78,7 +81,7 @@ class Point(object):
     def angle(self):
         return atan2(self.y,self.x)
     def norm(self):
-        return abs(self.as_complex()) #sqrt(self.x*self.x + self.y*self.y)
+        return abs(self)
 
     def as_complex(self):
         return self.x + self.y * 1j
