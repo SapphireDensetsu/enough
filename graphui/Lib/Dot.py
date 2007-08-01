@@ -135,7 +135,7 @@ class _GraphParser(object):
                 edge['label'] = edge['lx'] = edge['ly'] = None
             elif len(words) == 9+n*2:
                 edge['label'] = words[-5]
-                edge['lx'], edge['ly'] = words[-4], words[-3]
+                edge['lx'], edge['ly'] = float(words[-4]), float(words[-3])
             else:
                 assert False, "Cannot understand %r" % (line,)
             edge['style'] = words[-2]

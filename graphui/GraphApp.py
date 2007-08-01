@@ -19,6 +19,7 @@
 from functools import partial
 import pygame
 import time
+import math
 
 import twisted.python.log
 
@@ -61,7 +62,6 @@ class GraphElementValue(object):
     def dot_properties(self):
         name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
-                'fontsize': self.widget.default_font.get_height(),
                 }
 
 class NodeWidget(Widget):
@@ -103,6 +103,7 @@ class EdgeWidget(Widget):
         self.edge = edge
         self.target_widget = edge.target.value.widget
         self.line = line # A MovingLine
+        self.text_pos = None
 
         self.params.back_color = (160, 10,10)
         self.params.text_color = (160, 10,10)
@@ -122,6 +123,7 @@ class EdgeWidget(Widget):
         self.edge.value.entered_text(e)
 
     def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, bezier_points=30):
+        self.text_pos = Point(dot_edge['lx']*x_scale, dot_edge['ly']*y_scale)
         line = [Point(int(p[0]*x_scale), int(p[1]*y_scale)) for p in dot_edge['points']]
 
         from Lib.Bezier import Bezier
@@ -153,8 +155,12 @@ class EdgeWidget(Widget):
             return
         midsrc, middst = midvalues
         angle = (middst - midsrc).angle()
+        
+        if abs(angle) % (math.pi/2) < 0.001:
+            # This is to prevent 'flipping' between two sides of the
+            # edge when it moves only slightly
+            angle = math.pi/2
 
-        import math
         if 1*(2*math.pi)/4 < angle < 3*(2*math.pi)/4:
             angle += math.pi
             angle %= 2*math.pi
