@@ -62,6 +62,7 @@ class GraphElementValue(object):
     def dot_properties(self):
         name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings
         return {'label': '"%s"' % (name_text,),
+                #'fontsize': self._widget.default_font.get_height()/4.0,
                 }
 
 class NodeWidget(Widget):

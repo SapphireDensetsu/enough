@@ -176,7 +176,8 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
                 # OVERRIDE the real label with the id(edge), so we can
                 # later correlate in dot's plain output which edge is
                 # which.
-                edge_props['color'] = id(edge)
+                edge_props['label'] = id(edge)
+                edge_props['fontsize'] = 3
                 
                 out += '%s -> %s [%s];\n' % (id(node), id(other), _repr_properties(edge_props))
                 
@@ -219,7 +220,7 @@ def _data_received((g, n, e), groups):
             dot_edge['head_node'] = ids_to_nodes[dot_edge['head']]
             # in the "label" we actually save the id of the edge
             # object, see above in generate_dot
-            edge_sid = dot_edge['color']
+            edge_sid = dot_edge['label']
             try:
                 edge = ids_to_edges[edge_sid]
             except KeyError:
