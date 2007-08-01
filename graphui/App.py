@@ -25,8 +25,7 @@ from Lib.Point import Point
 from guilib import get_default, MovingValue, ParamHolder
 
 def mouse_pos():
-    x,y = pygame.mouse.get_pos()
-    return Point(x,y)
+    return Point(pygame.mouse.get_pos())
 
 def Event(name, **kw):
     return pygame.event.Event(pygame.USEREVENT, name=name, **kw)

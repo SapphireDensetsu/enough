@@ -46,7 +46,7 @@ def PointOnCubicBezier(cp, t):
     x= (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x
     y= (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y
 
-    return Point(x,y)
+    return Point((x,y))
 
 def rec_point_on_curve(cp, t):
     # From wikipedia - recursive definition for n-degree bezier curve
@@ -73,7 +73,7 @@ def choose(k, n):
 def nonrec_point_on_curve(cp, t):
     # Non-recursive implementation, also according to formula from wikipedia
     n = len(cp) - 1
-    p = Point(0,0)
+    p = Point((0,0))
     for i in xrange(n+1):
         p += cp[i]*float(choose(i, n)) * ((1-t)**(n-i)) * (t**i)
     return p
