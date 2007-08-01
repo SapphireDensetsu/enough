@@ -446,6 +446,8 @@ class GraphApp(App):
             node.value.widget.size.final.x = n_layout['width'] * x_scale * self.size_zoom
             node.value.widget.size.final.y = n_layout['height'] * y_scale * self.size_zoom
             node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5
+            node.value.widget.pos.reset()
+            node.value.widget.size.reset()
 
         for node, n_layout in n.iteritems():
             lines = []
