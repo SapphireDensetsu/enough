@@ -122,7 +122,7 @@ class App(object):
 
     def _draw_fps(self):
         self._count += 1
-        if self._count % 4 == 0 or self._rendered_fps_text is None:
+        if (self._count % 4 == 0 or self._rendered_fps_text is None) and self._cur_fps is not None:
             self._rendered_fps_text = self._fps_font.render('FPS: ' + str(int(self._cur_fps)), True, (255, 0, 0))
         # TODO: Only render text in some of the iterations...
         fps = self._rendered_fps_text
