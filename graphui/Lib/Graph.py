@@ -155,7 +155,7 @@ def _repr_properties(props_dict):
     return props_str
 
 
-def generate_dot(groups, graph_params=None):
+def generate_dot(groups, graph_params=None, edge_font_size=1):
     # Generates a DOT language description of the graph
     # Expects each node and edge instance, to have a .value.dot_properties() method
     out = 'digraph G {\n'
@@ -177,10 +177,10 @@ def generate_dot(groups, graph_params=None):
                 # later correlate in dot's plain output which edge is
                 # which.
                 edge_props['label'] = id(edge)
-                # Also, set the font size for the edge to something
-                # small so that the fictive label will not disrupt the
-                # layout.
-                edge_props['fontsize'] = 1
+                # Also, by default, set the font size for the edge to
+                # something small so that the fictive label will not
+                # disrupt the layout.
+                edge_props.setdefault('fontsize', 1)
                 
                 out += '%s -> %s [%s];\n' % (id(node), id(other), _repr_properties(edge_props))
                 

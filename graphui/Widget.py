@@ -152,3 +152,6 @@ class Widget(object):
             return self.pos.current+self.size.current*0.5
         return self.pos.final+self.size.final*0.5
         
+    def change_font_size(self, add = 4, mul = 1):
+        self.default_font = get_font(self.default_font.get_height()*mul + add)
+        
