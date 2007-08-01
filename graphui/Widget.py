@@ -69,6 +69,16 @@ class Widget(object):
         self.pos.update()
 
     def render_text(self):
+        if self.params.in_focus:
+            text_color = self.params.focus_text_color
+        elif self.params.in_hover:
+            text_color = self.params.hover_text_color
+        else:
+            text_color = self.params.text_color
+
+        if self.rendered_params == (self.params.autosize, self.size.final.as_tuple(), self.text, text_color):
+            return
+            
         lines = self.text.split('\n')
         if self.params.autosize == "by size":
             does_fit, self.font = find_font(lines, (self.size.final*(3./4)).as_tuple())
@@ -78,28 +88,19 @@ class Widget(object):
                 width, height = lines_size(self.font, lines)
                 self.size.final.x = self.size.current.x = width
                 self.size.final.y = self.size.current.y = height
-            
-        if self.params.in_focus:
-            text_color = self.params.focus_text_color
-        elif self.params.in_hover:
-            text_color = self.params.hover_text_color
-        else:
-            text_color = self.params.text_color
 
-        if self.rendered_params == (self.font, lines, text_color):
-            return
-            
         rendered_lines = [self.font.render(line, True, text_color)
                           for line in lines]
         size = (max(t.get_width() for t in rendered_lines),
                 sum(t.get_height() for t in rendered_lines))
         self.rendered_text = pygame.Surface(size, pygame.SWSURFACE|pygame.SRCALPHA|pygame.SRCCOLORKEY, 32)
+        self.rendered_params = (self.params.autosize, self.size.final.as_tuple(), self.text, text_color)
+        
         # TODO: Support centering and stuff?
         y = 0
         for rline in rendered_lines:
             self.rendered_text.blit(rline, (0, y))
             y += rline.get_height()
-        self.rendered_params = (self.font, lines, text_color)
 
     def get_current_rect(self):
         return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
