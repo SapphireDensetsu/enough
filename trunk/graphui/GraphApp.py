@@ -16,6 +16,8 @@
 ##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## */
 
+FILENAME = "graphui.data"
+
 from functools import partial
 import pygame
 import time
@@ -138,7 +140,6 @@ class GraphApp(App):
         self.unset_focus()
         self.update_layout()
 
-            
     #@undoable_method it's not so useful to undo this...
     def toggle_layout_engine(self, dirc):
         self.dot_prog_num = (self.dot_prog_num + dirc) % len(self.dot.layout_programs)
@@ -399,17 +400,23 @@ class GraphApp(App):
         self.update_layout()
 
     def save(self):
-        self.set_status_text("Saving...")
-        self.set_status_text("Please enter the filename in THE CONSOLE")
-        filename = raw_input("Please enter filename for save:\n")
-        super(GraphApp, self).save(filename)
-        self.set_status_text("Done Saving")
-        
+        filename = FILENAME
+        self.set_status_text("Saving to %r..." % (filename,))
+        try:
+            super(GraphApp, self).save(filename)
+        except Exception, e:
+            self.set_status_text("Save failed %s" % (e,))
+        else:
+            self.set_status_text("Saved successfully")
+
     def load(self):
-        self.set_status_text("Loading...")
-        self.set_status_text("Please enter the filename in THE CONSOLE")
-        filename = raw_input("Please enter filename for load:\n")
-        super(GraphApp, self).load(filename)
-        self.update_layout()
-        self.set_status_text("Done Loading")
+        filename = FILENAME
+        self.set_status_text("Loading from %s..." % (filename,))
+        try:
+            super(GraphApp, self).load(filename)
+        except Exception, e:
+            self.set_status_text("Load failed %s" % (e,))
+        else:
+            self.update_layout()
+            self.set_status_text("Loaded successfully")
 
