@@ -117,8 +117,13 @@ def paint_arrowhead_by_direction(surface, color, src, target_pos, size=7, width=
     
 def paint_arrowhead(surface, color, center, angle, size=7, width=0):
     triangle = n_point_regular_polygon(3, size, center, angle)
-    pygame.draw.polygon(surface, color, [tuple(p) for p in triangle], width)
+    points = [tuple(p) for p in triangle]
+    pygame.draw.polygon(surface, color, points, width)
+    return color, points, width # For re-use without calculation
 
+def repaint_arrowhead(surface, color, points, width):
+    pygame.draw.polygon(surface, color, points, width)
+    
 def n_point_regular_polygon(n, radius, center, phase=0):
     twopi = 2*math.pi
     for i in xrange(n):
