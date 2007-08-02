@@ -221,8 +221,8 @@ class GraphApp(App):
                             pygame.K_F1:("Show help", self.show_help),
                             pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
                             pygame.K_d: ("Delete selected node/edge", self.delete_focused),
-                            pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.5)),
-                            pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.5)),
+                            pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.1)),
+                            pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.1)),
                             }
     @undoable_method
     def add_nodes(self, nodes):
