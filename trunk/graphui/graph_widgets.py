@@ -21,7 +21,7 @@ import math
 
 from Widget import Widget
 from Lib.Point import Point, from_polar, point_near_polyline
-from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface
+from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead
 
 
 class NodeWidget(Widget):
@@ -75,7 +75,7 @@ class EdgeWidget(Widget):
         # this is just to prevent the text size from changing. we
         # don't really care about the self.size NOR about self.pos
         self.params.autosize = "by text"
-        self.found_intersection = None
+        self.cached_arrowhead = None
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
@@ -98,20 +98,24 @@ class EdgeWidget(Widget):
         
         
     def paint_shape(self, surface, back_color):
+        change_stopped_now = False
         if self.line.done and self.target_widget.pos.done and self.target_widget.size.done:
+            if not self.cached_arrowhead:
+                change_stopped_now = True
             changed = False
         else:
             changed = True
+            self.cached_arrowhead = None
             
         self.line.update()
         pygame.draw.lines(surface, back_color, False, [tuple(p) for p in self.line.current], 2)
 
-        if changed or not self.found_intersection:
+        if changed or change_stopped_now or not self.cached_arrowhead:
             # If we didn't cache the found intersection or some stuff changed....
+
+            # TODO: make this a binary search 
             shape = self.target_widget.get_shape()
             i = len(self.line.current)/2
-            if self.line.done and self.target_widget.pos.done and self.target_widget.size.done:
-                self.done_intersections = True
             while i + 1 < len(self.line.current):
                 a, b = self.line.current[i], self.line.current[i+1]
                 i += 1
@@ -120,12 +124,11 @@ class EdgeWidget(Widget):
                 else:
                     continue
 
-                self.found_intersection = a, intersection
-                break
+                self.cached_arrowhead = paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
+                return
 
-        if self.found_intersection:
-            a, intersection = self.found_intersection
-            paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
+        if self.cached_arrowhead:
+            repaint_arrowhead(surface, *self.cached_arrowhead)
             
 
     def paint_text(self, surface):
