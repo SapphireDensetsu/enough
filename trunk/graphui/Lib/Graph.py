@@ -29,9 +29,11 @@ class Edge(object):
         self.value = value
         
 class Node(object):
-    def __init__(self, value):
+    def __init__(self, value, inc=tuple(), outc=tuple()):
         self.value = value
-        self.connections = {'in': [], 'out': []}
+        self.connections = {'in': list(inc), 'out': list(outc)}
+    def __getstate__(self):
+        return dict(value=self.value, connections=self.connections)
 
     def connect_node(self, other, edge_value=None):
         e = Edge(self, other, edge_value)

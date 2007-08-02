@@ -76,7 +76,7 @@ class GraphApp(App):
                             pygame.K_y: ("Redo", self.redo),
                             pygame.K_p: ("Record (toggle)", self.toggle_record),
                             pygame.K_a: ("Create new node", self.create_new_node),
-                            pygame.K_s: ("Output DOT description", self.output_dot_description),
+                            pygame.K_o: ("Output DOT description", self.output_dot_description),
                             pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
                                                                                  3)),
                             pygame.K_MINUS: ("Lower curve resolution", partial(self.change_curve_resolution,
@@ -90,6 +90,10 @@ class GraphApp(App):
                             
                             pygame.K_e: ("Toggle stretch/keep aspect ratio", self.toggle_aspect_ratio),
                             pygame.K_r: ("Reset zoom & pan", self.reset_zoom_pan),
+                            
+                            pygame.K_s: ("Save", self.save),
+                            pygame.K_l: ("Load", self.load),
+                            #pygame.K_r: ("Reset zoom & pan", self.reset_zoom_pan),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -393,3 +397,8 @@ class GraphApp(App):
     def toggle_aspect_ratio(self):
         self.preserve_aspect_ratio = not self.preserve_aspect_ratio
         self.update_layout()
+
+    def load(self):
+        super(GraphApp, self).load()
+        self.update_layout()
+

@@ -23,26 +23,43 @@ from Lib import Func
 from Lib.Font import find_font, get_font, lines_size
 from guilib import get_default, MovingValue, ParamHolder
 
+
 class Widget(object):
     font_size = 40
-    default_font = get_font(font_size)
     
-    def __init__(self, text = '', pos=None):
-        self.size = MovingValue(Point((20,20)), Point((20,20)))
-        self.pos = MovingValue(Point((0,0)), Point((0,0)), step=0.3)
+    def __init__(self, text = '', pos=None, size=None, font_size=40):
+        self.size = get_default(size, MovingValue(Point((20,20)), Point((20,20))))
+        self.pos = get_default(pos, MovingValue(Point((0,0)), Point((0,0)), step=0.3))
         
-        self.font = None
         self.text = text
-        self.rendered_text = None
-        self.rendered_params = None
-
-        self.font_size = 40
-
+        self.font_size = font_size
+        self.reset()
+        
         self.init_params()
 
         from Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
 
+    def reset(self):
+        self.font=None
+        self.default_font=None
+        self.rendered_params = None
+        self.rendered_text = None
+        self.update_default_font()
+        
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        del d['font']
+        del d['default_font']
+        del d['rendered_text']
+        del d['rendered_params']
+        return d
+    def __setstate__(self, d):
+        self.__dict__ = d
+        self.reset()
+        
+    def update_default_font(self):
+        self.default_font = get_font(self.font_size)
 
     def init_params(self):
         self.params = ParamHolder(["visible", "enabled",

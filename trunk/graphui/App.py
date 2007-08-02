@@ -46,12 +46,12 @@ def undoable_method(func):
 class App(object):
     multiselect_modifier = pygame.KMOD_CTRL
     
-    def __init__(self, width=800, height=600, flags=0, fps=20):
+    def __init__(self, width=800, height=600, flags=0, fps=20, widgets=None):
         self.fps = fps
         from twisted.internet.task import LoopingCall
         self._lc = LoopingCall(self._iteration)
 
-        self.widgets = []
+        self.widgets = get_default(widgets, [])
         self.focused_widgets = None
         self.hovered_widget = None
         self.focus_locked = False
@@ -74,11 +74,14 @@ class App(object):
         self._fps_font = get_font(30)
         self._count = 0
         
+    def __getinitargs__(self):
+        return (self.width, self.height, self.screen_flags, self.fps, self.widgets)
     #______________________________________#
     
     def set_size(self, width, height, flags=pygame.HWSURFACE | pygame.DOUBLEBUF):
         self.width = width
         self.height = height
+        self.screen_flags = flags
         self.screen = pygame.display.set_mode((width, height), flags)
 
     def add_widget(self, widget, z = None):
@@ -300,3 +303,13 @@ class App(object):
         doer, undoer, args, kw = self.history_redo.pop()
         self.undoing = False
         undoer()
+        
+    def save(self):
+        import pickle
+        f=open("saved.graphui", 'wb')
+        pickle.dump(self.widgets,f,2)
+    def load(self):
+        import pickle
+        f=open("saved.graphui", 'rb')
+        self.widgets = pickle.load(f)
+        
