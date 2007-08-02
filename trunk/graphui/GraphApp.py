@@ -129,6 +129,8 @@ class GraphApp(App):
             return partial(self.zoom, 1.0/zoom)
 
     def delete_focused(self):
+        if self.focused_widgets is None:
+            return
         nodes = []
         for w in self.focused_widgets:
             if isinstance(w, NodeWidget):
