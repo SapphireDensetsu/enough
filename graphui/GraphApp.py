@@ -26,6 +26,7 @@ from App import App, mouse_pos, undoable_method
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font, find_font
+from Lib.Point import Point
 
 from guilib import paint_arrowhead_by_direction, pygame_reverse_key_map
 
@@ -35,9 +36,12 @@ from graph_widgets import NodeWidget, EdgeWidget
 from GraphElementValue import GraphElementValue
 
 
+message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
+
 class GraphApp(App):
     def __init__(self, *args, **kw):
         super(GraphApp, self).__init__(*args, **kw)
+        pygame.display.set_caption('Graphui | Enough')
         self.dot = Dot()
         self.init_control_map()
         
@@ -46,14 +50,16 @@ class GraphApp(App):
         self.disconnecting = False
         self.pos_zoom = 1
         self.size_zoom = 0.8
+        self.preserve_aspect_ratio = True
         self.bezier_points = 30
         self.modal_nodes = None
         
         self.dot_prog_num = 0
         
-        self.status_font = pygame.font.SysFont('serif',min(self.height/20, 14))
+        self.status_font = pygame.font.SysFont('serif',min(self.height/20, 18))
         self.rendered_status_texts = []
-        self.show_help()
+        self.set_status_text(message,15)
+        self.set_status_text('CTRL-H for help', 15)
         
     def init_control_map(self):
         zoom_amount = 1.3
@@ -74,6 +80,7 @@ class GraphApp(App):
                             pygame.K_d: ("Delete selected node/edge", self.delete_focused),
                             pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.1)),
                             pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.1)),
+                            pygame.K_e: ("Toggle stretch/keep aspect ratio", self.toggle_aspect_ratio)
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -289,15 +296,22 @@ class GraphApp(App):
     def _layout(self, (g, n, e)):
         if not n:
             return
-        x_scale = self.width / float(g['width']) * self.pos_zoom
-        y_scale = self.height / float(g['height']) * self.pos_zoom
+        g_height, g_width = float(g['height']), float(g['width'])
+        x_scale = self.width / g_width * self.pos_zoom
+        y_scale = self.height / g_height * self.pos_zoom
+        x_offset = 0
+        y_offset = 0
+        if self.preserve_aspect_ratio:
+            x_scale = y_scale = min(x_scale, y_scale)
+            x_offset = (self.width - (x_scale * g_width)) / 2
+            y_offset = (self.height - (y_scale * g_height)) / 2
         
         for node, n_layout in n.iteritems():
-            node.value.widget.pos.final.x = n_layout['x'] * x_scale
-            node.value.widget.pos.final.y = n_layout['y'] * y_scale
+            node.value.widget.pos.final.x = n_layout['x'] * x_scale + x_offset
+            node.value.widget.pos.final.y = n_layout['y'] * y_scale + y_offset
             node.value.widget.size.final.x = n_layout['width'] * x_scale * self.size_zoom
             node.value.widget.size.final.y = n_layout['height'] * y_scale * self.size_zoom
-            node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5
+            node.value.widget.pos.final = node.value.widget.pos.final - node.value.widget.size.final * 0.5 
             node.value.widget.pos.reset()
             node.value.widget.size.reset()
 
@@ -307,7 +321,7 @@ class GraphApp(App):
                 last_indices = {}
                 for edge, dot_edge in e[node].iteritems():
                     edge.value.widget.update_from_dot(dot_edge,
-                                                      x_scale=x_scale, y_scale=y_scale,
+                                                      x_scale=x_scale, y_scale=y_scale, x_offset=x_offset, y_offset=y_offset,
                                                       bezier_points=self.bezier_points)
 
     def paint_status_text(self):
@@ -328,6 +342,7 @@ class GraphApp(App):
             self.rendered_status_texts.append((time.time() + timeout, self.status_font.render(line, True, (255,100,100))))
 
     def show_help(self):
+        self.set_status_text(message, 10)
         for key, (name, func) in sorted(self.control_map.iteritems()):
             self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
 
@@ -336,4 +351,8 @@ class GraphApp(App):
             return
         for w in self.focused_widgets:
             w.change_font_size(mul=dir)
+        self.update_layout()
+
+    def toggle_aspect_ratio(self):
+        self.preserve_aspect_ratio = not self.preserve_aspect_ratio
         self.update_layout()

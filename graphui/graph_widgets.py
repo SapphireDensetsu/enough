@@ -82,10 +82,10 @@ class EdgeWidget(Widget):
     def entered_text(self, e):
         self.edge.value.entered_text(e)
 
-    def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, bezier_points=30):
-        self.text_pos = Point((dot_edge['lx']*x_scale, dot_edge['ly']*y_scale))
-        line = [Point((int(p[0]*x_scale),
-                       int(p[1]*y_scale))) for p in dot_edge['points']]
+    def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, x_offset=0, y_offset=0, bezier_points=30):
+        self.text_pos = Point((dot_edge['lx']*x_scale+x_offset, dot_edge['ly']*y_scale+y_offset))
+        line = [Point((int(p[0]*x_scale+x_offset),
+                       int(p[1]*y_scale+y_offset))) for p in dot_edge['points']]
 
         from Lib.Bezier import Bezier
         line.insert(0, (self.edge.source.value.widget.center_pos(False)))
