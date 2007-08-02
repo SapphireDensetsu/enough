@@ -65,6 +65,13 @@ class ParamHolder(object):
         self.__dict__['_name'] = get_default(name, self.__class__.__name__)
         self.__dict__['_params'] = {}
 
+    def __getinitargs__(self):
+        return (self.__dict__['_allowed_names'], self.__dict__['_name'])
+    def __getstate__(self):
+        return self.__dict__
+    def __setstate__(self, dict):
+        self.__dict__.update(dict)
+        
     def verify_exists(self, name):
         if name not in self.__dict__['_allowed_names']:
             raise AttributeError("%s can not hold attribute %s" % (self.__dict__['_name'], name))

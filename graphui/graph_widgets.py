@@ -21,15 +21,18 @@ import math
 
 from Widget import Widget
 from Lib.Point import Point, from_polar, point_near_polyline
-from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead
+from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead, get_default
 
 
 class NodeWidget(Widget):
     painting_z_order = 1 # these should always be painted AFTER edges
-    def __init__(self, *args, **kw):
+    def __init__(self, node=None, out_edges=None, *args, **kw):
         super(NodeWidget, self).__init__(*args, **kw)
-        self.out_edges = {}
-
+        
+        self.out_edges = get_default(out_edges, {})
+        if node:
+            self.set_node(node)
+    
     def entered_text(self, e):
         self.node.value.entered_text(e)
         
@@ -76,6 +79,7 @@ class EdgeWidget(Widget):
         # don't really care about the self.size NOR about self.pos
         self.params.autosize = "by text"
         self.cached_arrowhead = None
+        
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)

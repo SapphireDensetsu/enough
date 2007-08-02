@@ -64,14 +64,9 @@ class Point(object):
         else:
             return self.__class__((self.x/value, self.y/value))
 
-    def __eq__(self, other):
-        return other.x == self.x and other.y == self.y
-
-    def __ne__(self, other):
-        return not (self == other)
-
     def __cmp__(self, other):
-        raise ValueError("Can't compare vectors")
+        # This used to unallowed, but since we are using Pyrex also which doesn't support ne/eq, we allow this
+        return cmp(tuple(self), tuple(other))
 
     def __abs__(self):
         return sqrt(self.x*self.x + self.y*self.y)
