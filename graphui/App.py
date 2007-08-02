@@ -46,7 +46,7 @@ def undoable_method(func):
 class App(object):
     multiselect_modifier = pygame.KMOD_CTRL
     
-    def __init__(self, width=800, height=600, flags=0, fps=25):
+    def __init__(self, width=800, height=600, flags=0, fps=20):
         self.fps = fps
         from twisted.internet.task import LoopingCall
         self._lc = LoopingCall(self._iteration)
