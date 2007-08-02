@@ -1,21 +1,21 @@
-* Shift+Drag should connect and not unmark multi-selection
-* Persistency (Save/load)
-* Feed dot with information such as text (it needs it to create proper node sizes)
+* High priority
+  * Persistency (Save/load): Still needs proper file selection
+  * Maybe edge text should be given to dot after all, if the edge is
+   too short, there is simply no room for the text.
+  * Edge font size should decrease when stuff becomes dense and there
+   is less room in general.
+
+* UI improvements:
+  * Shift+Drag should connect and not unmark multi-selection
+  * Proper Scrolling
+  * Full keyboard control, focus changing with the mouse only is annoying!
+
+* Expose Dot Features:
+  * Play around with attributes such as shape, color, fillcolor, etc.
+  * Containing subgraphs in squares (dot supports this) so you can show state groups and do state machines.
+
+What the heck do these mean:
 * Add some nice way to use the graph backend in Python (for example, every new node creation or connection calls a callback or something)
-* Labels on edges (Label drawing is commented out there, but label storing and editing is missing)
-* Full keyboard control, focus changing with the mouse only is annoying!
-* Play around with attributes such as color, fillcolor, etc.
-* Containing subgraphs in squares (dot supports this) so you can show state groups and do state machines.
 
 Known bugs:
-* Some undo/redo bugs.
-
 * Make the edge text appear on one side (and not change sides randomly)
-
-
-=------------------------------------------------
-To make sure that EdgeWidgets represent the right dot output edges, a fictive edge label can be given to dot just to identify the edge
-(id(widget) for example), and it can identify back the widget. -Tplain doesn't really give you back most of the edge attributes (only label) so its going to be hard to make a .dot file that renders like us.
-
-B. The code that handles focus and dragging/etc needs to be refactored. I don't understand what's going on in there. Calling super()._mouse_down twice is not really valid Python code, too :) I think maybe the App/Widget division should be replaced by a Widget hierarchy, but we should talk about it on the phone.
-
