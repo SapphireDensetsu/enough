@@ -398,7 +398,18 @@ class GraphApp(App):
         self.preserve_aspect_ratio = not self.preserve_aspect_ratio
         self.update_layout()
 
+    def save(self):
+        self.set_status_text("Saving...")
+        self.set_status_text("Please enter the filename in THE CONSOLE")
+        filename = raw_input("Please enter filename for save:\n")
+        super(GraphApp, self).save(filename)
+        self.set_status_text("Done Saving")
+        
     def load(self):
-        super(GraphApp, self).load()
+        self.set_status_text("Loading...")
+        self.set_status_text("Please enter the filename in THE CONSOLE")
+        filename = raw_input("Please enter filename for load:\n")
+        super(GraphApp, self).load(filename)
         self.update_layout()
+        self.set_status_text("Done Loading")
 
