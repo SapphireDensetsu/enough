@@ -75,6 +75,7 @@ class EdgeWidget(Widget):
         # this is just to prevent the text size from changing. we
         # don't really care about the self.size NOR about self.pos
         self.params.autosize = "by text"
+        self.found_intersection = None
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
@@ -97,19 +98,35 @@ class EdgeWidget(Widget):
         
         
     def paint_shape(self, surface, back_color):
-        shape = self.target_widget.get_shape()
+        if self.line.done and self.target_widget.pos.done and self.target_widget.size.done:
+            changed = False
+        else:
+            changed = True
+            
         self.line.update()
         pygame.draw.lines(surface, back_color, False, [tuple(p) for p in self.line.current], 2)
-        i = len(self.line.current)/2
-        while i + 1 < len(self.line.current):
-            a, b = self.line.current[i], self.line.current[i+1]
-            i += 1
-            for intersection in shape.intersections(a, b):
+
+        if changed or not self.found_intersection:
+            # If we didn't cache the found intersection or some stuff changed....
+            shape = self.target_widget.get_shape()
+            i = len(self.line.current)/2
+            if self.line.done and self.target_widget.pos.done and self.target_widget.size.done:
+                self.done_intersections = True
+            while i + 1 < len(self.line.current):
+                a, b = self.line.current[i], self.line.current[i+1]
+                i += 1
+                for intersection in shape.intersections(a, b):
+                    break
+                else:
+                    continue
+
+                self.found_intersection = a, intersection
                 break
-            else:
-                continue
+
+        if self.found_intersection:
+            a, intersection = self.found_intersection
             paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
-            break
+            
 
     def paint_text(self, surface):
         mid = len(self.line.current)/2
