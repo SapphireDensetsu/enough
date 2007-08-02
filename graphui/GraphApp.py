@@ -156,8 +156,8 @@ class EdgeWidget(Widget):
             # not enough control points to figure out where to put text
             return
         midsrc, middst = midvalues
-        angle = (middst - midsrc).angle()
-        
+        angle = ((middst - midsrc).angle() % (2*math.pi))
+
         if abs(angle) % (math.pi/2) < 0.001:
             # This is to prevent 'flipping' between two sides of the
             # edge when it moves only slightly
