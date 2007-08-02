@@ -1,4 +1,4 @@
-## /* Copyright 2007, Noam Lewis, enoughmail@googlegroups.com */
+## /* Copyright 2007, Eyal Lotem, Noam Lewis, enoughmail@googlegroups.com */
 ## /*
 ##     This file is part of Enough.
 
