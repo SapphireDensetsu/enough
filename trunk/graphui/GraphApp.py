@@ -28,9 +28,9 @@ from Widget import Widget
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font, find_font
-from Lib.Point import Point, from_polar
+from Lib.Point import Point, from_polar, point_near_polyline
 
-from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface, point_near_polyline
+from guilib import get_default, MovingLine, paint_arrowhead_by_direction, pygame_reverse_key_map, rotate_surface
 
 from scancodes import scancode_map
 
