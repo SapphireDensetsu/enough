@@ -304,12 +304,12 @@ class App(object):
         self.undoing = False
         undoer()
         
-    def save(self):
+    def save(self, filename):
         import pickle
-        f=open("saved.graphui", 'wb')
+        f=open(filename, 'wb')
         pickle.dump(self.widgets,f,2)
-    def load(self):
+    def load(self, filename):
         import pickle
-        f=open("saved.graphui", 'rb')
+        f=open(filename, 'rb')
         self.widgets = pickle.load(f)
         
