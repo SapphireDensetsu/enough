@@ -48,8 +48,6 @@ class GraphApp(App):
         self.dragging_enabled = False
         self.connecting = False
         self.disconnecting = False
-        self.pos_zoom = 1
-        self.size_zoom = 0.8
         self.preserve_aspect_ratio = True
         self.bezier_points = 30
         self.modal_nodes = None
@@ -60,6 +58,15 @@ class GraphApp(App):
         self.rendered_status_texts = []
         self.set_status_text(message,15)
         self.set_status_text('CTRL-H for help', 15)
+
+        self.pan_start_pos = None
+        self.reset_zoom_pan()
+
+    def reset_zoom_pan(self):
+        self.pan_offset = Point((0,0))
+        self.pos_zoom = 1
+        self.size_zoom = 0.8
+        self.update_layout()
         
     def init_control_map(self):
         zoom_amount = 1.3
@@ -80,7 +87,9 @@ class GraphApp(App):
                             pygame.K_d: ("Delete selected node/edge", self.delete_focused),
                             pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.1)),
                             pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.1)),
-                            pygame.K_e: ("Toggle stretch/keep aspect ratio", self.toggle_aspect_ratio)
+                            
+                            pygame.K_e: ("Toggle stretch/keep aspect ratio", self.toggle_aspect_ratio),
+                            pygame.K_r: ("Reset zoom & pan", self.reset_zoom_pan),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -196,10 +205,27 @@ class GraphApp(App):
             name, handler = self.control_map[key]
             handler()
 
+    def _modkey_used(self, key, mods=None):
+        if not mods:
+            mods = pygame.key.get_mods()
+        return mods & key
+    def _connect_modifier_used(self, mods=None):
+        return self._modkey_used(pygame.KMOD_SHIFT)
+    def _multiselect_modifier_used(self, mods=None):
+        return self._modkey_used(self.multiselect_modifier)
+    def _pan_modifier_used(self, mods=None):
+        #return self._modkey_used(pygame.KMOD_ALT)
+        b1, b2, b3 = pygame.mouse.get_pressed()
+        return b1 & b3
+        
     def _mouse_down(self, e):
         mods = pygame.key.get_mods()
-        connect_modifier_used = (mods & pygame.KMOD_SHIFT)
-        multiselect = (mods & self.multiselect_modifier)
+        if self._pan_modifier_used(mods):
+            self.pan_start_offset = self.pan_offset
+            self.pan_start_pos = mouse_pos() 
+            return
+            
+        multiselect = self._multiselect_modifier_used(mods)
         if (not multiselect
             or (self.focused_widgets and self.hovered_widget not in self.focused_widgets)):
             # The or part is to allow people to use a first click-drag
@@ -207,7 +233,7 @@ class GraphApp(App):
             # connect. Otherwise, the connection group would not
             # include that last widget.
             super(GraphApp, self)._mouse_down(e)
-        if self.focused_widgets and connect_modifier_used:
+        if self.focused_widgets and self._connect_modifier_used(mods):
             if e.button == 1:
                 self.connecting = True
                 self.connecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
@@ -218,9 +244,20 @@ class GraphApp(App):
         if multiselect:
             super(GraphApp, self)._mouse_down(e)
             
+    def _mouse_motion(self, e):
+        super(GraphApp, self)._mouse_motion(e)
+        if self._pan_modifier_used():
+            p = mouse_pos()
+            self.pan_offset = p - self.pan_start_pos + self.pan_start_offset
+            self.update_layout()
+            
                 
     def _mouse_up(self, e):
         super(GraphApp, self)._mouse_up(e)
+        if self._pan_modifier_used():
+            self.update_layout()
+            return
+        
         if self.connecting:
             self.connecting = False
             target = self.hovered_widget
@@ -299,12 +336,12 @@ class GraphApp(App):
         g_height, g_width = float(g['height']), float(g['width'])
         x_scale = self.width / g_width * self.pos_zoom
         y_scale = self.height / g_height * self.pos_zoom
-        x_offset = 0
-        y_offset = 0
+        x_offset = self.pan_offset.x
+        y_offset = self.pan_offset.y
         if self.preserve_aspect_ratio:
             x_scale = y_scale = min(x_scale, y_scale)
-            x_offset = (self.width - (x_scale * g_width)) / 2
-            y_offset = (self.height - (y_scale * g_height)) / 2
+            x_offset += (self.width - (x_scale * g_width)) / 2
+            y_offset += (self.height - (y_scale * g_height)) / 2
         
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale + x_offset
