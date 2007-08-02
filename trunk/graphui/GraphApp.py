@@ -74,7 +74,7 @@ class GraphApp(App):
                             pygame.K_q: ("Zoom out", partial(self.zoom, 1.0/zoom_amount)),
                             pygame.K_z: ("Undo", self.undo),
                             pygame.K_y: ("Redo", self.redo),
-                            pygame.K_r: ("Record (toggle)", self.toggle_record),
+                            pygame.K_p: ("Record (toggle)", self.toggle_record),
                             pygame.K_a: ("Create new node", self.create_new_node),
                             pygame.K_s: ("Output DOT description", self.output_dot_description),
                             pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
