@@ -134,14 +134,17 @@ class EdgeWidget(Widget):
 
         curve = Bezier(line, bezier_points)
         self.line.final = curve
+        self.line.reset()
         
         
     def paint_shape(self, surface, back_color):
         shape = self.target_widget.get_shape()
         self.line.update()
         pygame.draw.lines(surface, back_color, False, [tuple(p) for p in self.line.current], 2)
-        c = self.line.current[len(self.line.current)/2:]
-        for a, b in zip(c, c[1:]):
+        i = len(self.line.current)/2
+        while i + 1 < len(self.line.current):
+            a, b = self.line.current[i], self.line.current[i+1]
+            i += 1
             for intersection in shape.intersections(a, b):
                 break
             else:

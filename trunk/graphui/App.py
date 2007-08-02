@@ -76,7 +76,7 @@ class App(object):
         
     #______________________________________#
     
-    def set_size(self, width, height, flags=0):
+    def set_size(self, width, height, flags=pygame.HWSURFACE | pygame.DOUBLEBUF):
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((width, height), flags)

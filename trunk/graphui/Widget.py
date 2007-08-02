@@ -40,6 +40,10 @@ class Widget(object):
 
         self.init_params()
 
+        from Ellipse import Ellipse
+        self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
+
+
     def init_params(self):
         self.params = ParamHolder(["visible", "enabled",
                                    "fore_color",
@@ -129,8 +133,8 @@ class Widget(object):
 
     def get_shape(self):
         # TODO make the shape a mutable attribute of self?
-        from Ellipse import Ellipse
-        return Ellipse(pygame.Rect(self.get_current_rect()))
+        self.shape.rect = pygame.Rect(self.get_current_rect())
+        return self.shape
     
     def paint_shape(self, surface, back_color):
         # TODO use self.get_shape to paint our shape?
