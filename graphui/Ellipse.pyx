@@ -9,6 +9,8 @@ cdef extern from "math.h":
 class Ellipse(object):
     def __init__(self, rect):
         self.rect = rect
+    def __getinitargs__(self):
+        return (self.rect,)
         
     def intersections(self, src, dest, margin_error = 0.0001):
         cdef double cx, cy, w, h, x1, y1, x2, y2, m, n, s, sq, div, xexpr, yexpr, yexpr1, yexpr2, cmargin_error
