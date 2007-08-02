@@ -24,7 +24,9 @@ from Lib.Font import find_font, get_font, lines_size
 from guilib import get_default, MovingValue, ParamHolder
 
 class Widget(object):
-    default_font = get_font(40)
+    font_size = 40
+    default_font = get_font(font_size)
+    
     def __init__(self, text = '', pos=None):
         self.size = MovingValue(Point((20,20)), Point((20,20)))
         self.pos = MovingValue(Point((0,0)), Point((0,0)), step=0.3)
@@ -33,6 +35,8 @@ class Widget(object):
         self.text = text
         self.rendered_text = None
         self.rendered_params = None
+
+        self.font_size = 40
 
         self.init_params()
 
@@ -76,7 +80,10 @@ class Widget(object):
         else:
             text_color = self.params.text_color
 
-        if self.rendered_params == (self.params.autosize, tuple(self.size.final), self.text, text_color):
+        params = (self.params.autosize, tuple(self.size.final), self.text, text_color)
+        if self.params.autosize == "by text":
+            params += (self.default_font,)
+        if self.rendered_params == params:
             return
             
         lines = self.text.split('\n')
@@ -94,7 +101,7 @@ class Widget(object):
         size = (max(t.get_width() for t in rendered_lines),
                 sum(t.get_height() for t in rendered_lines))
         self.rendered_text = pygame.Surface(size, pygame.SWSURFACE|pygame.SRCALPHA|pygame.SRCCOLORKEY, 32)
-        self.rendered_params = (self.params.autosize, tuple(self.size.final), self.text, text_color)
+        self.rendered_params = params
         
         # TODO: Support centering and stuff?
         y = 0
@@ -153,6 +160,8 @@ class Widget(object):
             return self.pos.current+self.size.current*0.5
         return self.pos.final+self.size.final*0.5
         
-    def change_font_size(self, add = 4, mul = 1):
-        self.default_font = get_font(self.default_font.get_height()*mul + add)
+    def change_font_size(self, add = 0, mul = 1):
+        self.font_size *= mul
+        self.font_size += add
+        self.default_font = get_font(self.font_size)
         
