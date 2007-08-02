@@ -35,6 +35,8 @@ cdef class Point:
     cdef public double x, y
     def __init__(self, t):
         self.x, self.y = t
+    def __getinitargs__(self):
+        return (tuple(self),)
     def __repr__(self):
         return '%s(x=%r, y=%r)' % (self.__class__.__name__, self.x, self.y)
     

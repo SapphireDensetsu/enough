@@ -7,7 +7,9 @@ from Lib.Point import Point
 class Ellipse(object):
     def __init__(self, rect):
         self.rect = rect
-        
+    def __getinitargs__(self):
+        return (self.rect,)
+
     def intersections(self, src, dest):
         """Returns the point of the intersection between the infinite
         line defined by (src, dest) and this shape, or None if there
