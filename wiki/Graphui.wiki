@@ -27,7 +27,7 @@ Here is a short animation showing Graphui switching between layout engines:
 http://enough.googlecode.com/svn/trunk/media/graphui_switch_layouts.gif
 
 = Applications =
-Graphui is still under development, but the following applications are possibly:
+Graphui is still under development. Here are some ideas for applications.
  * Diagram editor - the simplest most obvious application. Use Graphui instead of manual-layout programs (such as Visio and Dia) to easily create flow charts, state machine diagrams, etc. 
  * Graph visualization - because Graphui's format is simply pickled Python objects, you can easily create tools that make graphs from any dataset and then view/edit the graph in Graphui. 
  * Graph algorithms demonstration and visualization - a researcher/student may easily extend Graphui's code to work on graph algorithms in a live environment, instead of iterating between running his algorithm test program and viewing the result seperately.
