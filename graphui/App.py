@@ -180,7 +180,7 @@ class App(object):
         pygame.display.update()
 
         if self.record:
-            pygame.image.save(pygame.display.get_surface(), self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
+            self.save_snapshot_image(self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
             self._frame_counter+=1
 
     def start_record(self):
@@ -312,4 +312,6 @@ class App(object):
         import pickle
         f=open(filename, 'rb')
         self.widgets = pickle.load(f)
-        
+
+    def save_snapshot_image(self, filename):
+        pygame.image.save(pygame.display.get_surface(), filename)

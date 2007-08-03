@@ -77,6 +77,7 @@ class GraphApp(App):
                             pygame.K_z: ("Undo", self.undo),
                             pygame.K_y: ("Redo", self.redo),
                             pygame.K_p: ("Record (toggle)", self.toggle_record),
+                            pygame.K_i: ("Save snapshot image", partial(self.save_snapshot_image, "graphui.snapshot.bmp")),
                             pygame.K_a: ("Create new node", self.create_new_node),
                             pygame.K_o: ("Output DOT description", self.output_dot_description),
                             pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
@@ -402,23 +403,41 @@ class GraphApp(App):
         self.update_layout()
 
     def save(self):
+        # TODO fix the image code its ugly
         filename = FILENAME
-        self.set_status_text("Saving to %r..." % (filename,))
+        self.save_snapshot_image(filename+'.bmp')
+        image = open(filename+'.bmp', 'rb').read()
+        self.set_status_text("Saving to %r..." % (filename,), 2)
         try:
-            super(GraphApp, self).save(filename)
+            super(GraphApp, self).save(filename+'.tmp')
         except Exception, e:
             self.set_status_text("Save failed %s" % (e,))
-        else:
-            self.set_status_text("Saved successfully")
+            return
+        saved = open(filename+'.tmp', 'rb').read()
+        import struct
+        image_size = struct.pack('L', len(image))
+        open(filename+'.bmp', 'wb').write(image + saved + image_size)
+        self.set_status_text("Saved successfully")
+        
 
     def load(self):
         filename = FILENAME
-        self.set_status_text("Loading from %s..." % (filename,))
+        f=open(filename+'.bmp', 'rb')
+        f.seek(-4,2)
+        import struct
+        image_len, = struct.unpack('L', f.read())
+        f.seek(image_len)
+        saved = f.read()[:-4]
+        open(filename+'.tmp', 'wb').write(saved)
+        self.set_status_text("Loading from %s..." % (filename,), 2)
         try:
-            super(GraphApp, self).load(filename)
+            super(GraphApp, self).load(filename+'.tmp')
         except Exception, e:
             self.set_status_text("Load failed %s" % (e,))
-        else:
-            self.update_layout()
-            self.set_status_text("Loaded successfully")
+            return
+        self.update_layout()
+        self.set_status_text("Loaded successfully")
 
+    def save_snapshot_image(self, filename):
+        #self.set_status_text("Saving snapshot image: %s" % (filename,))
+        super(GraphApp, self).save_snapshot_image(filename)
