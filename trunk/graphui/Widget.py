@@ -243,7 +243,39 @@ class Widget(object):
         self.focused_widgets = []
 
     ########################################################
+    def get_current_rect(self):
+        return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
+
+    def paint(self, event):
+        if not self.params.visible:
+            return
+
+        surface = event.surface
+        
+        self.update_moving()
+        if self.params.in_focus:
+            back_color = self.params.focus_back_color
+        elif self.params.in_hover:
+            back_color = self.params.hover_back_color
+        else:
+            back_color = self.params.back_color
+
+        self.paint_shape(surface, back_color)
+        self.paint_text(surface)
+
+        self.paint_widgets(event)
+        return True # since we are painting them explicitly, the lower widgets don't need to
+
+    def paint_widgets(self, event):
+        for z, widget in self._z_ordered_widgets():
+            # We want to control the specific order of painting, so
+            # don't let the standard event passing through the
+            # hierarchy. just do it here
+            widget.handle_event(event)
+        
+
     # TODO move this to some subclass
+    # :
 
     def render_text(self):
         if self.params.in_focus:
@@ -282,36 +314,6 @@ class Widget(object):
             self.rendered_text.blit(rline, (0, y))
             y += rline.get_height()
 
-    def get_current_rect(self):
-        return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
-
-    def paint(self, event):
-        if not self.params.visible:
-            return
-
-        surface = event.surface
-        
-        self.update_moving()
-        if self.params.in_focus:
-            back_color = self.params.focus_back_color
-        elif self.params.in_hover:
-            back_color = self.params.hover_back_color
-        else:
-            back_color = self.params.back_color
-
-        self.paint_shape(surface, back_color)
-        self.paint_text(surface)
-
-        self.paint_widgets(event)
-        return True # since we are painting them explicitly, the lower widgets don't need to
-
-    def paint_widgets(self, event):
-        for z, widget in self._z_ordered_widgets():
-            # We want to control the specific order of painting, so
-            # don't let the standard event passing through the
-            # hierarchy. just do it here
-            widget.handle_event(event)
-        
     def get_shape(self):
         # TODO make the shape a mutable attribute of self?
         self.shape.rect = pygame.Rect(self.get_current_rect())
