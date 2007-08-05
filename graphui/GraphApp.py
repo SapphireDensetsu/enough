@@ -449,7 +449,7 @@ class GraphApp(AppWidget):
             super(GraphApp, self).load(filename+'.tmp')
         except Exception, e:
             self.set_status_text("Load failed %s" % (e,))
-            return
+            raise
         self.update_layout()
 
     def save_snapshot_image(self, filename):
