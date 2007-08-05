@@ -9,7 +9,7 @@
 
 ##     Enough is distributed in the hope that it will be useful,
 ##     but WITHOUT ANY WARRANTY; without even the implied warranty of
-##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##     GNU General Public License for more details.
 
 ##     You should have received a copy of the GNU General Public License
@@ -24,7 +24,8 @@ import time
 
 import twisted.python.log
 
-from App import App, mouse_pos, undoable_method
+from App import AppWidget, undoable_method
+from Widget import mouse_pos
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font, find_font
@@ -40,7 +41,7 @@ from GraphElementValue import GraphElementValue
 
 message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
 
-class GraphApp(App):
+class GraphApp(AppWidget):
     def __init__(self, *args, **kw):
         super(GraphApp, self).__init__(*args, **kw)
         pygame.display.set_caption('Graphui | Enough')
@@ -166,19 +167,19 @@ class GraphApp(App):
             self.paint_connector((150,250,150), [n.value.widget for n in self.connecting_sources])
         if self.disconnecting:
             self.paint_connector((250,150,150), [n.value.widget for n in self.disconnecting_sources])
-            
         self.paint_status_text()
         
+    def key_down(self, when, event):
+        super(GraphApp, self).key_down(when, event)
+        if when == 'post':
+            return False
         
-    def _key_down(self, e):
-        super(GraphApp, self)._key_down(e)
+        e = event.pygame_event
         if (e.mod & pygame.KMOD_CTRL):
             self.handle_control_key(e)
+            return True
         else:
-            if self.focused_widgets and len(self.focused_widgets) == 1:
-                widget, = self.focused_widgets
-                widget.entered_text(e)
-                self.update_layout()
+            return False
 
     def toggle_record(self):
         if not self.record:
@@ -213,34 +214,33 @@ class GraphApp(App):
             name, handler = self.control_map[key]
             handler()
 
-    def _modkey_used(self, key, mods=None):
-        if not mods:
-            mods = pygame.key.get_mods()
-        return mods & key
     def _connect_modifier_used(self, mods=None):
         return self._modkey_used(pygame.KMOD_SHIFT)
-    def _multiselect_modifier_used(self, mods=None):
-        return self._modkey_used(self.multiselect_modifier)
     def _pan_modifier_used(self, mods=None):
         #return self._modkey_used(pygame.KMOD_ALT)
         b1, b2, b3 = pygame.mouse.get_pressed()
         return b1 & b3
         
-    def _mouse_down(self, e):
+    def mouse_down(self, when, event):
+        res = super(GraphApp, self).mouse_down(when, event)
+        if res == 'pre':
+            return res
+        
+        e = event.pygame_event
         mods = pygame.key.get_mods()
         if self._pan_modifier_used(mods):
             self.pan_start_offset = self.pan_offset
             self.pan_start_pos = mouse_pos() 
-            return
+            return True
             
         multiselect = self._multiselect_modifier_used(mods)
-        if (not multiselect
-            or (self.focused_widgets and self.hovered_widget not in self.focused_widgets)):
-            # The or part is to allow people to use a first click-drag
-            # on the last widget of a multiselect group to
-            # connect. Otherwise, the connection group would not
-            # include that last widget.
-            super(GraphApp, self)._mouse_down(e)
+##        if (not multiselect
+##            or (self.focused_widgets and self.hovered_widget not in self.focused_widgets)):
+##            # The or part is to allow people to use a first click-drag
+##            # on the last widget of a multiselect group to
+##            # connect. Otherwise, the connection group would not
+##            # include that last widget.
+##            super(GraphApp, self).mouse_down(e)
         if self.focused_widgets and self._connect_modifier_used(mods):
             if e.button == 1:
                 self.connecting = True
@@ -249,22 +249,31 @@ class GraphApp(App):
                 self.disconnecting = True
                 self.disconnecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
             self.unset_focus()
-        if multiselect:
-            super(GraphApp, self)._mouse_down(e)
+##        if multiselect:
+##            super(GraphApp, self).mouse_down(e)
+        return True
             
-    def _mouse_motion(self, e):
-        super(GraphApp, self)._mouse_motion(e)
+    def mouse_motion(self, when, event):
+        res = super(GraphApp, self).mouse_motion(when, event)
+        if when == 'post':
+            return res
+
+        e = event.pygame_event
         if self._pan_modifier_used():
             p = mouse_pos()
             self.pan_offset = p - self.pan_start_pos + self.pan_start_offset
             self.update_layout()
+        return False
             
                 
-    def _mouse_up(self, e):
-        super(GraphApp, self)._mouse_up(e)
+    def mouse_up(self, when, event):
+        res = super(GraphApp, self).mouse_up(when, event)
+        if when == 'post':
+            return res
+        
         if self._pan_modifier_used():
             self.update_layout()
-            return
+            return False
         
         if self.connecting:
             self.connecting = False
@@ -280,9 +289,13 @@ class GraphApp(App):
                 target = target.node
                 self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
+        else:
+            return False
 
-    def _add_edge(self, source, target):
-        edge = Graph.Edge(source, target, GraphElementValue("edge"))
+        return True
+
+    def _add_edge(self, source, target, label='edge'):
+        edge = Graph.Edge(source, target, GraphElementValue(label))
         source.connect_edge(edge)
         edge_widget = source.value.widget.add_edge(edge)
         edge.value.set_widget(edge_widget)
@@ -402,42 +415,76 @@ class GraphApp(App):
         self.preserve_aspect_ratio = not self.preserve_aspect_ratio
         self.update_layout()
 
+    EXT='.bmp' # until we get support for jpg/png/gif whatever
     def save(self):
         # TODO fix the image code its ugly
         filename = FILENAME
-        self.save_snapshot_image(filename+'.bmp')
-        image = open(filename+'.bmp', 'rb').read()
-        self.set_status_text("Saving to %r..." % (filename,), 2)
+        ext=self.EXT
         try:
+            self.save_snapshot_image(filename+ext)
+            image = open(filename+ext, 'rb').read()
+            self.set_status_text("Saving to %r..." % (filename,), 2)
             super(GraphApp, self).save(filename+'.tmp')
+            saved = open(filename+'.tmp', 'rb').read()
+            import struct
+            image_size = struct.pack('L', len(image))
+            open(filename+ext, 'wb').write(image + saved + image_size)
         except Exception, e:
             self.set_status_text("Save failed %s" % (e,))
             return
-        saved = open(filename+'.tmp', 'rb').read()
-        import struct
-        image_size = struct.pack('L', len(image))
-        open(filename+'.bmp', 'wb').write(image + saved + image_size)
         self.set_status_text("Saved successfully")
         
 
     def load(self):
         filename = FILENAME
-        f=open(filename+'.bmp', 'rb')
-        f.seek(-4,2)
-        import struct
-        image_len, = struct.unpack('L', f.read())
-        f.seek(image_len)
-        saved = f.read()[:-4]
-        open(filename+'.tmp', 'wb').write(saved)
-        self.set_status_text("Loading from %s..." % (filename,), 2)
-        try:
-            super(GraphApp, self).load(filename+'.tmp')
-        except Exception, e:
-            self.set_status_text("Load failed %s" % (e,))
-            return
-        self.update_layout()
-        self.set_status_text("Loaded successfully")
+        ext=self.EXT
+        def callback(chosen, filename):
+            if not chosen:
+                return
+            try:
+                f=open(filename+ext, 'rb')
+                f.seek(-4,2)
+                import struct
+                image_len, = struct.unpack('L', f.read())
+                f.seek(image_len)
+                saved = f.read()[:-4]
+                open(filename+'.tmp', 'wb').write(saved)
+                self.set_status_text("Loading from %s..." % (filename,), 2)
+                super(GraphApp, self).load(filename+'.tmp')
+            except Exception, e:
+                self.set_status_text("Load failed %s" % (e,))
+                return
+            self.update_layout()
+            self.set_status_text("Loaded successfully")
+        self.show_textbox("Choose file", callback)
 
     def save_snapshot_image(self, filename):
         #self.set_status_text("Saving snapshot image: %s" % (filename,))
-        super(GraphApp, self).save_snapshot_image(filename)
+        # We don't want the status text to appear in the snaphot
+        t = self.rendered_status_texts
+        self.rendered_status_texts = []
+        self.set_status_text("This is a Graphui file", 9999)
+        self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
+        self._paint(None)
+        target_width = 640 # self.width
+        super(GraphApp, self).save_snapshot_image(filename, target_width, self.height/(self.width/target_width))
+        self.rendered_status_texts = t
+
+
+    # TODO should this be in a subclass of GraphApp?!
+    def show_textbox(self, label, callback, default=''):
+        self.push_widgets()
+
+        label_node = Graph.Node(GraphElementValue(label))
+        box_node = Graph.Node(GraphElementValue(default))
+        cancel_node = Graph.Node(GraphElementValue("press enter here to cancel"))
+        self.add_nodes([label_node, box_node, cancel_node])
+        self._add_edge(label_node, box_node, label='')
+        self._add_edge(label_node, cancel_node, label='')
+        box_node.value.widget.enabled = False
+        
+        def _callback(*args):
+            self.pop_widgets()
+            return callback(*args)
+        box_node.value.enter_callback = partial(callback, True)
+        cancel_node.value.enter_callback = partial(callback, False)

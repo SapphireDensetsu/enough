@@ -28,6 +28,7 @@ class GraphElementValue(object):
         self.name = name
         self.group_name = group_name
         self.start_pos = get_default(start_pos, Point((0,0)))
+        self.enter_callback = lambda x:None
 
     def set_widget(self, widget):
         self._widget = widget
@@ -42,10 +43,14 @@ class GraphElementValue(object):
 
     def entered_text(self, event):
         import string
+        event = event.pygame_event
         if event.key == pygame.K_BACKSPACE:
             self.name = self.name[:-1]
         elif event.unicode in (string.letters + string.digits + string.hexdigits + ' \r' + string.punctuation):
-            self.name += event.unicode.replace('\r', '\n')
+            ch = event.unicode.replace('\r', '\n')
+            if ch in '\n':
+                self.enter_callback(self.name)
+            self.name += ch
         self.update_widget_text()
 
     def dot_properties(self):

@@ -33,9 +33,12 @@ class NodeWidget(Widget):
         if node:
             self.set_node(node)
     
-    def entered_text(self, e):
+    def key_down(self, when, e):
+        if not self.params.enabled:
+            return False
         self.node.value.entered_text(e)
-        
+        return True
+    
     def set_node(self, node):
         self.node = node
         node.value.widget = self
