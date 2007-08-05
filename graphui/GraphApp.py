@@ -459,6 +459,7 @@ class GraphApp(AppWidget):
         self.rendered_status_texts = []
         self.set_status_text("This is a Graphui file", 9999)
         self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
+        # TODO : There is some bug here, the widgets are not painted in the correct order?
         self.cause_paint()
         target_width = 640 # self.width
         super(GraphApp, self).save_snapshot_image(filename, target_width, self.height/(self.width/target_width))
