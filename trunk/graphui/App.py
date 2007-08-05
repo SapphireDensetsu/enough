@@ -141,10 +141,14 @@ class AppWidget(Widget):
             if event is not None:
                 self.handle_event(event)
 
+        self.cause_paint()
+
+    def cause_paint(self):
         e = self.new_event('paint')
         e.surface = self.screen
         e.to_all = True
         self.handle_event(e)
+
 
     def _init_event_triggers(self):
         super(AppWidget, self)._init_event_triggers()

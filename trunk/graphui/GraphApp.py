@@ -87,7 +87,7 @@ class GraphApp(AppWidget):
                                                                                -3)),
                             pygame.K_h: ("Show help", self.show_help),
                             pygame.K_F1:("Show help", self.show_help),
-                            pygame.K_l: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
+                            pygame.K_k: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
                             pygame.K_d: ("Delete selected node/edge", self.delete_focused),
                             pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.1)),
                             pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.1)),
@@ -97,7 +97,6 @@ class GraphApp(AppWidget):
                             
                             pygame.K_s: ("Save", self.save),
                             pygame.K_l: ("Load", self.load),
-                            #pygame.K_r: ("Reset zoom & pan", self.reset_zoom_pan),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -438,25 +437,20 @@ class GraphApp(AppWidget):
     def load(self):
         filename = FILENAME
         ext=self.EXT
-        def callback(chosen, filename):
-            if not chosen:
-                return
-            try:
-                f=open(filename+ext, 'rb')
-                f.seek(-4,2)
-                import struct
-                image_len, = struct.unpack('L', f.read())
-                f.seek(image_len)
-                saved = f.read()[:-4]
-                open(filename+'.tmp', 'wb').write(saved)
-                self.set_status_text("Loading from %s..." % (filename,), 2)
-                super(GraphApp, self).load(filename+'.tmp')
-            except Exception, e:
-                self.set_status_text("Load failed %s" % (e,))
-                return
-            self.update_layout()
-            self.set_status_text("Loaded successfully")
-        self.show_textbox("Choose file", callback)
+        try:
+            f=open(filename+ext, 'rb')
+            f.seek(-4,2)
+            import struct
+            image_len, = struct.unpack('L', f.read())
+            f.seek(image_len)
+            saved = f.read()[:-4]
+            open(filename+'.tmp', 'wb').write(saved)
+            self.set_status_text("Loading from %s..." % (filename,), 2)
+            super(GraphApp, self).load(filename+'.tmp')
+        except Exception, e:
+            self.set_status_text("Load failed %s" % (e,))
+            return
+        self.update_layout()
 
     def save_snapshot_image(self, filename):
         #self.set_status_text("Saving snapshot image: %s" % (filename,))
@@ -465,26 +459,9 @@ class GraphApp(AppWidget):
         self.rendered_status_texts = []
         self.set_status_text("This is a Graphui file", 9999)
         self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
-        self._paint(None)
+        self.cause_paint()
         target_width = 640 # self.width
         super(GraphApp, self).save_snapshot_image(filename, target_width, self.height/(self.width/target_width))
         self.rendered_status_texts = t
 
 
-    # TODO should this be in a subclass of GraphApp?!
-    def show_textbox(self, label, callback, default=''):
-        self.push_widgets()
-
-        label_node = Graph.Node(GraphElementValue(label))
-        box_node = Graph.Node(GraphElementValue(default))
-        cancel_node = Graph.Node(GraphElementValue("press enter here to cancel"))
-        self.add_nodes([label_node, box_node, cancel_node])
-        self._add_edge(label_node, box_node, label='')
-        self._add_edge(label_node, cancel_node, label='')
-        box_node.value.widget.enabled = False
-        
-        def _callback(*args):
-            self.pop_widgets()
-            return callback(*args)
-        box_node.value.enter_callback = partial(callback, True)
-        cancel_node.value.enter_callback = partial(callback, False)
