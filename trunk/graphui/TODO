@@ -19,3 +19,14 @@ What the heck do these mean:
 
 Known bugs:
 * Make the edge text appear on one side (and not change sides randomly)
+
+Functions to optimize, according to profiling:
+* paint_shape (in EdgeWidget) - 18.9% self time
+* point_near_polyline (in Point) - 9% self time
+* get_current/set_current in moving value - called too many times! we don't need this property
+* get rid of the Attr object (especially "verify exists")
+  * and also its __getattr__ slows us down
+* factorial - called too many times. implement in C and find why called so many times?
+* choose - called too many times, like factorial
+* bezier calls choose/factorial too many times. (nonrec_point_on_curve)
+* rotate_surface
