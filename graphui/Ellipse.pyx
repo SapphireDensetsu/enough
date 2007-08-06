@@ -3,8 +3,6 @@ from Lib.Point import Point
 
 cdef extern from "math.h":
     double sqrt(double x)
-cdef extern from "math.h":
-    double pow(double x, double y)
     
 class Ellipse(object):
     def __init__(self, rect):
@@ -36,12 +34,12 @@ class Ellipse(object):
             m = 1. * (x2-x1)/(y2-y1)
             n = 1. * (x1*y2-x2*y1)/(y2-y1)
 
-            n_2 = pow(n,2)
-            m_2 = pow(m,2)
-            h_2 = pow(h,2)
-            w_2 = pow(w,2)
-            cx_2 = pow(cx,2)
-            cy_2 = pow(cy,2)
+            n_2 = n*n
+            m_2 = m*m
+            h_2 = h*h
+            w_2 = w*w
+            cx_2 = cx*cx
+            cy_2 = cy*cy
             
             s = (-4.*(n_2)-8*cy*m*n+8*cx*n + (h_2-4*(cy_2))*(m_2) + 8*cx*cy*m + (w_2)-4*(cx_2))
             if s < 0:
@@ -59,12 +57,12 @@ class Ellipse(object):
             m = (y2-y1)/(x2-x1)
             n = (x2*y1-x1*y2)/(x2-x1)
 
-            n_2 = pow(n,2)
-            m_2 = pow(m,2)
-            h_2 = pow(h,2)
-            w_2 = pow(w,2)
-            cx_2 = pow(cx,2)
-            cy_2 = pow(cy,2)
+            n_2 = n*n
+            m_2 = m*m
+            h_2 = h*h
+            w_2 = w*w
+            cx_2 = cx*cx
+            cy_2 = cy*cy
 
             s = (-4*(n_2)-8*cx*m*n+8*cy*n+((w_2))*((m_2))-4*((cx_2))*((m_2))+8*cx*cy*m+((h_2))-4*((cy_2)))
             if s < 0:
