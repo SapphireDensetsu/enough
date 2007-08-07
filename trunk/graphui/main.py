@@ -22,14 +22,21 @@
 import sys
 import pygame
 from GraphWidget import GraphWidget
+from RowWidget import RowWidget
 from App import AppWidget
 from Lib.Point import Point
 
 def main():
     pygame.init()
     a = AppWidget(800, 600)
-    a.add_widget(GraphWidget(pos=Point((0,0)), size=Point((800,300))))
-    a.add_widget(GraphWidget(pos=Point((0,300)), size=Point((800,300))))
+    
+    r = RowWidget(pos=Point((0,0)))
+    r.add_widget_to_row(GraphWidget(size=Point((300,300))))
+    r.add_widget_to_row(GraphWidget(size=Point((300,300))))
+    
+    #a.add_widget(GraphWidget(size=Point((800,600))))
+    a.add_widget(r)
+    r.transpose()
     a.run()
 
 import time

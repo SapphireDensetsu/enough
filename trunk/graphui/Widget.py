@@ -75,8 +75,9 @@ class Widget(object):
         self.max_undo = 25
 
         # TODO kick this outta here
-        from Ellipse import Ellipse
-        self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
+        #from Ellipse import Ellipse
+        from Rectangle import Rectangle
+        self.shape = Rectangle(pygame.Rect(self.get_current_rect()))
 
     def reset(self):
         self.font=None
@@ -387,17 +388,13 @@ class Widget(object):
     
     def paint_shape(self, parent_offset, surface, back_color):
         # TODO use subsurfaces instead of parent_offset (problematic beacuse of EdgeWidget right now)
-        
-        # TODO use self.get_shape to paint our shape?
+
+        self.get_shape()
         if not self.shape:
             return
 
-        rect = tuple(self.pos.current + parent_offset) + tuple(self.size.current)
-        pygame.draw.ellipse(surface, back_color, rect, 0)
-        if self.size.current.x > 5 and self.size.current.y > 5:
-            # otherwise we get a pygame error for using a width that's larger than the elipse radius
-            pygame.draw.ellipse(surface, self.params.fore_color, rect, 2)
-
+        #rect = tuple(self.pos.current + parent_offset) + tuple(self.size.current)
+        self.shape.paint(parent_offset, surface, self.params.fore_color, back_color)
 
     def paint_text(self, parent_offset, surface):
         lines = self.text.split('\n')
