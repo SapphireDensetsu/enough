@@ -79,6 +79,8 @@ class Widget(object):
         from Shapes.Rectangle import Rectangle
         self.shape = Rectangle(pygame.Rect(self.get_current_rect()))
 
+        self.save_next_paint = None
+
     def reset(self):
         self.font=None
         self.default_font=None
@@ -298,6 +300,13 @@ class Widget(object):
         self.paint_text(event.parent_offset, surface)
 
         self.paint_widgets(event)
+
+        if self.save_next_paint:
+            # TODO rewrite this to use the Trigger for 'paint'
+            args, kw = self.save_next_paint
+            self.save_next_paint = None # reset before calling to prevent hypothetical recursions
+            self.save_snapshot_image(event, *args, **kw)
+            
         return True # since we are painting them explicitly, the lower widgets don't need to
 
     def paint_widgets(self, event):
@@ -334,6 +343,26 @@ class Widget(object):
         import pickle
         f=open(filename, 'rb')
         self.widgets = pickle.load(f)
+
+
+    def save_snapshot_on_next_paint(self, filename, width=None, height=None, callback_when_done=None):
+        self.save_next_paint = (filename,), dict(width=width, height=height, callback_when_done=callback_when_done)
+        
+    def save_snapshot_image(self, event, filename, width=None, height=None, callback_when_done=None):
+        if width and not height:
+            height = self.size.final.y/(self.size.final.x/width)
+        elif height and not width:
+            width = self.size.final.x/(self.size.final.y/height)
+            
+        width = get_default(width, self.size.final.x)
+        height = get_default(height, self.size.final.y)
+        
+        rect = pygame.Rect(event.parent_offset.x, event.parent_offset.y, width, height)
+        rect = rect.clip(event.surface.get_rect())
+        subsurface = event.surface.subsurface(rect)
+        pygame.image.save(pygame.transform.scale(subsurface, (width,height)), filename)
+        if callback_when_done:
+            callback_when_done(filename, width, height)
 
 
     #############################################################################

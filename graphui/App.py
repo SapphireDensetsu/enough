@@ -173,9 +173,3 @@ class AppWidget(Widget):
         self.record = False
         
     #_______________________________
-    
-    def save_snapshot_image(self, filename, width=None, height=None):
-        width = get_default(width, self.width)
-        height = get_default(height, self.height)
-        pygame.image.save(pygame.transform.scale(pygame.display.get_surface(), (width,height)), filename)
-

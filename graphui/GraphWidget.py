@@ -175,6 +175,7 @@ class GraphWidget(Widget):
         if self.disconnecting:
             self.paint_connector(event.parent_offset, surface, (250,150,150), [n.value.widget for n in self.disconnecting_sources])
         self.paint_status_text(event.parent_offset, event.surface)
+            
         
     def key_down(self, when, event):
         super(GraphWidget, self).key_down(when, event)
@@ -428,14 +429,17 @@ class GraphWidget(Widget):
         filename = FILENAME
         ext=self.EXT
         try:
-            self.save_snapshot_image(filename+ext)
-            image = open(filename+ext, 'rb').read()
-            self.set_status_text("Saving to %r..." % (filename,), 2)
-            super(GraphWidget, self).save(filename+'.tmp')
-            saved = open(filename+'.tmp', 'rb').read()
-            import struct
-            image_size = struct.pack('L', len(image))
-            open(filename+ext, 'wb').write(image + saved + image_size)
+            def done_snapshot(filename_ext, width, height):
+                image = open(filename+ext, 'rb').read()
+                self.set_status_text("Saving to %r..." % (filename,), 2)
+                super(GraphWidget, self).save(filename+'.tmp')
+                saved = open(filename+'.tmp', 'rb').read()
+                import struct
+                image_size = struct.pack('L', len(image))
+                open(filename+ext, 'wb').write(image + saved + image_size)
+                
+            self.save_snapshot_on_next_paint(filename+ext, callback_when_done=done_snapshot)
+            
         except Exception, e:
             self.set_status_text("Save failed %s" % (e,))
             return
@@ -460,8 +464,8 @@ class GraphWidget(Widget):
             raise
         self.update_layout()
 
-    def save_snapshot_image(self, filename):
-        #self.set_status_text("Saving snapshot image: %s" % (filename,))
+    def save_snapshot_image(self, event, filename, *args, **kw):
+        self.set_status_text("Saving snapshot to %r" % (filename,), 5)
         # We don't want the status text to appear in the snaphot
         t = self.rendered_status_texts
         self.rendered_status_texts = []
@@ -469,8 +473,10 @@ class GraphWidget(Widget):
         self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
         # TODO : There is some bug here, the widgets are not painted in the correct order?
         #self.cause_paint()
-        target_width = 640 # self.width
-        super(GraphWidget, self).save_snapshot_image(filename, target_width, self.size.final.y/(self.size.final.x/target_width))
+        if not kw['width'] and not kw['height']:
+            kw['width'] = 640
+        super(GraphWidget, self).save_snapshot_image(event, filename, *args, **kw)
+        
         self.rendered_status_texts = t
 
 

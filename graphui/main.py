@@ -40,6 +40,7 @@ def main():
     #main_widget = RowWidget(size=Point((800,600)))
     #main_widget.add_widget_to_row(g)
     a.add_widget(g)
+    a.set_focus(g)
     a.run()
 
 import time
