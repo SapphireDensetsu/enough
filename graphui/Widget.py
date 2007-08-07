@@ -76,7 +76,7 @@ class Widget(object):
 
         # TODO kick this outta here
         #from Ellipse import Ellipse
-        from Rectangle import Rectangle
+        from Shapes.Rectangle import Rectangle
         self.shape = Rectangle(pygame.Rect(self.get_current_rect()))
 
     def reset(self):
@@ -157,7 +157,7 @@ class Widget(object):
     ######################################################################
     def add_widget(self, widget, z = None):
         if widget in self.widgets:
-            raise ValueError("Widget already exists! %r" (widget,))
+            raise ValueError("Widget already exists! %r" % (widget,))
 
         if z is None:
             self.widgets.append(widget)
