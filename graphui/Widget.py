@@ -350,14 +350,14 @@ class Widget(object):
         
     def save_snapshot_image(self, event, filename, width=None, height=None, callback_when_done=None):
         if width and not height:
-            height = self.size.final.y/(self.size.final.x/width)
+            height = self.size.current.y/(self.size.current.x/float(width))
         elif height and not width:
-            width = self.size.final.x/(self.size.final.y/height)
+            width = self.size.current.x/(self.size.current.y/float(height))
             
-        width = get_default(width, self.size.final.x)
-        height = get_default(height, self.size.final.y)
+        width = get_default(width, self.size.current.x)
+        height = get_default(height, self.size.current.y)
         
-        rect = pygame.Rect(event.parent_offset.x, event.parent_offset.y, width, height)
+        rect = pygame.Rect(event.parent_offset.x, event.parent_offset.y, self.size.current.x, self.size.current.y)
         rect = rect.clip(event.surface.get_rect())
         subsurface = event.surface.subsurface(rect)
         pygame.image.save(pygame.transform.scale(subsurface, (width,height)), filename)
