@@ -185,6 +185,7 @@ class GraphWidget(Widget):
         
         e = event.pygame_event
         if (e.mod & pygame.KMOD_CTRL):
+            print 'handling', e
             self.handle_control_key(e)
             return True
         else:
@@ -243,13 +244,6 @@ class GraphWidget(Widget):
             return True
             
         multiselect = self._multiselect_modifier_used(mods)
-##        if (not multiselect
-##            or (self.focused_widgets and self.hovered_widget not in self.focused_widgets)):
-##            # The or part is to allow people to use a first click-drag
-##            # on the last widget of a multiselect group to
-##            # connect. Otherwise, the connection group would not
-##            # include that last widget.
-##            super(GraphWidget, self).mouse_down(e)
         if self.focused_widgets and self._connect_modifier_used(mods):
             if e.button == 1:
                 self.connecting = True
@@ -258,8 +252,6 @@ class GraphWidget(Widget):
                 self.disconnecting = True
                 self.disconnecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
             self.unset_focus()
-##        if multiselect:
-##            super(GraphWidget, self).mouse_down(e)
         return True
             
     def mouse_motion(self, when, event):
