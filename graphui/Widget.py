@@ -273,7 +273,8 @@ class Widget(object):
         pass
 
     def set_focus(self, widget):
-        self.focused_widgets.append(widget)
+        if widget not in self.focused_widgets:
+            self.focused_widgets.append(widget)
         
     def unset_focus(self):
         for w in self.focused_widgets:
