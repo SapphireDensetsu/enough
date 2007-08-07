@@ -32,6 +32,11 @@ class NodeWidget(Widget):
         self.out_edges = get_default(out_edges, {})
         if node:
             self.set_node(node)
+
+
+        from Shapes.Ellipse import Ellipse
+        self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
+            
     
     def key_down(self, when, e):
         if not self.params.enabled:
@@ -84,7 +89,8 @@ class EdgeWidget(Widget):
         
         self.cached_arrowhead = None
         self.cached_parent_offset = None
-        
+
+        self.shape = None
 
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)

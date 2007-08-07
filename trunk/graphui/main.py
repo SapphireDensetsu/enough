@@ -30,13 +30,16 @@ def main():
     pygame.init()
     a = AppWidget(800, 600)
     
-    r = RowWidget(pos=Point((0,0)))
-    r.add_widget_to_row(GraphWidget(size=Point((300,300))))
-    r.add_widget_to_row(GraphWidget(size=Point((300,300))))
+    #r = RowWidget()#size=Point((100,200)))
+    #r.add_widget_to_row(GraphWidget(size=Point((300,300))))
+    #r.transpose()
     
-    #a.add_widget(GraphWidget(size=Point((800,600))))
-    a.add_widget(r)
-    r.transpose()
+    #r2 = RowWidget()
+    
+    g=GraphWidget(size=Point((800,600)))
+    #main_widget = RowWidget(size=Point((800,600)))
+    #main_widget.add_widget_to_row(g)
+    a.add_widget(g)
     a.run()
 
 import time
