@@ -112,7 +112,7 @@ class EdgeWidget(Widget):
         self.line.reset()
         
         
-    def paint_shape(self, parent_offset, surface, back_color):
+    def paint_shape(self, parent_offset, surface, fore_color, back_color):
         change_stopped_now = False
         if (self.line.done and self.target_widget.pos.done and self.target_widget.size.done
             and self.cached_parent_offset and self.cached_parent_offset == parent_offset):
