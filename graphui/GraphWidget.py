@@ -24,8 +24,8 @@ import time
 
 import twisted.python.log
 
-from App import AppWidget, undoable_method
-from Widget import mouse_pos
+from App import AppWidget
+from Widget import mouse_pos, Widget, undoable_method
 from Lib import Graph
 from Lib.Dot import Dot, OutOfDate
 from Lib.Font import get_font, find_font
@@ -41,10 +41,10 @@ from GraphElementValue import GraphElementValue
 
 message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
 
-class GraphApp(AppWidget):
+class GraphWidget(Widget):
     def __init__(self, *args, **kw):
-        super(GraphApp, self).__init__(*args, **kw)
-        pygame.display.set_caption('Graphui | Enough')
+        super(GraphWidget, self).__init__(*args, **kw)
+        #pygame.display.set_caption('Graphui | Enough')
         self.dot = Dot()
         self.init_control_map()
         
@@ -57,13 +57,16 @@ class GraphApp(AppWidget):
         
         self.dot_prog_num = 0
         
-        self.status_font = pygame.font.SysFont('serif',min(self.height/20, 18))
+        self.status_font = pygame.font.SysFont('serif',min(self.size.final.y/20, 18))
         self.rendered_status_texts = []
         self.set_status_text(message,15)
         self.set_status_text('CTRL-H for help', 15)
 
         self.pan_start_pos = None
         self.reset_zoom_pan()
+
+        # TODO get rid of shape in Widget (move it to some ShapeWidget or whatever)
+        #self.shape = None
 
     def reset_zoom_pan(self):
         self.pan_offset = Point((0,0))
@@ -152,24 +155,25 @@ class GraphApp(AppWidget):
         self.update_layout()
         #return partial(self.toggle_layout_engine, -dirc)
         
-    def paint_connector(self, color, widgets):
+    def paint_connector(self, parent_offset, surface, color, widgets):
         mpos = mouse_pos()
         for w in widgets:
-            cpos = w.center_pos()
-            paint_arrowhead_by_direction(self.screen, color, cpos, mpos)
-            pygame.draw.aalines(self.screen, color, False,
+            cpos = w.center_pos() + self.pos.current + parent_offset
+            paint_arrowhead_by_direction(surface, color, cpos, mpos)
+            pygame.draw.aalines(surface, color, False,
                                 [tuple(cpos), tuple(mpos)], True)
         
     def paint_widgets(self, event):
-        super(GraphApp, self).paint_widgets(event)
+        super(GraphWidget, self).paint_widgets(event)
+        surface = event.surface
         if self.connecting:
-            self.paint_connector((150,250,150), [n.value.widget for n in self.connecting_sources])
+            self.paint_connector(event.parent_offset, surface, (150,250,150), [n.value.widget for n in self.connecting_sources])
         if self.disconnecting:
-            self.paint_connector((250,150,150), [n.value.widget for n in self.disconnecting_sources])
-        self.paint_status_text()
+            self.paint_connector(event.parent_offset, surface, (250,150,150), [n.value.widget for n in self.disconnecting_sources])
+        self.paint_status_text(event.parent_offset, event.surface)
         
     def key_down(self, when, event):
-        super(GraphApp, self).key_down(when, event)
+        super(GraphWidget, self).key_down(when, event)
         if when == 'post':
             return False
         
@@ -221,7 +225,7 @@ class GraphApp(AppWidget):
         return b1 & b3
         
     def mouse_down(self, when, event):
-        res = super(GraphApp, self).mouse_down(when, event)
+        res = super(GraphWidget, self).mouse_down(when, event)
         if res == 'pre':
             return res
         
@@ -239,7 +243,7 @@ class GraphApp(AppWidget):
 ##            # on the last widget of a multiselect group to
 ##            # connect. Otherwise, the connection group would not
 ##            # include that last widget.
-##            super(GraphApp, self).mouse_down(e)
+##            super(GraphWidget, self).mouse_down(e)
         if self.focused_widgets and self._connect_modifier_used(mods):
             if e.button == 1:
                 self.connecting = True
@@ -249,11 +253,11 @@ class GraphApp(AppWidget):
                 self.disconnecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
             self.unset_focus()
 ##        if multiselect:
-##            super(GraphApp, self).mouse_down(e)
+##            super(GraphWidget, self).mouse_down(e)
         return True
             
     def mouse_motion(self, when, event):
-        res = super(GraphApp, self).mouse_motion(when, event)
+        res = super(GraphWidget, self).mouse_motion(when, event)
         if when == 'post':
             return res
 
@@ -266,7 +270,7 @@ class GraphApp(AppWidget):
             
                 
     def mouse_up(self, when, event):
-        res = super(GraphApp, self).mouse_up(when, event)
+        res = super(GraphWidget, self).mouse_up(when, event)
         if when == 'post':
             return res
         
@@ -354,14 +358,14 @@ class GraphApp(AppWidget):
         if not n:
             return
         g_height, g_width = float(g['height']), float(g['width'])
-        x_scale = self.width / g_width * self.pos_zoom
-        y_scale = self.height / g_height * self.pos_zoom
+        x_scale = self.size.final.x / g_width * self.pos_zoom
+        y_scale = self.size.final.y / g_height * self.pos_zoom
         x_offset = self.pan_offset.x
         y_offset = self.pan_offset.y
         if self.preserve_aspect_ratio:
             x_scale = y_scale = min(x_scale, y_scale)
-            x_offset += (self.width - (x_scale * g_width)) / 2
-            y_offset += (self.height - (y_scale * g_height)) / 2
+            x_offset += (self.size.final.x - (x_scale * g_width)) / 2
+            y_offset += (self.size.final.y - (y_scale * g_height)) / 2
         
         for node, n_layout in n.iteritems():
             node.value.widget.pos.final.x = n_layout['x'] * x_scale + x_offset
@@ -381,14 +385,14 @@ class GraphApp(AppWidget):
                                                       x_scale=x_scale, y_scale=y_scale, x_offset=x_offset, y_offset=y_offset,
                                                       bezier_points=self.bezier_points)
 
-    def paint_status_text(self):
+    def paint_status_text(self, parent_offset, surface):
         new_list = []
         h = self.status_font.get_height() + 2
         for i, (timeout, rendered) in enumerate(self.rendered_status_texts[:]):
             if time.time() > timeout:
                 continue
             new_list.append((timeout, rendered))
-            self.screen.blit(rendered, (0,self.height-h*(i+1)))
+            surface.blit(rendered, (0,self.size.current.y-h*(i+1)+self.pos.current.y+parent_offset.y))
 
         self.rendered_status_texts = new_list
         
@@ -423,7 +427,7 @@ class GraphApp(AppWidget):
             self.save_snapshot_image(filename+ext)
             image = open(filename+ext, 'rb').read()
             self.set_status_text("Saving to %r..." % (filename,), 2)
-            super(GraphApp, self).save(filename+'.tmp')
+            super(GraphWidget, self).save(filename+'.tmp')
             saved = open(filename+'.tmp', 'rb').read()
             import struct
             image_size = struct.pack('L', len(image))
@@ -446,7 +450,7 @@ class GraphApp(AppWidget):
             saved = f.read()[:-4]
             open(filename+'.tmp', 'wb').write(saved)
             self.set_status_text("Loading from %s..." % (filename,), 2)
-            super(GraphApp, self).load(filename+'.tmp')
+            super(GraphWidget, self).load(filename+'.tmp')
         except Exception, e:
             self.set_status_text("Load failed %s" % (e,))
             raise
@@ -460,9 +464,9 @@ class GraphApp(AppWidget):
         self.set_status_text("This is a Graphui file", 9999)
         self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
         # TODO : There is some bug here, the widgets are not painted in the correct order?
-        self.cause_paint()
+        #self.cause_paint()
         target_width = 640 # self.width
-        super(GraphApp, self).save_snapshot_image(filename, target_width, self.height/(self.width/target_width))
+        super(GraphWidget, self).save_snapshot_image(filename, target_width, self.size.final.y/(self.size.final.x/target_width))
         self.rendered_status_texts = t
 
 

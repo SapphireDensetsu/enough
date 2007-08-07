@@ -81,7 +81,9 @@ class EdgeWidget(Widget):
         # this is just to prevent the text size from changing. we
         # don't really care about the self.size NOR about self.pos
         self.params.autosize = "by text"
+        
         self.cached_arrowhead = None
+        self.cached_parent_offset = None
         
 
     def in_bounds(self, pos):
@@ -104,9 +106,9 @@ class EdgeWidget(Widget):
         self.line.reset()
         
         
-    def paint_shape(self, surface, back_color):
+    def paint_shape(self, parent_offset, surface, back_color):
         change_stopped_now = False
-        if self.line.done and self.target_widget.pos.done and self.target_widget.size.done:
+        if self.line.done and self.target_widget.pos.done and self.target_widget.size.done and parent_offset == self.cached_parent_offset:
             if not self.cached_arrowhead:
                 change_stopped_now = True
             changed = False
@@ -115,7 +117,7 @@ class EdgeWidget(Widget):
             self.cached_arrowhead = None
             
         self.line.update()
-        pygame.draw.lines(surface, back_color, False, [tuple(p) for p in self.line.current], 2)
+        pygame.draw.lines(surface, back_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
 
         if changed or change_stopped_now or not self.cached_arrowhead:
             # If we didn't cache the found intersection or some stuff changed....
@@ -131,14 +133,17 @@ class EdgeWidget(Widget):
                 else:
                     continue
 
-                self.cached_arrowhead = paint_arrowhead_by_direction(surface, (200,60,60), a, intersection)
+                self.cached_arrowhead = paint_arrowhead_by_direction(surface, (200,60,60),
+                                                                     a + parent_offset,
+                                                                     intersection + parent_offset)
+                self.cached_parent_offset = parent_offset
                 return
 
         if self.cached_arrowhead:
             repaint_arrowhead(surface, *self.cached_arrowhead)
             
 
-    def paint_text(self, surface):
+    def paint_text(self, parent_offset, surface):
         mid = len(self.line.current)/2
         midvalues = self.line.current[mid:mid+2]
         if len(midvalues) < 2:
@@ -165,6 +170,6 @@ class EdgeWidget(Widget):
         desired_topleft = midsrc + from_polar(text_centering_angle+angle,
                                               text_centering_length)
                 
-        pos = tuple(desired_topleft - topleft)
+        pos = tuple(desired_topleft - topleft + parent_offset)
         surface.blit(rt, map(int, pos))
 

@@ -33,7 +33,22 @@ def mouse_pos():
     return Point(pygame.mouse.get_pos())
 
 
+def undoable_method(func):
+    def new_func(self, *args, **kw):
+        undoer = func(self, *args, **kw)
+        if self.undoing:
+            l = self.history_redo
+        else:
+            l = self.history
+        if len(l) < self.max_undo:
+            l.append((func, undoer, args, kw))
+    return new_func
+    
+
+
+
 class Widget(object):
+    painting_z_order = 0
     font_size = 40
     
     def __init__(self, text = '', pos=None, size=None, font_size=40):
@@ -54,6 +69,12 @@ class Widget(object):
         self._init_params()
         self._init_event_triggers()
 
+        self.history = []
+        self.history_redo = []
+        self.undoing = False
+        self.max_undo = 25
+
+        # TODO kick this outta here
         from Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
 
@@ -117,6 +138,7 @@ class Widget(object):
         self.pos.update()
 
     def in_bounds(self, pos):
+        # Pos is relative to PARENTs origin
         p = self.pos.current
         s = self.size.current
         if ((pos.x > p.x)
@@ -190,15 +212,22 @@ class Widget(object):
     def mouse_motion(self, when, event):
         if when == 'post':
             return
+
+        # This is expected to be relative to our origin, not global origin.
         p = event.pos
+            
         self.params.in_hover = True
         for z, widget in reversed(self._z_ordered_widgets()):
             if not widget.in_bounds(p):
                 # todo call some widget.?? method?
                 widget.params.in_hover = False
                 continue
+
+            new_event = event.copy()
+            # make it relative
+            new_event.pos -= widget.pos.current
             
-            if widget.mouse_motion(when, event):
+            if widget.mouse_motion(when, new_event):
                 self.hovered_widget = widget
                 return True
         return True
@@ -224,6 +253,9 @@ class Widget(object):
                 continue
 
             self.set_focus(widget)
+            new_event = event.copy()
+            # make it relative
+            new_event.pos -= widget.pos.current
             if widget.mouse_down(when, event):
                 return True
         return True
@@ -261,18 +293,49 @@ class Widget(object):
         else:
             back_color = self.params.back_color
 
-        self.paint_shape(surface, back_color)
-        self.paint_text(surface)
+        self.paint_shape(event.parent_offset, surface, back_color)
+        self.paint_text(event.parent_offset, surface)
 
         self.paint_widgets(event)
         return True # since we are painting them explicitly, the lower widgets don't need to
 
     def paint_widgets(self, event):
+        new_event = event.copy()
+        new_event.parent_offset = new_event.parent_offset + self.pos.current
         for z, widget in self._z_ordered_widgets():
             # We want to control the specific order of painting, so
             # don't let the standard event passing through the
             # hierarchy. just do it here
-            widget.handle_event(event)
+            widget.handle_event(new_event)
+
+    #############################################################################
+
+    def undo(self):
+        if not self.history:
+            return
+        doer, undoer, args, kw = self.history.pop()
+        self.undoing = True
+        undoer()
+        self.undoing = False
+
+    def redo(self):
+        if not self.history_redo:
+            return
+        doer, undoer, args, kw = self.history_redo.pop()
+        self.undoing = False
+        undoer()
+        
+    def save(self, filename):
+        import pickle
+        f=open(filename, 'wb')
+        pickle.dump(self.widgets,f,2)
+    def load(self, filename):
+        import pickle
+        f=open(filename, 'rb')
+        self.widgets = pickle.load(f)
+
+
+    #############################################################################
         
 
     # TODO move this to some subclass
@@ -317,23 +380,33 @@ class Widget(object):
 
     def get_shape(self):
         # TODO make the shape a mutable attribute of self?
+        if not self.shape:
+            return None
         self.shape.rect = pygame.Rect(self.get_current_rect())
         return self.shape
     
-    def paint_shape(self, surface, back_color):
+    def paint_shape(self, parent_offset, surface, back_color):
+        # TODO use subsurfaces instead of parent_offset (problematic beacuse of EdgeWidget right now)
+        
         # TODO use self.get_shape to paint our shape?
-        pygame.draw.ellipse(surface, back_color, self.get_current_rect(), 0)
+        if not self.shape:
+            return
+
+        rect = tuple(self.pos.current + parent_offset) + tuple(self.size.current)
+        pygame.draw.ellipse(surface, back_color, rect, 0)
         if self.size.current.x > 5 and self.size.current.y > 5:
             # otherwise we get a pygame error for using a width that's larger than the elipse radius
-            pygame.draw.ellipse(surface, self.params.fore_color, self.get_current_rect(), 2)
+            pygame.draw.ellipse(surface, self.params.fore_color, rect, 2)
 
 
-    def paint_text(self, surface):
+    def paint_text(self, parent_offset, surface):
         lines = self.text.split('\n')
         text_size = Point(lines_size(self.font, lines))
-        surface.blit(self.rendered_text, tuple(self.center_pos()-text_size*0.5))
+        surface.blit(self.rendered_text, tuple(parent_offset + self.center_pos()-text_size*0.5))
 
     def change_font_size(self, add = 0, mul = 1):
         self.font_size *= mul
         self.font_size += add
         self.default_font = get_font(self.font_size)
+
+        

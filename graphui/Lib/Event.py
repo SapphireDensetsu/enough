@@ -3,6 +3,10 @@ class Event(object):
         self.type = typ
     def __repr__(self):
         return '<Event: %r>' % (self.__dict__,)
+    def copy(self):
+        new = type(self)(self.type)
+        new.__dict__.update(self.__dict__)
+        return new
 
 class EventTrigger(object):
     '''The name EventTrigger was chosen to prevent confusion with

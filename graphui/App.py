@@ -28,18 +28,6 @@ from guilib import get_default, MovingValue, ParamHolder
 from Widget import Widget
 
 
-def undoable_method(func):
-    def new_func(self, *args, **kw):
-        undoer = func(self, *args, **kw)
-        if self.undoing:
-            l = self.history_redo
-        else:
-            l = self.history
-        if len(l) < self.max_undo:
-            l.append((func, undoer, args, kw))
-    return new_func
-    
-
 class AppWidget(Widget):
     
     def __init__(self, width=800, height=600, flags=0, fps=20):
@@ -52,11 +40,6 @@ class AppWidget(Widget):
         self.params.back_color = (0,0,0)
         
         self.record = False
-
-        self.history = []
-        self.history_redo = []
-        self.undoing = False
-        self.max_undo = 25
 
         from Lib.Font import get_font
         self._fps_font = get_font(30)
@@ -143,10 +126,12 @@ class AppWidget(Widget):
 
         self.cause_paint()
 
+    zero_point = Point((0,0))
     def cause_paint(self):
         e = self.new_event('paint')
         e.surface = self.screen
         e.to_all = True
+        e.parent_offset = self.zero_point
         self.handle_event(e)
 
 
@@ -189,40 +174,8 @@ class AppWidget(Widget):
         
     #_______________________________
     
-    def undo(self):
-        if not self.history:
-            return
-        doer, undoer, args, kw = self.history.pop()
-        self.undoing = True
-        undoer()
-        self.undoing = False
-
-    def redo(self):
-        if not self.history_redo:
-            return
-        doer, undoer, args, kw = self.history_redo.pop()
-        self.undoing = False
-        undoer()
-        
-    def save(self, filename):
-        import pickle
-        f=open(filename, 'wb')
-        pickle.dump(self.widgets,f,2)
-    def load(self, filename):
-        import pickle
-        f=open(filename, 'rb')
-        self.widgets = pickle.load(f)
-
     def save_snapshot_image(self, filename, width=None, height=None):
         width = get_default(width, self.width)
         height = get_default(height, self.height)
         pygame.image.save(pygame.transform.scale(pygame.display.get_surface(), (width,height)), filename)
 
-    def push_widgets(self, new_widgets=None):
-        new_widgets = get_default(new_widgets, [])
-        self.widgets_stack.append(self.widgets)
-        self.widgets = new_widgets
-    def pop_widgets(self):
-        if self.widgets_stack:
-            self.widgets = self.widgets_stack.pop()
-        
