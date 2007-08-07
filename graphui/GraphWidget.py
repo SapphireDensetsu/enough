@@ -67,6 +67,10 @@ class GraphWidget(Widget):
 
         # TODO get rid of shape in Widget (move it to some ShapeWidget or whatever)
         #self.shape = None
+        #self.params.fore_color = None
+        self.params.back_color = None
+        self.params.focus_back_color = (10,10,20)
+        self.params.hover_back_color = (5,5,10)
 
     def reset_zoom_pan(self):
         self.pan_offset = Point((0,0))
