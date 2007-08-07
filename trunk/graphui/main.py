@@ -21,11 +21,15 @@
 
 import sys
 import pygame
-from GraphApp import GraphApp
+from GraphWidget import GraphWidget
+from App import AppWidget
+from Lib.Point import Point
 
 def main():
     pygame.init()
-    a = GraphApp(800, 600)
+    a = AppWidget(800, 600)
+    a.add_widget(GraphWidget(pos=Point((0,0)), size=Point((800,300))))
+    a.add_widget(GraphWidget(pos=Point((0,300)), size=Point((800,300))))
     a.run()
 
 import time
