@@ -26,6 +26,8 @@ class EventTrigger(object):
     def register(self, handler, forced=False):
         self.handlers.append((handler, forced))
 
+# TODO implement unregister
+
 class TriggerList(object):
     def __init__(self):
         self.triggers = {}
