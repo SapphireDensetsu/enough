@@ -9,7 +9,15 @@ class Ellipse(object):
         self.rect = rect
     def __getinitargs__(self):
         return (self.rect,)
+
+    def paint(self, offset, surface):
+        rect = self.rect.x+offset.x, self.rect.y+offset.y, self.rect.w, self.rect.h
+        pygame.draw.ellipse(surface, back_color, rect, 0)
+        if rect.size[0] > 5 and rect.size.y > 5:
+            # otherwise we get a pygame error for using a width that's larger than the elipse radius
+            pygame.draw.ellipse(surface, self.params.fore_color, rect, 2)
         
+    
     def intersections(self, src, dest, margin_error = 0.0001):
         cdef double cx, cy, w, h, x1, y1, x2, y2, m, n, s, sq, div, xexpr, yexpr, yexpr1, yexpr2, cmargin_error
 

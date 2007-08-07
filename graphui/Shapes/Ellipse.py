@@ -10,6 +10,14 @@ class Ellipse(object):
     def __getinitargs__(self):
         return (self.rect,)
 
+    def paint(self, offset, surface, fore_color, back_color):
+        import pygame
+        rect = self.rect.x+offset.x, self.rect.y+offset.y, self.rect.w, self.rect.h
+        pygame.draw.ellipse(surface, back_color, rect, 0)
+        if rect[2] > 5 and rect[3] > 5:
+            # otherwise we get a pygame error for using a width that's larger than the elipse radius
+            pygame.draw.ellipse(surface, fore_color, rect, 2)
+        
     def intersections(self, src, dest):
         """Returns the point of the intersection between the infinite
         line defined by (src, dest) and this shape, or None if there
