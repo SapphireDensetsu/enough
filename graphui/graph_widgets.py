@@ -92,6 +92,12 @@ class EdgeWidget(Widget):
 
         self.shape = None
 
+    def key_down(self, when, e):
+        if not self.params.enabled:
+            return False
+        self.edge.value.entered_text(e)
+        return True
+
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
 
