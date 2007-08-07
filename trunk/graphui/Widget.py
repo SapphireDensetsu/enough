@@ -110,6 +110,7 @@ class Widget(object):
                                    "in_focus",
                                    "in_hover",
                                    "focus_back_color",
+                                   "focus_fore_color",
                                    "focus_text_color",
                                    "hover_back_color",
                                    "hover_text_color",
@@ -128,6 +129,7 @@ class Widget(object):
         
         self.params.in_hover = False
         self.params.focus_back_color = (50,50,100)
+        self.params.focus_fore_color = (150,150,250)
         self.params.focus_text_color = (230,230,255)
         self.params.hover_back_color = (20,20,60)
         self.params.hover_text_color = (200,200,215)
@@ -291,12 +293,15 @@ class Widget(object):
         self.update_moving()
         if self.params.in_focus:
             back_color = self.params.focus_back_color
+            fore_color = self.params.focus_fore_color
         elif self.params.in_hover:
             back_color = self.params.hover_back_color
+            fore_color = self.params.fore_color
         else:
             back_color = self.params.back_color
+            fore_color = self.params.fore_color
 
-        self.paint_shape(event.parent_offset, surface, back_color)
+        self.paint_shape(event.parent_offset, surface, fore_color, back_color)
         self.paint_text(event.parent_offset, surface)
 
         self.paint_widgets(event)
@@ -415,7 +420,7 @@ class Widget(object):
         self.shape.rect = pygame.Rect(self.get_current_rect())
         return self.shape
     
-    def paint_shape(self, parent_offset, surface, back_color):
+    def paint_shape(self, parent_offset, surface, fore_color, back_color):
         # TODO use subsurfaces instead of parent_offset (problematic beacuse of EdgeWidget right now)
 
         self.get_shape()
@@ -423,7 +428,7 @@ class Widget(object):
             return
 
         #rect = tuple(self.pos.current + parent_offset) + tuple(self.size.current)
-        self.shape.paint(parent_offset, surface, self.params.fore_color, back_color)
+        self.shape.paint(parent_offset, surface, fore_color, back_color)
 
     def paint_text(self, parent_offset, surface):
         lines = self.text.split('\n')
