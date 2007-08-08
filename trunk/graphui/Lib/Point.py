@@ -66,6 +66,8 @@ class Point(object):
 
     def __cmp__(self, other):
         # This used to unallowed, but since we are using Pyrex also which doesn't support ne/eq, we allow this
+        if not isinstance(other, Point):
+            return -1
         return cmp(tuple(self), tuple(other))
 
     def __abs__(self):

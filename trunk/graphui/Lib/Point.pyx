@@ -71,6 +71,8 @@ cdef class Point:
             return Point((self.x/value, self.y/value))
 
     def __cmp__(self, other):
+        if not isinstance(other, Point):
+            return -1
         return cmp(tuple(self), tuple(other))
 
     def __abs__(self):

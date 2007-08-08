@@ -22,68 +22,56 @@ from Widget import Widget
 
 from Lib.Point import Point
 from guilib import MovingValue
-        
+
+from functools import partial
+
 class RowWidget(Widget):
-    def __init__(self, *args, **kw):
+    def __init__(self, entry_size, *args, **kw):
         # TODO add autosize flag
         super(RowWidget, self).__init__(*args, **kw)
 
         self.margin = 5
+        self.entry_size = entry_size
         self.transposed = False # True means this is a column
         self.cached_size = None
         self.row_size = Point((1,1))*self.margin
 
-    def update_moving(self):
-        super(RowWidget, self).update_moving()
-        self.update_widgets_size()
-        
     def add_widget_to_row(self, widget):
-        if self.transposed:
-            coord = 1
-        else:
-            coord = 0
-                
-        offset = tuple(self.row_size)[coord]
-
-        offset += self.margin
-        if self.transposed:
-            widget.pos.final = Point((self.margin,offset))
-            self.row_size.x = max(self.row_size.x, widget.size.final.x) + self.margin
-            self.row_size.y += widget.size.final.y + self.margin
-        else:
-            widget.pos.final = Point((offset,self.margin))
-            self.row_size.y = max(self.row_size.y, widget.size.final.y) + self.margin
-            self.row_size.x += widget.size.final.x + self.margin
-
+        self.layout_widget(len(self.widgets), widget)
         self.add_widget(widget)
 
-    def update_widgets_size(self):
-        if self.cached_size == self.size.final:
-            return
-        self.cached_size = self.size.final.copy()
+    def layout_widget(self, index, widget):
+        p_margin = Point((self.margin,self.margin))
+        widget.size.final = self.entry_size.copy()
+        widget.pos.final = p_margin + (self.entry_size + p_margin)*index
+        if self.transposed:
+            widget.pos.final.y = self.margin
+        else:
+            widget.pos.final.x = self.margin
+        self.size.final = widget.size.final + widget.pos.final + Point((self.margin,self.margin))
 
-        if self.row_size.x <= self.margin or self.row_size.y <= self.margin:
-            return
-
-        # Scale the widgets so that the fill us exactly (with margin left)
-        x_ratio = (self.size.final.x - 2*self.margin) / (self.row_size.x - self.margin)
-        y_ratio = (self.size.final.y - 2*self.margin) / (self.row_size.y - self.margin)
-
-        print x_ratio, y_ratio
-        print self.size.final, self.row_size
-        for widget in self.widgets:
-            widget.size.final.x *= x_ratio
-            widget.size.final.y *= y_ratio
-
-        # Dumb code again
-        #self.transpose()
-        #self.transpose()
-        
     def transpose(self):
         self.transposed = not self.transposed
-        # Dumb code.
-        self.row_size = Point((1,1))*self.margin
-        widgets = self.widgets
-        self.widgets = []
-        for widget in widgets:
-            self.add_widget_to_row(widget)
+        for i,widget in enumerate(self.widgets):
+            self.layout_widget(i,widget)
+
+
+#------------------------------------------------------------------
+
+def make_row_menu(label_values, choose_callback, width=200, row_height=50):
+    
+    # The choose_callback will get:
+    # menu_widget, (label,value), clicked_widget, event
+    # (event that triggered the callback (mouse up event normally))
+    
+    main = RowWidget(Point((width, row_height)))
+    for label,value in label_values:
+        w = RowWidget(Point((width, row_height)))
+        w.text = label
+        
+        # So the user won't edit the label
+        w.params.enabled = False
+        w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, (label, value), w))
+        main.add_widget_to_row(w)
+        
+    return main
