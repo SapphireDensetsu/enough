@@ -185,7 +185,6 @@ class GraphWidget(Widget):
         
         e = event.pygame_event
         if (e.mod & pygame.KMOD_CTRL):
-            print 'handling', e
             self.handle_control_key(e)
             return True
         else:
