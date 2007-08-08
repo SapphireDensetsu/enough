@@ -84,6 +84,9 @@ class ParamHolder(object):
         self.verify_exists(name)
         self.__dict__['_params'][name] = value
 
+    def add_allowed_name(self, name):
+        self.__dict__['_allowed_names'].append(name)
+        
 class MovingLine(MovingValue):
     # like MovingValue but for a list of points the represent a line
     def update(self):

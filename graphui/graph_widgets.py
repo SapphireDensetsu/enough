@@ -23,6 +23,8 @@ from Widget import Widget
 from Lib.Point import Point, from_polar, point_near_polyline
 from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead, get_default
 
+from Lib.Font import get_font
+
 
 class NodeWidget(Widget):
     painting_z_order = 1 # these should always be painted AFTER edges
@@ -37,7 +39,12 @@ class NodeWidget(Widget):
         from Shapes.Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
             
-    
+        self.cached_font_height = None
+        self.cached_group_rendered_text = None
+        self.cached_group_text = None
+        self.params.add_allowed_name('show_group_name')
+        self.params.show_group_name = True
+        
     def key_down(self, when, e):
         if not self.params.enabled:
             return False
@@ -64,6 +71,35 @@ class NodeWidget(Widget):
 
     def remove_edge(self, edge_widget):
         self.get_edges_to(edge_widget.target_widget).remove(edge_widget)
+
+    def paint_text(self, parent_offset, surface):
+        super(NodeWidget, self).paint_text(parent_offset, surface)
+        self.render_group_text(parent_offset, surface)
+        
+    def render_group_text(self, parent_offset, surface):
+        if not self.params.show_group_name:
+            return
+        if not self.node.value.group_name:
+            return
+        
+        font_height = self.font.get_height()
+        group_font_height = font_height / 3
+        text = self.node.value.group_name
+        label_pos = parent_offset + self.pos.current
+        
+        if (not self.cached_group_rendered_text or
+            font_height != self.cached_font_height or
+            text != self.cached_group_text):
+
+            self.cached_group_text = text
+            self.cached_font_height = font_height
+            
+            text_color = self.get_current_text_color()
+            group_name_font = get_font(group_font_height)
+            
+            self.cached_group_rendered_text = group_name_font.render(text, True, text_color)
+            
+        surface.blit(self.cached_group_rendered_text, tuple(label_pos))
         
 
 class EdgeWidget(Widget):
