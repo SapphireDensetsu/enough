@@ -344,7 +344,8 @@ class GraphWidget(Widget):
     def assign_to_group(self):
         self._last_group += 1
         for widget in self.focused_widgets:
-            widget.node.value.group_name = str(self._last_group)
+            if isinstance(widget, NodeWidget):
+                widget.node.value.group_name = str(self._last_group)
         self.update_layout()
         
     def _get_nodes_and_groups(self):

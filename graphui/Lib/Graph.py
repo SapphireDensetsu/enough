@@ -167,7 +167,7 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
             out+='%s=%s,' % (k,v)
     out += '];\n'
     for group_name, nodes in groups.iteritems():
-        out += 'subgraph "cluster%s" {\n' % (group_name,)
+        out += 'subgraph cluster%s {\n' % (group_name,)
         for node in nodes:
             props_str = _repr_properties(node.value.dot_properties())
                 
