@@ -38,6 +38,7 @@ from scancodes import scancode_map
 from graph_widgets import NodeWidget, EdgeWidget
 from GraphElementValue import GraphElementValue
 
+from RowWidget import make_row_menu
 
 message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
 
@@ -116,7 +117,7 @@ class GraphWidget(Widget):
     def add_nodes(self, nodes):
         self.set_status_text("Add %d nodes" % (len(nodes),))
         for node in nodes:
-            w = NodeWidget()
+            w = NodeWidget(start_pos=self.size.current*0.5)
             w.set_node(node)
             self.add_widget(w)
         self.update_layout()
@@ -277,6 +278,7 @@ class GraphWidget(Widget):
         if when == 'post':
             return res
         
+        e = event.pygame_event
         if self._pan_modifier_used():
             self.update_layout()
             return False
@@ -295,11 +297,29 @@ class GraphWidget(Widget):
                 target = target.node
                 self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
+            
+        elif e.button == 3:
+            # right click
+            menu = make_row_menu((('transpose',None),('test',None),('this',None)), self.chosen)
+            menu.params.in_drag_mode = True
+            menu.painting_z_order = NodeWidget.painting_z_order + 1
+            menu.transpose()
+            self.add_widget(menu)
+            
         else:
             return False
 
         return True
 
+    def chosen(self, menu, (label,value), clicked_widget, event):
+        if label=='transpose':
+            menu.transpose()
+            return
+        if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
+            return
+        print label, value
+        self.remove_widget(menu)
+    
     def _add_edge(self, source, target, label='edge'):
         edge = Graph.Edge(source, target, GraphElementValue(label))
         source.connect_edge(edge)

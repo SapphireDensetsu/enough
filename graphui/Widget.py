@@ -51,9 +51,11 @@ class Widget(object):
     painting_z_order = 0
     font_size = 40
     
-    def __init__(self, text = '', pos=None, size=None, font_size=40):
+    def __init__(self, text = '', pos=None, size=None, font_size=40, start_pos=None):
         self.size = MovingValue(Point((20,20)), get_default(size, Point((20,20))))
-        self.pos = MovingValue(Point((0,0)), get_default(pos, Point((0,0))), step=0.3)
+        pos = get_default(pos, Point((0,0)))
+        start_pos = get_default(start_pos, Point((0,0)))
+        self.pos = MovingValue(start_pos, pos, step=0.3)
 
         self.widgets = [] # sub-widgets
         self.focused_widgets = []
@@ -84,6 +86,10 @@ class Widget(object):
         self.rendered_text = None
         self.update_default_font()
         self.save_next_paint = None
+        
+        self.drag_start_pos = None
+        self.dragged_widget = None
+        
         self.history = []
         self.history_redo = []
         self.undoing = False
@@ -115,9 +121,15 @@ class Widget(object):
                                    "hover_back_color",
                                    "hover_text_color",
                                    "autosize",
+                                   "in_drag_mode",
                                    "user"], "WidgetParams")
         self.params.enabled = True
         self.params.visible = True
+
+        # In drag mode, you can drag the widget with the mouse to move
+        # it
+        self.params.in_drag_mode = False
+        
         self.params.fore_color = (100,100,200)
         self.params.back_color = (10,  10,15)
         self.params.text_color = (150,150,150)
@@ -175,6 +187,9 @@ class Widget(object):
         return sorted((w.painting_z_order, w) for w in self.widgets)
 
     ######################################################################
+
+    def pos_relative_to_widget(self, pos, widget):
+        return pos - widget.pos.current
     
     def handle_event(self, event):
         if self.trigger_lists['pre'].handle_event(event):
@@ -182,13 +197,16 @@ class Widget(object):
 
         if 'mouse' in event.type:
             orig_pos = event.pos.copy()
-            event.pos += self.pos.current
         handled = False
         if event.to_all:
             for widget in self.widgets:
+                if 'mouse' in event.type:
+                    event.pos = self.pos_relative_to_widget(orig_pos, widget)
                 handled = widget.handle_event(event)
         elif event.to_focused and self.focused_widgets:
             for widget in self.focused_widgets:
+                if 'mouse' in event.type:
+                    event.pos = self.pos_relative_to_widget(orig_pos, widget)
                 handled = widget.handle_event(event)
         if 'mouse' in event.type:
             event.pos = orig_pos
@@ -222,19 +240,29 @@ class Widget(object):
         p = event.pos
             
         self.params.in_hover = True
-        for z, widget in reversed(self._z_ordered_widgets()):
-            if not widget.in_bounds(p):
-                # todo call some widget.?? method?
-                widget.params.in_hover = False
-                continue
+        self.hovered_widget = None
 
+        if self.dragged_widget:
             new_event = event.copy()
-            # make it relative
-            new_event.pos -= widget.pos.current
-            
-            if widget.mouse_motion(when, new_event):
-                self.hovered_widget = widget
-                return True
+            new_event.pos -= self.dragged_widget.pos.current
+            self.dragged_widget.mouse_motion(when, new_event)
+        else:
+            for z, widget in reversed(self._z_ordered_widgets()):
+                if self.hovered_widget or not widget.in_bounds(p):
+                    # todo call some widget.?? method?
+                    widget.params.in_hover = False
+                    continue
+
+                new_event = event.copy()
+                # make it relative
+                new_event.pos = self.pos_relative_to_widget(event.pos, widget)
+                if widget.mouse_motion(when, new_event):
+                    self.hovered_widget = widget
+
+        if self.params.in_drag_mode and self.drag_start_pos:
+             # if we use event.pos, the widget will not be dragged beyond its own borders
+            self.pos.final = self.drag_start_pos + mouse_pos()
+
         return True
 
     def _modkey_used(self, key, mods=None):
@@ -260,13 +288,25 @@ class Widget(object):
             self.set_focus(widget)
             new_event = event.copy()
             # make it relative
-            new_event.pos -= widget.pos.current
-            if widget.mouse_down(when, event):
+            new_event.pos = self.pos_relative_to_widget(event.pos, widget)
+            if widget.params.in_drag_mode:
+                self.dragged_widget = widget
+            if widget.mouse_down(when, new_event):
                 return True
+
+        if self.params.in_drag_mode:
+            self.drag_start_pos = self.pos.current - mouse_pos()
+            self.pos.final = self.pos.current
+            
         return True
         
     def mouse_up(self, when, event):
-        pass
+        if self.params.in_drag_mode and self.drag_start_pos:
+            self.drag_start_pos = None
+            return True
+        return False
+
+            
     def key_up(self, when, event):
         pass
     def key_down(self, when, event):
