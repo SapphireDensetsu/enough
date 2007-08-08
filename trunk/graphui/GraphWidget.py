@@ -108,7 +108,9 @@ class GraphWidget(Widget):
                             pygame.K_s: ("Save", self.save),
                             pygame.K_l: ("Load", self.load),
 
-                            pygame.K_g: ("Group node", self.assign_to_group),
+                            pygame.K_g: ("Group selected nodes", self.assign_to_group),
+                            pygame.K_f: ("Ungroup selected nodes", self.unassign_to_group),
+                            pygame.K_b: ("Toggle showing group names", self.toggle_show_group_names),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -346,6 +348,18 @@ class GraphWidget(Widget):
         for widget in self.focused_widgets:
             if isinstance(widget, NodeWidget):
                 widget.node.value.group_name = str(self._last_group)
+        self.update_layout()
+
+    def unassign_to_group(self):
+        for widget in self.focused_widgets:
+            if isinstance(widget, NodeWidget):
+                widget.node.value.group_name = None
+        self.update_layout()
+
+    def toggle_show_group_names(self):
+        for widget in self.widgets:
+            if isinstance(widget, NodeWidget):
+                widget.params.show_group_name = not widget.params.show_group_name
         self.update_layout()
         
     def _get_nodes_and_groups(self):

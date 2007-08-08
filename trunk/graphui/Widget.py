@@ -376,14 +376,17 @@ class Widget(object):
 
     # TODO move this to some subclass
     # :
-
-    def render_text(self):
+    def get_current_text_color(self):
         if self.params.in_focus:
             text_color = self.params.focus_text_color
         elif self.params.in_hover:
             text_color = self.params.hover_text_color
         else:
             text_color = self.params.text_color
+        return text_color
+        
+    def render_text(self):
+        text_color = self.get_current_text_color()
 
         params = (self.params.autosize, tuple(self.size.final), self.text, text_color)
         if self.params.autosize == "by text":
