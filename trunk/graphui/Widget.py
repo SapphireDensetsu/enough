@@ -280,7 +280,8 @@ class Widget(object):
         self.params.in_focus = True
         if not self._multiselect_modifier_used():
             self.unset_focus()
-            
+
+        self.dragged_widget = None
         for z, widget in reversed(self._z_ordered_widgets()):
             if not widget.in_bounds(p):
                 continue
@@ -301,6 +302,7 @@ class Widget(object):
         return True
         
     def mouse_up(self, when, event):
+        self.dragged_widget = None
         if self.params.in_drag_mode and self.drag_start_pos:
             self.drag_start_pos = None
             return True

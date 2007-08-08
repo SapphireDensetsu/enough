@@ -58,7 +58,7 @@ class RowWidget(Widget):
 
 #------------------------------------------------------------------
 
-def make_row_menu(label_values, choose_callback, width=200, row_height=50):
+def make_row_menu(label_values, choose_callback, width=100, row_height=30):
     
     # The choose_callback will get:
     # menu_widget, (label,value), clicked_widget, event
@@ -70,7 +70,7 @@ def make_row_menu(label_values, choose_callback, width=200, row_height=50):
         w.text = label
         
         # So the user won't edit the label
-        w.params.enabled = False
+        #w.params.enabled = False
         w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, (label, value), w))
         main.add_widget_to_row(w)
         

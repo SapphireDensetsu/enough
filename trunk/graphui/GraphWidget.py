@@ -252,11 +252,13 @@ class GraphWidget(Widget):
         multiselect = self._multiselect_modifier_used(mods)
         if self.focused_widgets and self._connect_modifier_used(mods):
             if e.button == 1:
-                self.connecting = True
                 self.connecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
+                if self.connecting_sources:
+                    self.connecting = True
             elif e.button == 3:
-                self.disconnecting = True
                 self.disconnecting_sources = [w.node for w in self.focused_widgets if isinstance(w, NodeWidget)]
+                if self.disconnecting_sources:
+                    self.disconnecting = True
             self.unset_focus()
         return True
             
@@ -312,13 +314,14 @@ class GraphWidget(Widget):
         return True
 
     def chosen(self, menu, (label,value), clicked_widget, event):
+        print 'chosen'
         if label=='transpose':
             menu.transpose()
             return
         if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
             return
         print label, value
-        self.remove_widget(menu)
+        #self.remove_widget(menu)
     
     def _add_edge(self, source, target, label='edge'):
         edge = Graph.Edge(source, target, GraphElementValue(label))
