@@ -39,11 +39,14 @@ class NodeWidget(Widget):
         from Shapes.Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(self.get_current_rect()))
             
+        self.params.add_allowed_name('show_group_name')
+        self.params.show_group_name = True
+
+    def reset(self):
+        super(NodeWidget, self).reset()
         self.cached_font_height = None
         self.cached_group_rendered_text = None
         self.cached_group_text = None
-        self.params.add_allowed_name('show_group_name')
-        self.params.show_group_name = True
         
     def key_down(self, when, e):
         if not self.params.enabled:
