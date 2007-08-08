@@ -69,9 +69,6 @@ class Widget(object):
         self._init_params()
         self._init_event_triggers()
 
-        self.history = []
-        self.history_redo = []
-        self.undoing = False
         self.max_undo = 25
 
         # TODO kick this outta here
@@ -79,7 +76,6 @@ class Widget(object):
         from Shapes.Rectangle import Rectangle
         self.shape = Rectangle(pygame.Rect(self.get_current_rect()))
 
-        self.save_next_paint = None
 
     def reset(self):
         self.font=None
@@ -87,6 +83,10 @@ class Widget(object):
         self.rendered_params = None
         self.rendered_text = None
         self.update_default_font()
+        self.save_next_paint = None
+        self.history = []
+        self.history_redo = []
+        self.undoing = False
         
     def __getstate__(self):
         d = self.__dict__.copy()
