@@ -161,13 +161,13 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
     # Generates a DOT language description of the graph
     # Expects each node and edge instance, to have a .value.dot_properties() method
     out = 'digraph G {\n'
+    out += 'graph [packMode=clust,'
     if graph_params is not None:
-        out += 'graph ['
         for k,v in graph_params.iteritems():
             out+='%s=%s,' % (k,v)
-        out += '];\n'
+    out += '];\n'
     for group_name, nodes in groups.iteritems():
-        out += 'subgraph "%s" {\n' % (group_name,)
+        out += 'subgraph "cluster%s" {\n' % (group_name,)
         for node in nodes:
             props_str = _repr_properties(node.value.dot_properties())
                 

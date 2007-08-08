@@ -18,7 +18,10 @@ What the heck do these mean:
 * Add some nice way to use the graph backend in Python (for example, every new node creation or connection calls a callback or something)
 
 Known bugs:
-* Make the edge text appear on one side (and not change sides randomly)
+* Make the edge text appear on one side (and not change sides
+   randomly)
+* undoing after loading, tries to undo stuff from the graph before the
+   load, which causes an exception.
 
 Functions to optimize, according to profiling:
 * paint_shape (in EdgeWidget) - 18.9% self time

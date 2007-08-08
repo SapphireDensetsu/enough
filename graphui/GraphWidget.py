@@ -73,6 +73,8 @@ class GraphWidget(Widget):
         self.params.hover_back_color = None
         self.params.focus_fore_color = (150,150,255)
 
+        self._last_group = 0
+        
     def reset_zoom_pan(self):
         self.pan_offset = Point((0,0))
         self.pos_zoom = 1
@@ -105,6 +107,8 @@ class GraphWidget(Widget):
                             
                             pygame.K_s: ("Save", self.save),
                             pygame.K_l: ("Load", self.load),
+
+                            pygame.K_g: ("Group node", self.assign_to_group),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -337,6 +341,12 @@ class GraphWidget(Widget):
             if isinstance(widget, NodeWidget):
                 yield widget
                 
+    def assign_to_group(self):
+        self._last_group += 1
+        for widget in self.focused_widgets:
+            widget.node.value.group_name = str(self._last_group)
+        self.update_layout()
+        
     def _get_nodes_and_groups(self):
         nodes = [widget.node for widget in self.iter_node_widgets()]
         groups = {}
