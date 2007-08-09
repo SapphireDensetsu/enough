@@ -38,7 +38,7 @@ from scancodes import scancode_map
 from graph_widgets import NodeWidget, EdgeWidget
 from GraphElementValue import GraphElementValue
 
-from RowWidget import make_row_menu
+from RowWidget import RowWidget,make_row_menu, make_row_label_menu
 
 message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
 
@@ -54,7 +54,7 @@ class GraphWidget(Widget):
         self.disconnecting = False
         self.preserve_aspect_ratio = True
         self.bezier_points = 30
-        self.modal_nodes = None
+        self.popup_menu_widget = None
         
         self.dot_prog_num = 0
         
@@ -280,6 +280,8 @@ class GraphWidget(Widget):
         if when == 'post':
             return res
         
+        self.close_popup()
+        
         e = event.pygame_event
         if self._pan_modifier_used():
             self.update_layout()
@@ -299,29 +301,49 @@ class GraphWidget(Widget):
                 target = target.node
                 self.disconnect_nodes(self.disconnecting_sources, target)
             self.disconnecting_source = None
-            
         elif e.button == 3:
             # right click
-            menu = make_row_menu((('transpose',None),('test',None),('this',None)), self.chosen)
-            menu.params.in_drag_mode = True
-            menu.painting_z_order = NodeWidget.painting_z_order + 1
-            menu.transpose()
-            self.add_widget(menu)
-            
+            self.show_popup()
         else:
             return False
 
         return True
 
-    def chosen(self, menu, (label,value), clicked_widget, event):
-        print 'chosen'
+    def close_popup(self):
+        if self.popup_menu_widget:
+            self.remove_widget(self.popup_menu_widget)
+            self.popup_menu_widget = None
+
+    def show_popup(self):
+        rows = []
+        values = self.control_map.values()
+        step = 4
+        item_width=180
+        item_height=30
+        margin=2
+        menu = RowWidget(Point(((item_width+margin)*step, item_height+2*margin)))
+        menu.margin = margin
+        for i in xrange(len(values)/step):
+            row = make_row_label_menu(tuple(values[i*step:i*step+step]), partial(self.chosen, menu),
+                                      width=item_width,
+                                      row_height=item_height)
+            row.margin=margin
+            row.painting_z_order = NodeWidget.painting_z_order + 1
+            row.transpose()
+            menu.add_widget_to_row(row)
+        menu.painting_z_order = NodeWidget.painting_z_order+1
+        menu.params.in_drag_mode = True
+        self.add_widget(menu)
+        self.popup_menu_widget = menu
+        
+    def chosen(self, menu, sub_menu, (label,value), clicked_widget, event):
         if label=='transpose':
             menu.transpose()
             return
         if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
             return
-        print label, value
-        #self.remove_widget(menu)
+        self.close_popup()
+        value()
     
     def _add_edge(self, source, target, label='edge'):
         edge = Graph.Edge(source, target, GraphElementValue(label))
@@ -427,7 +449,10 @@ class GraphWidget(Widget):
                 last_indices = {}
                 for edge, dot_edge in e[node].iteritems():
                     edge.value.widget.update_from_dot(dot_edge,
-                                                      x_scale=x_scale, y_scale=y_scale, x_offset=x_offset, y_offset=y_offset,
+                                                      x_scale=x_scale,
+                                                      y_scale=y_scale,
+                                                      x_offset=x_offset,
+                                                      y_offset=y_offset,
                                                       bezier_points=self.bezier_points)
 
     def paint_status_text(self, parent_offset, surface):
