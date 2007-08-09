@@ -60,10 +60,11 @@ class GraphWidget(Widget):
         
         self.dot_prog_num = 0
         
-        self.status_font = pygame.font.SysFont('serif',min(self.size.final.y/20, 18))
+        self.status_font = pygame.font.SysFont('serif',min(self.size.final.y/30, 12))
         self.rendered_status_texts = []
         self.set_status_text(message,15)
         self.set_status_text('CTRL-H for help', 15)
+        self.set_status_text('Right-Click for menu', 15)
 
         self.pan_start_pos = None
         self.reset_zoom_pan()
@@ -118,6 +119,13 @@ class GraphWidget(Widget):
 
                             pygame.K_h: ("Help","Show help", self.show_help),
                             }
+
+    def control_map_by_menu(self):
+        menu_dict = {}
+        for key, (menu, name, handler) in sorted(self.control_map.iteritems()):
+            menu_dict.setdefault(menu, []).append((key, name,handler))
+        return menu_dict
+        
     @undoable_method
     def add_nodes(self, nodes):
         self.set_status_text("Add %d nodes" % (len(nodes),))
@@ -309,12 +317,10 @@ class GraphWidget(Widget):
             self.disconnecting_source = None
         elif e.button == 3:
             # right click
-            menu_dict = {}
-            for menu, name, handler in sorted(self.control_map.values()):
-                menu_dict.setdefault(menu, []).append((name,handler))
             menu_seq = []
+            menu_dict = self.control_map_by_menu()
             for menu in menu_dict:
-                current_submenu = tuple(menu_dict[menu])
+                current_submenu = [(name,handler) for (key,name,handler) in menu_dict[menu]]
                 menu_seq.append((menu, current_submenu))
             self.show_popup(menu_seq)
         else:
@@ -339,7 +345,7 @@ class GraphWidget(Widget):
         # menu_list Should be a sequence:
         # ('submenu title', (('label', handler), ('label2', handler2), etc...)], ), ('nextsubmenu', ....)
         for submenu_title, name_handlers in menu_list:
-            step = min(4, len(name_handlers))
+            step = min(3, len(name_handlers))+1
 
             submenu = RowWidget()
             submenu.transpose()
@@ -512,8 +518,12 @@ class GraphWidget(Widget):
 
     def show_help(self):
         self.set_status_text(message, 10)
-        for key, (name, func) in sorted(self.control_map.iteritems()):
-            self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
+        self.set_status_text('Right-Click for menu', 10)
+        d = self.control_map_by_menu()
+        for menu in d:
+            for key, name, handler in d[menu]:
+                self.set_status_text('CTRL-%s - %s' % (pygame_reverse_key_map[key][len('K_'):], name), 10)
+            self.set_status_text("-- %s --" % (menu,), 10)
 
     def focused_font_size(self, dir):
         if not self.focused_widgets:
