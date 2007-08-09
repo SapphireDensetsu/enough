@@ -45,8 +45,6 @@ def undoable_method(func):
     return new_func
     
 
-
-
 class Widget(object):
     painting_z_order = 0
     font_size = 40
@@ -315,10 +313,17 @@ class Widget(object):
             return True
         return False
 
-
     def set_focus(self, widget):
-        if widget not in self.focused_widgets:
+        if widget not in self.widgets:
+            for subwidget in self.widgets:
+                if subwidget.set_focus(widget):
+                    self.set_focus(subwidget)
+                    return True
+            return False
+        elif widget not in self.focused_widgets:
             self.focused_widgets.append(widget)
+            widget.params.in_focus = True
+            return True
         
     def unset_focus(self):
         for w in self.focused_widgets:

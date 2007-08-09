@@ -28,6 +28,7 @@ from Lib.Point import Point
 
 def main():
     pygame.init()
+    pygame.key.set_repeat(500,30)
     a = AppWidget(800, 600)
     
     #r = RowWidget()#size=Point((100,200)))

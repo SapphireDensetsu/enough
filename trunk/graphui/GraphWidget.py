@@ -73,6 +73,7 @@ class GraphWidget(Widget):
         self.params.focus_back_color = None
         self.params.hover_back_color = None
         self.params.focus_fore_color = (150,150,255)
+        self.params.enabled = False 
 
         self._last_group = 0
         
@@ -345,8 +346,8 @@ class GraphWidget(Widget):
                 current_values = tuple(name_handlers[i*step:i*step+step])
                 row = make_row_label_menu(current_values, partial(self.popup_item_chosen, submenu), text_size=20)
 
-                for (label,obj), item in zip(current_values, row.widgets):
-                    all_items.append(((label,obj),item))
+                for (label,obj), widget in zip(current_values, row.widgets):
+                    all_items.append(((label,obj),widget))
 
                 row.margin=margin
                 row.painting_z_order = NodeWidget.painting_z_order + 1
@@ -561,6 +562,7 @@ class GraphWidget(Widget):
             self.update_layout()
         submenu = ('load',[('enter filename here', None),('OK',do_load)])
         all_items = self.show_popup((submenu,))
+        self.set_focus(all_items[0][1])
 
     def save_snapshot_image(self, event, filename, *args, **kw):
         self.set_status_text("Saving snapshot to %r" % (filename,), 5)
