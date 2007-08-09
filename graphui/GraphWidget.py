@@ -304,7 +304,7 @@ class GraphWidget(Widget):
             self.disconnecting_source = None
         elif e.button == 3:
             # right click
-            self.show_popup(sorted(self.control_map.values()))
+            self.show_popup(tuple(sorted(self.control_map.values())))
         else:
             return False
 
@@ -334,7 +334,7 @@ class GraphWidget(Widget):
             times += 1
         for i in xrange(times):
             current_values = tuple(values[i*step:i*step+step])
-            row = make_row_label_menu(values, partial(self.popup_item_chosen, menu),
+            row = make_row_label_menu(current_values, partial(self.popup_item_chosen, menu),
                                       width=item_width,
                                       row_height=item_height)
             
