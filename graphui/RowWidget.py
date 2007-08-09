@@ -89,6 +89,7 @@ def make_row_menu(widgets, choose_callback, entry_size=None):
     main = RowWidget(entry_size)
     for w, obj in widgets:
         w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, obj, w))
+        #w.trigger_lists['pre'].register_event_type('enter down', partial(choose_callback, main, obj, w))
         main.add_widget_to_row(w)
     return main
 

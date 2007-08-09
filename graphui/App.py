@@ -99,6 +99,7 @@ class AppWidget(Widget):
         return True
     
     def translate_event(self, pygame_event):
+        events = []
         event_map = {pygame.KEYDOWN : 'key down',
                      pygame.KEYUP : 'key up',
                      pygame.MOUSEBUTTONDOWN : 'mouse down',
@@ -108,8 +109,10 @@ class AppWidget(Widget):
                      }
         event_type = event_map.get(pygame_event.type, None)
         if event_type is None:
-            return None
+            return events
+        
         e = self.new_event(event_type)
+        events.append(e)
         e.pygame_event = pygame_event
         if 'mouse' in e.type:
             e.pos = Point(e.pygame_event.pos)
@@ -117,13 +120,17 @@ class AppWidget(Widget):
         elif 'key' in e.type:
             e.key = e.pygame_event.key # TODO translate scancodes here
             e.to_focused = True
-        return e
+            if 'key down' == e.type:
+                enter_e = e.copy()
+                enter_e.type = 'enter down'
+                events.append(enter_e)
+            
+        return events
         
     def handle_events(self):
         events_handled = False
         for pygame_event in pygame.event.get():
-            event = self.translate_event(pygame_event)
-            if event is not None:
+            for event in self.translate_event(pygame_event):
                 self.handle_event(event)
                 events_handled = True
 

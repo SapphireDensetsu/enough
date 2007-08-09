@@ -365,7 +365,7 @@ class GraphWidget(Widget):
         return all_items
         
     def popup_item_chosen(self, menu, sub_menu, (label,value), clicked_widget, event):
-        if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
+        if ('mouse' in event.type) and not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
             return
         if value:
             self.close_popup()
