@@ -65,7 +65,7 @@ class Widget(object):
                                   
         
         self.text = text
-        self.font_size = font_size
+        self._font_size = font_size
         self.reset()
         
         self._init_params()
@@ -79,6 +79,13 @@ class Widget(object):
         self.shape = Rectangle(pygame.Rect(self.get_current_rect()))
 
 
+    def get_font_size(self):
+        return self._font_size
+    def set_font_size(self, value):
+        self._font_size = value
+        self.update_default_font()
+    font_size = property(fget=get_font_size,fset=set_font_size)
+    
     def reset(self):
         self.font=None
         self.default_font=None
@@ -498,8 +505,8 @@ class Widget(object):
         surface.blit(self.rendered_text, tuple(parent_offset + self.center_pos()-text_size*0.5))
 
     def change_font_size(self, add = 0, mul = 1):
-        self.font_size *= mul
-        self.font_size += add
-        self.default_font = get_font(self.font_size)
+        self._font_size *= mul
+        self._font_size += add
+        self.update_default_font()
 
         

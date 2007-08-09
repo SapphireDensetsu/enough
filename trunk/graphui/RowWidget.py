@@ -26,52 +26,81 @@ from guilib import MovingValue
 from functools import partial
 
 class RowWidget(Widget):
-    def __init__(self, entry_size, *args, **kw):
+    def __init__(self, entry_size=None, *args, **kw):
         # TODO add autosize flag
         super(RowWidget, self).__init__(*args, **kw)
 
         self.margin = 5
         self.entry_size = entry_size
         self.transposed = False # True means this is a column
-        self.cached_size = None
-        self.row_size = Point((1,1))*self.margin
 
     def add_widget_to_row(self, widget):
         self.layout_widget(len(self.widgets), widget)
         self.add_widget(widget)
 
+    def paint(self, *args,**kw):
+        if not self.entry_size:
+            self.relayout()
+        return super(RowWidget,self).paint(*args,**kw)
+        
     def layout_widget(self, index, widget):
+        widget.update_moving() # If the widget needs to resize itself, let it
         p_margin = Point((self.margin,self.margin))
-        widget.size.final = self.entry_size.copy()
-        widget.pos.final = p_margin + (self.entry_size + p_margin)*index
-        if self.transposed:
-            widget.pos.final.y = self.margin
+        if self.entry_size:
+            widget.size.final = self.entry_size.copy()
+            widget.pos.final = p_margin + (self.entry_size + p_margin)*index
+            if self.transposed:
+                widget.pos.final.y = self.margin
+            else:
+                widget.pos.final.x = self.margin
+            self.size.final = widget.size.final + widget.pos.final + p_margin
         else:
-            widget.pos.final.x = self.margin
-        self.size.final = widget.size.final + widget.pos.final + Point((self.margin,self.margin))
+            if self.transposed:
+                size = Point((self.margin,self.size.final.y))
+            else:
+                size = Point((self.size.final.x,self.margin))
 
-    def transpose(self):
-        self.transposed = not self.transposed
+            widget.pos.final = size
+            
+            if self.transposed:
+                self.size.final.x = max(self.size.final.x, widget.pos.final.x + widget.size.final.x + self.margin)
+                self.size.final.y = widget.pos.final.y + widget.size.final.y + self.margin
+            else:
+                self.size.final.y = max(self.size.final.y, widget.pos.final.y + widget.size.final.y + self.margin)
+                self.size.final.x = widget.pos.final.x + widget.size.final.x + self.margin
+
+    def relayout(self):
+        if not self.entry_size:
+            self.size.final = Point((self.margin,self.margin))
         for i,widget in enumerate(self.widgets):
             self.layout_widget(i,widget)
+        
+    def transpose(self):
+        self.transposed = not self.transposed
+        self.relayout()
 
 
 #------------------------------------------------------------------
 
-def make_row_menu(widgets, choose_callback, width=100, row_height=30):
+def make_row_menu(widgets, choose_callback, entry_size=None):
     # The choose_callback will get:
     # menu_widget, obj, clicked_widget, event
     # (event that triggered the callback (mouse up event normally))
-    main = RowWidget(Point((width, row_height)))
+    main = RowWidget(entry_size)
     for w, obj in widgets:
         w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, obj, w))
         main.add_widget_to_row(w)
     return main
 
-def make_row_label_menu(label_values, choose_callback, width=100, row_height=30):
+def make_row_label_menu(label_values, choose_callback, entry_size=None, text_size=None):
+    if entry_size and text_size:
+        raise ValueErrot("Only one of entry_size, text_size can be set")
     widgets = []
     for label,value in label_values:
-        w = RowWidget(Point((width, row_height)))
+        w = RowWidget(entry_size)
         w.text = label
+        if not entry_size:
+            w.params.autosize = 'by text'
+            w.font_size = text_size
         widgets.append((w, (label,value)))
-    return make_row_menu(widgets, choose_callback, width=width, row_height=row_height)
+    return make_row_menu(widgets, choose_callback, entry_size=entry_size)
