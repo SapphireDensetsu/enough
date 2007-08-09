@@ -27,7 +27,10 @@ from App import AppWidget
 from Lib.Point import Point
 
 def main():
-    pygame.init()
+    ok,bad = pygame.init()
+    if bad:
+        print "WARNING: Failed pygame.init on %d modules" % (bad,)
+        
     pygame.key.set_repeat(500,30)
     a = AppWidget(800, 600)
     
@@ -37,7 +40,7 @@ def main():
     
     #r2 = RowWidget()
     
-    g=GraphWidget(size=Point((800,600)))
+    g=GraphWidget(size=a.size.final.copy())
     #main_widget = RowWidget(size=Point((800,600)))
     #main_widget.add_widget_to_row(g)
     a.add_widget(g)
