@@ -326,14 +326,21 @@ class GraphWidget(Widget):
 
         menu = RowWidget(Point(((item_width+margin)*step, item_height+2*margin)))
         menu.margin = margin
+
+        all_items = []
         
         times = len(values)/step
         if len(values) % step:
             times += 1
         for i in xrange(times):
-            row = make_row_label_menu(tuple(values[i*step:i*step+step]), partial(self.popup_item_chosen, menu),
+            current_values = tuple(values[i*step:i*step+step])
+            row = make_row_label_menu(values, partial(self.popup_item_chosen, menu),
                                       width=item_width,
                                       row_height=item_height)
+            
+            for (label,obj), item in zip(current_values, row.widgets):
+                all_items.append(((label,obj),item))
+                
             row.margin=margin
             row.painting_z_order = NodeWidget.painting_z_order + 1
             row.transpose()
@@ -343,6 +350,7 @@ class GraphWidget(Widget):
         menu.pos.final = self.size.final / 2 - menu.size.final / 2
         self.add_widget(menu)
         self.popup_menu_widget = menu
+        return all_items
         
     def popup_item_chosen(self, menu, sub_menu, (label,value), clicked_widget, event):
         if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
@@ -500,6 +508,7 @@ class GraphWidget(Widget):
         filename = FILENAME
         ext=self.EXT
         def do_save():
+            filename = all_items[0][1].text
             try:
                 def done_snapshot(filename_ext, width, height):
                     image = open(filename+ext, 'rb').read()
@@ -517,25 +526,28 @@ class GraphWidget(Widget):
                 return
             self.set_status_text("Saved successfully")
 
-        self.show_popup([('filename', None),('OK',do_save)])
+        all_items = self.show_popup([('enter filename here', None),('OK',do_save)])
 
     def load(self):
         filename = FILENAME
         ext=self.EXT
-        try:
-            f=open(filename+ext, 'rb')
-            f.seek(-4,2)
-            import struct
-            image_len, = struct.unpack('L', f.read())
-            f.seek(image_len)
-            saved = f.read()[:-4]
-            open(filename+'.tmp', 'wb').write(saved)
-            self.set_status_text("Loading from %s..." % (filename,), 2)
-            super(GraphWidget, self).load(filename+'.tmp')
-        except Exception, e:
-            self.set_status_text("Load failed %s" % (e,))
-            raise
-        self.update_layout()
+        def do_load():
+            filename = all_items[0][1].text
+            try:
+                f=open(filename+ext, 'rb')
+                f.seek(-4,2)
+                import struct
+                image_len, = struct.unpack('L', f.read())
+                f.seek(image_len)
+                saved = f.read()[:-4]
+                open(filename+'.tmp', 'wb').write(saved)
+                self.set_status_text("Loading from %s..." % (filename,), 2)
+                super(GraphWidget, self).load(filename+'.tmp')
+            except Exception, e:
+                self.set_status_text("Load failed %s" % (e,))
+                return
+            self.update_layout()
+        all_items = self.show_popup([('enter filename here', None),('OK',do_load)])
 
     def save_snapshot_image(self, event, filename, *args, **kw):
         self.set_status_text("Saving snapshot to %r" % (filename,), 5)
