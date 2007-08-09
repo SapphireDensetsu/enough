@@ -98,6 +98,10 @@ class Widget(object):
         self.history = []
         self.history_redo = []
         self.undoing = False
+
+        self.shape_image = None
+        self.focused_shape_image = None
+        self.hovered_shape_image = None
         
     def __getstate__(self):
         d = self.__dict__.copy()
@@ -353,7 +357,6 @@ class Widget(object):
             self.text += ch
 
     def enter_down(self, when, event):
-        print 'enter'
         pass
     
     ########################################################
@@ -507,7 +510,13 @@ class Widget(object):
             return
 
         #rect = tuple(self.pos.current + parent_offset) + tuple(self.size.current)
-        self.shape.paint(parent_offset, surface, fore_color, back_color)
+        if self.params.in_focus:
+            image = self.focused_shape_image
+        elif self.params.in_hover:
+            image = self.hovered_shape_image
+        else:
+            image = self.shape_image
+        self.shape.paint(parent_offset, surface, fore_color, back_color, image)
 
     def paint_text(self, parent_offset, surface):
         lines = self.text.split('\n')

@@ -40,6 +40,8 @@ from GraphElementValue import GraphElementValue
 
 from RowWidget import RowWidget,make_row_menu, make_row_label_menu
 
+from Lib.image import load_image
+
 message = 'Graphui | http://code.google.com/p/enough | Enough Lame Computing! | GPLv3'
 
 class GraphWidget(Widget):
@@ -70,12 +72,16 @@ class GraphWidget(Widget):
         #self.shape = None
         #self.params.fore_color = None
         self.params.back_color = None
-        self.params.focus_back_color = None
-        self.params.hover_back_color = None
+        self.params.focus_back_color = (20,20,50)
+        self.params.hover_back_color = (10,10,25)
         self.params.focus_fore_color = (150,150,255)
         self.params.enabled = False 
 
         self._last_group = 0
+
+        self.rect_image = load_image("images/square_purple_gray.png")
+        self.focused_rect_image = load_image("images/square.png")
+        self.hovered_rect_image = load_image("images/square_purple.png")
         
     def reset_zoom_pan(self):
         self.pan_offset = Point((0,0))
@@ -203,7 +209,7 @@ class GraphWidget(Widget):
             self.stop_record()
 
     def create_new_node(self):
-        self.add_nodes([Graph.Node(GraphElementValue('new'))])
+        self.add_nodes([Graph.Node(GraphElementValue(''))])
 
     def output_dot_description(self):
         nodes, groups = self._get_nodes_and_groups()
@@ -348,6 +354,7 @@ class GraphWidget(Widget):
 
                 for (label,obj), widget in zip(current_values, row.widgets):
                     all_items.append(((label,obj),widget))
+                    widget.shape=None
 
                 row.margin=margin
                 row.painting_z_order = NodeWidget.painting_z_order + 1
@@ -360,6 +367,11 @@ class GraphWidget(Widget):
         menu.params.in_drag_mode = True
         menu.pos.final = self.size.final / 2 - menu.size.final / 2
         menu.painting_z_order = NodeWidget.painting_z_order+1
+
+        #menu.shape_image = self.rect_image
+        #menu.hovered_shape_image = self.hovered_rect_image
+        #menu.focused_shape_image = self.focused_rect_image
+
         self.add_widget(menu)
         self.popup_menu_widget = menu
         return all_items
@@ -371,7 +383,7 @@ class GraphWidget(Widget):
             self.close_popup()
             value()
     
-    def _add_edge(self, source, target, label='edge'):
+    def _add_edge(self, source, target, label=''):
         edge = Graph.Edge(source, target, GraphElementValue(label))
         source.connect_edge(edge)
         edge_widget = source.value.widget.add_edge(edge)
