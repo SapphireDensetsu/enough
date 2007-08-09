@@ -308,11 +308,6 @@ class Widget(object):
             return True
         return False
 
-            
-    def key_up(self, when, event):
-        pass
-    def key_down(self, when, event):
-        pass
 
     def set_focus(self, widget):
         if widget not in self.focused_widgets:
@@ -322,6 +317,27 @@ class Widget(object):
         for w in self.focused_widgets:
             w.params.in_focus = False
         self.focused_widgets = []
+
+            
+    def key_up(self, when, event):
+        pass
+    
+    def key_down(self, when, event):
+        if when=='pre':
+            return False
+        if not self.params.enabled:
+            return False
+        self.entered_text(event)
+        return True
+
+    def entered_text(self, event):
+        import string
+        event = event.pygame_event
+        if event.key == pygame.K_BACKSPACE:
+            self.text = self.text[:-1]
+        elif event.unicode in (string.letters + string.digits + string.hexdigits + ' \r' + string.punctuation):
+            ch = event.unicode.replace('\r', '\n')
+            self.text += ch
 
     ########################################################
     def get_current_rect(self):

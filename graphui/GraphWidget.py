@@ -279,8 +279,9 @@ class GraphWidget(Widget):
         res = super(GraphWidget, self).mouse_up(when, event)
         if when == 'post':
             return res
-        
-        self.close_popup()
+
+        if self.popup_menu_widget not in self.focused_widgets and self.popup_menu_widget != self.hovered_widget:
+            self.close_popup()
         
         e = event.pygame_event
         if self._pan_modifier_used():
@@ -303,7 +304,7 @@ class GraphWidget(Widget):
             self.disconnecting_source = None
         elif e.button == 3:
             # right click
-            self.show_popup()
+            self.show_popup(sorted(self.control_map.values()))
         else:
             return False
 
@@ -314,17 +315,23 @@ class GraphWidget(Widget):
             self.remove_widget(self.popup_menu_widget)
             self.popup_menu_widget = None
 
-    def show_popup(self):
+    def show_popup(self, name_handlers):
+        self.close_popup()
         rows = []
-        values = self.control_map.values()
-        step = 4
+        values = name_handlers # Should be a sequence: (('label', handler), ('label2', handler2), etc...)
+        step = min(4, len(values))
         item_width=180
         item_height=30
         margin=2
+
         menu = RowWidget(Point(((item_width+margin)*step, item_height+2*margin)))
         menu.margin = margin
-        for i in xrange(len(values)/step):
-            row = make_row_label_menu(tuple(values[i*step:i*step+step]), partial(self.chosen, menu),
+        
+        times = len(values)/step
+        if len(values) % step:
+            times += 1
+        for i in xrange(times):
+            row = make_row_label_menu(tuple(values[i*step:i*step+step]), partial(self.popup_item_chosen, menu),
                                       width=item_width,
                                       row_height=item_height)
             row.margin=margin
@@ -333,17 +340,16 @@ class GraphWidget(Widget):
             menu.add_widget_to_row(row)
         menu.painting_z_order = NodeWidget.painting_z_order+1
         menu.params.in_drag_mode = True
+        menu.pos.final = self.size.final / 2 - menu.size.final / 2
         self.add_widget(menu)
         self.popup_menu_widget = menu
         
-    def chosen(self, menu, sub_menu, (label,value), clicked_widget, event):
-        if label=='transpose':
-            menu.transpose()
-            return
+    def popup_item_chosen(self, menu, sub_menu, (label,value), clicked_widget, event):
         if not clicked_widget.in_bounds(event.pos + clicked_widget.pos.current):
             return
-        self.close_popup()
-        value()
+        if value:
+            self.close_popup()
+            value()
     
     def _add_edge(self, source, target, label='edge'):
         edge = Graph.Edge(source, target, GraphElementValue(label))
@@ -493,23 +499,25 @@ class GraphWidget(Widget):
         # TODO fix the image code its ugly
         filename = FILENAME
         ext=self.EXT
-        try:
-            def done_snapshot(filename_ext, width, height):
-                image = open(filename+ext, 'rb').read()
-                self.set_status_text("Saving to %r..." % (filename,), 2)
-                super(GraphWidget, self).save(filename+'.tmp')
-                saved = open(filename+'.tmp', 'rb').read()
-                import struct
-                image_size = struct.pack('L', len(image))
-                open(filename+ext, 'wb').write(image + saved + image_size)
-                
-            self.save_snapshot_on_next_paint(filename+ext, callback_when_done=done_snapshot)
-            
-        except Exception, e:
-            self.set_status_text("Save failed %s" % (e,))
-            return
-        self.set_status_text("Saved successfully")
-        
+        def do_save():
+            try:
+                def done_snapshot(filename_ext, width, height):
+                    image = open(filename+ext, 'rb').read()
+                    self.set_status_text("Saving to %r..." % (filename,), 2)
+                    super(GraphWidget, self).save(filename+'.tmp')
+                    saved = open(filename+'.tmp', 'rb').read()
+                    import struct
+                    image_size = struct.pack('L', len(image))
+                    open(filename+ext, 'wb').write(image + saved + image_size)
+
+                self.save_snapshot_on_next_paint(filename+ext, callback_when_done=done_snapshot)
+
+            except Exception, e:
+                self.set_status_text("Save failed %s" % (e,))
+                return
+            self.set_status_text("Saved successfully")
+
+        self.show_popup([('filename', None),('OK',do_save)])
 
     def load(self):
         filename = FILENAME
