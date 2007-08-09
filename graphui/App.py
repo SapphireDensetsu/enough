@@ -40,6 +40,7 @@ class AppWidget(Widget):
         self.params.back_color = (0,0,0)
         
         self.record = False
+        self.last_surface = None
 
         from Lib.Font import get_font
         self._fps_font = get_font(30)
@@ -119,21 +120,22 @@ class AppWidget(Widget):
         return e
         
     def handle_events(self):
+        events_handled = False
         for pygame_event in pygame.event.get():
             event = self.translate_event(pygame_event)
             if event is not None:
                 self.handle_event(event)
+                events_handled = True
 
-        self.cause_paint()
+        self.cause_paint(events_handled)
 
     zero_point = Point((0,0))
-    def cause_paint(self):
+    def cause_paint(self, events_handled):
         e = self.new_event('paint')
         e.surface = self.screen
         e.to_all = True
         e.parent_offset = self.zero_point
         self.handle_event(e)
-
 
     def _init_event_triggers(self):
         super(AppWidget, self)._init_event_triggers()
@@ -157,9 +159,8 @@ class AppWidget(Widget):
         pygame.display.update()
 
         if self.record:
-            self.save_snapshot_image(self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
+            self.save_snapshot_image(event, self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
             self._frame_counter+=1
-
 
     #_______________________________
     

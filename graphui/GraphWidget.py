@@ -84,34 +84,32 @@ class GraphWidget(Widget):
         
     def init_control_map(self):
         zoom_amount = 1.3
-        self.control_map = {pygame.K_w: ("Zoom in", partial(self.zoom, zoom_amount)),
-                            pygame.K_q: ("Zoom out", partial(self.zoom, 1.0/zoom_amount)),
-                            pygame.K_z: ("Undo", self.undo),
-                            pygame.K_y: ("Redo", self.redo),
-                            pygame.K_p: ("Record (toggle)", self.toggle_record),
-                            pygame.K_i: ("Save snapshot image", partial(self.save_snapshot_image, "graphui.snapshot.bmp")),
-                            pygame.K_a: ("Create new node", self.create_new_node),
-                            pygame.K_o: ("Output DOT description", self.output_dot_description),
-                            pygame.K_EQUALS: ("Higher curve resolution", partial(self.change_curve_resolution,
+        self.control_map = {pygame.K_w: ("View","Zoom in", partial(self.zoom, zoom_amount)),
+                            pygame.K_q: ("View","Zoom out", partial(self.zoom, 1.0/zoom_amount)),
+                            pygame.K_z: ("Edit","Undo", self.undo),
+                            pygame.K_y: ("Edit","Redo", self.redo),
+                            pygame.K_p: ("Tools","Record (toggle)", self.toggle_record),
+                            pygame.K_i: ("Tools","Save snapshot image", partial(self.save_snapshot_image, "graphui.snapshot.bmp")),
+                            pygame.K_o: ("File","Output DOT", self.output_dot_description),
+                            pygame.K_EQUALS: ("View","More curve points", partial(self.change_curve_resolution,
                                                                                  3)),
-                            pygame.K_MINUS: ("Lower curve resolution", partial(self.change_curve_resolution,
+                            pygame.K_MINUS: ("View","Less curve points", partial(self.change_curve_resolution,
                                                                                -3)),
-                            pygame.K_h: ("Show help", self.show_help),
-                            pygame.K_F1:("Show help", self.show_help),
-                            pygame.K_k: ("Switch layout engine", partial(self.toggle_layout_engine, 1)),
-                            pygame.K_d: ("Delete selected node/edge", self.delete_focused),
-                            pygame.K_1: ("Smaller font for node/edge", partial(self.focused_font_size, 1/1.1)),
-                            pygame.K_2: ("Larger font for node/edge", partial(self.focused_font_size, 1.1)),
+                            pygame.K_k: ("View","Switch layout engine", partial(self.toggle_layout_engine, 1)),
+                            pygame.K_a: ("Edit","Create new node", self.create_new_node),
+                            pygame.K_d: ("Edit","Delete selected", self.delete_focused),
                             
-                            pygame.K_e: ("Toggle stretch/keep aspect ratio", self.toggle_aspect_ratio),
-                            pygame.K_r: ("Reset zoom & pan", self.reset_zoom_pan),
+                            pygame.K_e: ("View", "Stretch (toggle)", self.toggle_aspect_ratio),
+                            pygame.K_r: ("View", "Reset zoom & pan", self.reset_zoom_pan),
                             
-                            pygame.K_s: ("Save", self.save),
-                            pygame.K_l: ("Load", self.load),
+                            pygame.K_s: ("File", "Save", self.save),
+                            pygame.K_l: ("File", "Load", self.load),
 
-                            pygame.K_g: ("Group selected nodes", self.assign_to_group),
-                            pygame.K_f: ("Ungroup selected nodes", self.unassign_to_group),
-                            pygame.K_b: ("Toggle showing group names", self.toggle_show_group_names),
+                            pygame.K_g: ("Edit", "Group selected", self.assign_to_group),
+                            pygame.K_f: ("Edit", "Ungroup selected", self.unassign_to_group),
+                            pygame.K_b: ("View", "Toggle group names", self.toggle_show_group_names),
+
+                            pygame.K_h: ("Help","Show help", self.show_help),
                             }
     @undoable_method
     def add_nodes(self, nodes):
@@ -227,7 +225,7 @@ class GraphWidget(Widget):
                 print 'Unknown scancode', scancode, 'key=', e.key, 'unicode=', e.unicode
             key = scancode_map.get(scancode, e.key)
         if key in self.control_map:
-            name, handler = self.control_map[key]
+            menu_name, name, handler = self.control_map[key]
             handler()
 
     def _connect_modifier_used(self, mods=None):
@@ -304,7 +302,14 @@ class GraphWidget(Widget):
             self.disconnecting_source = None
         elif e.button == 3:
             # right click
-            self.show_popup(tuple(sorted(self.control_map.values())))
+            menu_dict = {}
+            for menu, name, handler in sorted(self.control_map.values()):
+                menu_dict.setdefault(menu, []).append((name,handler))
+            menu_seq = []
+            for menu in menu_dict:
+                current_submenu = tuple(menu_dict[menu])
+                menu_seq.append((menu, current_submenu))
+            self.show_popup(menu_seq)
         else:
             return False
 
@@ -315,39 +320,45 @@ class GraphWidget(Widget):
             self.remove_widget(self.popup_menu_widget)
             self.popup_menu_widget = None
 
-    def show_popup(self, name_handlers):
+    def show_popup(self, menu_list):
         self.close_popup()
-        rows = []
-        values = name_handlers # Should be a sequence: (('label', handler), ('label2', handler2), etc...)
-        step = min(4, len(values))
         item_width=180
         item_height=30
         margin=2
-
-        menu = RowWidget(Point(((item_width+margin)*step, item_height+2*margin)))
-        menu.margin = margin
-
         all_items = []
         
-        times = len(values)/step
-        if len(values) % step:
-            times += 1
-        for i in xrange(times):
-            current_values = tuple(values[i*step:i*step+step])
-            row = make_row_label_menu(current_values, partial(self.popup_item_chosen, menu),
-                                      width=item_width,
-                                      row_height=item_height)
-            
-            for (label,obj), item in zip(current_values, row.widgets):
-                all_items.append(((label,obj),item))
-                
-            row.margin=margin
-            row.painting_z_order = NodeWidget.painting_z_order + 1
-            row.transpose()
-            menu.add_widget_to_row(row)
-        menu.painting_z_order = NodeWidget.painting_z_order+1
+        menu = RowWidget()
+        
+        # menu_list Should be a sequence:
+        # ('submenu title', (('label', handler), ('label2', handler2), etc...)], ), ('nextsubmenu', ....)
+        for submenu_title, name_handlers in menu_list:
+            step = min(4, len(name_handlers))
+
+            submenu = RowWidget()
+            submenu.transpose()
+            submenu.margin = margin
+
+            times = len(name_handlers)/step
+            if len(name_handlers) % step:
+                times += 1
+            for i in xrange(times):
+                current_values = tuple(name_handlers[i*step:i*step+step])
+                row = make_row_label_menu(current_values, partial(self.popup_item_chosen, submenu), text_size=20)
+
+                for (label,obj), item in zip(current_values, row.widgets):
+                    all_items.append(((label,obj),item))
+
+                row.margin=margin
+                row.painting_z_order = NodeWidget.painting_z_order + 1
+                row.transpose()
+                row.shape = None
+                submenu.add_widget_to_row(row)
+
+            menu.add_widget_to_row(submenu)
+
         menu.params.in_drag_mode = True
         menu.pos.final = self.size.final / 2 - menu.size.final / 2
+        menu.painting_z_order = NodeWidget.painting_z_order+1
         self.add_widget(menu)
         self.popup_menu_widget = menu
         return all_items
@@ -526,7 +537,8 @@ class GraphWidget(Widget):
                 return
             self.set_status_text("Saved successfully")
 
-        all_items = self.show_popup([('enter filename here', None),('OK',do_save)])
+        submenu = ('save',[('enter filename here', None),('OK',do_save)])
+        all_items = self.show_popup((submenu,))
 
     def load(self):
         filename = FILENAME
@@ -547,7 +559,8 @@ class GraphWidget(Widget):
                 self.set_status_text("Load failed %s" % (e,))
                 return
             self.update_layout()
-        all_items = self.show_popup([('enter filename here', None),('OK',do_load)])
+        submenu = ('load',[('enter filename here', None),('OK',do_load)])
+        all_items = self.show_popup((submenu,))
 
     def save_snapshot_image(self, event, filename, *args, **kw):
         self.set_status_text("Saving snapshot to %r" % (filename,), 5)
