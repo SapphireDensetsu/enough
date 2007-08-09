@@ -31,24 +31,14 @@ class GraphElementValue(object):
 
     def set_widget(self, widget):
         self._widget = widget
-        self.update_widget_text()
+        self._widget.text = self.name
         self._widget.pos.final = self.start_pos
     def get_widget(self):
         return self._widget
     widget = property(fget=get_widget,fset=set_widget)
     
-    def update_widget_text(self):
-        self._widget.text = self.name
-
-    def entered_text(self, event):
-        import string
-        event = event.pygame_event
-        if event.key == pygame.K_BACKSPACE:
-            self.name = self.name[:-1]
-        elif event.unicode in (string.letters + string.digits + string.hexdigits + ' \r' + string.punctuation):
-            ch = event.unicode.replace('\r', '\n')
-            self.name += ch
-        self.update_widget_text()
+    def update_from_widget_text(self):
+        self.name = self._widget.text
 
     def dot_properties(self):
         name_text = repr(str(self.name))[1:-1] # Str translates unicode to regular strings

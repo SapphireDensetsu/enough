@@ -48,11 +48,10 @@ class NodeWidget(Widget):
         self.cached_group_rendered_text = None
         self.cached_group_text = None
         
-    def key_down(self, when, e):
-        if not self.params.enabled:
-            return False
-        self.node.value.entered_text(e)
-        return True
+    def entered_text(self, *args, **kw):
+        res = super(NodeWidget, self).entered_text(*args, **kw)
+        self.node.value.update_from_widget_text()
+        return res
     
     def set_node(self, node):
         self.node = node
@@ -131,17 +130,13 @@ class EdgeWidget(Widget):
 
         self.shape = None
 
-    def key_down(self, when, e):
-        if not self.params.enabled:
-            return False
-        self.edge.value.entered_text(e)
-        return True
-
     def in_bounds(self, pos):
         return point_near_polyline(pos, self.line.current, 8)
 
-    def entered_text(self, e):
-        self.edge.value.entered_text(e)
+    def entered_text(self, *args, **kw):
+        res = super(NodeWidget, self).entered_text(*args, **kw)
+        self.node.value.update_from_widget_text()
+        return res
 
     def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, x_offset=0, y_offset=0, bezier_points=30):
         self.text_pos = Point((dot_edge['lx']*x_scale+x_offset, dot_edge['ly']*y_scale+y_offset))

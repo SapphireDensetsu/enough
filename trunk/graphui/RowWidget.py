@@ -64,8 +64,6 @@ def make_row_menu(widgets, choose_callback, width=100, row_height=30):
     # (event that triggered the callback (mouse up event normally))
     main = RowWidget(Point((width, row_height)))
     for w, obj in widgets:
-        # So the user won't edit the label
-        #w.params.enabled = False
         w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, obj, w))
         main.add_widget_to_row(w)
     return main
