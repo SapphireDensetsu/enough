@@ -151,7 +151,7 @@ class EdgeWidget(Widget):
 
     def entered_text(self, *args, **kw):
         res = super(EdgeWidget, self).entered_text(*args, **kw)
-        self.node.value.update_from_widget_text()
+        self.edge.value.update_from_widget_text()
         return res
 
     def update_from_dot(self, dot_edge, x_scale=1, y_scale=1, x_offset=0, y_offset=0, bezier_points=30):
