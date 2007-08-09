@@ -58,20 +58,22 @@ class RowWidget(Widget):
 
 #------------------------------------------------------------------
 
-def make_row_menu(label_values, choose_callback, width=100, row_height=30):
-    
+def make_row_menu(widgets, choose_callback, width=100, row_height=30):
     # The choose_callback will get:
-    # menu_widget, (label,value), clicked_widget, event
+    # menu_widget, obj, clicked_widget, event
     # (event that triggered the callback (mouse up event normally))
-    
     main = RowWidget(Point((width, row_height)))
+    for w, obj in widgets:
+        # So the user won't edit the label
+        #w.params.enabled = False
+        w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, obj, w))
+        main.add_widget_to_row(w)
+    return main
+
+def make_row_label_menu(label_values, choose_callback, width=100, row_height=30):
+    widgets = []
     for label,value in label_values:
         w = RowWidget(Point((width, row_height)))
         w.text = label
-        
-        # So the user won't edit the label
-        #w.params.enabled = False
-        w.trigger_lists['pre'].register_event_type('mouse up', partial(choose_callback, main, (label, value), w))
-        main.add_widget_to_row(w)
-        
-    return main
+        widgets.append((w, (label,value)))
+    return make_row_menu(widgets, choose_callback, width=width, row_height=row_height)
