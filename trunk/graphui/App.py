@@ -163,7 +163,7 @@ class AppWidget(Widget):
 
         self._draw_fps()
             
-        pygame.display.update()
+        pygame.display.flip() #update()
 
         if self.record:
             self.save_snapshot_image(event, self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))

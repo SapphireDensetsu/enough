@@ -25,6 +25,7 @@ from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, rep
 
 from Lib.Font import get_font
 
+from Lib.image import load_image
 
 class NodeWidget(Widget):
     painting_z_order = 1 # these should always be painted AFTER edges
@@ -41,6 +42,10 @@ class NodeWidget(Widget):
             
         self.params.add_allowed_name('show_group_name')
         self.params.show_group_name = True
+
+        self.shape_image = load_image("images/circle_purple_gray.png")
+        self.focused_shape_image = load_image("images/circle.png")
+        self.hovered_shape_image = load_image("images/circle_purple.png")
 
     def reset(self):
         super(NodeWidget, self).reset()
@@ -129,12 +134,23 @@ class EdgeWidget(Widget):
         self.cached_parent_offset = None
 
         self.shape = None
+        self.draw_rect = None
 
     def in_bounds(self, pos):
-        return point_near_polyline(pos, self.line.current, 8)
+        dist = 8
+        if self.draw_rect:
+            if self.draw_rect.h < dist:
+                self.draw_rect.y -= dist
+                self.draw_rect.h += dist
+            if self.draw_rect.w < dist:
+                self.draw_rect.x -= dist
+                self.draw_rect.w += dist
+            if not self.draw_rect.collidepoint(tuple(pos)):
+                return False
+        return point_near_polyline(pos, self.line.current, dist)
 
     def entered_text(self, *args, **kw):
-        res = super(NodeWidget, self).entered_text(*args, **kw)
+        res = super(EdgeWidget, self).entered_text(*args, **kw)
         self.node.value.update_from_widget_text()
         return res
 
@@ -164,7 +180,7 @@ class EdgeWidget(Widget):
             self.cached_arrowhead = None
             
         self.line.update()
-        pygame.draw.lines(surface, back_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
+        self.draw_rect = pygame.draw.lines(surface, back_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
 
         if changed or change_stopped_now or not self.cached_arrowhead:
             # If we didn't cache the found intersection or some stuff changed....
