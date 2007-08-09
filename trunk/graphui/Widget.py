@@ -231,6 +231,7 @@ class Widget(object):
                                                     ('mouse up', self.mouse_up, False),
                                                     ('key up', self.key_up, False),
                                                     ('key down', self.key_down, False),
+                                                    ('enter down', self.enter_down, False),
                                                     ):
             for when in ('pre', 'post'):
                 # This saves for the common event handlers the need to
@@ -351,6 +352,10 @@ class Widget(object):
             ch = event.unicode.replace('\r', '\n')
             self.text += ch
 
+    def enter_down(self, when, event):
+        print 'enter'
+        pass
+    
     ########################################################
     def get_current_rect(self):
         return self.pos.current.x, self.pos.current.y, self.size.current.x, self.size.current.y
@@ -395,7 +400,7 @@ class Widget(object):
             widget.handle_event(new_event)
 
     #############################################################################
-
+            
     def undo(self):
         if not self.history:
             return
