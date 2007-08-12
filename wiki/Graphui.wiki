@@ -5,7 +5,7 @@
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
 
 
-http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2_thumbnail.jpg
+http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2_thumbnail.JPG
 [http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2.jpg Large version] 
 
 
