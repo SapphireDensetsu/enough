@@ -4,7 +4,7 @@
 = Features =
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
 
-Short *demo video*: http://enough.googlecode.com/svn/trunk/media/graphui_sneak_2.avi
+Short http://enough.googlecode.com/svn/trunk/media/graphui_sneak_2.mp4 *demo video*] (if you experience problems with QuickTime, use something else.)
 
 [http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2.jpg Screenshot]:
 
