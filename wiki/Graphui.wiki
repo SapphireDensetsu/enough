@@ -4,6 +4,12 @@
 = Features =
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
 
+
+http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2_thumbnail.jpg
+[http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2.jpg Large version] 
+
+
+
 Here are the current "features":
  * Automatic layout using [http://www.graphviz.org Dot, Neato & Twopi] (Graphviz). You can switch layout engines in real time
  * Cross-platform - tested on Linux (ubuntu) and Windows
