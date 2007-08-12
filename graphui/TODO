@@ -1,4 +1,6 @@
 * High priority
+  * Refactor or event rewrite some code to make event handling more normal, and to make it easy to hook on edge addition/removal from within Lib.Graph (so that EVERY change to the graph will cause the hooks to be called)
+
   * Persistency (Save/load): Still needs proper file selection
   * Maybe edge text should be given to dot after all, if the edge is
    too short, there is simply no room for the text.
