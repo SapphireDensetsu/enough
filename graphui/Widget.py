@@ -85,6 +85,7 @@ class Widget(object):
     font_size = property(fget=get_font_size,fset=set_font_size)
     
     def reset(self):
+        self.record = False
         self.font=None
         self.default_font=None
         self.rendered_params = None
@@ -391,6 +392,11 @@ class Widget(object):
             self.save_next_paint = None # reset before calling to prevent hypothetical recursions
             self.save_snapshot_image(event, *args, **kw)
             
+        if self.record:
+            pygame.draw.circle(surface, (255,100,100), (self.size.current.x-7, 7), 5, 0)
+            self.save_snapshot_image(event, self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
+            self._frame_counter+=1
+
         return True # since we are painting them explicitly, the lower widgets don't need to
 
     def paint_widgets(self, event):
@@ -432,7 +438,7 @@ class Widget(object):
     def save_snapshot_on_next_paint(self, filename, width=None, height=None, callback_when_done=None):
         self.save_next_paint = (filename,), dict(width=width, height=height, callback_when_done=callback_when_done)
         
-    def save_snapshot_image(self, event, filename, width=None, height=None, callback_when_done=None):
+    def save_snapshot_image(self, event, filename, width=None, height=None, callback_when_done=None, **kw):
         if width and not height:
             height = self.size.current.y/(self.size.current.x/float(width))
         elif height and not width:
@@ -528,4 +534,13 @@ class Widget(object):
         self._font_size += add
         self.update_default_font()
 
+        
+    def start_record(self):
+        self._frame_counter = 0
+        import os, time
+        self.record_dir = '/tmp/record_%s' % (time.time())
+        os.makedirs(self.record_dir)
+        self.record = True
+    def stop_record(self):
+        self.record = False
         

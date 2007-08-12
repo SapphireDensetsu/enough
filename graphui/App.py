@@ -39,7 +39,6 @@ class AppWidget(Widget):
         self.set_size(width, height, flags)
         self.params.back_color = (0,0,0)
         
-        self.record = False
         self.last_surface = None
 
         from Lib.Font import get_font
@@ -158,26 +157,11 @@ class AppWidget(Widget):
         self.paint_widgets(event)
 
         # This is the post-painting stuff - flip display, etc.
-        if self.record:
-            pygame.draw.circle(surface, (255,100,100), (self.width-11, 11), 10, 0)
-
         self._draw_fps()
             
         pygame.display.flip() #update()
 
-        if self.record:
-            self.save_snapshot_image(event, self.record_dir + '/img%4.4d.BMP' % (self._frame_counter))
-            self._frame_counter+=1
 
     #_______________________________
     
-    def start_record(self):
-        self._frame_counter = 0
-        import os, time
-        self.record_dir = '/tmp/record_%s' % (time.time())
-        os.makedirs(self.record_dir)
-        self.record = True
-    def stop_record(self):
-        self.record = False
-        
     #_______________________________

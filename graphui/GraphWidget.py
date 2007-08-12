@@ -553,7 +553,7 @@ class GraphWidget(Widget):
                     image_size = struct.pack('L', len(image))
                     open(filename+ext, 'wb').write(image + saved + image_size)
 
-                self.save_snapshot_on_next_paint(filename+ext, callback_when_done=done_snapshot)
+                self.save_snapshot_on_next_paint(filename+ext, callback_when_done=done_snapshot, saving=True)
 
             except Exception, e:
                 self.set_status_text("Save failed %s" % (e,))
@@ -587,18 +587,20 @@ class GraphWidget(Widget):
         self.set_focus(all_items[0][1])
 
     def save_snapshot_image(self, event, filename, *args, **kw):
-        self.set_status_text("Saving snapshot to %r" % (filename,), 5)
-        # We don't want the status text to appear in the snaphot
-        t = self.rendered_status_texts
-        self.rendered_status_texts = []
-        self.set_status_text("This is a Graphui file", 9999)
-        self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
-        # TODO : There is some bug here, the widgets are not painted in the correct order?
-        #self.cause_paint()
-        if not kw['width'] and not kw['height']:
-            kw['width'] = 640
+        if kw.get('saving', False):
+            # We don't want the status text to appear in the snaphot
+            t = self.rendered_status_texts
+            self.rendered_status_texts = []
+            self.set_status_text("This is a Graphui file", 9999)
+            self.set_status_text("Do NOT edit in imaging programs, use Graphui!", 9999)
+            # TODO : There is some bug here, the widgets are not painted in the correct order?
+            # self.cause_paint()
+            if 'width'  in kw and (not kw['width'] and not kw['height']):
+                kw['width'] = 640
+                
         super(GraphWidget, self).save_snapshot_image(event, filename, *args, **kw)
         
-        self.rendered_status_texts = t
+        if kw.get('saving', False):
+            self.rendered_status_texts = t
 
 
