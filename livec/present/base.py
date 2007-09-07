@@ -1,2 +1,0 @@
-class CodePresenter(object):
-    pass
