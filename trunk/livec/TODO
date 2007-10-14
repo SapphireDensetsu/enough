@@ -1,0 +1,4 @@
+* How to do defines? Are they just replaced in place of usage? Are
+   they just values?
+* Linkage (currently we can derive #include's but not which objs to
+   link)
