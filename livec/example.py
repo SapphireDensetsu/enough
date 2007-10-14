@@ -49,16 +49,17 @@ class LiteralChar(SlotClass):
     defaults = dict(meta=dict)
 
 class Module(SlotClass):
-    __slots__ = ['defines', 'types', 'functions', 'meta']
-    defaults = dict(meta=dict, defines=list, types=list, functions=list)
+    __slots__ = ['defines', 'types', 'variable_declarations', 'functions', 'meta']
+    defaults = dict(meta=dict, defines=list, types=list,
+                    variable_declarations=list, functions=list)
 
 class Function(SlotClass):
     __slots__ = ['return_type', 'parameters', 'block', 'meta']
     defaults = dict(meta=dict)
 
 class Block(SlotClass):
-    __slots__ = ['statements', 'meta']
-    defaults = dict(meta=dict)
+    __slots__ = ['statements', 'variable_declarations', 'meta']
+    defaults = dict(meta=dict, variable_declarations=list)
 
 class If(SlotClass):
     __slots__ = ['expr', 'then', 'meta']
