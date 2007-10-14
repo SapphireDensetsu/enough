@@ -13,6 +13,7 @@ enum return_value
 int main(int argc, char **argv)
 {
     char *s;
+
     if(ARG_COUNT != argc)
     {
         return ERROR;

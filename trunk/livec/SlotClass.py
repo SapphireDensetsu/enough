@@ -24,14 +24,11 @@ class SlotClass:
     def __getinitargs__(self):
         return tuple(getattr(self, field_name)
                      for field_name in self.__slots__)
-        
-    @classmethod
-    def name(cls):
-        return cls.__name__
 
     def __repr__(self):
-        t = tuple(getattr(self, field_name)
+        t = tuple((field_name, getattr(self, field_name))
                   for field_name in self.__slots__
                   if field_name not in self.avoid_repr)
-        return '%s%r' % (self.name(), t)
+        named_values_str = ', '.join('%s=%r'%i for i in t)
+        return '%s(%s)' % (self.__class__.__name__, named_values_str)
 
