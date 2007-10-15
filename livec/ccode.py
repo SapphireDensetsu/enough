@@ -122,7 +122,7 @@ class CCodeGenerator(object):
         elif isinstance(node, nodes.LiteralInt):
             return str(node.value)
         elif isinstance(node, nodes.LiteralString):
-            return '"%s"' % node._c_escape(node.value,)
+            return '"%s"' % self._cescape(node.value,)
         elif isinstance(node, nodes.LiteralChar):
             return "'%c'" % (node.value,)
         elif isinstance(node, nodes.NotEquals):
@@ -139,6 +139,9 @@ class CCodeGenerator(object):
             return self._If_ccode(node)
         else:
             assert False, "Don't know how to make ccode for %r" % (node,)
+
+    def _cescape(self, value):
+        return value.replace('\\', '\\\\').replace('\n', '\\n')
 
     @concat_lines
     def _Module_ccode(self, node):

@@ -69,9 +69,6 @@ class LiteralInt(Node):
 class LiteralString(Node):
     __slots__ = ['value', 'meta']
     defaults = dict(meta=dict)
-    # TODO: To ccode
-    def _c_escape(self, value):
-        return value.replace('\\', '\\\\').replace('\n', '\\n')
 
 class LiteralChar(Node):
     __slots__ = ['value', 'meta']
