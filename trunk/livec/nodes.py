@@ -35,15 +35,16 @@ class Define(Named):
         return []
 
 class Enum(Named):
-    __slots__ = ['values', 'meta']
-    defaults = dict(meta=dict)
+    __slots__ = ['meta', 'values']
+    defaults = dict(meta=dict, values=list)
     def referred(self):
-        return self.values
+        return []
 
 class EnumValue(Named):
-    __slots__ = ['value', 'meta']
+    __slots__ = ['value', 'enum', 'meta']
     defaults = dict(meta=dict)
     def referred(self):
+        yield self.enum
         yield self.value
 
 class Import(SlotClass):
@@ -87,16 +88,10 @@ class LiteralChar(SlotClass):
         return []
 
 class Module(SlotClass):
-    __slots__ = ['defines', 'types', 'variable_declarations', 'functions', 'meta']
-    defaults = dict(meta=dict, defines=list, types=list,
-                    variable_declarations=list, functions=list)
+    __slots__ = ['functions', 'variables', 'meta']
+    defaults = dict(meta=dict, functions=list, variables=list)
     def referred(self):
-        return itertools.chain(
-            self.defines,
-            self.types,
-            self.variable_declarations,
-            self.functions
-        )
+        return itertools.chain(self.functions, self.variables)
 
 class Function(Named):
     __slots__ = ['return_type', 'parameters', 'block', 'meta']
@@ -122,10 +117,10 @@ class Equals(SlotClass):
         yield self.b
 
 class Block(SlotClass):
-    __slots__ = ['statements', 'variable_declarations', 'meta']
-    defaults = dict(meta=dict, variable_declarations=list)
+    __slots__ = ['statements', 'meta']
+    defaults = dict(meta=dict)
     def referred(self):
-        return itertools.chain(self.statements, self.variable_declarations)
+        return self.statements
 
 class If(SlotClass):
     __slots__ = ['expr', 'if_true', 'if_false', 'meta']

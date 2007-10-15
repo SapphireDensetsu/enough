@@ -1,6 +1,8 @@
+from __future__ import with_statement
 import nodes
 import itertools
 import functools
+import contextlib
 
 def visit_all(x, visited=None):
     if visited is None:
@@ -23,6 +25,7 @@ class CCodeGenerator(object):
     def __init__(self):
         self._cnames = {}
         self._names = self._make_names()
+        self._decls = set()
 
     def _make_names(self):
         for i in itertools.count():
@@ -63,17 +66,37 @@ class CCodeGenerator(object):
         elif isinstance(node, nodes.Variable):
             return self.ctypedeclcode(node.type, self._cname(node))
         elif isinstance(node, nodes.Define):
-            return '#define %s %s' % (self._cname(node), self.ccode(node.expr))
+            return '#define %s (%s)' % (self._cname(node), self.ccode(node.expr))
 
     @concat_lines
     def _Function_cdeclcode(self, node):
         yield '%s(%s)' % (self.ctypedeclcode(node.return_type, self._cname(node)),
-                          ', '.join(self.ccode(param)
+                          ', '.join(self.cdeclcode(param)
                                     for param in node.parameters))
         yield '{'
-        yield self.ccode(node.block)
+        with self._declared(node.parameters):
+            yield self.ccode(node.block)
         yield '}'
 
+    def _declare(self, decls):
+        l = len(self._decls)
+        self._decls |= set(decls)
+        assert len(self._decls) == l + len(decls)
+
+    def _undeclare(self, decls):
+        self._decls -= set(decls)
+
+    def _is_declared(self, decl):
+        return decl in self._decls
+
+    @contextlib.contextmanager
+    def _declared(self, decls):
+        """With the given declarations as declared"""
+        self._declare(decls)
+        try:
+            yield
+        finally:
+            self._undeclare(decls)
 
     def ccode(self, node):
         if isinstance(node, nodes.Call):
@@ -114,25 +137,36 @@ class CCodeGenerator(object):
             return self._Block_ccode(node)
         elif isinstance(node, nodes.If):
             return self._If_ccode(node)
+        else:
+            assert False, "Don't know how to make ccode for %r" % (node,)
 
     @concat_lines
     def _Module_ccode(self, node):
         for x in self._includes(node):
             yield '#include %s' % (x,)
-        for x in node.defines:
-            yield self.ccode(x)
-        for x in node.types:
-            yield self.ccode(x) + ';'
-        for x in node.variable_declarations:
-            yield self.ccode(x) + ';'
-        for x in node.functions:
-            yield self.ccode(x)
+        defs = list(self._defines(node))
+        for x in defs:
+            yield self.cdeclcode(x)
+        with self._declared(defs):
+            types = list(self._types(node))
+            for x in types:
+                yield self.cdeclcode(x)
+            with self._declared(types):
+                for x in node.variables:
+                    if self._is_declared(x):
+                        continue
+                    yield self.cdeclcode(x)
+                with self._declared(node.variables):
+                    for x in node.functions:
+                        yield self.cdeclcode(x)
 
     @concat_lines
     def _Block_ccode(self, node):
         yield '{'
-        for variable_declaration in node.variable_declarations:
-            yield self.ccode(variable_declaration) + ';'
+        for var in self._variables(node):
+            if self._is_declared(var):
+                continue
+            yield self.cdeclcode(var) + ';'
         for statement in node.statements:
             yield self.ccode(statement) + ';'
         yield '}'
@@ -149,9 +183,27 @@ class CCodeGenerator(object):
             yield self.ccode(node.if_false)
             yield '}'
 
-    def _includes(self, node):
+    def _find_all(self, node, predicat):
         i = set()
         for x in visit_all(node):
-            if isinstance(x, nodes.Import):
-                i.add(x.include)
+            if predicat(x):
+                i.add(x)
         return i
+
+    def _find_type(self, node, typ):
+        def p(x):
+            return isinstance(x, typ)
+        return self._find_all(node, p)
+
+    def _includes(self, node):
+        for imp in self._find_type(node, nodes.Import):
+            yield imp.include
+
+    def _defines(self, node):
+        return self._find_type(node, nodes.Define)
+
+    def _variables(self, node):
+        return self._find_type(node, nodes.Variable)
+
+    def _types(self, node):
+        return self._find_type(node, nodes.Enum)
