@@ -1,4 +1,3 @@
-import ccode
 import nodes
 
 int = nodes.BuiltinType(name='int')
@@ -54,5 +53,6 @@ example = nodes.Module(
     ]
 )
 
+import ccode
 g = ccode.CCodeGenerator()
 open('example2.c','wb').write(g.ccode(example))
