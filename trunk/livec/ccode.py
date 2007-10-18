@@ -187,6 +187,9 @@ class CCodeGenerator(object):
             yield '}'
 
     def _find_all(self, node, predicat):
+        # TODO: node must be root. If its not root, then this should
+        # not walk the referred() graph but children() (that does not
+        # yet exist).
         i = set()
         for x in visit_all(node):
             if predicat(x):
@@ -198,9 +201,11 @@ class CCodeGenerator(object):
             return isinstance(x, typ)
         return self._find_all(node, p)
 
+    def _imports(self, node):
+        return self._find_type(node, nodes.Import)
+
     def _includes(self, node):
-        for imp in self._find_type(node, nodes.Import):
-            yield imp.include
+        return set(imp.include for imp in self._imports(node))
 
     def _defines(self, node):
         return self._find_type(node, nodes.Define)

@@ -1,6 +1,13 @@
 import itertools
 from SlotClass import SlotClass
 
+class Meta(dict):
+    """This is a special kind of node that does not affect the
+    semantics in any way, and only useful for the petty human. This is
+    why it does not inherit from Node, and is not included in the
+    referred() graph."""
+    pass
+
 class Node(SlotClass):
     def referred(self):
         for i in self.__slots__:

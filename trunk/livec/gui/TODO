@@ -1,0 +1,9 @@
+* Start without events.
+* Start with only draw that allocates display space bottom-up.
+* GUI does not contain any state that's redundant to the model,
+   adapter functions/callbacks are always used.
+* GUI is allowed to contain extra state that is not redundant to the
+   model.
+
+Events:
+* To get reflection about key bindings, must have key registrations rather than handle_event
