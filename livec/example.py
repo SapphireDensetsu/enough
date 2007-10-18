@@ -3,19 +3,19 @@ import nodes
 int = nodes.BuiltinType(name='int')
 char = nodes.BuiltinType(name='char')
 
-argc=nodes.Variable(meta=dict(name='argc'), type=int)
-argv=nodes.Variable(meta=dict(name='argv'), type=nodes.Ptr(pointed_type=
+argc=nodes.Variable(meta=nodes.Meta(name='argc'), type=int)
+argv=nodes.Variable(meta=nodes.Meta(name='argv'), type=nodes.Ptr(pointed_type=
                                                nodes.Ptr(pointed_type=char)))
 
-arg_count = nodes.Define(meta=dict(name='ARG_COUNT'), expr=nodes.LiteralInt(value=2))
+arg_count = nodes.Define(meta=nodes.Meta(name='ARG_COUNT'), expr=nodes.LiteralInt(value=2))
 
-ret_value = nodes.Enum(meta=dict(name='ret_value'))
-ok = nodes.EnumValue(meta=dict(name='OK'), value=nodes.LiteralInt(value=0), enum=ret_value)
+ret_value = nodes.Enum(meta=nodes.Meta(name='ret_value'))
+ok = nodes.EnumValue(meta=nodes.Meta(name='OK'), value=nodes.LiteralInt(value=0), enum=ret_value)
 ret_value.values.append(ok)
-error = nodes.EnumValue(meta=dict(name='ERROR'), value=nodes.LiteralInt(value=1), enum=ret_value)
+error = nodes.EnumValue(meta=nodes.Meta(name='ERROR'), value=nodes.LiteralInt(value=1), enum=ret_value)
 ret_value.values.append(error)
 
-s = nodes.Variable(meta=dict(), type=nodes.Ptr(pointed_type=char))
+s = nodes.Variable(type=nodes.Ptr(pointed_type=char))
 strchr = nodes.Import(include='<string.h>', name='strchr')
 fprintf = nodes.Import(include='<stdio.h>', name='fprintf')
 printf = nodes.Import(include='<stdio.h>', name='printf')
@@ -25,9 +25,9 @@ null = nodes.Import(include='<stddef.h>', name='NULL')
 argv_1 = nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
 
 example = nodes.Module(
-    meta=dict(name='example.c'),
+    meta=nodes.Meta(name='example.c'),
     functions=[
-        nodes.Function(meta=dict(name='main'), return_type=int,
+        nodes.Function(meta=nodes.Meta(name='main'), return_type=int,
                        parameters=[argc, argv],
                        block=nodes.Block(
             statements=[
@@ -45,14 +45,10 @@ example = nodes.Module(
                    ])
                 ),
                 nodes.Call(printf, args=[nodes.LiteralString("Your comma is at %d!\n"),
-                                   nodes.Subtract(s, argv_1)]),
+                                         nodes.Subtract(s, argv_1)]),
                 nodes.Return(expr=ok)
-                ]
+            ]
             )
         )
     ]
 )
-
-import ccode
-g = ccode.CCodeGenerator()
-open('example2.c','wb').write(g.ccode(example))
