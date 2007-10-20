@@ -6,4 +6,5 @@ class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
         self.meta_widget = widget_for(self.module.meta)
-        VBox.__init__(self, lambda : [self.meta_widget])
+        self.function_widgets = [widget_for(func) for func in self.module.functions]
+        VBox.__init__(self, lambda : [self.meta_widget] + self.function_widgets)
