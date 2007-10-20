@@ -9,4 +9,4 @@ with pygame_display((800, 600)) as display:
     from example import example
     s.push(widget_for(example))
     from gui.loop import loop
-    loop(display, s)
+    loop.loop(display, s)
