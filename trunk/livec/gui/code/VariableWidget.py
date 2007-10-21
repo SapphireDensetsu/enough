@@ -5,10 +5,11 @@ from gui.code import widget_for
 
 from List import List
 
-class VariableWidget(VBox):
+class VariableWidget(HBox):
     def __init__(self, variable):
         self.variable = variable
-        VBox.__init__(self, List([
+        HBox.__init__(self, List([
+            widget_for(self.variable.type),
             TextEdit(lambda : self.variable.meta['name']),
-#            widget_for(self.variable.type),
         ]))
+        self.is_centered = True
