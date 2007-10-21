@@ -14,6 +14,10 @@ class Vertical(Direction):
 class Box(Widget):
     padding = 5
     frame_color = (40, 40, 255)
+
+    def has_frame(self):
+        return self.frame_color is not None
+    
     def __init__(self, child_list):
         self.child_list = child_list
         self.child_list.add_observer(self)
@@ -32,14 +36,14 @@ class Box(Widget):
             abs_pos[self.direction.oaxis] += center_offset
             child.draw(surface, abs_pos)
         total = self._do(draw_child)
-        if self.frame_color is not None:
+        if self.has_frame():
             r = pygame.Rect(pos, (total[0]-1, total[1]-1))
             pygame.draw.rect(surface, self.frame_color, r, 2)
 
     def _do(self, func):
         cur = [0, 0]
         max_len = 0
-        padding = self.padding if self.frame_color is not None else 0
+        padding = self.padding if self.has_frame() else 0
         cur[self.direction.axis] = padding
         for child in self.child_list:
             size = child.size()
