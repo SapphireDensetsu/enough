@@ -25,6 +25,7 @@ Meta = proxy_class(Meta, '_dict', methods=[
     'keys',
     'items',
     'values',
+    'get',
 ])
 
 class Node(SlotClass):
@@ -71,6 +72,11 @@ class BuiltinType(Node):
 
 class Ptr(Node):
     __slots__ = ['pointed_type', 'meta']
+    defaults = dict(meta=Meta)
+
+class Array(Node):
+    # TODO these are constant-sized arrays. what about [] array types?
+    __slots__ = ['element_type', 'size', 'meta']
     defaults = dict(meta=Meta)
 
 class Declaration(Node):

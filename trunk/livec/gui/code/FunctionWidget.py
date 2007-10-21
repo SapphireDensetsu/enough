@@ -38,5 +38,5 @@ class FunctionWidget(VBox):
         prototype.is_centered = True
         VBox.__init__(self, List([
             prototype,
-#            self.block_widget
+            self.block_widget
         ]))

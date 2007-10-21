@@ -9,4 +9,4 @@ from List import List
 class BlockWidget(VBox):
     def __init__(self, block):
         self.block = block
-        VBox.__init__(self, CacheMap(ccode_widget_for, self.block.statements))
+        VBox.__init__(self, CacheMap(widget_for, List(self.block.statements)))
