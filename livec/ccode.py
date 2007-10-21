@@ -18,14 +18,22 @@ def visit_all(x, visited=None):
 def concat_lines(func):
     @functools.wraps(func)
     def new_func(*args, **kw):
-        return '\n'.join(func(*args, **kw)) + '\n'
+        return '\n' + '\n'.join(func(*args, **kw)) 
     return new_func
 
+def tabbed_concat_lines(func):
+    @functools.wraps(func)
+    def new_func(self, *args, **kw):
+        for line in func(self, *args, **kw):
+            yield self._tab()+line
+    return concat_lines(new_func)
+    
 class CCodeGenerator(object):
     def __init__(self):
         self._cnames = {}
         self._names = self._make_names()
         self._decls = set()
+        self._tab_num = 0
 
     def _make_names(self):
         for i in itertools.count():
@@ -68,15 +76,16 @@ class CCodeGenerator(object):
         elif isinstance(node, nodes.Define):
             return '#define %s (%s)' % (self._cname(node), self.ccode(node.expr))
 
-    @concat_lines
+    @tabbed_concat_lines
     def _Function_cdeclcode(self, node):
         yield '%s(%s)' % (self.ctypedeclcode(node.return_type, self._cname(node)),
                           ', '.join(self.cdeclcode(param)
                                     for param in node.parameters))
-        yield '{'
+        #yield '{'
+        #with self._tabbed():
         with self._declared(node.parameters):
             yield self.ccode(node.block)
-        yield '}'
+        #yield '}'
 
     def _declare(self, decls):
         l = len(self._decls)
@@ -143,7 +152,7 @@ class CCodeGenerator(object):
     def _cescape(self, value):
         return value.replace('\\', '\\\\').replace('\n', '\\n')
 
-    @concat_lines
+    @tabbed_concat_lines
     def _Module_ccode(self, node):
         for x in self._includes(node):
             yield '#include %s' % (x,)
@@ -163,28 +172,31 @@ class CCodeGenerator(object):
                     for x in node.functions:
                         yield self.cdeclcode(x)
 
-    @concat_lines
+    @tabbed_concat_lines
     def _Block_ccode(self, node):
         yield '{'
-        for var in self._variables(node):
-            if self._is_declared(var):
-                continue
-            yield self.cdeclcode(var) + ';'
-        for statement in node.statements:
-            yield self.ccode(statement) + ';'
+        with self._tabbed():
+            for var in self._variables(node):
+                if self._is_declared(var):
+                    continue
+                yield self.cdeclcode(var) + ';'
+            for statement in node.statements:
+                yield self.ccode(statement) + ';'
         yield '}'
 
-    @concat_lines
+    @tabbed_concat_lines
     def _If_ccode(self, node):
         yield 'if(%s)' % (self.ccode(node.expr),)
-        yield '{'
+        #yield '{'
+        #with self._tabbed():
         yield self.ccode(node.if_true)
-        yield '}'
+        #yield '}'
         if node.if_false is not None:
             yield 'else'
-            yield '{'
+            #yield '{'
+            #with self._tabbed():
             yield self.ccode(node.if_false)
-            yield '}'
+            #yield '}'
 
     def _find_all(self, node, predicat):
         # TODO: node must be root. If its not root, then this should
@@ -215,3 +227,23 @@ class CCodeGenerator(object):
 
     def _types(self, node):
         return self._find_type(node, nodes.Enum)
+
+
+    def _push_tab(self):
+        self._tab_num += 1
+
+    def _pop_tab(self):
+        self._tab_num -= 1
+
+    def _tab(self):
+        return self._tab_num * "   "
+
+    @contextlib.contextmanager
+    def _tabbed(self):
+        """With the given declarations as declared"""
+        self._push_tab()
+        try:
+            yield
+        finally:
+            self._pop_tab()
+
