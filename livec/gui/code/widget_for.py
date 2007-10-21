@@ -2,11 +2,26 @@ import nodes
 from functools import partial
 
 def ccode_widget_for(x):
+    # TODO TEMP CODE
     from gui.TextEdit import TextEdit
     from ccode import CCodeGenerator
     c = CCodeGenerator()
     return TextEdit(partial(c.ccode, x))
     
+
+def cached_widget_for(items):
+    return CacheMap(widget_for, List(items))
+
+
+def tabbed(widget):
+    from gui.Box import HBox
+    from List import List
+    b = HBox(List([widget_for(' '), widget]))
+    b.is_centered = True
+    b.frame_color = None
+    return b
+
+
 def widget_for(x):
     # TODO: Circular import must be inside, yuck, how to fix?
 
