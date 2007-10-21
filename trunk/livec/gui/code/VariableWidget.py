@@ -9,6 +9,6 @@ class VariableWidget(VBox):
     def __init__(self, variable):
         self.variable = variable
         VBox.__init__(self, List([
-            widget_for(self.variable.meta),
+            TextEdit(lambda : self.variable.meta['name']),
 #            widget_for(self.variable.type),
         ]))

@@ -13,9 +13,6 @@ def widget_for(x):
     if isinstance(x, nodes.Module):
         from ModuleWidget import ModuleWidget
         return ModuleWidget(x)
-    elif isinstance(x, nodes.Meta):
-        from MetaWidget import MetaWidget
-        return MetaWidget(x)
     elif isinstance(x, nodes.Function):
         from FunctionWidget import FunctionWidget
         return FunctionWidget(x)
