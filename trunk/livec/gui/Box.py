@@ -12,8 +12,8 @@ class Vertical(Direction):
     oaxis = 0
 
 class Box(Widget):
-    padding = 5
-    frame_color = (30, 30, 80)
+    padding = 3
+    frame_color = None#(30, 30, 80)
     is_centered = False
 
     def has_frame(self):
