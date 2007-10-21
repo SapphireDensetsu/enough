@@ -6,6 +6,7 @@ from functools import partial
 from List import List
 
 class MetaWidget(VBox):
+    draw_rect = False
     def __init__(self, meta):
         self.meta = meta
         self.meta.add_observer(self) # TODO: observing methods
@@ -24,15 +25,3 @@ class MetaWidget(VBox):
 
     def _set_value(self, key, value):
         self.meta[key] = value
-
-    def draw(self, *args, **kw):
-        prev_draw_rect = self.draw_rect
-        try:
-            if prev_draw_rect:
-                if len(self.meta) <= 1:
-                    self.draw_rect = False
-                else:
-                    self.draw_rect = True
-            return VBox.draw(self, *args, **kw)
-        finally:
-            self.draw_rect = prev_draw_rect
