@@ -28,11 +28,33 @@ def widget_for(x):
     elif isinstance(x, nodes.Ptr):
         from PtrTypeWidget import PtrTypeWidget
         return PtrTypeWidget(x)
-                             
+    elif isinstance(x, nodes.Array):
+        from ArrayTypeWidget import ArrayTypeWidget
+        return ArrayTypeWidget(x)
+
+
+    elif isinstance(x, nodes.If):
+        from IfWidget import IfWidget
+        return IfWidget(x)
+
+    elif isinstance(x, nodes.Equals):
+        from BinaryOpWidget import EqualsWidget
+        return EqualsWidget(x)
+    elif isinstance(x, nodes.NotEquals):
+        from BinaryOpWidget import NotEqualsWidget
+        return NotEqualsWidget(x)
+    elif isinstance(x, nodes.Assign):
+        from BinaryOpWidget import AssignWidget
+        return AssignWidget(x)
+    elif isinstance(x, nodes.Subtract):
+        from BinaryOpWidget import SubtractWidget
+        return SubtractWidget(x)
+    
     elif isinstance(x, str):
         # If it is a pythonic string, just make a text edit
         from gui.TextEdit import TextEdit
         return TextEdit(lambda : x)
         
     else:
-        assert False, "Don't know how to widget %r" % (x,)
+        return ccode_widget_for(x)
+        #assert False, "Don't know how to widget %r" % (x,)

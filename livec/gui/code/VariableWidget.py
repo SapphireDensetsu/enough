@@ -10,6 +10,6 @@ class VariableWidget(HBox):
         self.variable = variable
         HBox.__init__(self, List([
             widget_for(self.variable.type),
-            TextEdit(lambda : self.variable.meta['name']),
+            TextEdit(lambda : self.variable.meta.get('name', '<noname>')),
         ]))
         self.is_centered = True
