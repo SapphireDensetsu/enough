@@ -4,6 +4,8 @@ from SlotClass import SlotClass
 from observer import Observable, observed_method
 from proxyclass import proxy_class
 
+from List import List
+
 class Meta(Observable):
     """This is a special kind of node that does not affect the
     semantics in any way, and only useful for the petty human. This is
@@ -23,27 +25,6 @@ Meta = proxy_class(Meta, '_dict', methods=[
     'keys',
     'items',
     'values',
-])
-
-class List(Observable):
-    def __init__(self, *args, **kw):
-        Observable.__init__(self)
-        self._items = list(*args, **kw)
-
-    @observed_method()
-    def insert(self, index, item):
-        self._items.insert(index, item)
-    
-    @observed_method()
-    def remove(self, item):
-        self._items.remove(item)
-
-
-    def append(self, item):
-        self.insert(len(self), item)
-List = proxy_class(List, '_items', methods=[
-    '__getitem__',
-    '__len__',
 ])
 
 class Node(SlotClass):

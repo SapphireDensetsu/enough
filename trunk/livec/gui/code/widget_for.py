@@ -9,26 +9,24 @@ def ccode_widget_for(x):
     
 def widget_for(x):
     # TODO: Circular import must be inside, yuck, how to fix?
-    from gui.TextEdit import TextEdit
 
-    from ModuleWidget import ModuleWidget
-    from MetaWidget import MetaWidget
-    from FunctionWidget import FunctionWidget
-    from BuiltInTypeWidget import BuiltInTypeWidget
-    from VariableWidget import VariableWidget
-    from BlockWidget import BlockWidget
-    
     if isinstance(x, nodes.Module):
+        from ModuleWidget import ModuleWidget
         return ModuleWidget(x)
     elif isinstance(x, nodes.Meta):
+        from MetaWidget import MetaWidget
         return MetaWidget(x)
     elif isinstance(x, nodes.Function):
+        from FunctionWidget import FunctionWidget
         return FunctionWidget(x)
     elif isinstance(x, nodes.BuiltinType):
+        from BuiltInTypeWidget import BuiltInTypeWidget
         return BuiltInTypeWidget(x)
     elif isinstance(x, nodes.Variable):
+        from VariableWidget import VariableWidget
         return VariableWidget(x)
     elif isinstance(x, nodes.Block):
+        from BlockWidget import BlockWidget
         return BlockWidget(x)
     else:
         assert False, "Don't know how to widget %r" % (x,)
