@@ -6,11 +6,16 @@ from gui.code import widget_for
 from CacheMap import CacheMap
 from List import List
 
-def mix(a,mix_item):
-    for i in a[:-1]:
+def join(seq, mix_item):
+    siter = iter(seq)
+    for i in siter:
         yield i
+        break
+    else:
+        return
+    for i in siter:
         yield mix_item
-    yield a[-1]
+        yield i
         
 class FunctionWidget(VBox):
     def __init__(self, function):
@@ -19,7 +24,7 @@ class FunctionWidget(VBox):
         self.name_widget = TextEdit(lambda : self.function.meta['name'])
         
         self.parameters_widget = HBox(CacheMap(widget_for,
-                                               mix(self.function.parameters, ',')))
+                                               join(self.function.parameters, ',')))
         self.parameters_widget.is_centered = True
         
         self.block_widget = widget_for(self.function.block)
@@ -33,5 +38,5 @@ class FunctionWidget(VBox):
         prototype.is_centered = True
         VBox.__init__(self, List([
             prototype,
-            self.block_widget
+#            self.block_widget
         ]))
