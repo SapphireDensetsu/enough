@@ -3,10 +3,12 @@ from gui.TextEdit import TextEdit
 #from gui.Label import Label
 from gui.code import widget_for
 
+from List import List
 
 class VariableWidget(VBox):
     def __init__(self, variable):
         self.variable = variable
-        self.meta_widget = widget_for(self.variable.meta)
-        VBox.__init__(self)
-        self.add_child(self.meta_widget)
+        VBox.__init__(self, List([
+            widget_for(self.variable.meta),
+#            widget_for(self.variable.type),
+        ]))

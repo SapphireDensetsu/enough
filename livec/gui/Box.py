@@ -14,19 +14,17 @@ class Vertical(Direction):
 class Box(Widget):
     padding = 5
     draw_rect = True
-    def __init__(self):
-        self.children = []
-    def add_child(self, child):
-        self.children.append(child)
-    def remove_child(self, child):
-        self.children.remove(child)
+    def __init__(self, child_list):
+        self.child_list = child_list
+        self.child_list.add_observer(self)
+
     def draw(self, surface, pos):
         pos = list(pos)
         cur = list(pos)
         max_len = 0
         cur[0] += self.padding
         cur[1] += self.padding
-        for child in self.children:
+        for child in self.child_list:
             size = child.draw(surface, cur)
             max_len = max(max_len, size[self.direction.oaxis])
             cur[self.direction.axis] += size[self.direction.axis] + self.padding
