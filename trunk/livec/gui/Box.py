@@ -13,33 +13,39 @@ class Vertical(Direction):
 
 class Box(Widget):
     padding = 5
-    draw_rect = True
+    frame_color = (40, 40, 255)
     def __init__(self, child_list):
         self.child_list = child_list
         self.child_list.add_observer(self)
 
     def size(self):
-        return self._do(lambda child, child_pos: None)
+        def ignore_child(child, child_pos, child_size):
+            pass
+        return self._do(ignore_child)
 
     def draw(self, surface, pos):
-        def func(child, child_pos):
-            child.draw(surface, tuple(a+b for a,b in zip(pos, child_pos)))
-        total = self._do(func)
-        if self.draw_rect:
+        self_size = self.size()
+        def draw_child(child, child_pos, child_size):
+            abs_pos = [a+b for a,b in zip(pos, child_pos)]
+            center_offset = (self_size[self.direction.oaxis] -
+                             child_size[self.direction.oaxis]) / 2
+            abs_pos[self.direction.oaxis] += center_offset
+            child.draw(surface, abs_pos)
+        total = self._do(draw_child)
+        if self.frame_color is not None:
             r = pygame.Rect(pos, (total[0]-1, total[1]-1))
-            pygame.draw.rect(surface, (40, 40, 150), r, 2)
+            pygame.draw.rect(surface, self.frame_color, r, 2)
 
     def _do(self, func):
         cur = [0, 0]
         max_len = 0
-        padding = self.padding if self.draw_rect else 0
-        cur[0] += padding
-        cur[1] += padding
+        padding = self.padding if self.frame_color is not None else 0
+        cur[self.direction.axis] = padding
         for child in self.child_list:
             size = child.size()
-            func(child, cur)
+            func(child, cur, size)
             max_len = max(max_len, size[self.direction.oaxis])
-            cur[self.direction.axis] += size[self.direction.axis] + padding
+            cur[self.direction.axis] += size[self.direction.axis]+padding
         total = [None, None]
         total[self.direction.axis] = cur[self.direction.axis]
         total[self.direction.oaxis] = max_len+padding*2
