@@ -1,0 +1,12 @@
+from gui.Box import VBox, HBox
+from gui.TextEdit import TextEdit
+#from gui.Label import Label
+from gui.code import widget_for, ccode_widget_for
+
+
+class BlockWidget(VBox):
+    def __init__(self, block):
+        self.block = block
+        self.meta_widget = widget_for(self.block.meta)
+        self.statements_Widgets = [ccode_widget_for(s) for s in self.block.statements]
+        VBox.__init__(self, lambda : [self.meta_widget] + self.statements_Widgets)
