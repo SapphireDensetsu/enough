@@ -9,7 +9,4 @@ from List import List
 class BlockWidget(VBox):
     def __init__(self, block):
         self.block = block
-        VBox.__init__(self, List([
-#            TextEdit(lambda : self.block.meta['name'],
-            VBox(CacheMap(ccode_widget_for, self.block.statements))
-        ]))
+        VBox.__init__(self, CacheMap(ccode_widget_for, self.block.statements))

@@ -8,6 +8,7 @@ class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
         ibox = VBox(CacheMap(widget_for, self.module.functions))
+        ibox.frame_color = None
         VBox.__init__(self, List([
             TextEdit(lambda : self.module.meta['name']),
             ibox,
