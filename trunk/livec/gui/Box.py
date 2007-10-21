@@ -8,8 +8,9 @@ class Vertical(Direction): axis = 1
 
 class Box(Widget):
     padding = 5
-    def __init__(self, get_children_widgets):
+    def __init__(self, get_children_widgets, draw_rect = True):
         self.get_children_widgets = get_children_widgets
+        self.draw_rect = draw_rect
     def draw(self, surface, pos):
         pos = list(pos)
         cur = list(pos)
@@ -23,8 +24,9 @@ class Box(Widget):
         total = [None, None]
         total[self.direction.axis] = cur[self.direction.axis]-pos[self.direction.axis]
         total[self.direction.axis^1] = max_len+self.padding*2
-        r = pygame.Rect(pos, (total[0]-1, total[1]-1))
-        pygame.draw.rect(surface, (255, 0, 0), r, 2)
+        if self.draw_rect:
+            r = pygame.Rect(pos, (total[0]-1, total[1]-1))
+            pygame.draw.rect(surface, (40, 40, 150), r, 2)
         return tuple(total)
 
 class VBox(Box):

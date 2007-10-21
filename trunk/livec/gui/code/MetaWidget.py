@@ -26,6 +26,7 @@ class MetaWidget(VBox):
     def _get_hbox_children(self, key, value):
         if key not in self._hbox_cache:
             self._hbox_cache[key] = (TextEdit(lambda : key),
+                                     TextEdit(lambda : ":"),
                                      TextEdit(partial(self._get_value, key),
                                               partial(self._set_value, key)))
         return self._hbox_cache[key]
@@ -35,3 +36,16 @@ class MetaWidget(VBox):
 
     def _set_value(self, key, value):
         self.meta[key] = value
+
+    def draw(self, *args, **kw):
+        prev_draw_rect = self.draw_rect
+        try:
+            if prev_draw_rect:
+                if len(self.meta) <= 1:
+                    self.draw_rect = False
+                else:
+                    self.draw_rect = True
+            return VBox.draw(self, *args, **kw)
+        finally:
+            self.draw_rect = prev_draw_rect
+    
