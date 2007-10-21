@@ -14,6 +14,7 @@ class Vertical(Direction):
 class Box(Widget):
     padding = 5
     frame_color = (40, 40, 255)
+    is_centered = False
 
     def has_frame(self):
         return self.frame_color is not None
@@ -23,17 +24,20 @@ class Box(Widget):
         self.child_list.add_observer(self)
 
     def size(self):
-        def ignore_child(child, child_pos, child_size):
+        def ignore_child(child, child_pos, child_size, padding):
             pass
         return self._do(ignore_child)
 
     def draw(self, surface, pos):
         self_size = self.size()
-        def draw_child(child, child_pos, child_size):
+        def draw_child(child, child_pos, child_size, padding):
             abs_pos = [a+b for a,b in zip(pos, child_pos)]
-            center_offset = (self_size[self.direction.oaxis] -
-                             child_size[self.direction.oaxis]) / 2
-            abs_pos[self.direction.oaxis] += center_offset
+            if self.is_centered:
+                offset = (self_size[self.direction.oaxis] -
+                          child_size[self.direction.oaxis]) / 2
+            else:
+                offset = padding
+            abs_pos[self.direction.oaxis] += offset
             child.draw(surface, abs_pos)
         total = self._do(draw_child)
         if self.has_frame():
@@ -47,7 +51,7 @@ class Box(Widget):
         cur[self.direction.axis] = padding
         for child in self.child_list:
             size = child.size()
-            func(child, cur, size)
+            func(child, cur, size, padding)
             max_len = max(max_len, size[self.direction.oaxis])
             cur[self.direction.axis] += size[self.direction.axis]+padding
         total = [None, None]
