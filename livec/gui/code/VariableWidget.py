@@ -8,5 +8,5 @@ class VariableWidget(VBox):
     def __init__(self, variable):
         self.variable = variable
         self.meta_widget = widget_for(self.variable.meta)
-        self.meta_widget.draw_rect = False
-        VBox.__init__(self, lambda : [self.meta_widget])
+        VBox.__init__(self)
+        self.add_child(self.meta_widget)

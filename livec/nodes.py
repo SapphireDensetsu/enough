@@ -1,12 +1,50 @@
 import itertools
 from SlotClass import SlotClass
 
-class Meta(dict):
+from observer import Observable, observed_method
+from proxyclass import proxy_class
+
+class Meta(Observable):
     """This is a special kind of node that does not affect the
     semantics in any way, and only useful for the petty human. This is
     why it does not inherit from Node, and is not included in the
     referred() graph."""
-    pass
+    def __init__(self, *args, **kw):
+        self._dict = dict(*args, **kw)
+        Observable.__init__(self)
+
+Meta = proxy_class(Meta, '_dict', methods=[
+    '__iter__',
+    '__getitem__',
+    '__len__',
+    'iterkeys',
+    'iteritems',
+    'itervalues',
+    'keys',
+    'items',
+    'values',
+])
+
+class List(Observable):
+    def __init__(self, *args, **kw):
+        Observable.__init__(self)
+        self._items = list(*args, **kw)
+
+    @observed_method()
+    def insert(self, index, item):
+        self._items.insert(index, item)
+    
+    @observed_method()
+    def remove(self, item):
+        self._items.remove(item)
+
+
+    def append(self, item):
+        self.insert(len(self), item)
+List = proxy_class(List, '_items', methods=[
+    '__getitem__',
+    '__len__',
+])
 
 class Node(SlotClass):
     def referred(self):
@@ -29,7 +67,7 @@ class Define(Named):
 
 class Enum(Named):
     __slots__ = ['meta', 'values']
-    defaults = dict(meta=Meta, values=list)
+    defaults = dict(meta=Meta, values=List)
     def referred(self):
         return self.values
 
@@ -83,7 +121,7 @@ class LiteralChar(Node):
 
 class Module(Node):
     __slots__ = ['functions', 'variables', 'meta']
-    defaults = dict(meta=Meta, functions=list, variables=list)
+    defaults = dict(meta=Meta, functions=List, variables=List)
     def referred(self):
         return itertools.chain(self.functions, self.variables)
 

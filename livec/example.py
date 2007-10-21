@@ -26,29 +26,27 @@ argv_1 = nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
 
 example = nodes.Module(
     meta=nodes.Meta(name='example.c'),
-    functions=[
-        nodes.Function(meta=nodes.Meta(name='main'), return_type=int,
-                       parameters=[argc, argv],
-                       block=nodes.Block(
-            statements=[
+    functions=nodes.List([
+        nodes.Function(
+            meta=nodes.Meta(name='main'), return_type=int,
+            parameters=nodes.List([argc, argv]),
+            block=nodes.Block(statements=nodes.List([
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),
-                   if_true=nodes.Block(statements=[
-                       nodes.Return(expr=error),
-                   ])
-                ),
+                         if_true=nodes.Block(statements=nodes.List([
+                    nodes.Return(expr=error),
+                ]))),
                 nodes.Assign(lvalue=s,
-                       rvalue=nodes.Call(strchr, args=[argv_1, nodes.LiteralChar(value=',')])),
+                             rvalue=nodes.Call(strchr, args=nodes.List([argv_1, nodes.LiteralChar(value=',')]))),
                 nodes.If(expr=nodes.Equals(null, s),
-                   if_true=nodes.Block(statements=[
-                       nodes.Call(fprintf, args=[stderr, nodes.LiteralString("No comma!\n")]),
+                   if_true=nodes.Block(statements=nodes.List([
+                       nodes.Call(fprintf, args=nodes.List([stderr, nodes.LiteralString("No comma!\n")])),
                        nodes.Return(expr=error),
-                   ])
+                   ]))
                 ),
-                nodes.Call(printf, args=[nodes.LiteralString("Your comma is at %d!\n"),
-                                         nodes.Subtract(s, argv_1)]),
+                nodes.Call(printf, args=nodes.List([nodes.LiteralString("Your comma is at %d!\n"),
+                                                    nodes.Subtract(s, argv_1)])),
                 nodes.Return(expr=ok)
-            ]
-            )
+            ]))
         )
-    ]
+    ])
 )
