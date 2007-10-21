@@ -8,4 +8,6 @@ class BuiltInTypeWidget(VBox):
         self.type = _type
         self.meta_widget = widget_for(self.type.meta)
         self.name_widget = TextEdit(lambda : self.type.name)
-        VBox.__init__(self, lambda : [self.meta_widget, self.name_widget])
+        VBox.__init__(self)
+        self.add_child(self.meta_widget)
+        self.add_child(self.name_widget)
