@@ -25,5 +25,11 @@ def widget_for(x):
     elif isinstance(x, nodes.Block):
         from BlockWidget import BlockWidget
         return BlockWidget(x)
+    
+    elif isinstance(x, str):
+        # If it is a pythonic string, just make a text edit
+        from gui.TextEdit import TextEdit
+        return TextEdit(lambda : x)
+        
     else:
         assert False, "Don't know how to widget %r" % (x,)
