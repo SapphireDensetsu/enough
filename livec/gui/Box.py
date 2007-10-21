@@ -13,7 +13,7 @@ class Vertical(Direction):
 
 class Box(Widget):
     padding = 5
-    frame_color = (40, 40, 255)
+    frame_color = (30, 30, 80)
     is_centered = False
 
     def has_frame(self):
@@ -47,16 +47,15 @@ class Box(Widget):
     def _do(self, func):
         cur = [0, 0]
         max_len = 0
-        padding = self.padding if self.has_frame() else 0
-        cur[self.direction.axis] = padding
+        cur[self.direction.axis] = self.padding
         for child in self.child_list:
             size = child.size()
-            func(child, cur, size, padding)
+            func(child, cur, size, self.padding)
             max_len = max(max_len, size[self.direction.oaxis])
-            cur[self.direction.axis] += size[self.direction.axis]+padding
+            cur[self.direction.axis] += size[self.direction.axis]+self.padding
         total = [None, None]
         total[self.direction.axis] = cur[self.direction.axis]
-        total[self.direction.oaxis] = max_len+padding*2
+        total[self.direction.oaxis] = max_len+self.padding*2
         return tuple(total)
 
 class VBox(Box):

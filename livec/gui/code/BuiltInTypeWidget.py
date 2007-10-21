@@ -7,4 +7,4 @@ from List import List
 class BuiltInTypeWidget(TextEdit):
     def __init__(self, _type):
         self.type = _type
-        TextEdit.__init__(self, lambda : self.type.name)
+        TextEdit.__init__(self, lambda : self.type.name, color=(0, 255, 0))
