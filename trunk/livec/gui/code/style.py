@@ -1,0 +1,9 @@
+indent_width = 40
+braces_color = (200, 200, 255)
+paren_color = (220, 220, 255)
+if_color = (255, 30, 30)
+type_color = (30, 255, 30)
+func_name_color = (220, 220, 50)
+module_name_color = (255, 255, 255)
+variable_name_color = (100, 100, 255)
+identifier_color = (150, 150, 255)

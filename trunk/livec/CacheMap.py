@@ -1,4 +1,4 @@
-from observer import Observable, observed_method
+from observer import Observable
 
 class CacheMap(Observable):
     def __init__(self, func, l):
@@ -6,13 +6,20 @@ class CacheMap(Observable):
         self.func = func
         self._list = l
         self._cache = map(self.func, self._list)
+        l.add_observer(self)
 
-    def observe_insert(self, index, item):
-        self._cache.insert(index, self.func(item))
+    def observe_insert(self, list, index, item):
+        new_item = self.func(item)
+        self._cache.insert(index, new_item)
+        for observer in self.observers:
+            observer.observe_insert(self, index, new_item)
 
     def observe_pop(self, index):
         # TODO: Should call destroy() here
-        self._cache.pop(index)
+        result = self._cache.pop(index)
+        for observer in self.observers:
+            observer.observe_pop(self, index)
+        return result
 
 from proxyclass import proxy_class
 CacheMap = proxy_class(CacheMap, '_cache', methods=[

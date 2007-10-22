@@ -1,17 +1,19 @@
-from observer import Observable, observed_method
+from observer import Observable
 
 class List(Observable):
     def __init__(self, *args, **kw):
         Observable.__init__(self)
         self._items = list(*args, **kw)
 
-    @observed_method()
     def insert(self, index, item):
         self._items.insert(index, item)
+        for observer in self.observers:
+            observer.observe_insert(self, index, item)
     
-    @observed_method()
     def pop(self, index):
         self._items.pop(index)
+        for observer in self.observers:
+            observer.observe_pop(self, index)
 
     def remove(self, item):
         self.pop(self.index(item))

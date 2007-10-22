@@ -1,7 +1,7 @@
 import itertools
 from SlotClass import SlotClass
 
-from observer import Observable, observed_method
+from observer import Observable
 from proxyclass import proxy_class
 
 from List import List

@@ -1,44 +1,33 @@
 from gui.Box import VBox, HBox
-from gui.TextEdit import TextEdit
-#from gui.Label import Label
-from gui.code import widget_for, tabbed
+from gui.TextEdit import make_label
+from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_for, indented
+from gui.code import style
 
-from CacheMap import CacheMap
 from List import List
-
-def join(seq, mix_item):
-    siter = iter(seq)
-    for i in siter:
-        yield i
-        break
-    else:
-        return
-    for i in siter:
-        yield mix_item
-        yield i
+from CacheMap import CacheMap
         
 class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
-        self.return_type_widget = widget_for(self.function.return_type)
-        self.name_widget = TextEdit(lambda : self.function.meta['name'])
+        self.return_type_widget = type_widget_for(self.function.return_type)
+        self.name_widget = make_label(self.function.meta['name'], color=style.func_name_color)
         
-        self.parameters_widget = HBox(CacheMap(widget_for,
-                                               join(self.function.parameters, ',')))
+        self.parameters_widget = HBox(CacheMap(declaration_widget_for,
+                                               self.function.parameters))
         self.parameters_widget.is_centered = True
         
-        self.block_widget = widget_for(self.function.block)
         prototype = HBox(List([
             self.return_type_widget,
             self.name_widget,
-            TextEdit(lambda : '('),
+            make_label('(', color=style.paren_color),
             self.parameters_widget,
-            TextEdit(lambda : ')'),
+            make_label(')', color=style.paren_color),
         ]))
         prototype.is_centered = True
+        
         VBox.__init__(self, List([
             prototype,
-            widget_for('{'),
-            tabbed(self.block_widget),
-            widget_for('}'),
+            make_label('{', color=style.braces_color),
+            indented(widget_for(self.function.block)),
+            make_label('}', color=style.braces_color),
         ]))

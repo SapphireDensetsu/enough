@@ -1,6 +1,6 @@
 from gui.Box import VBox
-from gui.TextEdit import TextEdit
-from gui.code import widget_for
+from gui.TextEdit import make_label
+from gui.code.widget_for import widget_for, style
 from CacheMap import CacheMap
 from List import List
 
@@ -10,6 +10,6 @@ class ModuleWidget(VBox):
         ibox = VBox(CacheMap(widget_for, self.module.functions))
         ibox.frame_color = None
         VBox.__init__(self, List([
-            TextEdit(lambda : self.module.meta['name']),
+            make_label(self.module.meta['name'], color=style.module_name_color),
             ibox,
         ]))

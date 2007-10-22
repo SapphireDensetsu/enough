@@ -1,9 +1,8 @@
 from gui.Box import VBox, HBox
-from gui.TextEdit import TextEdit
-#from gui.Label import Label
-from gui.code import widget_for, tabbed
+from gui.TextEdit import make_label
+from gui.code.widget_for import widget_for, indented
+from gui.code import style
 
-from CacheMap import CacheMap
 from List import List
 
 from itertools import chain
@@ -13,17 +12,25 @@ class IfWidget(VBox):
     def __init__(self, if_node):
         self.if_node = if_node
 
-        if_label = TextEdit(lambda : 'if', color=(255,30,30))
-        
-        cond_part = HBox(List([if_label, widget_for(self.if_node.expr)]))
+        cond_part = HBox(List([
+            make_label('if', color=style.if_color),
+            widget_for(self.if_node.expr),
+        ]))
         cond_part.is_centered = True
         
-        if_true_part = tabbed(widget_for(self.if_node.if_true))
-
-        parts = [cond_part, widget_for('{'), if_true_part, widget_for('}')]
+        parts = [
+            cond_part,
+            make_label('{', color=style.braces_color),
+            indented(widget_for(self.if_node.if_true)),
+            make_label('}', color=style.braces_color),
+        ]
         if self.if_node.if_false:
-            if_false_part = [widget_for('else {'), tabbed(widget_for(self.if_node.if_false)), widget_for('}')]
+            if_false_part = [
+                make_label('else', color=style.else_color),
+                make_label('{', color=style.braces_color),
+                indented(widget_for(self.if_node.if_false)),
+                make_label('}', color=style.braces_color),
+            ]
             parts.append(if_false_part)
             
-        
         VBox.__init__(self, List(parts))

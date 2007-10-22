@@ -8,6 +8,10 @@ class TextEdit(Widget):
         self.color = color
         self._font = pygame.font.Font(pygame.font.get_default_font(), 14)
 
+        # TODO: Debugging hack, remove
+        import traceback
+        self.creator = traceback.format_stack()
+
     def size(self):
         def func(line, cur_height):
             return self._font.size(line)
@@ -28,3 +32,6 @@ class TextEdit(Widget):
             size[0] = max(size[0], twidth)
             size[1] += theight
         return size
+
+def make_label(text, **kw):
+    return TextEdit(lambda : text, **kw)
