@@ -1,6 +1,23 @@
-* List->ObservableList?
+Requirements:
+* User is exposed to one cursor
+* Cursor is moved via keys determined by the containing widget
+* Cursor is drawn by the containing widget, its not necessarily a
+   frame
+
+* For now cursor will be a frame
+* Focus is a priority-sorted set of event receivers
+
+* "Ordinary" Keys should be sent to the focus
+* "Navigation" Keys should be sent to the parent of the focus, or to
+   its parent
+
+* observable.Join is probably a bad idea, because these separators
+   should only exist for viewing purposes.
 
 * When does an observable object die?
+  * Either observers are weakrefs -- which should make everything
+   disappear when it should.
+  * Or explicit detachment is used (how?)
 
 Events:
 * To get reflection about key bindings, must have key registrations rather than handle_event
