@@ -1,12 +1,19 @@
 import pygame
 from Widget import Widget
 
+class TextStyle(object):
+    def __init__(self, color, font_size, font_name):
+        self.color=color
+        self.font_size=font_size
+        self.font_name=font_name
+
+
 class TextEdit(Widget):
-    def __init__(self, get_text, set_text=None, color=(255, 255, 255), font_size=14, font_name='serif'):
+    def __init__(self, style, get_text, set_text=None):
         self.get_text = get_text
         self.set_text = set_text
-        self.color = color
-        self._font = pygame.font.SysFont(font_name, font_size)
+        self.color = style.color
+        self._font = pygame.font.Font(style.font_name, style.font_size)
 
         # TODO: Debugging hack, remove
         import traceback
