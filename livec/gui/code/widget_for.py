@@ -3,6 +3,7 @@ from functools import partial
 from gui.code import style
 
 from gui.Box import HBox
+from gui.TextEdit import make_label
 from List import List
 
 def ccode_widget_for(x):
@@ -22,7 +23,6 @@ def indented(widget):
 
 def posttype_widget_for(x, name):
     if isinstance(x, nodes.BuiltinType):
-        from gui.TextEdit import make_label
         return make_label(name, color=style.identifier_color)
     elif isinstance(x, nodes.Ptr):
         from PtrTypeWidget import PtrTypeWidget
@@ -51,6 +51,7 @@ def type_widget_for(x, name=''):
 
     type_widget = HBox(List([
         basetype_widget,
+        make_label(' '),
         posttype_widget_for(x, name),
     ]))
     type_widget.is_centered = True

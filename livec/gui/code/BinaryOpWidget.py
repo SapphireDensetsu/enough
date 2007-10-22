@@ -16,7 +16,7 @@ class BinaryOpWidget(HBox):
         HBox.__init__(self, List([
             make_label('(', color=style.paren_color),
             widget_for(getattr(self.node, self.operand_attrs[0])),
-            make_label(self.op_string, color=style.paren_color),
+            make_label(' ' + self.op_string + ' ', color=style.paren_color),
             widget_for(getattr(self.node, self.operand_attrs[1])),
             make_label(')', color=style.paren_color),
         ]))
