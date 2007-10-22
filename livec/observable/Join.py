@@ -7,12 +7,13 @@ class Join(Observable):
         self._cache = []
         self.l = l
         self.l.add_observer(self)
-        for item in self.l:
+        it = iter(self.l)
+        for item in it:
             self._cache.append(item)
             break
         else:
             return
-        for item in self.l:
+        for item in it:
             self._cache.append(separator_factory())
             self._cache.append(item)
         
