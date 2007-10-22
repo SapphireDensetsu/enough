@@ -4,7 +4,7 @@ from gui.code import style
 
 from gui.Box import HBox
 from gui.TextEdit import make_label
-from List import List
+from observable.List import List
 
 def ccode_widget_for(x):
     # TODO TEMP CODE

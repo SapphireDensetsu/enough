@@ -1,8 +1,8 @@
 from gui.Box import VBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, style
-from CacheMap import CacheMap
-from List import List
+from observable.CacheMap import CacheMap
+from observable.List import List
 
 class ModuleWidget(VBox):
     def __init__(self, module):

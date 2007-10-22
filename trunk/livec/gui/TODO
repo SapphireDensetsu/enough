@@ -1,4 +1,6 @@
 * List->ObservableList?
 
+* When does an observable object die?
+
 Events:
 * To get reflection about key bindings, must have key registrations rather than handle_event

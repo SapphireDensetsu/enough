@@ -3,7 +3,7 @@ import fix_import_paths
 from gui.Box import VBox
 from gui.TextEdit import TextEdit
 from gui.main import pygame_display
-from List import List
+from observable.List import List
 
 def main():
     with pygame_display((800, 600)) as display:

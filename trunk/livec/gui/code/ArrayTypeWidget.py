@@ -3,7 +3,7 @@ from gui.Box import HBox
 from gui.code.widget_for import posttype_widget_for, widget_for
 from gui.code import style
 
-from List import List
+from observable.List import List
 
 class ArrayTypeWidget(HBox):
     def __init__(self, _type, name):

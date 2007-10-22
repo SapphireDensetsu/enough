@@ -3,17 +3,22 @@ from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_for, indented
 from gui.code import style
 
-from List import List
-from CacheMap import CacheMap
+from observable.List import List
+from observable.CacheMap import CacheMap
+from observable.Join import Join
         
 class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
         self.return_type_widget = type_widget_for(self.function.return_type)
         self.name_widget = make_label(self.function.meta['name'], color=style.func_name_color)
+
+        def make_comma():
+            return make_label(', ')
         
-        self.parameters_widget = HBox(CacheMap(declaration_widget_for,
-                                               self.function.parameters))
+        self.parameters_widget = HBox(Join(make_comma,
+                                           CacheMap(declaration_widget_for,
+                                                    self.function.parameters)))
         self.parameters_widget.is_centered = True
         
         prototype = HBox(List([
