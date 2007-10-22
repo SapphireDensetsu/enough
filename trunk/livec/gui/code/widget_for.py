@@ -47,7 +47,7 @@ def find_basetype(x):
 
 def type_widget_for(x, name=''):
     from BaseTypeWidget import BaseTypeWidget
-    basetype_widget = BuiltInTypeWidget(find_basetype(x))
+    basetype_widget = BaseTypeWidget(find_basetype(x))
 
     type_widget = HBox(List([
         basetype_widget,
