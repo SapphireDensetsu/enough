@@ -16,11 +16,11 @@ error = nodes.EnumValue(meta=nodes.Meta(name='ERROR'), value=nodes.LiteralInt(va
 ret_value.values.append(error)
 
 s = nodes.Variable(type=nodes.Ptr(pointed_type=char))
-strchr = nodes.Import(include='<string.h>', name='strchr')
-fprintf = nodes.Import(include='<stdio.h>', name='fprintf')
-printf = nodes.Import(include='<stdio.h>', name='printf')
-stderr = nodes.Import(include='<stdio.h>', name='stderr')
-null = nodes.Import(include='<stddef.h>', name='NULL')
+strchr = nodes.Import(include='<string.h>', name='strchr', meta=nodes.Meta(name='strchr'))
+fprintf = nodes.Import(include='<stdio.h>', name='fprintf', meta=nodes.Meta(name='fprintf'))
+printf = nodes.Import(include='<stdio.h>', name='printf', meta=nodes.Meta(name='printf'))
+stderr = nodes.Import(include='<stdio.h>', name='stderr', meta=nodes.Meta(name='stderr'))
+null = nodes.Import(include='<stddef.h>', name='NULL', meta=nodes.Meta(name='NULL'))
 
 argv_1 = nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
 
