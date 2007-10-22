@@ -1,23 +1,31 @@
 import pygame
+from Keymap import Keymap
 
 class ExitLoop(Exception): pass
 
-def draw():
-    pass
-
 class Loop(object):
+    def __init__(self):
+        self.global_keymap = Keymap()
+        self.global_keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_q),
+                                            lambda event: self._quit())
     def _handle_event(self, event):
-        pass
-#         if event.type == pygame.KEYDOWN:
-#             self.focus.keymap.keydown(event)
+        if event.type == pygame.QUIT:
+            self._quit()
+        if event.type == pygame.KEYDOWN:
+            self.global_keymap.keydown(event)
+#         elif event.type == pygame.KEYUP:
+#             self.global_keymap.keyup(event)
+    def _quit(self):
+        raise ExitLoop()
     def loop(self, display, widget):
         c = pygame.time.Clock()
         while True:
             c.tick(50)
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                try:
+                    self._handle_event(event)
+                except ExitLoop:
                     return
-                self._handle_event(event)
             display.fill((0, 0, 0))
             widget.draw(display, (0, 0))
             pygame.display.update()
