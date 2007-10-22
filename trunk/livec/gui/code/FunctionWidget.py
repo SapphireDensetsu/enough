@@ -18,6 +18,7 @@ class FunctionWidget(VBox):
         
         prototype = HBox(List([
             self.return_type_widget,
+            make_label(' '),
             self.name_widget,
             make_label('(', color=style.paren_color),
             self.parameters_widget,

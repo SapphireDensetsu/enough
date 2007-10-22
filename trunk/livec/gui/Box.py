@@ -13,7 +13,7 @@ class Vertical(Direction):
 
 class Box(Widget):
     outspace = 0
-    padding = 3
+    padding = 0
     frame_color = None#(255, 30, 80)
     is_centered = False
 
