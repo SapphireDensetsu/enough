@@ -1,5 +1,5 @@
 from gui.Box import VBox, HBox
-from styletools import styled_label
+from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_for, indented
 from gui.code import style
 
@@ -11,10 +11,10 @@ class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
         self.return_type_widget = type_widget_for(self.function.return_type)
-        self.name_widget = styled_label(self.function.meta['name'], color=style.func_name_color)
+        self.name_widget = make_label(style.func_name, self.function.meta['name'])
 
         def make_comma():
-            return styled_label(', ')
+            return make_label(style.comma, ', ')
         
         self.parameters_widget = HBox(Join(make_comma,
                                            CacheMap(declaration_widget_for,
@@ -23,17 +23,17 @@ class FunctionWidget(VBox):
         
         prototype = HBox(List([
             self.return_type_widget,
-            styled_label(' '),
+            make_label(style.default, ' '),
             self.name_widget,
-            styled_label('(', color=style.paren_color),
+            make_label(style.paren, '('),
             self.parameters_widget,
-            styled_label(')', color=style.paren_color),
+            make_label(style.paren, ')'),
         ]))
         prototype.is_centered = True
         
         VBox.__init__(self, List([
             prototype,
-            styled_label('{', color=style.braces_color),
+            make_label(style.braces, '{'),
             indented(widget_for(self.function.block)),
-            styled_label('}', color=style.braces_color),
+            make_label(style.braces, '}'),
         ]))

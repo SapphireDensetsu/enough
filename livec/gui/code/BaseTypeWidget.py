@@ -1,7 +1,9 @@
-from styletools import StyledTextEdit
+from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for
 
-class BaseTypeWidget(StyledTextEdit):
+import style
+
+class BaseTypeWidget(TextEdit):
     def __init__(self, _type):
         self.type = _type
-        StyledTextEdit.__init__(self, lambda : self.type.name, color = (0,255,0))
+        TextEdit.__init__(style.base_type, self, lambda : self.type.name)
