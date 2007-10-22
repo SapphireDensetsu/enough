@@ -1,3 +1,8 @@
+default_font_color = (220, 220, 220)
+default_font_size = 24
+import pygame
+default_font_name = 'courier'
+
 indent_width = 40
 braces_color = (200, 200, 255)
 paren_color = (220, 220, 255)
