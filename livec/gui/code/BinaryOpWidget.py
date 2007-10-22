@@ -1,6 +1,6 @@
 from gui.Box import VBox, HBox
 from gui.code.widget_for import widget_for, ccode_widget_for
-from gui.TextEdit import make_label
+from styletools import styled_label
 from gui.code import style
 
 from observable.List import List
@@ -15,7 +15,7 @@ class BinaryOpWidget(HBox):
 
         HBox.__init__(self, List([
             widget_for(getattr(self.node, self.operand_attrs[0])),
-            make_label(' ' + self.op_string + ' ', color=style.paren_color),
+            styled_label(' ' + self.op_string + ' ', color=style.paren_color),
             widget_for(getattr(self.node, self.operand_attrs[1])),
         ]))
         self.is_centered = True

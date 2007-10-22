@@ -1,5 +1,5 @@
 from gui.Box import HBox
-from gui.TextEdit import make_label
+from styletools import styled_label
 from gui.code.widget_for import widget_for
 
 from observable.List import List
@@ -11,7 +11,7 @@ class ArrayDerefWidget(HBox):
         self.array_deref = array_deref
         HBox.__init__(self, List([
             widget_for(self.array_deref.expr),
-            make_label("[", color=style.bracket_color),
+            styled_label("[", color=style.bracket_color),
             widget_for(self.array_deref.index),
-            make_label("]", color=style.bracket_color),
+            styled_label("]", color=style.bracket_color),
         ]))

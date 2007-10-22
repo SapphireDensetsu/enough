@@ -1,7 +1,7 @@
-from gui.TextEdit import TextEdit
+from styletools import StyledTextEdit
 
-class IdentifierWidget(TextEdit):
+class IdentifierWidget(StyledTextEdit):
     def __init__(self, variable, color):
         self.variable = variable
         name = self.variable.meta.get('name', '<noname>')
-        TextEdit.__init__(self, (lambda : name), color=color)
+        StyledTextEdit.__init__(self, (lambda : name), color=color)

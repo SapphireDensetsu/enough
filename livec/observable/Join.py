@@ -19,8 +19,17 @@ class Join(Observable):
         
     def observe_insert(self, list, index, item):
         TODO
+        self._cache.insert(index*2, item)
+        self._cache.insert(index*2+1, self.separator_factory())
+        
     def observe_pop(self, list, index):
         TODO
+        self._cache.pop(index*2)
+        # assumes pop was called before observe_pop
+        if index == -1 or index == len(list):
+            self._cache.pop(-1)
+        else:
+            self._cache.pop(index*2)
 
 from proxyclass import proxy_class
 Join = proxy_class(Join, '_cache', methods=[
