@@ -2,7 +2,7 @@ from gui.Box import VBox, HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import type_widget_for, style
 
-from List import List
+from observable.List import List
 
 class VariableDeclarationWidget(HBox):
     is_centered = True

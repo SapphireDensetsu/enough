@@ -2,8 +2,7 @@ from gui.Box import VBox, HBox
 from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for, ccode_widget_for
 
-from List import List
-from CacheMap import CacheMap
+from observable.CacheMap import CacheMap
 
 class BlockWidget(VBox):
     def __init__(self, block):

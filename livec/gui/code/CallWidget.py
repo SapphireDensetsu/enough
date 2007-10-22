@@ -2,17 +2,20 @@ from gui.Box import HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for
 
-from List import List
-from CacheMap import CacheMap
+from observable.Join import Join
+from observable.List import List
+from observable.CacheMap import CacheMap
 
 import style
 
 class CallWidget(HBox):
     def __init__(self, call):
         self.call = call
+        def make_comma():
+            return make_label(', ')
         HBox.__init__(self, List([
             widget_for(self.call.func),
             make_label("(", color=style.paren_color),
-            HBox(CacheMap(widget_for, self.call.args)),
+            HBox(Join(make_comma, CacheMap(widget_for, self.call.args))),
             make_label(")", color=style.paren_color),
         ]))

@@ -3,7 +3,7 @@ from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, indented
 from gui.code import style
 
-from List import List
+from observable.List import List
 
 from itertools import chain
 
@@ -14,7 +14,9 @@ class IfWidget(VBox):
 
         cond_part = HBox(List([
             make_label('if', color=style.if_color),
+            make_label('(', color=style.paren_color),
             widget_for(self.if_node.expr),
+            make_label(')', color=style.paren_color),
         ]))
         cond_part.is_centered = True
         

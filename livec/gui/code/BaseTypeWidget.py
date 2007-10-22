@@ -1,8 +1,6 @@
 from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for
 
-from List import List
-
 class BaseTypeWidget(TextEdit):
     def __init__(self, _type):
         self.type = _type

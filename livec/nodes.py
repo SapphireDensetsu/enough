@@ -4,7 +4,7 @@ from SlotClass import SlotClass
 from observer import Observable
 from proxyclass import proxy_class
 
-from List import List
+from observable.List import List
 
 class Meta(Observable):
     """This is a special kind of node that does not affect the
