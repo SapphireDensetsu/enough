@@ -117,7 +117,9 @@ class Box(Widget):
                 offset = self.outspace
             abs_pos[self.direction.oaxis] += offset
             child.draw(surface, abs_pos)
+                
         total = self._do(draw_child)
+        
 
     def _do(self, func):
         cur = [0, 0]
