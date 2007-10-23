@@ -22,6 +22,8 @@ class Observable(object):
                     handler(*iargs, **ikw)
                 except:
                     import traceback
+                    traceback.print_stack()
+                    print "Exception caught here:"
                     traceback.print_exc()
         return func
     notify = attrspace_property(get_notifier)

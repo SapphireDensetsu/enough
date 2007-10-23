@@ -2,16 +2,16 @@ from observer import Observable
 
 class List(object):
     def __init__(self, *args, **kw):
-        self.obs = Observable()
+        self.obs_list = Observable()
         self._items = list(*args, **kw)
 
     def insert(self, index, item):
         self._items.insert(index, item)
-        self.obs.notify.insert(index, item)
+        self.obs_list.notify.insert(index, item)
     
     def pop(self, index):
         self._items.pop(index)
-        self.obs.notify.pop(index)
+        self.obs_list.notify.pop(index)
 
     def remove(self, item):
         self.pop(self.index(item))

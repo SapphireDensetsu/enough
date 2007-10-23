@@ -13,7 +13,7 @@ class Widget(object):
         # keys when you are above the focus.
         self.keymap = Keymap()
         self.focus_keymap = Keymap()
-        self.focus_keymap.activation.add_observer(self, '_keymap_')
+        self.focus_keymap.obs_activation.add_observer(self, '_keymap_')
         self.keymap.set_next_keymap(self.focus_keymap)
         
         self._prev_frame_color = None

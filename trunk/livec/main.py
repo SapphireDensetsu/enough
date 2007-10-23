@@ -19,8 +19,8 @@ with pygame_display((800, 600)) as display:
     from gui.Spacer import Spacer
     b = VBox(List([
         s,
-#        Spacer((0, 50)),
-#        keys_reflection_widget,
+        Spacer((0, 50)),
+        keys_reflection_widget,
     ]), relay_focus=True)
 
     loop.loop(display, b)
