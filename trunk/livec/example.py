@@ -1,12 +1,11 @@
 import nodes
+import builtins
 from observable.List import List
 
-int = nodes.BuiltinType(name='int')
-char = nodes.BuiltinType(name='char')
 
-argc=nodes.Variable(meta=nodes.Meta(name='argc'), type=int)
+argc=nodes.Variable(meta=nodes.Meta(name='argc'), type=builtins.int)
 argv=nodes.Variable(meta=nodes.Meta(name='argv'), type=nodes.Ptr(pointed_type=
-                                               nodes.Ptr(pointed_type=char)))
+                                               nodes.Ptr(pointed_type=builtins.char)))
 
 arg_count = nodes.Define(meta=nodes.Meta(name='ARG_COUNT'), expr=nodes.LiteralInt(value=2))
 
@@ -16,7 +15,7 @@ ret_value.values.append(ok)
 error = nodes.EnumValue(meta=nodes.Meta(name='ERROR'), value=nodes.LiteralInt(value=1), enum=ret_value)
 ret_value.values.append(error)
 
-s = nodes.Variable(type=nodes.Ptr(pointed_type=char))
+s = nodes.Variable(type=nodes.Ptr(pointed_type=builtins.char))
 strchr = nodes.Import(include='<string.h>', name='strchr', meta=nodes.Meta(name='strchr'))
 fprintf = nodes.Import(include='<stdio.h>', name='fprintf', meta=nodes.Meta(name='fprintf'))
 printf = nodes.Import(include='<stdio.h>', name='printf', meta=nodes.Meta(name='printf'))
@@ -30,7 +29,7 @@ example = nodes.Module(
     functions=List([
         nodes.Function(
             meta=nodes.Meta(name='main'),
-            type=nodes.FunctionType(return_type=int,
+            type=nodes.FunctionType(return_type=builtins.int,
                                     parameters=List([argc, argv])),
             block=nodes.Block(statements=List([
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),

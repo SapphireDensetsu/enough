@@ -26,9 +26,9 @@ class Box(Widget):
         if not relay_focus:
             r((0, pygame.K_RIGHT), discard_eventarg(self._enter_child))
 
-        self.child_selection_keymap = Keymap()
+        self.parenting_keymap = Keymap()
 
-        csr = self.child_selection_keymap.register_keydown
+        csr = self.parenting_keymap.register_keydown
         if not relay_focus:
             csr((0, pygame.K_LEFT), discard_eventarg(self._leave_child))
 
@@ -45,8 +45,8 @@ class Box(Widget):
             self._leave_child()
 
     def _set_next_keymap(self):
-        self.keymap.set_next_keymap(self.child_selection_keymap)
-        self.child_selection_keymap.set_next_keymap(self.selected_child.keymap)
+        self.keymap.set_next_keymap(self.parenting_keymap)
+        self.parenting_keymap.set_next_keymap(self.selected_child.keymap)
 
     def _enter_child(self):
         """Go in"""
@@ -79,8 +79,8 @@ class Box(Widget):
         index = selectables.index(self.selected_child)
         index += delta
 ##        index %= len(selectables)
-        csu = self.child_selection_keymap.unregister_keydown
-        csr = self.child_selection_keymap.register_keydown
+        csu = self.parenting_keymap.unregister_keydown
+        csr = self.parenting_keymap.register_keydown
         if index == len(selectables)-1:
             csu((0, pygame.K_DOWN))
         else:
