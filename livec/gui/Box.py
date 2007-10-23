@@ -1,4 +1,3 @@
-import pygame
 from gui.Widget import Widget
 
 class Direction(object): pass
@@ -14,12 +13,7 @@ class Vertical(Direction):
 class Box(Widget):
     outspace = 0
     padding_widget = None
-    frame_color = None # (255, 30, 80)
     is_centered = False
-
-    @classmethod
-    def has_frame(cls):
-        return cls.frame_color is not None
     
     def __init__(self, child_list):
         Widget.__init__(self)
@@ -31,7 +25,7 @@ class Box(Widget):
             pass
         return self._do(ignore_child)
 
-    def draw(self, surface, pos):
+    def _draw(self, surface, pos):
         self_size = self.size()
         def draw_child(child, child_pos, child_size):
             abs_pos = [a+b for a,b in zip(pos, child_pos)]
@@ -43,9 +37,6 @@ class Box(Widget):
             abs_pos[self.direction.oaxis] += offset
             child.draw(surface, abs_pos)
         total = self._do(draw_child)
-        if self.has_frame():
-            r = pygame.Rect(pos, (total[0]-1, total[1]-1))
-            pygame.draw.rect(surface, self.frame_color, r, 2)
 
     def _do(self, func):
         cur = [0, 0]

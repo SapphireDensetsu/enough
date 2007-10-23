@@ -1,12 +1,28 @@
 import pygame
+from observer import Observable
 
-class Keymap(object):
+class Keymap(Observable):
     def __init__(self):
+        Observable.__init__(self)
         self.pre_keydown_registrations = {}
         self.next_keymap = None
         self.post_keydown_registrations = {}
+
     def set_next_keymap(self, keymap):
+        if self.next_keymap is not None:
+            self.next_keymap.deactivate()
         self.next_keymap = keymap
+        if self.next_keymap is not None:
+            self.next_keymap.activate()
+
+    def activate(self):
+        for observer in self.observers:
+            observer.observe_activated(self)
+
+    def deactivate(self):
+        for observer in self.observers:
+            observer.observe_deactivated(self)
+
     def _keydown_registrations(self, pre):
         if pre:
             return self.pre_keydown_registrations
