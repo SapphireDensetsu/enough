@@ -27,8 +27,8 @@ class Widget(object):
         self._prev_frame_color = None
         
     def draw(self, surface, pos):
-        self.draw_frame(surface, pos)
         self._draw(surface, pos)
+        self.draw_frame(surface, pos)
 
     def draw_frame(self, surface, pos):
         if self.frame_color is not None:

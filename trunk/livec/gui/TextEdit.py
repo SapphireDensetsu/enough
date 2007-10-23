@@ -2,10 +2,15 @@ import pygame
 from Widget import Widget
 
 class TextStyle(object):
-    def __init__(self, color, font_size, font_name):
+    def __init__(self, color, font_size, font_name, bgcolor=None):
         self.color = color
         self.font_size = font_size
         self.font_name = font_name
+        self.bgcolor = bgcolor
+    
+    @classmethod
+    def from_style(cls, style):
+        return cls(style.color, style.font_size, style.font_name, style.bgcolor)
 
 class TextEdit(Widget):
     selectable = False
@@ -16,6 +21,10 @@ class TextEdit(Widget):
         if set_text:
             self.selectable = True
         self.color = style.color
+        if style.bgcolor is None:
+            self.bgcolor = ()
+        else:
+            self.bgcolor = (style.bgcolor,)
         try:
             self._font = pygame.font.Font(style.font_name, style.font_size)
         except IOError:
@@ -28,7 +37,7 @@ class TextEdit(Widget):
     
     def _draw(self, surface, pos):
         def func(line, cur_height):
-            text_surface = self._font.render(line, True, self.color)
+            text_surface = self._font.render(line, True, self.color, *self.bgcolor)
             surface.blit(text_surface, (pos[0], pos[1]+cur_height))
             return text_surface.get_size()
         self._do(func)
