@@ -40,10 +40,10 @@ class Keymap(Observable):
             return self.post_keydown_registrations
     def register_keydown(self, (modifiers, key), func, pre=False):
         r = self._keydown_registrations(pre)
-        assert (modifiers, key) not in r
         r[(modifiers, key)] = func
-    def unregister_keydown(self, (modifiers, key)):
-        del r[(modifiers, key)]
+    def unregister_keydown(self, (modifiers, key), pre=False):
+        r = self._keydown_registrations(pre)
+        r.pop((modifiers, key), None)
     def keyup(self, event):
         assert False, "keyup not implemented yet"
     def keydown(self, event):
