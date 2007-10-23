@@ -1,6 +1,8 @@
 * replace Widget.size() method with Widget.update() recursion prior to
    the draw() recursion that updates an exposed .size attribute.
 
+* add the defines to the top of module
+
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
 
