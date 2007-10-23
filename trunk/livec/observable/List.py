@@ -1,25 +1,17 @@
 from observer import Observable
 
-class ListObserver(object):
-    def observe_insert(self, list, index, item):
-        pass
-    def observe_pop(self, list, index):
-        pass
-
-class List(Observable):
+class List(object):
     def __init__(self, *args, **kw):
-        Observable.__init__(self)
+        self.obs = Observable()
         self._items = list(*args, **kw)
 
     def insert(self, index, item):
         self._items.insert(index, item)
-        for observer in self.observers:
-            observer.observe_insert(self, index, item)
+        self.obs.notify.insert(index, item)
     
     def pop(self, index):
         self._items.pop(index)
-        for observer in self.observers:
-            observer.observe_pop(self, index)
+        self.obs.notify.pop(index)
 
     def remove(self, item):
         self.pop(self.index(item))

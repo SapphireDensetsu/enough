@@ -8,15 +8,9 @@ def discard_eventarg(func):
         return func()
     return handler
  
-class KeymapObserver(object):
-    def observe_activated(self, keymap):
-        pass
-    def observe_deactivated(self, keymap):
-        pass
-
-class Keymap(Observable):
+class Keymap(object):
     def __init__(self):
-        Observable.__init__(self)
+        self.activation = Observable()
         self.pre_keydown_registrations = {}
         self.next_keymap = None
         self.post_keydown_registrations = {}
@@ -31,8 +25,7 @@ class Keymap(Observable):
 
     def activate(self):
         self.is_active = True
-        for observer in self.observers:
-            observer.observe_activated(self)
+        self.activation.notify.activated()
         if self.next_keymap is not None:
             self.next_keymap.activate()
 
@@ -40,8 +33,7 @@ class Keymap(Observable):
         self.is_active = False
         if self.next_keymap is not None:
             self.next_keymap.deactivate()
-        for observer in self.observers:
-            observer.observe_deactivated(self)
+        self.activation.notify.deactivated()
 
     def _keydown_registrations(self, pre):
         if pre:
