@@ -44,6 +44,12 @@ class Box(Widget):
         else:
             self._leave_child()
 
+    def _child_insert(self, index, widget):
+        self._move_selection(0)
+
+    def _child_pop(self, index):
+        self._move_selection(0)
+
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
         self.parenting_keymap.set_next_keymap(self.selected_child.keymap)
