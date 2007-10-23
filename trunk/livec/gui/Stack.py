@@ -11,5 +11,6 @@ class Stack(Widget):
         return self.items[-1].size()
     def push(self, widget):
         self.items.append(widget)
+        self.keymap.set_next_keymap(widget.keymap)
     def pop(self):
         self.items.pop()
