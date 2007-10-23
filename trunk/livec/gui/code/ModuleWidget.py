@@ -7,8 +7,7 @@ from observable.List import List
 class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
-        ibox = VBox(CacheMap(widget_for, self.module.functions))
-        ibox.frame_color = None
+        ibox = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, self.module.meta['name']),
             ibox,

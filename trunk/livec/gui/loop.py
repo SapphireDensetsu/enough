@@ -22,7 +22,7 @@ class Loop(object):
         self.global_keymap.set_next_keymap(widget.keymap)
         c = pygame.time.Clock()
         while True:
-            c.tick(50)
+            c.tick(20)
             for event in pygame.event.get():
                 try:
                     self._handle_event(event)
