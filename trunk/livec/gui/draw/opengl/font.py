@@ -19,13 +19,18 @@ def make_chars(pfont):
     return chars
 
 def draw_chars(line, chars, color, pos):
+    r,g,b = map(lambda x:x/255.0, color)
     GL.glPushMatrix()
-    pos = list(pos)
+    GL.glPixelTransferf(GL.GL_RED_SCALE, r)
+    GL.glPixelTransferf(GL.GL_GREEN_SCALE, g)
+    GL.glPixelTransferf(GL.GL_BLUE_SCALE, b)
+    
+    pos = list(map(int, pos))
     for c in line:
         data, w, h = chars[c]
-        GL.glRasterPos2i(pos[0], pos[1])
+        GL.glRasterPos2i(pos[0], pos[1]+h)
         GL.glDrawPixels(w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, data)
-        pos[0] += w
+        pos[0] += w -1
     GL.glPopMatrix()
         
 
