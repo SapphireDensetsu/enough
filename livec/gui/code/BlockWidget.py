@@ -16,11 +16,13 @@ class BlockWidget(VBox):
         
         self.keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_i), discard_eventarg(self._add_if))
 
+
     def _add_if(self):
         """Add a new 'if'"""
         _if = nodes.If(
             expr=nodes.Equals(a=nodes.LiteralInt(value=0),
                               b=nodes.LiteralInt(value=0)),
             if_true=nodes.Block(statements=List()),
+            if_false=nodes.Block(statements=List()),
         )
         self.block.statements.append(_if)

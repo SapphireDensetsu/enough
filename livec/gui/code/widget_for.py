@@ -6,6 +6,10 @@ from gui.Box import HBox
 from gui.TextEdit import make_label
 from observable.List import List
 
+node_paths_widgets = {}
+def widget_of_node_path(node_path):
+    return node_paths_widgets[node_path]
+    
 def ccode_widget_for(x):
     # TODO TEMP CODE
     from gui.TextEdit import TextEdit
@@ -79,71 +83,59 @@ def c_escape_char(x):
 def c_escape_str(x):
     return c_escape_common(x).replace('"', '\\"')
 
+from functools import partial, wraps
+
+def rpartial(func, *fargs, **fkw):
+    def new_func(*args, **kw):
+        return partial(func, **fkw)(*(args + fargs))
+    return new_func
+
 def widget_for(x):
-    if isinstance(x, nodes.Module):
-        from ModuleWidget import ModuleWidget
-        return ModuleWidget(x)
-    elif isinstance(x, nodes.Function):
-        from FunctionWidget import FunctionWidget
-        return FunctionWidget(x)
-
-    elif isinstance(x, nodes.Variable):
-        from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, style.identifier)
-    elif isinstance(x, nodes.Define):
-        from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, style.define)
-    elif isinstance(x, nodes.EnumValue):
-        from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, style.enum)
-    elif isinstance(x, nodes.Import):
-        from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, style.import_)
+    from ModuleWidget import ModuleWidget
+    from FunctionWidget import FunctionWidget
+    from IdentifierWidget import IdentifierWidget
+    from BlockWidget import BlockWidget
+    from ReturnWidget import ReturnWidget
+    from IfWidget import IfWidget
+    from BinaryOpWidget import EqualsWidget, NotEqualsWidget, AssignWidget, SubtractWidget
+    from CallWidget import CallWidget
+    from ArrayDerefWidget import ArrayDerefWidget
+    from LiteralWidget import LiteralWidget
     
-    elif isinstance(x, nodes.Block):
-        from BlockWidget import BlockWidget
-        return BlockWidget(x)
-    elif isinstance(x, nodes.Return):
-        from ReturnWidget import ReturnWidget
-        return ReturnWidget(x)
+    widget_map = {
+        nodes.Module: ModuleWidget,
+        nodes.Function: FunctionWidget,
+
+        nodes.Variable: rpartial(IdentifierWidget, style.identifier),
+        nodes.Define: rpartial(IdentifierWidget, style.define),
+        nodes.EnumValue: rpartial(IdentifierWidget, style.enum),
+        nodes.Import: rpartial(IdentifierWidget, style.import_),
+    
+        nodes.Block: BlockWidget,
+        nodes.Return: ReturnWidget,
 
 
-    elif isinstance(x, nodes.If):
-        from IfWidget import IfWidget
-        return IfWidget(x)
+        nodes.If: IfWidget,
 
-    elif isinstance(x, nodes.Equals):
-        from BinaryOpWidget import EqualsWidget
-        return EqualsWidget(x)
-    elif isinstance(x, nodes.NotEquals):
-        from BinaryOpWidget import NotEqualsWidget
-        return NotEqualsWidget(x)
-    elif isinstance(x, nodes.Assign):
-        from BinaryOpWidget import AssignWidget
-        return AssignWidget(x)
-    elif isinstance(x, nodes.Subtract):
-        from BinaryOpWidget import SubtractWidget
-        return SubtractWidget(x)
+        nodes.Equals: EqualsWidget,
+        nodes.NotEquals: NotEqualsWidget,
+        nodes.Assign: AssignWidget,
+        nodes.Subtract: SubtractWidget,
 
-    elif isinstance(x, nodes.Call):
-        from CallWidget import CallWidget
-        return CallWidget(x)
-    elif isinstance(x, nodes.ArrayDeref):
-        from ArrayDerefWidget import ArrayDerefWidget
-        return ArrayDerefWidget(x)
+        nodes.Call: CallWidget,
+        nodes.ArrayDeref: ArrayDerefWidget,
 
-    elif isinstance(x, nodes.LiteralInt):
-        from LiteralWidget import LiteralWidget
-        return LiteralWidget(x, repr)
-    elif isinstance(x, nodes.LiteralChar):
-        from LiteralWidget import LiteralWidget
-        return LiteralWidget(x, lambda value: "'%c'" % c_escape_char(value))
-    elif isinstance(x, nodes.LiteralString):
-        from LiteralWidget import LiteralWidget
-        return LiteralWidget(x, lambda value: '"%s"' % c_escape_str(value))
+        nodes.LiteralInt: rpartial(LiteralWidget, repr),
+        nodes.LiteralChar: rpartial(LiteralWidget, lambda value: "'%c'" % c_escape_char(value)),
+        nodes.LiteralString: rpartial(LiteralWidget, lambda value: '"%s"' % c_escape_str(value)),
+    }
 
+    for type_,factory in widget_map.iteritems():
+        if isinstance(x, type_):
+            return factory(x)
+        
     # These are only to be used as type_widget_for
-    elif isinstance(x, (nodes.Ptr, nodes.Array, nodes.BuiltinType)):
+    if isinstance(x, (nodes.Ptr, nodes.Array, nodes.BuiltinType)):
         assert False
 
     else:
