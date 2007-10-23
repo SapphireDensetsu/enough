@@ -33,8 +33,12 @@ class KeysReflectionWidget(VBox):
 
     def _widget(self, (key, func)):
         from gui.Spacer import Spacer
+        if not func.__doc__:
+            f = '<undocumented: %s>' % (func.__name__,)
+        else:
+            f = func.__doc__
         return HBox(List([
-            make_label(style.keydoc_name, func.__doc__),
+            make_label(style.keydoc_name, f),
             Spacer((style.key_space_width, 0)),
             make_label(style.key_name, key_name(key)),
         ]))
