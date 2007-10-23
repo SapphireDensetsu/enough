@@ -3,6 +3,9 @@
 # * setuptools http://pypi.python.org/pypi/setuptools#downloads
 from OpenGL  import GL
 
+import OpenGL.error
+OpenGL.error.ErrorChecker.registerChecker(lambda : None)
+
 import pygame
 
 def fill(display, color):

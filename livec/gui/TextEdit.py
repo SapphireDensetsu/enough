@@ -59,7 +59,7 @@ class TextEdit(Widget):
 
     def update(self):
         def func(line, cur_height):
-            size = self._font.size(line)
+            size = list(self._font.size(line))
             size[0] += self.margin[0]*2
             size[1] += self.margin[1]*2
             return size
@@ -69,7 +69,7 @@ class TextEdit(Widget):
         def func(line, cur_height):
             text_surface = self._font.render(line, True, self.color, *self.bgcolor)
             gui.draw.draw_font(surface, text_surface, (pos[0]+self.margin[0], pos[1]+cur_height+self.margin[1]))
-            size = self._font.size(line)
+            size = list(self._font.size(line))
             size[0] += self.margin[0]*2
             size[1] += self.margin[1]*2
             return size

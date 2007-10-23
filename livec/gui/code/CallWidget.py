@@ -2,8 +2,8 @@ from gui.Box import HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for
 
-from observable.List import List
-from observable.CacheMap import CacheMap
+from lib.observable.List import List
+from lib.observable.CacheMap import CacheMap
 
 import style
 

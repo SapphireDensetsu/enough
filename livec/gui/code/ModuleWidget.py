@@ -1,8 +1,8 @@
 from gui.Box import VBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, style
-from observable.CacheMap import CacheMap
-from observable.List import List
+from lib.observable.CacheMap import CacheMap
+from lib.observable.List import List
 
 from gui.Keymap import discard_eventarg
 

@@ -3,7 +3,7 @@ from gui.code.widget_for import widget_for, ccode_widget_for
 from gui.TextEdit import make_label
 from gui.code import style
 
-from observable.List import List
+from lib.observable.List import List
 
 from itertools import chain
 

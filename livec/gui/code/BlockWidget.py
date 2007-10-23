@@ -1,13 +1,13 @@
 import nodes
 import pygame
 from gui.Keymap import discard_eventarg
-from observable.List import List
+from lib.observable.List import List
 
 from gui.Box import VBox, HBox
 from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for, ccode_widget_for
 
-from observable.CacheMap import CacheMap
+from lib.observable.CacheMap import CacheMap
 
 class BlockWidget(VBox):
     def __init__(self, block):

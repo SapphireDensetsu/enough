@@ -3,7 +3,7 @@ from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_for, indented
 from gui.code import style
 
-from observable.List import List
+from lib.observable.List import List
         
 class FunctionWidget(VBox):
     def __init__(self, function):

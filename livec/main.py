@@ -16,7 +16,7 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from gui.code.KeysReflectionWidget import KeysReflectionWidget
     keys_reflection_widget = KeysReflectionWidget(loop.global_keymap)
 
-    from observable.List import List
+    from lib.observable.List import List
     from gui.Box import VBox
     from gui.Spacer import Spacer
     b = VBox(List([

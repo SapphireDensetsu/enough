@@ -1,7 +1,7 @@
 from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for
 
-from observable.List import List
+from lib.observable.List import List
 
 import style
 

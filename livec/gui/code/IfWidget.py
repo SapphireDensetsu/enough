@@ -1,14 +1,14 @@
 import nodes
 import pygame
 from gui.Keymap import discard_eventarg
-from observable.List import List
+from lib.observable.List import List
 
 from gui.Box import VBox, HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, indented
 from gui.code import style
 
-from observable.List import List
+from lib.observable.List import List
 
 from itertools import chain
 

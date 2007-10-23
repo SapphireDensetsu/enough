@@ -1,6 +1,6 @@
 import nodes
 import builtins
-from observable.List import List
+from lib.observable.List import List
 
 
 argc=nodes.Variable(meta=nodes.Meta(name='argc'), type=builtins.int)
