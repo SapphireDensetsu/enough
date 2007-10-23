@@ -60,6 +60,9 @@ class EnumValue(Named):
 class Function(Named):
     __slots__ = ['type', 'block', 'meta']
     defaults = dict(meta=Meta)
+    def referred(self):
+        yield self.type
+        yield self.block
 
 class FunctionType(Node):
     __slots__ = ['meta', 'return_type', 'parameters']
@@ -68,7 +71,6 @@ class FunctionType(Node):
         yield self.return_type
         for param in self.parameters:
             yield param
-        yield self.block
 
 class BuiltinType(Node):
     __slots__ = ['name', 'meta']
