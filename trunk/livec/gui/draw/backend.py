@@ -1,1 +1,1 @@
-from sdl import *
+from opengl import *
