@@ -11,9 +11,10 @@ def fill(display, color):
     GL.glClearColor(r,g,b,0)
     GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-def rect(surface, color, rect, width=0):
+def rect(surface, color, rect, width=1):
     GL.glLoadIdentity()
     GL.glColor3f(*color)
+    GL.glLineWidth(width)
     GL.glBegin(GL.GL_LINE_LOOP)
     GL.glVertex2f(*rect.topleft)
     GL.glVertex2f(*rect.topright)
@@ -21,8 +22,9 @@ def rect(surface, color, rect, width=0):
     GL.glVertex2f(*rect.bottomleft)
     GL.glEnd()
     
-def line(surface, color, startpos, endpos, width=1):
+def line(surface, color, startpos, endpos, width=0):
     GL.glLoadIdentity()
+    GL.glLineWidth(width)
     GL.glColor3f(*color)
     GL.glBegin(GL.GL_LINES)
     GL.glVertex2f(startpos[0], startpos[1])
@@ -40,6 +42,7 @@ def arc(surface, color, rect, angle_start, angle_stop, width=0):
     n = 3*r #/* # of segments */
     dt = (sweep - t0)/ n
     GL.glColor3f(*color)
+    GL.glLineWidth(width)
     GL.glBegin(GL.GL_LINE_STRIP)
     for i in xrange(n+1):
         GL.glVertex2f(x + r*cos(t), y - r*sin(t))
@@ -82,7 +85,7 @@ class FontFaker(object):
         return self, text, fore_color, back_color
 
     def size(self, text):
-        return self.font.size(text)
+        return font.calc_size(text, self.chars)
 
 _font_cache = {}
 def get_font(name, size):
