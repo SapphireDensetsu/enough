@@ -1,6 +1,6 @@
 from observer import Observable
 
-class CacheMap(Observable):
+class CacheMap(Observable, ListObserver):
     def __init__(self, func, l):
         Observable.__init__(self)
         self.func = func
@@ -14,8 +14,8 @@ class CacheMap(Observable):
         for observer in self.observers:
             observer.observe_insert(self, index, new_item)
 
-    def observe_pop(self, index):
-        # TODO: Should call destroy() here
+    def observe_pop(self, list, index):
+        # TODO: Should call destroy() here?
         result = self._cache.pop(index)
         for observer in self.observers:
             observer.observe_pop(self, index)
