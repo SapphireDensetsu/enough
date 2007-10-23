@@ -18,8 +18,12 @@ class Keymap(Observable):
     def activate(self):
         for observer in self.observers:
             observer.observe_activated(self)
+        if self.next_keymap is not None:
+            self.next_keymap.activate()
 
     def deactivate(self):
+        if self.next_keymap is not None:
+            self.next_keymap.deactivate()
         for observer in self.observers:
             observer.observe_deactivated(self)
 
