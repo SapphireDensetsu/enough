@@ -1,5 +1,5 @@
 from gui.Box import HBox
-from styletools import make_label
+from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for
 
 from observable.List import List

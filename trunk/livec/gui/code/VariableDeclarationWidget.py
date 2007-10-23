@@ -1,5 +1,4 @@
 from gui.Box import VBox, HBox
-from styletools import styled_label
 from gui.code.widget_for import type_widget_for, style
 
 from observable.List import List

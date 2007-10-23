@@ -17,10 +17,12 @@ class Box(Widget):
     frame_color = None#(255, 30, 80)
     is_centered = False
 
-    def has_frame(self):
-        return self.frame_color is not None
+    @classmethod
+    def has_frame(cls):
+        return cls.frame_color is not None
     
     def __init__(self, child_list):
+        Widget.__init__(self)
         self.child_list = child_list
         self.child_list.add_observer(self)
 

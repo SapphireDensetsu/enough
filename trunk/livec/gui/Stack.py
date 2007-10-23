@@ -3,6 +3,7 @@ from Widget import Widget
 
 class Stack(Widget):
     def __init__(self):
+        Widget.__init__(self)
         self.items = []
     def draw(self, surface, pos):
         self.items[-1].draw(surface, pos)

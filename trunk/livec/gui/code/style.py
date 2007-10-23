@@ -3,13 +3,13 @@ from gui.TextEdit import TextStyle
 def _make_style(color=(220, 220, 220), font_size=24, font_name='courier'):
     return TextStyle(color=color, font_size=font_size, font_name=font_name)
 
-
-        
-
 indent_width = 40
 braces = _make_style(color=(200, 200, 255))
 paren = _make_style(color=(220, 220, 255))
 bracket = _make_style(color=(200, 200, 255))
+comma = _make_style(color=(200, 200, 255))
+operator = _make_style(color=(220, 220, 255))
+space = _make_style()
 
 keyword = _make_style(color=(255, 30, 30))
 if_ = _make_style(color=keyword.color)

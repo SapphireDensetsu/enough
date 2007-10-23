@@ -18,6 +18,7 @@ class Loop(object):
     def _quit(self):
         raise ExitLoop()
     def loop(self, display, widget):
+        self.global_keymap.set_next_keymap(widget.keymap)
         c = pygame.time.Clock()
         while True:
             c.tick(50)

@@ -1,5 +1,5 @@
 from gui.Box import VBox, HBox
-from styletools import styled_label
+from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, indented
 from gui.code import style
 
@@ -13,25 +13,25 @@ class IfWidget(VBox):
         self.if_node = if_node
 
         cond_part = HBox(List([
-            styled_label('if', color=style.if_color),
-            styled_label('(', color=style.paren_color),
+            make_label(style.if_, 'if'),
+            make_label(style.paren, '('),
             widget_for(self.if_node.expr),
-            styled_label(')', color=style.paren_color),
+            make_label(style.paren, ')'),
         ]))
         cond_part.is_centered = True
         
         parts = [
             cond_part,
-            styled_label('{', color=style.braces_color),
+            make_label(style.braces, '{'),
             indented(widget_for(self.if_node.if_true)),
-            styled_label('}', color=style.braces_color),
+            make_label(style.braces, '}'),
         ]
         if self.if_node.if_false:
             if_false_part = [
-                styled_label('else', color=style.else_color),
-                styled_label('{', color=style.braces_color),
+                make_label(style.else_, 'else'),
+                make_label(style.braces, '{'),
                 indented(widget_for(self.if_node.if_false)),
-                styled_label('}', color=style.braces_color),
+                make_label(style.braces, '}'),
             ]
             parts.append(if_false_part)
             

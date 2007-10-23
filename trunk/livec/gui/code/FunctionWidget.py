@@ -23,7 +23,7 @@ class FunctionWidget(VBox):
         
         prototype = HBox(List([
             self.return_type_widget,
-            make_label(style.default, ' '),
+            make_label(style.space, ' '),
             self.name_widget,
             make_label(style.paren, '('),
             self.parameters_widget,

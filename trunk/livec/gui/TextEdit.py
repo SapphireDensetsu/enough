@@ -10,10 +10,14 @@ class TextStyle(object):
 
 class TextEdit(Widget):
     def __init__(self, style, get_text, set_text=None):
+        Widget.__init__(self)
         self.get_text = get_text
         self.set_text = set_text
         self.color = style.color
-        self._font = pygame.font.Font(style.font_name, style.font_size)
+        try:
+            self._font = pygame.font.Font(style.font_name, style.font_size)
+        except IOError:
+            self._font = pygame.font.Font(pygame.font.get_default_font(), style.font_size)
 
         # TODO: Debugging hack, remove
         import traceback
@@ -40,5 +44,5 @@ class TextEdit(Widget):
             size[1] += theight
         return size
 
-def make_label(text, **kw):
-    return TextEdit(lambda : text, **kw)
+def make_label(style, text):
+    return TextEdit(style, lambda : text)
