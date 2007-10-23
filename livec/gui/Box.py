@@ -87,13 +87,17 @@ class Box(Widget):
             csr((0, pygame.K_UP), discard_eventarg(self._prev))
         self.selected_child = selectables[index]
 
-    def size(self):
+    def update(self):
+        for child in self.child_list:
+            child.update()
+        if self.padding_widget is not None:
+            self.padding_widget.update()
         def ignore_child(child, child_pos, child_size):
             pass
-        return self._do(ignore_child)
+        self.size = self._do(ignore_child)
 
     def _draw(self, surface, pos):
-        self_size = self.size()
+        self_size = self.size
         def draw_child(child, child_pos, child_size):
             abs_pos = [a+b for a,b in zip(pos, child_pos)]
             if self.is_centered:
@@ -111,7 +115,7 @@ class Box(Widget):
         cur[self.direction.axis] = self.outspace
         
         if self.padding_widget is not None:
-            padding_size = self.padding_widget.size()
+            padding_size = self.padding_widget.size
             padding = padding_size[self.direction.axis]
             max_len = max(max_len, padding_size[self.direction.oaxis])
         
@@ -120,7 +124,7 @@ class Box(Widget):
                 func(self.padding_widget, cur, padding_size)
                 cur[self.direction.axis] += padding
             
-            size = child.size()
+            size = child.size
             func(child, cur, size)
             max_len = max(max_len, size[self.direction.oaxis])
             cur[self.direction.axis] += size[self.direction.axis]

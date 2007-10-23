@@ -25,10 +25,10 @@ class TextEdit(Widget):
         import traceback
         self.creator = traceback.format_stack()
 
-    def size(self):
+    def update(self):
         def func(line, cur_height):
             return self._font.size(line)
-        return self._do(func)
+        self.size = self._do(func)
     
     def _draw(self, surface, pos):
         def func(line, cur_height):

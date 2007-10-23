@@ -31,13 +31,12 @@ class Widget(object):
         self._draw(surface, pos)
 
     def draw_frame(self, surface, pos):
-        size = self.size()
         if self.frame_color is not None:
-            r = pygame.Rect(pos, size)
+            r = pygame.Rect(pos, self.size)
             pygame.draw.rect(surface, self.frame_color, r, self.frame_width)
 
     def _draw(self, surface, pos):
         raise NotImplementedError()
 
-    def size(self):
+    def update(self):
         raise NotImplementedError()

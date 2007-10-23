@@ -1,10 +1,9 @@
-* replace Widget.size() method with Widget.update() recursion prior to
-   the draw() recursion that updates an exposed .size attribute.
+* observable.ValueProxy and use that so made child widgets can be
+   replaced when they should be.
 
 * add the defines to the top of module
 
-* observable.ValueProxy and use that so made child widgets can be
-   replaced when they should be.
+* semicolons (not as easy as it seems!)
 
 * add_observer to take an arg and have infrastructure to call the
    observe_methods with the arg instead of "self". Allow specifying a
