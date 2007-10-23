@@ -4,6 +4,12 @@ from gui.code.widget_for import widget_for, style
 from observable.CacheMap import CacheMap
 from observable.List import List
 
+from gui.Keymap import discard_eventarg
+
+import pygame
+import nodes
+import builtins
+
 class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
@@ -12,3 +18,13 @@ class ModuleWidget(VBox):
             make_label(style.module_name, self.module.meta['name']),
             ibox,
         ]))
+
+        self.parenting_keymap.register_keydown((0, pygame.K_f), discard_eventarg(self._add_func))
+
+    def _add_func(self):
+        func = nodes.Function(meta=nodes.Meta(name='new func'),
+                              type=nodes.FunctionType(return_type=builtins.void,
+                                                      parameters=List()),
+                              block=nodes.Block(statements=List()),
+                              )
+        self.module.functions.append(func)
