@@ -1,7 +1,7 @@
 import pygame
-from Keymap import Keymap
+from Keymap import Keymap, KeymapObserver
 
-class Widget(object):
+class Widget(KeymapObserver):
     # frame_color is consulted first, and allowed to be None for no
     # frame.
     frame_color = None

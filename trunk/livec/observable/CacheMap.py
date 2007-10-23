@@ -1,4 +1,5 @@
 from observer import Observable
+from List import ListObserver
 
 class CacheMap(Observable, ListObserver):
     def __init__(self, func, l):
