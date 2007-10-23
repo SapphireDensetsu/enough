@@ -1,18 +1,11 @@
+* add the defines to the top of module
+
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
 
-* add the defines to the top of module
-
 * semicolons (not as easy as it seems!)
-
-* add_observer to take an arg and have infrastructure to call the
-   observe_methods with the arg instead of "self". Allow specifying a
-   prefix too perhaps?
 
 * When does an observable object die?
   * Either observers are weakrefs -- which should make everything
    disappear when it should.
   * Or explicit detachment is used (how?)
-
-Events:
-* To get reflection about key bindings, must have key registrations rather than handle_event
