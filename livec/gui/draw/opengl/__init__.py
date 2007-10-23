@@ -29,9 +29,22 @@ def line(surface, color, startpos, endpos, width=1):
     GL.glVertex2f(endpos[0], endpos[1])
     GL.glEnd()
 
-def arc(surface, color, Rect, angle_start, angle_stop, width=0):
+from math import pi, sin, cos
+def arc(surface, color, rect, angle_start, angle_stop, width=0):
     # TODO implement
-    pass
+    x,y = rect.center
+    t0 = angle_start
+    sweep = angle_stop
+    t = t0
+    r = rect.width/2.0
+    n = 3*r #/* # of segments */
+    dt = (sweep - t0)/ n
+    GL.glColor3f(*color)
+    GL.glBegin(GL.GL_LINE_STRIP)
+    for i in xrange(n+1):
+        GL.glVertex2f(x + r*cos(t), y - r*sin(t))
+        t += dt
+    GL.glEnd()
 
 
 def set_mode(size, flags, depth=0):
