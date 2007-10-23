@@ -1,5 +1,6 @@
 import pygame
 from Keymap import Keymap
+import gui.draw
 
 class Widget(object):
     # frame_color is consulted first, and allowed to be None for no
@@ -33,7 +34,7 @@ class Widget(object):
     def draw_frame(self, surface, pos):
         if self.frame_color is not None:
             r = pygame.Rect(pos, self.size)
-            pygame.draw.rect(surface, self.frame_color, r, self.frame_width)
+            gui.draw.rounded.rounded_rect(surface, self.frame_color, r, self.frame_width, 5)
 
     def _draw(self, surface, pos):
         raise NotImplementedError()

@@ -1,5 +1,6 @@
 import pygame
 from Widget import Widget
+import gui.draw
 
 class TextStyle(object):
     def __init__(self, color, font_size, font_name, bgcolor=None):
@@ -26,9 +27,9 @@ class TextEdit(Widget):
         else:
             self.bgcolor = (style.bgcolor,)
         try:
-            self._font = pygame.font.Font(style.font_name, style.font_size)
+            self._font = gui.draw.get_font(style.font_name, style.font_size)
         except IOError:
-            self._font = pygame.font.Font(pygame.font.get_default_font(), style.font_size)
+            self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
 
     def update(self):
         def func(line, cur_height):
@@ -38,8 +39,8 @@ class TextEdit(Widget):
     def _draw(self, surface, pos):
         def func(line, cur_height):
             text_surface = self._font.render(line, True, self.color, *self.bgcolor)
-            surface.blit(text_surface, (pos[0], pos[1]+cur_height))
-            return text_surface.get_size()
+            gui.draw.draw_font(surface, text_surface, (pos[0], pos[1]+cur_height))
+            return self._font.size(line)
         self._do(func)
 
     def _do(self, func):

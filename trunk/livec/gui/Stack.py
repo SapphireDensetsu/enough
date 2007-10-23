@@ -6,12 +6,14 @@ class Stack(Widget):
         Widget.__init__(self)
         self.items = []
     def draw(self, surface, pos):
-        self.items[-1].draw(surface, pos)
+        self.top().draw(surface, pos)
     def update(self):
-        self.items[-1].update()
-        self.size = self.items[-1].size
+        self.top().update()
+        self.size = self.top().size
     def push(self, widget):
         self.items.append(widget)
         self.keymap.set_next_keymap(widget.keymap)
     def pop(self):
         self.items.pop()
+    def top(self):
+        return self.items[-1]

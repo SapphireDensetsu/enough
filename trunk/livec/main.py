@@ -1,7 +1,9 @@
 from __future__ import with_statement
 from gui.main import pygame_display
 
-with pygame_display((800, 600)) as display:
+import pygame
+
+with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from gui.loop import loop
 
     from gui.code.BrowserWidget import BrowserWidget
@@ -23,4 +25,7 @@ with pygame_display((800, 600)) as display:
         keys_reflection_widget,
     ]), relay_focus=True)
 
+    import pygame
+    pygame.key.set_repeat(500,30)
+    
     loop.loop(display, b)

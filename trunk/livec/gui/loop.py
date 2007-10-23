@@ -1,6 +1,8 @@
 import pygame
 from Keymap import Keymap, discard_eventarg
 
+import gui.draw
+
 class ExitLoop(Exception): pass
 
 class Loop(object):
@@ -29,9 +31,9 @@ class Loop(object):
                     self._handle_event(event)
                 except ExitLoop:
                     return
-            display.fill((0, 0, 0))
+            gui.draw.fill(display, (0, 0, 0))
             widget.update()
             widget.draw(display, (0, 0))
-            pygame.display.update()
+            pygame.display.flip()
 
 loop = Loop()
