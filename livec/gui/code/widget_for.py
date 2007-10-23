@@ -3,7 +3,7 @@ from functools import partial
 from gui.code import style
 
 from gui.Box import HBox
-from styletools import styled_label
+from gui.TextEdit import make_label
 from observable.List import List
 
 def ccode_widget_for(x):
@@ -23,7 +23,7 @@ def indented(widget):
 
 def posttype_widget_for(x, name):
     if isinstance(x, nodes.BuiltinType):
-        return styled_label(name, color=style.identifier_color)
+        return make_label(style.identifier, name)
     elif isinstance(x, nodes.Ptr):
         from PtrTypeWidget import PtrTypeWidget
         return PtrTypeWidget(x, name)
@@ -51,7 +51,7 @@ def type_widget_for(x, name=''):
 
     type_widget = HBox(List([
         basetype_widget,
-        styled_label(' '),
+        make_label(style.space, ' '),
         posttype_widget_for(x, name),
     ]))
     type_widget.is_centered = True
@@ -87,16 +87,16 @@ def widget_for(x):
 
     elif isinstance(x, nodes.Variable):
         from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, color=style.identifier_color)
+        return IdentifierWidget(x, style.identifier)
     elif isinstance(x, nodes.Define):
         from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, color=style.define_color)
+        return IdentifierWidget(x, style.define)
     elif isinstance(x, nodes.EnumValue):
         from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, color=style.enum_color)
+        return IdentifierWidget(x, style.enum)
     elif isinstance(x, nodes.Import):
         from IdentifierWidget import IdentifierWidget
-        return IdentifierWidget(x, color=style.import_color)
+        return IdentifierWidget(x, style.import_)
     
     elif isinstance(x, nodes.Block):
         from BlockWidget import BlockWidget

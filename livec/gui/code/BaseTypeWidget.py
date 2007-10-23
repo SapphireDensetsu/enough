@@ -6,4 +6,4 @@ import style
 class BaseTypeWidget(TextEdit):
     def __init__(self, _type):
         self.type = _type
-        TextEdit.__init__(style.base_type, self, lambda : self.type.name)
+        TextEdit.__init__(self, style.base_type, lambda : self.type.name)

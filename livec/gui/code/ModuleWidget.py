@@ -1,5 +1,5 @@
 from gui.Box import VBox
-from styletools import styled_label
+from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, style
 from observable.CacheMap import CacheMap
 from observable.List import List
@@ -10,6 +10,6 @@ class ModuleWidget(VBox):
         ibox = VBox(CacheMap(widget_for, self.module.functions))
         ibox.frame_color = None
         VBox.__init__(self, List([
-            styled_label(self.module.meta['name'], color=style.module_name_color),
+            make_label(style.module_name, self.module.meta['name']),
             ibox,
         ]))
