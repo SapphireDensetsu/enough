@@ -15,9 +15,7 @@ class Observable(object):
                 ikw = ikw.copy()
                 ikw.update(kw)
                 iargs = iargs+args
-                handler = getattr(observer, prefix + name, None)
-                if handler is None:
-                    continue
+                handler = getattr(observer, prefix + name)
                 try:
                     handler(*iargs, **ikw)
                 except:

@@ -1,5 +1,6 @@
 import pygame
 from Widget import Widget
+from gui.Keymap import discard_eventarg
 import gui.draw
 
 class TextStyle(object):
@@ -13,6 +14,11 @@ class TextStyle(object):
     def from_style(cls, style):
         return cls(style.color, style.font_size, style.font_name, style.bgcolor)
 
+# TODO: This should come from somewhere, assuming pygame.K_x is
+# ord('x') sucks:
+import string
+letter_keys = map(ord, string.letters)
+
 class TextEdit(Widget):
     selectable = False
     def __init__(self, style, get_text, set_text=None):
@@ -21,6 +27,25 @@ class TextEdit(Widget):
         self.set_text = set_text
         if set_text:
             self.selectable = True
+#            self._register_keys()
+        self.set_style(style)
+
+    def _register_keys(self):
+        for mod in [pygame.KMOD_SHIFT, 0]:
+            for key in letter_keys + [pygame.K_UNDERSCORE]:
+                self.focus_keymap.register_keydown((mod, key), self._insert_char)
+        self.focus_keymap.register_keydown((0, pygame.K_BACKSPACE),
+                                           discard_eventarg(self._backspace))
+
+    def _backspace(self):
+        """Backspace"""
+        self.set_text(self.get_text()[:-1])
+
+    def _insert_char(self, event):
+        """Insert character"""
+        self.set_text(self.get_text() + event.unicode)
+
+    def set_style(self, style):
         self.color = style.color
         if style.bgcolor is None:
             self.bgcolor = ()

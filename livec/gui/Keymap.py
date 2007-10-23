@@ -52,10 +52,11 @@ class Keymap(object):
             if self.is_active:
                 self.next_keymap.deactivate()
             for key, value in list(self.next_keymap.iteritems()):
-                self.obs_dict.notify.remove_item(key, value)
                 if key in self.keydown_registrations:
-                    self.obs_dict.notify.add_item(
-                        key, self.keydown_registrations[key])
+                    self.obs_dict.notify.set_item(
+                        key, value, self.keydown_registrations[key])
+                else:
+                    self.obs_dict.notify.remove_item(key, value)
             self.next_keymap.obs_dict.remove_observer(self)
                 
         self.next_keymap = keymap
@@ -65,9 +66,10 @@ class Keymap(object):
             self.next_keymap.obs_dict.add_observer(self, '_next_keymap_')
             for key, value in list(self.next_keymap.iteritems()):
                 if key in self.keydown_registrations:
-                    self.obs_dict.notify.remove_item(
-                        key, self.keydown_registrations[key])
-                self.obs_dict.notify.add_item(key, value)
+                    self.obs_dict.notify.set_item(
+                        key, self.keydown_registrations[key], value)
+                else:
+                    self.obs_dict.notify.add_item(key, value)
 
     def _next_keymap_add_item(self, key, func):
         if key in self.keydown_registrations:
@@ -78,6 +80,9 @@ class Keymap(object):
         self.obs_dict.notify.remove_item(key, func)
         if key in self.keydown_registrations:
             self.obs_dict.notify.add_item(key, self.keydown_registrations[key])
+
+    def _next_keymap_set_item(self, key, old_func, new_func):
+        self.obs_dict.notify.set_item(key, old_func, new_func)
 
     def activate(self):
         self.is_active = True

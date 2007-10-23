@@ -21,6 +21,10 @@ class SortedItems(object):
         self._items.pop(index)
         self.obs_list.notify.pop(index)
 
+    def _dict_set_item(self, key, old_value, new_value):
+        self._dict_remove_item(key, old_value)
+        self._dict_add_item(key, new_value)
+
 from proxyclass import proxy_class
 SortedItems = proxy_class(SortedItems, '_items', methods=[
     '__getitem__',
