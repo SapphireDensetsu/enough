@@ -29,8 +29,9 @@ example = nodes.Module(
     meta=nodes.Meta(name='example.c'),
     functions=List([
         nodes.Function(
-            meta=nodes.Meta(name='main'), return_type=int,
-            parameters=List([argc, argv]),
+            meta=nodes.Meta(name='main'),
+            type=nodes.FunctionType(return_type=int,
+                                    parameters=List([argc, argv])),
             block=nodes.Block(statements=List([
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),
                          if_true=nodes.Block(statements=List([

@@ -4,33 +4,14 @@ from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_
 from gui.code import style
 
 from observable.List import List
-from observable.CacheMap import CacheMap
         
 class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
-        self.return_type_widget = type_widget_for(self.function.return_type)
-        self.name_widget = make_label(style.func_name, self.function.meta['name'])
-
-        comma = make_label(style.comma, ', ')
-        
-        self.parameters_widget = HBox(CacheMap(declaration_widget_for,
-                                               self.function.parameters))
-        self.parameters_widget.padding_widget = comma
-        self.parameters_widget.is_centered = True
-        
-        prototype = HBox(List([
-            self.return_type_widget,
-            make_label(style.space, ' '),
-            self.name_widget,
-            make_label(style.paren, '('),
-            self.parameters_widget,
-            make_label(style.paren, ')'),
-        ]))
-        prototype.is_centered = True
+        self.prototype_widget = type_widget_for(self.function.type, self.function.meta['name'])
         
         VBox.__init__(self, List([
-            prototype,
+            self.prototype_widget,
             make_label(style.braces, '{'),
             indented(widget_for(self.function.block)),
             make_label(style.braces, '}'),

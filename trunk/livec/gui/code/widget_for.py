@@ -30,6 +30,9 @@ def posttype_widget_for(x, name):
     elif isinstance(x, nodes.Array):
         from ArrayTypeWidget import ArrayTypeWidget
         return ArrayTypeWidget(x, name)
+    elif isinstance(x, nodes.FunctionType):
+        from FunctionTypeWidget import FunctionTypeWidget
+        return FunctionTypeWidget(x, name)
     # TODO: Function-type (not function + body declaration, but
     # function type)
     else:
@@ -42,6 +45,8 @@ def find_basetype(x):
         return find_basetype(x.pointed_type)
     elif isinstance(x, nodes.Array):
         return find_basetype(x.element_type)
+    elif isinstance(x, nodes.FunctionType):
+        return find_basetype(x.return_type)
     else:
         assert False, "Cannot find base type of %r" % (x,)
 

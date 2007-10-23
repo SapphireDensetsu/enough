@@ -1,6 +1,9 @@
 * replace Widget.size() method with Widget.update() recursion prior to
    the draw() recursion that updates an exposed .size attribute.
 
+* observable.ValueProxy and use that so made child widgets can be
+   replaced when they should be.
+
 * When does an observable object die?
   * Either observers are weakrefs -- which should make everything
    disappear when it should.

@@ -19,6 +19,7 @@ class Box(Widget):
         Widget.__init__(self)
         self.child_list = child_list
         self.child_list.add_observer(self)
+        self.selected_child = None
 
     def size(self):
         def ignore_child(child, child_pos, child_size):

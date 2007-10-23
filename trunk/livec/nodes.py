@@ -58,7 +58,11 @@ class EnumValue(Named):
     defaults = dict(meta=Meta)
 
 class Function(Named):
-    __slots__ = ['return_type', 'parameters', 'block', 'meta']
+    __slots__ = ['type', 'block', 'meta']
+    defaults = dict(meta=Meta)
+
+class FunctionType(Node):
+    __slots__ = ['meta', 'return_type', 'parameters']
     defaults = dict(meta=Meta)
     def referred(self):
         yield self.return_type
