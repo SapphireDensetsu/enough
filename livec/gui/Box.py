@@ -46,7 +46,6 @@ class Box(Widget):
 
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.child_selection_keymap)
-        print self.selected_child
         self.child_selection_keymap.set_next_keymap(self.selected_child.keymap)
 
     def _enter_child(self):
