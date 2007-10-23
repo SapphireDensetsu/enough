@@ -20,7 +20,7 @@ class Box(Widget):
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
         self.child_list = child_list
-        self.child_list.obs.add_observer(self, '_child_')
+        self.child_list.obs_list.add_observer(self, '_child_')
 
         r = self.focus_keymap.register_keydown
         if not relay_focus:

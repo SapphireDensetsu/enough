@@ -22,6 +22,7 @@ class ModuleWidget(VBox):
         self.parenting_keymap.register_keydown((0, pygame.K_f), discard_eventarg(self._add_func))
 
     def _add_func(self):
+        """Add a new function"""
         func = nodes.Function(meta=nodes.Meta(name='new func'),
                               type=nodes.FunctionType(return_type=builtins.void,
                                                       parameters=List()),
