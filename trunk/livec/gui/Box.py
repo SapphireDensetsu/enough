@@ -13,8 +13,8 @@ class Vertical(Direction):
 
 class Box(Widget):
     outspace = 0
-    padding = 0
-    frame_color = None#(255, 30, 80)
+    padding_widget = None
+    frame_color = None # (255, 30, 80)
     is_centered = False
 
     @classmethod
@@ -51,11 +51,21 @@ class Box(Widget):
         cur = [0, 0]
         max_len = 0
         cur[self.direction.axis] = self.outspace
-        for child in self.child_list:
+        
+        if self.padding_widget is not None:
+            padding_size = self.padding_widget.size()
+            padding = padding_size[self.direction.axis]
+            max_len = max(max_len, padding_size[self.direction.oaxis])
+        
+        for index, child in enumerate(self.child_list):
+            if index > 0 and self.padding_widget is not None:
+                func(self.padding_widget, cur, padding_size)
+                cur[self.direction.axis] += padding
+            
             size = child.size()
             func(child, cur, size)
             max_len = max(max_len, size[self.direction.oaxis])
-            cur[self.direction.axis] += size[self.direction.axis]+self.padding
+            cur[self.direction.axis] += size[self.direction.axis]
         total = [None, None]
         total[self.direction.axis] = cur[self.direction.axis]
         total[self.direction.oaxis] = max_len+self.outspace*2

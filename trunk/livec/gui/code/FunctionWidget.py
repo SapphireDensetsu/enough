@@ -5,7 +5,6 @@ from gui.code import style
 
 from observable.List import List
 from observable.CacheMap import CacheMap
-from observable.Join import Join
         
 class FunctionWidget(VBox):
     def __init__(self, function):
@@ -13,12 +12,11 @@ class FunctionWidget(VBox):
         self.return_type_widget = type_widget_for(self.function.return_type)
         self.name_widget = make_label(style.func_name, self.function.meta['name'])
 
-        def make_comma():
-            return make_label(style.comma, ', ')
+        comma = make_label(style.comma, ', ')
         
-        self.parameters_widget = HBox(Join(make_comma,
-                                           CacheMap(declaration_widget_for,
-                                                    self.function.parameters)))
+        self.parameters_widget = HBox(CacheMap(declaration_widget_for,
+                                               self.function.parameters))
+        self.parameters_widget.padding_widget = comma
         self.parameters_widget.is_centered = True
         
         prototype = HBox(List([
