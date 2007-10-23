@@ -29,7 +29,6 @@ class KeysReflectionWidget(VBox):
     
     def __init__(self, root):
         self.root = root
-        # TODO: Use the root keymap
         VBox.__init__(self, CacheMap(self._widget, SortedItems(self.root)))
 
     def _widget(self, (key, func)):

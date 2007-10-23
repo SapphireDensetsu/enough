@@ -33,8 +33,6 @@ def posttype_widget_for(x, name):
     elif isinstance(x, nodes.FunctionType):
         from FunctionTypeWidget import FunctionTypeWidget
         return FunctionTypeWidget(x, name)
-    # TODO: Function-type (not function + body declaration, but
-    # function type)
     else:
         assert False
 
@@ -81,8 +79,6 @@ def c_escape_str(x):
     return c_escape_common(x).replace('"', '\\"')
 
 def widget_for(x):
-    # TODO: Circular import must be inside, yuck, how to fix?
-
     if isinstance(x, nodes.Module):
         from ModuleWidget import ModuleWidget
         return ModuleWidget(x)

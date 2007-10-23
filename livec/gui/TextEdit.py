@@ -21,10 +21,6 @@ class TextEdit(Widget):
         except IOError:
             self._font = pygame.font.Font(pygame.font.get_default_font(), style.font_size)
 
-        # TODO: Debugging hack, remove
-        import traceback
-        self.creator = traceback.format_stack()
-
     def update(self):
         def func(line, cur_height):
             return self._font.size(line)
