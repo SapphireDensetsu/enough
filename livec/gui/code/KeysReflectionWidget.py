@@ -25,6 +25,8 @@ def key_name((modifier, key)):
 
 # TODO: Use a Table, not a vbox of hboxes
 class KeysReflectionWidget(VBox):
+    selectable = False
+    
     def __init__(self, root):
         self.root = root
         # TODO: Use the root keymap
