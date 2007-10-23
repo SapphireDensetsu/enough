@@ -1,4 +1,6 @@
+import pygame
 from gui.Widget import Widget
+from gui.Keymap import Keymap, discard_event
 
 class Direction(object): pass
 
@@ -19,7 +21,57 @@ class Box(Widget):
         Widget.__init__(self)
         self.child_list = child_list
         self.child_list.add_observer(self)
-        self.selected_child = None
+        selectables = [c for c in self.child_list if c.selectable]
+        if selectables:
+            self.selected_child = selectables[0]
+        else:
+            self.selected_child = None
+
+        r = self.focus_keymap.register_keydown
+        r((0, pygame.K_RIGHT), discard_event(self._enter_child))
+
+        self.child_selection_keymap = Keymap()
+        
+        csr = self.child_selection_keymap.register_keydown
+        csr((0, pygame.K_DOWN), discard_event(self._next))
+        csr((0, pygame.K_UP), discard_event(self._prev))
+        csr((0, pygame.K_LEFT), discard_event(self._leave_child))
+
+        self._leave_child()
+
+    def _set_next_keymap(self):
+        self.keymap.set_next_keymap(self.child_selection_keymap)
+        print self.selected_child
+        self.child_selection_keymap.set_next_keymap(self.selected_child.keymap)
+
+    def _enter_child(self):
+        if self.selected_child is None:
+            return
+        self._set_next_keymap()
+        self.in_child = True
+
+    def _leave_child(self):
+        self.in_child = False
+        self.keymap.set_next_keymap(self.focus_keymap)
+
+    def _next(self):
+        if not self.in_child:
+            return
+        self._move_selection(1)
+        self._set_next_keymap()
+
+    def _prev(self):
+        if not self.in_child:
+            return
+        self._move_selection(-1)
+        self._set_next_keymap()
+
+    def _move_selection(self, delta):
+        selectables = [c for c in self.child_list if c.selectable]
+        index = selectables.index(self.selected_child)
+        index += delta
+        index %= len(selectables)
+        self.selected_child = selectables[index]
 
     def size(self):
         def ignore_child(child, child_pos, child_size):
