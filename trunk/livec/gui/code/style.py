@@ -19,6 +19,7 @@ space = _make_style()
 
 keyword = _make_style(color=(255, 30, 30))
 if_ = _make_style(color=keyword.color)
+else_ = _make_style(color=keyword.color)
 return_ = _make_style(color=keyword.color)
 
 type_ = _make_style(color=(60, 255, 60))

@@ -1,3 +1,8 @@
+import nodes
+import pygame
+from gui.Keymap import discard_eventarg
+from observable.List import List
+
 from gui.Box import VBox, HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, indented
@@ -33,6 +38,7 @@ class IfWidget(VBox):
                 indented(widget_for(self.if_node.if_false)),
                 make_label(style.braces, '}'),
             ]
-            parts.append(if_false_part)
+            parts.extend(if_false_part)
             
         VBox.__init__(self, List(parts))
+
