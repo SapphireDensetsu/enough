@@ -6,10 +6,16 @@ class Widget(object):
     # frame.
     frame_color = None
     frame_width = 2
+    selectable = True
 
     def __init__(self):
+        # Use self.keymap.set_next_keymap and self.keymap for stealing
+        # keys when you are above the focus.
         self.keymap = Keymap()
-        self.keymap.add_observer(self)
+        self.focus_keymap = Keymap()
+        self.focus_keymap.add_observer(self)
+        self.keymap.set_next_keymap(self.focus_keymap)
+        
         self._prev_frame_color = None
         
     def observe_activated(self, keymap):

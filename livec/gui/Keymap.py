@@ -1,27 +1,33 @@
 import pygame
 from observer import Observable
 
+def discard_event(func):
+    return lambda event: func()
+
 class Keymap(Observable):
     def __init__(self):
         Observable.__init__(self)
         self.pre_keydown_registrations = {}
         self.next_keymap = None
         self.post_keydown_registrations = {}
+        self.is_active = False
 
     def set_next_keymap(self, keymap):
-        if self.next_keymap is not None:
+        if self.is_active and self.next_keymap is not None:
             self.next_keymap.deactivate()
         self.next_keymap = keymap
-        if self.next_keymap is not None:
+        if self.is_active and self.next_keymap is not None:
             self.next_keymap.activate()
 
     def activate(self):
+        self.is_active = True
         for observer in self.observers:
             observer.observe_activated(self)
         if self.next_keymap is not None:
             self.next_keymap.activate()
 
     def deactivate(self):
+        self.is_active = False
         if self.next_keymap is not None:
             self.next_keymap.deactivate()
         for observer in self.observers:
@@ -63,4 +69,5 @@ class Keymap(Observable):
         if mkey not in keymap:
             return False
         handler = keymap[mkey]
-        return handler(*args)
+        handler(*args)
+        return True
