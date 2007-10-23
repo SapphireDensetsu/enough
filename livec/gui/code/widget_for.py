@@ -16,7 +16,7 @@ def ccode_widget_for(x):
 
 def indented(widget):
     from gui.Spacer import Spacer
-    b = HBox(List([Spacer((style.indent_width, 0)), widget]))
+    b = HBox(List([Spacer((style.indent_width, 0)), widget]), relay_focus=True)
     b.is_centered = True
     b.frame_color = None
     return b
