@@ -1,8 +1,18 @@
 import pygame
+import functools
 from observer import Observable
-
+ 
 def discard_eventarg(func):
-    return lambda event: func()
+    @functools.wraps(func)
+    def handler(event):
+        return func()
+    return handler
+ 
+class KeymapObserver(object):
+    def observe_activated(self, keymap):
+        pass
+    def observe_deactivated(self, keymap):
+        pass
 
 class Keymap(Observable):
     def __init__(self):
