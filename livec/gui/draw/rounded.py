@@ -3,8 +3,8 @@ import backend
 from math import pi
 
 def rounded_rect(surface, color, rect, width, corner_radius):
-    rect.height -= width
-    rect.width -= width
+    rect.height -= width//2
+    rect.width -= width//2
     diameter = corner_radius * 2
     for offset, angles, corner in (((0,         0),        (pi/2, pi), rect.topleft,),
                                    ((-diameter, 0),        (0,  pi/2), rect.topright),
