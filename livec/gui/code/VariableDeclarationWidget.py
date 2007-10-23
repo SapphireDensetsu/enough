@@ -7,7 +7,6 @@ class VariableDeclarationWidget(HBox):
     is_centered = True
     def __init__(self, variable):
         self.variable = variable
-        name = self.variable.meta.get('name', '<noname>')
         HBox.__init__(self, List([
-            type_widget_for(self.variable.type, name),
+            type_widget_for(self.variable.type, self.variable),
         ]))
