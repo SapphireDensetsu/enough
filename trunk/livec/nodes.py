@@ -1,10 +1,10 @@
 import itertools
-from SlotClass import SlotClass
+from lib.SlotClass import SlotClass
 
-from observer import Observable
-from proxyclass import proxy_class
+from lib.observer import Observable
+from lib.proxyclass import proxy_class
 
-from observable.List import List
+from lib.observable.List import List
 
 class Meta(dict):
     """This is a special kind of node that does not affect the

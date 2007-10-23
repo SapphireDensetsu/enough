@@ -3,8 +3,8 @@ from gui.TextEdit import make_label
 from gui.code.widget_for import posttype_widget_for, declaration_widget_for
 from gui.code import style
 
-from observable.List import List
-from observable.CacheMap import CacheMap
+from lib.observable.List import List
+from lib.observable.CacheMap import CacheMap
         
 class FunctionTypeWidget(HBox):
     is_centered = True

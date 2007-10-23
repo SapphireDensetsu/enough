@@ -1,4 +1,4 @@
-from observer import Observable
+from lib.observer import Observable
 
 class CacheMap(object):
     def __init__(self, func, l):
@@ -19,7 +19,7 @@ class CacheMap(object):
         self.obs_list.notify.pop(index)
         return result
 
-from proxyclass import proxy_class
+from lib.proxyclass import proxy_class
 CacheMap = proxy_class(CacheMap, '_cache', methods=[
     '__getitem__',
     '__len__',

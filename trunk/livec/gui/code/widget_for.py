@@ -4,7 +4,7 @@ from gui.code import style
 
 from gui.Box import HBox
 from gui.TextEdit import make_label
-from observable.List import List
+from lib.observable.List import List
 
 node_paths_widgets = {}
 def widget_of_node_path(node_path):

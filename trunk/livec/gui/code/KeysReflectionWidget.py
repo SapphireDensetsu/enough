@@ -2,9 +2,9 @@ import pygame
 from gui.Box import HBox, VBox
 from gui.TextEdit import make_label
 
-from observable.CacheMap import CacheMap
-from observable.List import List
-from observable.SortedItems import SortedItems
+from lib.observable.CacheMap import CacheMap
+from lib.observable.List import List
+from lib.observable.SortedItems import SortedItems
 
 import style
 

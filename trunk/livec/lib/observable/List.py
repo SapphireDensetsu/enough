@@ -1,4 +1,4 @@
-from observer import Observable
+from lib.observer import Observable
 
 class List(object):
     def __init__(self, *args, **kw):
@@ -19,7 +19,7 @@ class List(object):
     def append(self, item):
         self.insert(len(self), item)
 
-from proxyclass import proxy_class
+from lib.proxyclass import proxy_class
 List = proxy_class(List, '_items', methods=[
     '__getitem__',
     '__len__',

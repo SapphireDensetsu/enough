@@ -1,4 +1,4 @@
-from observer import Observable
+from lib.observer import Observable
 import bisect
 
 class SortedItems(object):
@@ -25,7 +25,7 @@ class SortedItems(object):
         self._dict_remove_item(key, old_value)
         self._dict_add_item(key, new_value)
 
-from proxyclass import proxy_class
+from lib.proxyclass import proxy_class
 SortedItems = proxy_class(SortedItems, '_items', methods=[
     '__getitem__',
     '__len__',
