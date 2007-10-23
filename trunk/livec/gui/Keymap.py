@@ -41,17 +41,17 @@ class Keymap(object):
         return self.keydown_registrations[key]
 
     def _iteritems(self):
-        for key, value in self.keydown_registrations.iteritems():
+        for key, value in list(self.keydown_registrations.iteritems()):
             if key not in self.next_keymap:
                 yield key, value
-        for key, value in self.next_keymap.iteritems():
+        for key, value in list(self.next_keymap.iteritems()):
             yield key, value
 
     def set_next_keymap(self, keymap):
         if self.next_keymap is not None:
             if self.is_active:
                 self.next_keymap.deactivate()
-            for key, value in self.next_keymap.iteritems():
+            for key, value in list(self.next_keymap.iteritems()):
                 self.obs_dict.notify.remove_item(key, value)
                 if key in self.keydown_registrations:
                     self.obs_dict.notify.add_item(
@@ -63,7 +63,7 @@ class Keymap(object):
             if self.is_active:
                 self.next_keymap.activate()
             self.next_keymap.obs_dict.add_observer(self, '_next_keymap_')
-            for key, value in self.next_keymap.iteritems():
+            for key, value in list(self.next_keymap.iteritems()):
                 if key in self.keydown_registrations:
                     self.obs_dict.notify.remove_item(
                         key, self.keydown_registrations[key])
@@ -96,6 +96,8 @@ class Keymap(object):
         self.unregister_keydown(k)
         r = self.keydown_registrations
         r[k] = func
+        if self.next_keymap is not None and k in self.next_keymap:
+            return
         self.obs_dict.notify.add_item(k, func)
 
     def unregister_keydown(self, (modifiers, key)):
@@ -103,9 +105,9 @@ class Keymap(object):
         r = self.keydown_registrations
         old_func = r.pop(k, None)
         if old_func is not None:
-            self.obs_dict.notify.remove_item(k, old_func)
             if self.next_keymap is not None and k in self.next_keymap:
-                self.obs_dict.notify.add_item(k, self.next_keymap[k])
+                return
+            self.obs_dict.notify.remove_item(k, old_func)
             
     def keyup(self, event):
         assert False, "keyup not implemented yet"
