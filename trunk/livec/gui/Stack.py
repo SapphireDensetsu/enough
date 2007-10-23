@@ -7,8 +7,8 @@ class Stack(Widget):
         self.items = []
     def draw(self, surface, pos):
         self.items[-1].draw(surface, pos)
-    def size(self):
-        return self.items[-1].size()
+    def update(self):
+        return self.items[-1].update()
     def push(self, widget):
         self.items.append(widget)
         self.keymap.set_next_keymap(widget.keymap)
