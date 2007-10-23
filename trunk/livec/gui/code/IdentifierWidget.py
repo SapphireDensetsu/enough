@@ -5,12 +5,16 @@ from gui.TextEdit import TextStyle
 import style
 
 class IdentifierWidget(TextEdit):
-    def __init__(self, variable, s):
+    def __init__(self, variable, var_style):
         self.variable = variable
+        self.var_style = var_style
+        TextEdit.__init__(self, var_style, self._get_name, self._set_name)
+
+    def _get_name(self):
         if 'name' in self.variable.meta:
-            name = self.variable.meta['name']
+            return self.variable.meta['name']
         else:
-            name = loop.browser.get_name(self.variable)
-            s = TextStyle.from_style(s)
-            s.bgcolor = style.unnamed_bg_color
-        TextEdit.__init__(self, s, (lambda : name))
+            return loop.browser.get_name(self.variable)
+
+    def _set_name(self, name):
+        self.variable.meta['name'] = name
