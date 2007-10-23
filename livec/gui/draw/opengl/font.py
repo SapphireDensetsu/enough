@@ -15,7 +15,7 @@ def make_chars(pfont):
             letter = pygame.image.tostring(letter_render, 'RGBA', 1)
             letter_w, letter_h = letter_render.get_size()
             
-        chars[s] = letter, letter_w, int(letter_h*0.7)
+        chars[s] = letter, letter_w, letter_h
     return chars
 
 def calc_size(line, chars):
