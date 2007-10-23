@@ -3,6 +3,10 @@ from gui.TextEdit import TextStyle
 def _make_style(color=(220, 220, 220), font_size=16, font_name='gui/fonts/FreeMonoBold.ttf'):
     return TextStyle(color=color, font_size=font_size, font_name=font_name)
 
+key_name = _make_style(color=(80, 255, 80))
+key_space_width = 40
+keydoc_name = _make_style(color=(255, 255, 255))
+
 indent_width = 40
 braces = _make_style(color=(200, 200, 255))
 paren = _make_style(color=(220, 220, 255))

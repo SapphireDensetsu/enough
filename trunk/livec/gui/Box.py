@@ -1,6 +1,7 @@
 import pygame
 from gui.Widget import Widget
 from gui.Keymap import Keymap, discard_eventarg
+from observable.List import ListObserver
 
 class Direction(object): pass
 
@@ -12,7 +13,7 @@ class Vertical(Direction):
     axis = 1
     oaxis = 0
 
-class Box(Widget):
+class Box(Widget, ListObserver):
     outspace = 0
     padding_widget = None
     is_centered = False
@@ -49,22 +50,26 @@ class Box(Widget):
         self.child_selection_keymap.set_next_keymap(self.selected_child.keymap)
 
     def _enter_child(self):
+        """Go in"""
         if self.selected_child is None:
             return
         self._set_next_keymap()
         self.in_child = True
 
     def _leave_child(self):
+        """Go out"""
         self.in_child = False
         self.keymap.set_next_keymap(self.focus_keymap)
 
     def _next(self):
+        """Go to the next"""
         if not self.in_child:
             return
         self._move_selection(1)
         self._set_next_keymap()
 
     def _prev(self):
+        """Go to the prev"""
         if not self.in_child:
             return
         self._move_selection(-1)

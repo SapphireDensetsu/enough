@@ -1,5 +1,11 @@
 from observer import Observable
 
+class ListObserver(object):
+    def observe_insert(self, list, index, item):
+        pass
+    def observe_pop(self, list, index):
+        pass
+
 class List(Observable):
     def __init__(self, *args, **kw):
         Observable.__init__(self)
@@ -25,5 +31,6 @@ from proxyclass import proxy_class
 List = proxy_class(List, '_items', methods=[
     '__getitem__',
     '__len__',
+    '__iter__',
     'index',
 ])
