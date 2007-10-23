@@ -21,18 +21,19 @@ def indented(widget):
     b.frame_color = None
     return b
 
-def posttype_widget_for(x, name):
+def posttype_widget_for(x, variable):
     if isinstance(x, nodes.BuiltinType):
-        return make_label(style.identifier, name)
+        from IdentifierWidget import IdentifierWidget
+        return IdentifierWidget(variable, style.identifier)
     elif isinstance(x, nodes.Ptr):
         from PtrTypeWidget import PtrTypeWidget
-        return PtrTypeWidget(x, name)
+        return PtrTypeWidget(x, variable)
     elif isinstance(x, nodes.Array):
         from ArrayTypeWidget import ArrayTypeWidget
-        return ArrayTypeWidget(x, name)
+        return ArrayTypeWidget(x, variable)
     elif isinstance(x, nodes.FunctionType):
         from FunctionTypeWidget import FunctionTypeWidget
-        return FunctionTypeWidget(x, name)
+        return FunctionTypeWidget(x, variable)
     else:
         assert False
 
@@ -48,14 +49,14 @@ def find_basetype(x):
     else:
         assert False, "Cannot find base type of %r" % (x,)
 
-def type_widget_for(x, name=''):
+def type_widget_for(x, variable):
     from BaseTypeWidget import BaseTypeWidget
     basetype_widget = BaseTypeWidget(find_basetype(x))
 
     type_widget = HBox(List([
         basetype_widget,
         make_label(style.space, ' '),
-        posttype_widget_for(x, name),
+        posttype_widget_for(x, variable),
     ]))
     type_widget.is_centered = True
     return type_widget

@@ -8,7 +8,7 @@ from observable.CacheMap import CacheMap
         
 class FunctionTypeWidget(HBox):
     is_centered = True
-    def __init__(self, function_type, name):
+    def __init__(self, function_type, variable):
         self.function_type = function_type
 
         comma = make_label(style.comma, ', ')
@@ -19,7 +19,7 @@ class FunctionTypeWidget(HBox):
         self.parameters_widget.is_centered = True
 
         HBox.__init__(self, List([
-            posttype_widget_for(self.function_type.return_type, name),
+            posttype_widget_for(self.function_type.return_type, variable),
             make_label(style.paren, '('),
             self.parameters_widget,
             make_label(style.paren, ')'),

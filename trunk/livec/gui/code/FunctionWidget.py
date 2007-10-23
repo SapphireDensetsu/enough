@@ -8,7 +8,7 @@ from observable.List import List
 class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
-        self.prototype_widget = type_widget_for(self.function.type, self.function.meta['name'])
+        self.prototype_widget = type_widget_for(self.function.type, self.function)
         
         VBox.__init__(self, List([
             self.prototype_widget,
