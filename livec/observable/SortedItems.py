@@ -8,13 +8,11 @@ class SortedItems(object):
         self._items = sorted(d.iteritems())
 
     def _dict_add_item(self, key, value):
-        print "_dict_add_item", key, value
         index = bisect.bisect_left(self._items, (key, value))
         self._items.insert(index, (key, value))
         self.obs_list.notify.insert(index, (key, value))
     
     def _dict_remove_item(self, key, value):
-        print "_dict_remove_item", key, value
         index = bisect.bisect_left(self._items, (key, value))
         if self._items[index] != (key, value):
             import pdb
