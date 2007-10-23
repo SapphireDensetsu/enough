@@ -1,7 +1,6 @@
 import pygame
 from gui.Widget import Widget
 from gui.Keymap import Keymap, discard_eventarg
-from observable.List import ListObserver
 
 class Direction(object): pass
 
@@ -13,7 +12,7 @@ class Vertical(Direction):
     axis = 1
     oaxis = 0
 
-class Box(Widget, ListObserver):
+class Box(Widget):
     outspace = 0
     padding_widget = None
     is_centered = False
@@ -21,7 +20,7 @@ class Box(Widget, ListObserver):
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
         self.child_list = child_list
-        self.child_list.add_observer(self)
+        self.child_list.obs.add_observer(self, '_child_')
 
         r = self.focus_keymap.register_keydown
         if not relay_focus:

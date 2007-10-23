@@ -1,3 +1,8 @@
+* observers suck! :-(
+  * To fix namespace collision, can add prefix
+  * To observe just what you want to, can create notifiers/observables
+   rather than inherit them.
+
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
 

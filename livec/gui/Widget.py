@@ -1,7 +1,7 @@
 import pygame
-from Keymap import Keymap, KeymapObserver
+from Keymap import Keymap
 
-class Widget(KeymapObserver):
+class Widget(object):
     # frame_color is consulted first, and allowed to be None for no
     # frame.
     frame_color = None
@@ -13,16 +13,16 @@ class Widget(KeymapObserver):
         # keys when you are above the focus.
         self.keymap = Keymap()
         self.focus_keymap = Keymap()
-        self.focus_keymap.add_observer(self)
+        self.focus_keymap.activation.add_observer(self, '_keymap_')
         self.keymap.set_next_keymap(self.focus_keymap)
         
         self._prev_frame_color = None
         
-    def observe_activated(self, keymap):
+    def _keymap_activated(self):
         self._prev_frame_color = self.frame_color
         self.frame_color = (255, 0, 0)
 
-    def observe_deactivated(self, keymap):
+    def _keymap_deactivated(self):
         self.frame_color = self._prev_frame_color
         self._prev_frame_color = None
         

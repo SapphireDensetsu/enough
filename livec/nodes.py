@@ -6,14 +6,14 @@ from proxyclass import proxy_class
 
 from observable.List import List
 
-class Meta(Observable):
+class Meta(object):
     """This is a special kind of node that does not affect the
     semantics in any way, and only useful for the petty human. This is
     why it does not inherit from Node, and is not included in the
     referred() graph."""
     def __init__(self, *args, **kw):
         self._dict = dict(*args, **kw)
-        Observable.__init__(self)
+        self.obs = Observable()
 
 Meta = proxy_class(Meta, '_dict', methods=[
     '__iter__',
