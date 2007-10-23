@@ -6,7 +6,7 @@ class Widget(object):
     # frame_color is consulted first, and allowed to be None for no
     # frame.
     frame_color = None
-    frame_width = 2
+    frame_width = 1
     selectable = True
 
     def __init__(self):
@@ -34,7 +34,7 @@ class Widget(object):
     def draw_frame(self, surface, pos):
         if self.frame_color is not None:
             r = pygame.Rect(pos, self.size)
-            r.inflate_ip(self.frame_width, self.frame_width) # Half of each side
+            r.inflate_ip(-self.frame_width, -self.frame_width) # Half of each side
             gui.draw.rounded.rounded_rect(surface, self.frame_color, r, self.frame_width, 5)
 
     def _draw(self, surface, pos):

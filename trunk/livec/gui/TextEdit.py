@@ -21,6 +21,7 @@ letter_keys = map(ord, string.letters)
 
 class TextEdit(Widget):
     selectable = False
+    margin=[1,0]
     def __init__(self, style, get_text, set_text=None):
         Widget.__init__(self)
         self.get_text = get_text
@@ -58,14 +59,20 @@ class TextEdit(Widget):
 
     def update(self):
         def func(line, cur_height):
-            return self._font.size(line)
+            size = self._font.size(line)
+            size[0] += self.margin[0]*2
+            size[1] += self.margin[1]*2
+            return size
         self.size = self._do(func)
     
     def _draw(self, surface, pos):
         def func(line, cur_height):
             text_surface = self._font.render(line, True, self.color, *self.bgcolor)
-            gui.draw.draw_font(surface, text_surface, (pos[0], pos[1]+cur_height))
-            return self._font.size(line)
+            gui.draw.draw_font(surface, text_surface, (pos[0]+self.margin[0], pos[1]+cur_height+self.margin[1]))
+            size = self._font.size(line)
+            size[0] += self.margin[0]*2
+            size[1] += self.margin[1]*2
+            return size
         self._do(func)
 
     def _do(self, func):

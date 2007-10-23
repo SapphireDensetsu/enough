@@ -15,7 +15,7 @@ def make_chars(pfont):
             letter = pygame.image.tostring(letter_render, 'RGBA', 1)
             letter_w, letter_h = letter_render.get_size()
             
-        chars[s] = letter, letter_w, letter_h
+        chars[s] = letter, letter_w, int(letter_h*0.7)
     return chars
 
 def calc_size(line, chars):
@@ -32,7 +32,7 @@ def draw_chars(line, chars, color, pos):
     GL.glPixelTransferf(GL.GL_RED_SCALE, r)
     GL.glPixelTransferf(GL.GL_GREEN_SCALE, g)
     GL.glPixelTransferf(GL.GL_BLUE_SCALE, b)
-    
+    GL.glAlphaFunc(GL.GL_GREATER, 0)
     pos = list(map(int, pos))
     for c in line:
         data, w, h = chars[c]
