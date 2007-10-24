@@ -1,3 +1,30 @@
+'''
+Widget does not know that it can have children. The only widget->child
+relation is in Box.
+
+Each Widget has a keymap that handles key presses events that it
+receives. Now, why would a widget`s keymap receive key presses at all,
+you ask? Great question!
+
+Lets look at loop.py:
+        if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
+            self.global_keymap.key_event(event)
+
+Main loop sends events to the global keymap. Now, what does global key
+map (or any other keymap) do when it gets an event like that?
+
+The things it tries to do are:
+
+1. Pass it to its "next keymap" the "next" keymap (of a child, thus
+more "specific" widget) is stronger/overrides the keymap itself.
+
+2. If the next keymap does not know the key, then it tries to handle
+it itself according to a map it holds that maps specific
+(modifier,key) to funcs, and then, also according to a map of broader
+groups to funcs (it checks group after group if thee key is in it and
+uses the func).
+
+ '''
 import pygame
 from functools import partial
 

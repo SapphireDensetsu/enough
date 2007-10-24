@@ -8,7 +8,7 @@ class PyRunner(object):
         self.module = module
         imports = nodewalker.imports(module)
 
-        pytypes = {LiteralInt: int,
+        pytypes = {LiteralInt: pybuiltins,
                    LiteralString: str,
                    LiteralChar: CChar
         
