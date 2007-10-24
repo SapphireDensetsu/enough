@@ -16,11 +16,14 @@ class TextStyle(object):
 
 class TextEdit(Widget):
     selectable = False
-    margin=[0,0]
-    def __init__(self, style, get_text, set_text=None):
+    margin = [0,0]
+    start_editing_key = Keymap.Key(0, pygame.K_RETURN)
+    stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
+    def __init__(self, style, get_text, set_text=None, convertor=None):
         Widget.__init__(self)
         self.get_text = get_text
         self.set_text = set_text
+        self.convertor = convertor
         if set_text:
             self.selectable = True
             self._register_keys()
@@ -31,10 +34,36 @@ class TextEdit(Widget):
             import pdb;pdb.set_trace()
 
     def _register_keys(self):
-        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
-                                                 self._backspace)
-        self.focus_keymap.register_group(Keymap.alphanumeric,
-                                         self._insert_char)
+        self.focus_keymap.register_keydown_noarg(self.start_editing_key,
+                                                 self._start_editing)
+        self.focus_keymap.register_keydown_noarg(self.stop_editing_key,
+                                                 self._stop_editing)
+        self.editing_keymap = Keymap.Keymap()
+        self.editing_keymap.obs_activation.add_observer(self, "_editing_")
+        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
+                                                   self._backspace)
+        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_RETURN),
+                                                   self._return)
+        self.editing_keymap.register_group(Keymap.alphanumeric,
+                                           self._insert_char)
+
+    def _editing_activated(self):
+        self.push_frame(bg_color=(40, 80, 40))
+
+    def _editing_deactivated(self):
+        self.pop_frame()
+
+    def _start_editing(self):
+        """Start editing"""
+        self.focus_keymap.set_next_keymap(self.editing_keymap)
+
+    def _stop_editing(self):
+        """Stop editing"""
+        self.focus_keymap.set_next_keymap(None)
+
+    def _return(self):
+        """Insert a newline"""
+        self._insert('\n')
 
     def _backspace(self):
         """Delete last character"""
@@ -42,7 +71,10 @@ class TextEdit(Widget):
 
     def _insert_char(self, event):
         """Insert character"""
-        self.set_text(self.get_text() + event.unicode)
+        self._insert(event.unicode)
+
+    def _insert(self, x):
+        self.set_text(self.get_text() + x)
 
     def set_style(self, style):
         self.color = style.color
@@ -73,8 +105,13 @@ class TextEdit(Widget):
             return size
         self._do(func)
 
+    def _convert(self, text):
+        if self.convertor is None:
+            return text
+        return ''.join([self.convertor.get(i, i) for i in text])
+
     def _do(self, func):
-        text = self.get_text()
+        text = self._convert(self.get_text())
         size = [0, 0]
         for line in text.split('\n'):
             twidth, theight = func(line, size[1])
