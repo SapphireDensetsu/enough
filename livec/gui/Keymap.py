@@ -81,13 +81,12 @@ class Group(object):
 
 # TODO: Its bad to assume anything about K_* here...
 import string
-alphanumeric = Group('Alphanumeric',
-                     [pygame.KMOD_SHIFT, 0],
+alphanumeric = Group('Alphanumeric', [pygame.KMOD_SHIFT, 0],
                      [ord(x) for x in string.letters+string.digits] +
                      [pygame.K_UNDERSCORE, pygame.K_MINUS])
 
-text_control = Group('Text control symbols', [0],
-                     [pygame.K_RETURN, pygame.K_TAB, pygame.K_SPACE])
+all_printable = Group('Printable symbols', [pygame.KMOD_SHIFT, 0],
+                      [ord(x) for x in string.printable])
 
 digits = Group('Digit', [0], [ord(x) for x in string.digits])
 
