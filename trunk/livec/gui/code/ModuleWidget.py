@@ -1,10 +1,11 @@
 from gui.Box import VBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, style
+from gui.Keymap import Key
+from gui.loop import loop
+
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
-
-from gui.Keymap import Key
 
 import pygame
 import nodes
@@ -15,7 +16,7 @@ class ModuleWidget(VBox):
         self.module = module
         func_box = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
         VBox.__init__(self, List([
-            make_label(style.module_name, self.module.meta['name']),
+            make_label(style.module_name, loop.namer.get_name(self.module)),
             func_box,
         ]))
 

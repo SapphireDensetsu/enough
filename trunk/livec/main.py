@@ -6,6 +6,10 @@ import pygame
 with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from gui.loop import loop
     from gui.code.BrowserWidget import BrowserWidget
+
+    from gui.code.Namer import Namer
+    loop.namer = Namer()
+    
     from example import example
     loop.browser = BrowserWidget(example)
 
