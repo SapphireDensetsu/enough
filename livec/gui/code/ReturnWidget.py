@@ -11,5 +11,6 @@ class ReturnWidget(HBox):
         self.return_ = return_
         HBox.__init__(self, List([
             make_label(style.return_, "return "),
-            widget_for(self.return_.expr)
+            widget_for(self.return_.expr),
+            make_label(style.semicolon, ";"),
         ]))

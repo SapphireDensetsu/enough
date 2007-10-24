@@ -15,6 +15,7 @@ paren = _make_style(color=(220, 220, 255))
 bracket = _make_style(color=(200, 200, 255))
 comma = _make_style(color=(200, 200, 255))
 operator = _make_style(color=(220, 220, 255))
+semicolon = _make_style(color=(200, 200, 255))
 space = _make_style()
 
 keyword = _make_style(color=(255, 30, 30))

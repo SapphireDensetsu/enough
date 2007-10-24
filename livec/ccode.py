@@ -12,6 +12,21 @@ def concat_lines(func):
         return '\n'.join(func(*args, **kw)) + '\n'
     return new_func
 
+def is_expr(node):
+    return isinstance(node, (nodes.Call,
+                             nodes.Assign,
+                             nodes.Variable,
+                             nodes.Define,
+                             nodes.EnumValue,
+                             nodes.Import,
+                             nodes.ArrayDeref,
+                             nodes.Subtract,
+                             nodes.LiteralInt,
+                             nodes.LiteralString,
+                             nodes.LiteralChar,
+                             nodes.NotEquals,
+                             nodes.Equals))
+
 class CCodeGenerator(object):
     def __init__(self):
         self._cnames = {}
