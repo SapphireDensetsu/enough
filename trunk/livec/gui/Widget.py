@@ -1,6 +1,8 @@
 import pygame
-from Keymap import Keymap
+from functools import partial
+
 import gui.draw
+from gui.Keymap import Keymap
 
 class Widget(object):
     # frame_color is consulted first, and allowed to be None for no
@@ -8,6 +10,7 @@ class Widget(object):
     frame_color = None
     frame_width = 1
     selectable = True
+    use_rounded_rect = True
 
     def __init__(self):
         # Use self.keymap.set_next_keymap and self.keymap for stealing
@@ -35,7 +38,11 @@ class Widget(object):
         if self.frame_color is not None:
             r = pygame.Rect(pos, self.size)
             r.inflate_ip(-self.frame_width, -self.frame_width) # Half of each side
-            gui.draw.rounded.rounded_rect(surface, self.frame_color, r, self.frame_width, 5)
+            if self.use_rounded_rect:
+                dr = partial(gui.draw.rounded.rounded_rect, corner_radius=5)
+            else:
+                dr = gui.draw.rect
+            dr(surface, self.frame_color, r, self.frame_width)
 
     def _draw(self, surface, pos):
         raise NotImplementedError()

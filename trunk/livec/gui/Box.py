@@ -16,6 +16,7 @@ class Box(Widget):
     outspace = 0
     padding_widget = None
     is_centered = False
+    start_in_child = False
     
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
@@ -39,7 +40,7 @@ class Box(Widget):
         else:
             self.selected_child = None
 
-        if relay_focus:
+        if relay_focus or self.start_in_child:
             self._enter_child()
         else:
             self._leave_child()

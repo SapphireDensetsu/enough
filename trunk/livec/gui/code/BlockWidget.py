@@ -10,11 +10,13 @@ from gui.code.widget_for import widget_for, ccode_widget_for
 from lib.observable.CacheMap import CacheMap
 
 class BlockWidget(VBox):
+    start_in_child = True
     def __init__(self, block):
         self.block = block
         VBox.__init__(self, CacheMap(widget_for, self.block.statements))
         
-        self.keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_i), discard_eventarg(self._add_if))
+        self.keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_i),
+                                     discard_eventarg(self._add_if))
 
 
     def _add_if(self):

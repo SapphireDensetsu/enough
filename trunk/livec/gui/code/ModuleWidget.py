@@ -13,13 +13,14 @@ import builtins
 class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
-        ibox = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
+        func_box = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, self.module.meta['name']),
-            ibox,
+            func_box,
         ]))
 
-        self.keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_f), discard_eventarg(self._add_func))
+        self.keymap.register_keydown((pygame.KMOD_CTRL, pygame.K_f),
+                                     discard_eventarg(self._add_func))
 
     def _add_func(self):
         """Add a new function"""

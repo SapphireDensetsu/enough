@@ -4,27 +4,19 @@ import itertools
 import functools
 import contextlib
 
-from nodewalker import visit_all, NodeWalker
+import nodewalker
 
 def concat_lines(func):
     @functools.wraps(func)
     def new_func(*args, **kw):
-        return '\n' + '\n'.join(func(*args, **kw)) 
+        return '\n'.join(func(*args, **kw)) + '\n'
     return new_func
 
-def tabbed_concat_lines(func):
-    @functools.wraps(func)
-    def new_func(self, *args, **kw):
-        for line in func(self, *args, **kw):
-            yield self._tab()+line
-    return concat_lines(new_func)
-    
-class CCodeGenerator(NodeWalker):
+class CCodeGenerator(object):
     def __init__(self):
         self._cnames = {}
         self._names = self._make_names()
         self._decls = set()
-        self._tab_num = 0
 
     def _make_names(self):
         for i in itertools.count():
@@ -44,12 +36,22 @@ class CCodeGenerator(NodeWalker):
             return node.name
         elif isinstance(node, nodes.Ptr):
             return self._cbasetype(node.pointed_type)
+        elif isinstance(node, nodes.FunctionType):
+            return self._cbasetype(node.return_type)
+        else:
+            assert False, "Cannot find base type of %r" % (node,)
 
     def _cposttype(self, node, name):
         if isinstance(node, nodes.BuiltinType):
             return name
         elif isinstance(node, nodes.Ptr):
             return '(*%s)' % (self._cposttype(node.pointed_type, name),)
+        elif isinstance(node, nodes.FunctionType):
+            return '%s(%s)' % (self._cposttype(node.return_type, name),
+                               ', '.join(self.vardeclcode(param)
+                                         for param in node.parameters))
+        else:
+            assert False, "Cannot find post type of %r" % (node,)
 
     def ctypedeclcode(self, node, name):
         return '%s %s' % (self._cbasetype(node), self._cposttype(node, name))
@@ -58,25 +60,36 @@ class CCodeGenerator(NodeWalker):
         if isinstance(node, nodes.Function):
             return self._Function_cdeclcode(node)
         elif isinstance(node, nodes.Enum):
-            return 'enum %s {%s};' % (
-                self._cname(node),
-                ', '.join('%s=%s' % (self._cname(value), self.ccode(value.value))
-                          for value in node.values))
-        elif isinstance(node, nodes.Variable):
-            return self.ctypedeclcode(node.type, self._cname(node))
+            return self._Enum_cdeclcode(node)
         elif isinstance(node, nodes.Define):
-            return '#define %s (%s)' % (self._cname(node), self.ccode(node.expr))
+            return self._Define_cdeclcode(node)
+        elif isinstance(node, nodes.Variable):
+            return [self.vardeclcode(node) + ';']
+        else:
+            assert False, "No declcode for %r" % (node,)
 
-    @tabbed_concat_lines
+    def vardeclcode(self, node):
+        assert isinstance(node, nodes.Variable)
+        return self.ctypedeclcode(node.type, self._cname(node))
+
+    def _Define_cdeclcode(self, node):
+        yield '#define %s (%s)' % (self._cname(node), self._exprcode(node.expr))
+
+    def _Enum_cdeclcode(self, node):
+        yield 'enum %s' % (self._cname(node),)
+        yield '{'
+        for value in node.values[:-1]:
+            yield '    %s=%s,' % (self._cname(value), self._exprcode(value.value))
+        value = node.values[-1]
+        yield '    %s=%s' % (self._cname(value), self._exprcode(value.value))
+        yield '};'
+
+
     def _Function_cdeclcode(self, node):
-        yield '%s(%s)' % (self.ctypedeclcode(node.type.return_type, self._cname(node)),
-                          ', '.join(self.cdeclcode(param)
-                                    for param in node.type.parameters))
-        #yield '{'
-        #with self._tabbed():
+        yield self.ctypedeclcode(node.type, self._cname(node))
         with self._declared(node.type.parameters):
-            yield self.ccode(node.block)
-        #yield '}'
+            for line in self._ccode(node.block):
+                yield line
 
     def _declare(self, decls):
         l = len(self._decls)
@@ -98,15 +111,30 @@ class CCodeGenerator(NodeWalker):
         finally:
             self._undeclare(decls)
 
+    @concat_lines
     def ccode(self, node):
+        return self._ccode(node)
+
+    def _ccode(self, node):
+        if isinstance(node, nodes.Declaration):
+            return self.cdeclcode(node.obj)
+        elif isinstance(node, nodes.Module):
+            return self._Module_ccode(node)
+        elif isinstance(node, nodes.Block):
+            return self._Block_ccode(node)
+        elif isinstance(node, nodes.If):
+            return self._If_ccode(node)
+        elif isinstance(node, nodes.Return):
+            return ['return %s;' % (self._exprcode(node.expr),)]
+        return [self._exprcode(node) + ';']
+    
+    def _exprcode(self, node):
         if isinstance(node, nodes.Call):
-            return '(%s(%s))' % (self.ccode(node.func),
-                                 ','.join(self.ccode(arg)
+            return '(%s(%s))' % (self._exprcode(node.func),
+                                 ','.join(self._exprcode(arg)
                                           for arg in node.args))
         elif isinstance(node, nodes.Assign):
-            return '(%s=%s)' % (self.ccode(node.lvalue), self.ccode(node.rvalue))
-        elif isinstance(node, nodes.Declaration):
-            return self.cdeclcode(node.obj)
+            return '(%s=%s)' % (self._exprcode(node.lvalue), self._exprcode(node.rvalue))
         elif isinstance(node, nodes.Variable):
             return self._cname(node)
         elif isinstance(node, nodes.Define):
@@ -116,9 +144,9 @@ class CCodeGenerator(NodeWalker):
         elif isinstance(node, nodes.Import):
             return node.name
         elif isinstance(node, nodes.ArrayDeref):
-            return '(%s[%s])' % (self.ccode(node.expr), self.ccode(node.index))
+            return '(%s[%s])' % (self._exprcode(node.expr), self._exprcode(node.index))
         elif isinstance(node, nodes.Subtract):
-            return '(%s-%s)' % (self.ccode(node.lexpr), self.ccode(node.rexpr))
+            return '(%s-%s)' % (self._exprcode(node.lexpr), self._exprcode(node.rexpr))
         elif isinstance(node, nodes.LiteralInt):
             return str(node.value)
         elif isinstance(node, nodes.LiteralString):
@@ -126,85 +154,64 @@ class CCodeGenerator(NodeWalker):
         elif isinstance(node, nodes.LiteralChar):
             return "'%c'" % (node.value,)
         elif isinstance(node, nodes.NotEquals):
-            return '(%s!=%s)' % (self.ccode(node.a), self.ccode(node.b))
+            return '(%s!=%s)' % (self._exprcode(node.a), self._exprcode(node.b))
         elif isinstance(node, nodes.Equals):
-            return '(%s==%s)' % (self.ccode(node.a), self.ccode(node.b))
-        elif isinstance(node, nodes.Return):
-            return 'return %s' % (self.ccode(node.expr),)
-        elif isinstance(node, nodes.Module):
-            return self._Module_ccode(node)
-        elif isinstance(node, nodes.Block):
-            return self._Block_ccode(node)
-        elif isinstance(node, nodes.If):
-            return self._If_ccode(node)
+            return '(%s==%s)' % (self._exprcode(node.a), self._exprcode(node.b))
         else:
             assert False, "Don't know how to make ccode for %r" % (node,)
 
     def _cescape(self, value):
         return value.replace('\\', '\\\\').replace('\n', '\\n')
 
-    @tabbed_concat_lines
     def _Module_ccode(self, node):
-        for x in self._includes(node):
+        for x in nodewalker.includes(node):
             yield '#include %s' % (x,)
-        defs = list(self._defines(node))
+        defs = list(nodewalker.defines(node))
         for x in defs:
-            yield self.cdeclcode(x)
+            for line in self.cdeclcode(x):
+                yield line
         with self._declared(defs):
-            types = list(self._types(node))
+            types = list(nodewalker.types(node))
             for x in types:
-                yield self.cdeclcode(x)
+                for line in self.cdeclcode(x):
+                    yield line
             with self._declared(types):
                 for x in node.variables:
                     if self._is_declared(x):
                         continue
-                    yield self.cdeclcode(x)
+                    for line in self.cdeclcode(x):
+                        yield line
                 with self._declared(node.variables):
                     for x in node.functions:
-                        yield self.cdeclcode(x)
+                        for line in self.cdeclcode(x):
+                            yield line
 
-    @tabbed_concat_lines
     def _Block_ccode(self, node):
         yield '{'
-        with self._tabbed():
-            for var in self._variables(node):
-                if self._is_declared(var):
-                    continue
-                yield self.cdeclcode(var) + ';'
-            for statement in node.statements:
-                yield self.ccode(statement) + ';'
+        for var in nodewalker.variables(node):
+            if self._is_declared(var):
+                continue
+            for line in self.cdeclcode(var):
+                yield '    ' + line
+        for statement in node.statements:
+            for line in self._ccode(statement):
+                yield '    ' + line
         yield '}'
 
-    @tabbed_concat_lines
+    def _indented_ccode(self, node):
+        ccode_lines = self._ccode(node)
+        if isinstance(node, nodes.Block):
+            for line in ccode_lines:
+                yield line
+        else:
+            for line in ccode_lines:
+                yield '    ' + line
+
     def _If_ccode(self, node):
-        yield 'if(%s)' % (self.ccode(node.expr),)
-        #yield '{'
-        #with self._tabbed():
-        yield self.ccode(node.if_true)
-        #yield '}'
+        yield 'if(%s)' % (self._exprcode(node.expr),)
+        for line in self._indented_ccode(node.if_true):
+            yield line
         if node.if_false is not None:
             yield 'else'
-            #yield '{'
-            #with self._tabbed():
-            yield self.ccode(node.if_false)
-            #yield '}'
-
-
-    def _push_tab(self):
-        self._tab_num += 1
-
-    def _pop_tab(self):
-        self._tab_num -= 1
-
-    def _tab(self):
-        return self._tab_num * "   "
-
-    @contextlib.contextmanager
-    def _tabbed(self):
-        """With the given declarations as declared"""
-        self._push_tab()
-        try:
-            yield
-        finally:
-            self._pop_tab()
-
+            for line in self._indented_ccode(node.if_false):
+                yield line

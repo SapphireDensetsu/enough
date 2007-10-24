@@ -1,3 +1,7 @@
+* Have Widget allocate some space for its own rect
+
+* TextEdit should take an observable mutable string, not get/set
+
 * add the defines to the top of module
 
 * observable.ValueProxy and use that so made child widgets can be
