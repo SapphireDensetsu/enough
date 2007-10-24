@@ -55,12 +55,11 @@ class NodeWidget(Widget):
         
     def entered_text(self, *args, **kw):
         res = super(NodeWidget, self).entered_text(*args, **kw)
-        self.node.value.update_from_widget_text()
+        self.node.value = self.text
         return res
     
     def set_node(self, node):
         self.node = node
-        node.value.widget = self
 
     def get_edges_to(self, other_widget):
         return self.out_edges.setdefault(other_widget, [])
