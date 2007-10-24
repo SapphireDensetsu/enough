@@ -67,7 +67,7 @@ class Widget(object):
         self.lost_focus()
 
     def push_frame(self, frame_color=_dontchange, bg_color=_dontchange, fg_color=_dontchange):
-        self._prev_frame_colors.append((self.frame_color, self.bg_color))
+        self._prev_frame_colors.append((self.frame_color, self.bg_color, self.fg_color))
         if frame_color is not _dontchange:
             self.frame_color = frame_color
         if bg_color is not _dontchange:
