@@ -60,8 +60,12 @@ class Key(object):
 class Group(object):
     def __init__(self, name, allowed_modifiers, keys):
         self.allowed_modifiers = set(allowed_modifiers)
-        self.keys = set(keys)
+        self.keys = set(self._flatten(key) for key in keys)
         self._name = name
+    def _flatten(self, key):
+        if isinstance(key, Group):
+            return key.keys
+        return key
     def name(self):
         return self._name
     def overlaps(self, key):
@@ -79,7 +83,10 @@ class Group(object):
 import string
 alphanumeric = Group('Alphanumeric',
                      [pygame.KMOD_SHIFT, 0],
-                     [ord(x) for x in string.letters+string.digits+'_'])
+                     [ord(x) for x in string.letters+string.digits] +
+                     [pygame.K_UNDERSCORE, pygame.K_MINUS])
+
+text_control = Group('Text control symbols', [0], [pygame.K_RETURN, pygame.K_TAB])
 
 digits = Group('Digit', [0], [ord(x) for x in string.digits])
 
@@ -120,7 +127,7 @@ class Keymap(object):
     __iter__ = iterkeys
 
     def __getitem__(self, key):
-        if self.next_keymap is not None:
+        if self.next_keymap is not None and key in self.next_keymap:
             return self.next_keymap[key]
         if key in self.keydown_registrations:
             return self.keydown_registrations[key]
@@ -135,18 +142,25 @@ class Keymap(object):
                 self.next_keymap.deactivate()
 
             for key, value in self.next_keymap.iteritems():
+                if keymap is not None and isinstance(key, Key) and key in keymap:
+                    # The key will remain overrided
+                    continue
                 self._next_keymap_remove_item(key, value)
-            assert not self.disabled_group_registrations
             
             self.next_keymap.obs_dict.remove_observer(self)
-                
+
+        prev_keymap = self.next_keymap
         self.next_keymap = keymap
         if self.next_keymap is not None:
             if self.is_active:
                 self.next_keymap.activate()
             self.next_keymap.obs_dict.add_observer(self, '_next_keymap_')
             for key, value in self.next_keymap.iteritems():
-                self._next_keymap_add_item(key, value)
+                if prev_keymap is not None and isinstance(key, Key) and key in prev_keymap:
+                    # The key was overridden and remains so, but with a new value
+                    self._next_keymap_set_item(key, prev_keymap[key], value)
+                else:
+                    self._next_keymap_add_item(key, value)
 
     def _shadow_groups(self, key):
         for group in self.group_registrations.keys():
