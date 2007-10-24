@@ -11,8 +11,11 @@ import pygame
 # TODO: Maybe call it LiveCEditorWidget ?
 class BrowserWidget(VBox):
     def __init__(self, node):
-        stack = Stack()
-        stack.push(widget_for(node))
+        self.main_stack = Stack()
+        self.main_stack.push(widget_for(node))
+
+        self.info_stack = Stack()
+        self.info_stack.push(Spacer((0, 0)))
 
         from gui.loop import loop
         from KeysReflectionWidget import KeysReflectionWidget
@@ -20,7 +23,8 @@ class BrowserWidget(VBox):
 
         from lib.observable.List import List
         VBox.__init__(self, List([
-            stack,
+            self.main_stack,
+            self.info_stack,
             Spacer((0, 20)),
             keys_reflection_widget,
         ]), relay_focus=True)
@@ -48,6 +52,12 @@ class BrowserWidget(VBox):
     def _offset_down(self):
         """Moves screen down"""
         gui.draw.offset.add_offset((0,-self.offset_speed))
+
+    def add_info_widget(self, info):
+        self.info_stack.push(info)
+
+    def remove_info_widget(self, info):
+        self.info_stack.remove(info)
 
     def get_name(self, x):
         if x not in self._names:

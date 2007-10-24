@@ -100,6 +100,13 @@ class Keymap(object):
     def __init__(self):
         self.obs_activation = Observable()
         self.obs_dict = Observable()
+
+        # Cache these cause they are rather expensive to generate and
+        # used a LOT.
+        self.notify_remove_item = self.obs_dict.notify.remove_item
+        self.notify_add_item = self.obs_dict.notify.add_item
+        self.notify_set_item = self.obs_dict.notify.set_item
+        
         self.next_keymap = None
         self.key_registrations = {}
         self.group_registrations = {}
@@ -173,7 +180,7 @@ class Keymap(object):
             assert group not in self.disabled_group_registrations
             gvalue = self.group_registrations.pop(group)
             self.disabled_group_registrations[group] = gvalue
-            self.obs_dict.notify.remove_item(group, gvalue)
+            self.notify_remove_item(group, gvalue)
 
     def _unshadow_groups(self, key):
         for group in self.disabled_group_registrations.keys():
@@ -182,24 +189,24 @@ class Keymap(object):
             assert group not in self.group_registrations
             gvalue = self.disabled_group_registrations.pop(group)
             self.group_registrations[group] = gvalue
-            self.obs_dict.notify.add_item(group, gvalue)
+            self.notify_add_item(group, gvalue)
 
     def _next_keymap_add_item(self, key, func):
         self._shadow_groups(key)
         if key in self.key_registrations:
-            self.obs_dict.notify.set_item(key, self.key_registrations[key], func)
+            self.notify_set_item(key, self.key_registrations[key], func)
         else:
-            self.obs_dict.notify.add_item(key, func)
+            self.notify_add_item(key, func)
 
     def _next_keymap_remove_item(self, key, func):
         if key in self.key_registrations:
-            self.obs_dict.notify.set_item(key, func, self.key_registrations[key])
+            self.notify_set_item(key, func, self.key_registrations[key])
         else:
-            self.obs_dict.notify.remove_item(key, func)
+            self.notify_remove_item(key, func)
         self._unshadow_groups(key)
 
     def _next_keymap_set_item(self, key, old_func, new_func):
-        self.obs_dict.notify.set_item(key, old_func, new_func)
+        self.notify_set_item(key, old_func, new_func)
 
     def activate(self):
         self.is_active = True
@@ -225,7 +232,7 @@ class Keymap(object):
         r[key] = func
         if self.next_keymap is not None and key in self.next_keymap:
             return
-        self.obs_dict.notify.add_item(key, func)
+        self.notify_add_item(key, func)
 
     def register_key_noarg(self, key, func):
         self.register_key(key, discard_eventarg(func))
@@ -237,7 +244,7 @@ class Keymap(object):
         if old_func is not None:
             if self.next_keymap is not None and key in self.next_keymap:
                 return
-            self.obs_dict.notify.remove_item(key, old_func)
+            self.notify_remove_item(key, old_func)
 
     def register_group(self, group, func):
         assert func.__doc__, "Must use documented functions (%r)" % (func,)

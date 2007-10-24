@@ -13,6 +13,8 @@ class Stack(Widget):
     def push(self, widget):
         self.items.append(widget)
         self.keymap.set_next_keymap(widget.keymap)
+    def remove(self, item):
+        self.items.remove(item)
     def pop(self):
         self.items.pop()
     def top(self):
