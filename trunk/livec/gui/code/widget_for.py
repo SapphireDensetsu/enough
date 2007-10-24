@@ -72,16 +72,18 @@ def declaration_widget_for(x):
     else:
         return widget_for(x)
 
-def c_escape_common(x):
-    for ch in "\\\t\r\n":
-        x = x.replace(ch, repr(ch))
-    return x
+c_escape_common = {
+    '\\' : '\\\\',
+    '\t' : '\\t',
+    '\r' : '\\r',
+    '\n' : '\\n',
+}
 
-def c_escape_char(x):
-    return c_escape_common(x).replace("'", "\\'")
+c_escape_char = c_escape_common.copy()
+c_escape_char["'"] = "\\'"
 
-def c_escape_str(x):
-    return c_escape_common(x).replace('"', '\\"')
+c_escape_str = c_escape_common.copy()
+c_escape_str['"'] = '\\"'
 
 from functools import partial, wraps
 
@@ -127,8 +129,8 @@ def widget_for(x):
         nodes.ArrayDeref: ArrayDerefWidget,
 
         nodes.LiteralInt: rpartial(LiteralIntWidget, repr),
-        nodes.LiteralChar: rpartial(LiteralWidget, lambda value: "'%c'" % c_escape_char(value)),
-        nodes.LiteralString: rpartial(LiteralWidget, lambda value: '"%s"' % c_escape_str(value)),
+        nodes.LiteralChar: rpartial(LiteralWidget, "'", c_escape_char),
+        nodes.LiteralString: rpartial(LiteralWidget, '"', c_escape_str),
     }
 
     for type_,factory in widget_map.iteritems():

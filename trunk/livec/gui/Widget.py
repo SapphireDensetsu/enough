@@ -4,6 +4,8 @@ from functools import partial
 import gui.draw
 from gui.Keymap import Keymap
 
+class _dontchange: pass
+
 class Widget(object):
     # frame_color is consulted first, and allowed to be None for no
     # frame.
@@ -23,7 +25,7 @@ class Widget(object):
         self.focus_keymap.obs_activation.add_observer(self, '_keymap_')
         self.keymap.set_next_keymap(self.focus_keymap)
         
-        self._prev_frame_color = None
+        self._prev_frame_colors = []
         
     def _keymap_activated(self):
         self.got_focus()
@@ -31,16 +33,22 @@ class Widget(object):
     def _keymap_deactivated(self):
         self.lost_focus()
 
+    def push_frame(self, frame_color=_dontchange, bg_color=_dontchange):
+        self._prev_frame_colors.append((self.frame_color, self.bg_color))
+        if frame_color is not _dontchange:
+            self.frame_color = frame_color
+        if bg_color is not _dontchange:
+            self.bg_color = bg_color
+
+    def pop_frame(self):
+        self.frame_color, self.bg_color = self._prev_frame_colors.pop()
+        
     def got_focus(self):
-        self._prev_frame_color = self.frame_color
-        self._prev_bg_color = self.bg_color
-        self.frame_color = self.activated_frame_color
-        self.bg_color = self.activated_bg_color
+        self.push_frame(frame_color=self.activated_frame_color,
+                        bg_color=self.activated_bg_color)
 
     def lost_focus(self):
-        self.frame_color = self._prev_frame_color
-        self.bg_color = self._prev_bg_color
-        self._prev_frame_color = None
+        self.pop_frame()
         
     def draw(self, surface, pos):
         self.draw_background(surface, pos)
