@@ -43,6 +43,8 @@ class Box(Widget):
     def _child_insert(self, index, widget):
         if index <= self.index:
             self.set_index(self.index+1, 1)
+        else:
+            self.set_index(self.index)
 
     def _child_pop(self, index):
         if index == self.index:

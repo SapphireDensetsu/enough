@@ -13,6 +13,7 @@ class BrowserWidget(VBox):
         self.main_stack.push(widget_for(node))
 
         self.info_stack = Stack()
+        self.info_stack.selectable = False
         self.info_stack.push(Spacer((0, 0)))
 
         from gui.loop import loop
