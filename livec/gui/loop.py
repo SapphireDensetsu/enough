@@ -35,7 +35,7 @@ class Loop(object):
         c = pygame.time.Clock()
         while True:
             gui.draw.offset.step()
-            c.tick(30)
+            c.tick(20)
             for event in pygame.event.get():
                 try:
                     self._handle_event(event)

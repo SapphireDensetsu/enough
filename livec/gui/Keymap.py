@@ -1,13 +1,13 @@
 import pygame
 import functools
 from lib.observer import Observable
- 
+
 def discard_eventarg(func):
     @functools.wraps(func)
     def handler(event):
         return func()
     return handler
- 
+
 class Keymap(object):
     def __init__(self):
         self.obs_activation = Observable()

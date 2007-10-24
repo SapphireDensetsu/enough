@@ -4,8 +4,9 @@ from lib.observable.List import List
 
 
 argc=nodes.Variable(meta=nodes.Meta(name='argc'), type=builtins.int)
-argv=nodes.Variable(meta=nodes.Meta(name='argv'), type=nodes.Ptr(pointed_type=
-                                               nodes.Ptr(pointed_type=builtins.char)))
+argv=nodes.Variable(meta=nodes.Meta(name='argv'),
+                    type=nodes.Ptr(pointed_type=
+                                   nodes.Ptr(pointed_type=builtins.char)))
 
 arg_count = nodes.Define(meta=nodes.Meta(name='ARG_COUNT'), expr=nodes.LiteralInt(value=2))
 
@@ -16,11 +17,6 @@ error = nodes.EnumValue(meta=nodes.Meta(name='ERROR'), value=nodes.LiteralInt(va
 ret_value.values.append(error)
 
 s = nodes.Variable(type=nodes.Ptr(pointed_type=builtins.char))
-strchr = nodes.Import(include='<string.h>', name='strchr', meta=nodes.Meta(name='strchr'))
-fprintf = nodes.Import(include='<stdio.h>', name='fprintf', meta=nodes.Meta(name='fprintf'))
-printf = nodes.Import(include='<stdio.h>', name='printf', meta=nodes.Meta(name='printf'))
-stderr = nodes.Import(include='<stdio.h>', name='stderr', meta=nodes.Meta(name='stderr'))
-null = nodes.Import(include='<stddef.h>', name='NULL', meta=nodes.Meta(name='NULL'))
 
 argv_1 = nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
 
@@ -33,19 +29,20 @@ example = nodes.Module(
                                     parameters=List([argc, argv])),
             block=nodes.Block(statements=List([
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),
-                         if_true=nodes.Block(statements=List([
-                    nodes.Return(expr=error),
-                ]))),
+                         if_true=nodes.Return(expr=error)),
                 nodes.Assign(lvalue=s,
-                             rvalue=nodes.Call(strchr, args=List([argv_1, nodes.LiteralChar(value=',')]))),
-                nodes.If(expr=nodes.Equals(null, s),
+                             rvalue=nodes.Call(builtins.strchr, args=List([argv_1, nodes.LiteralChar(value=',')]))),
+                nodes.If(expr=nodes.Equals(builtins.null, s),
                    if_true=nodes.Block(statements=List([
-                       nodes.Call(fprintf, args=List([stderr, nodes.LiteralString("No comma!\n")])),
+                       nodes.Call(builtins.fprintf,
+                                  args=List([builtins.stderr,
+                                             nodes.LiteralString("No comma!\n")])),
                        nodes.Return(expr=error),
                    ]))
                 ),
-                nodes.Call(printf, args=List([nodes.LiteralString("Your comma is at %d!\n"),
-                                              nodes.Subtract(s, argv_1)])),
+                nodes.Call(builtins.printf,
+                           args=List([nodes.LiteralString("Your comma is at %d!\n"),
+                                      nodes.Subtract(s, argv_1)])),
                 nodes.Return(expr=ok)
             ]))
         )
