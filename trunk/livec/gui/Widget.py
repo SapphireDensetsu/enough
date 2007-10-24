@@ -30,6 +30,7 @@ from functools import partial
 
 import gui.draw
 from gui.Keymap import Keymap
+from animation import MovingPos
 
 class _dontchange: pass
 
@@ -53,6 +54,8 @@ class Widget(object):
         self.keymap.set_next_keymap(self.focus_keymap)
         
         self._prev_frame_colors = []
+
+        self._anim_pos = MovingPos()
         
     def _keymap_activated(self):
         self.got_focus()
@@ -78,6 +81,10 @@ class Widget(object):
         self.pop_frame()
         
     def draw(self, surface, pos):
+        self._anim_pos.set_target(pos)
+        self._anim_pos.update(0.4)
+        pos = self._anim_pos.current_pos
+        
         self.draw_background(surface, pos)
         self._draw(surface, pos)
         self.draw_frame(surface, pos)
