@@ -12,10 +12,7 @@ class IdentifierWidget(TextEdit):
                           [Keymap.alphanumeric])
 
     def _get_name(self):
-        if 'name' in self.variable.meta:
-            return self.variable.meta['name']
-        else:
-            return loop.browser.get_name(self.variable)
+        return loop.namer.get_name(self.variable)
 
     def _set_name(self, name):
         if name[0].isdigit():

@@ -1,7 +1,9 @@
 from gui.TextEdit import TextStyle
 
-def _make_style(color=(220, 220, 220), font_size=16, font_name='gui/fonts/FreeMonoBold.ttf'):
-    return TextStyle(color=color, font_size=font_size, font_name=font_name)
+def _make_style(color=(220, 220, 220), font_size=16, font_name='gui/fonts/FreeMonoBold.ttf',
+                bgcolor=None, is_italic=False, is_underline=False, is_bold=False):
+    return TextStyle(color, font_size, font_name, bgcolor,
+                     is_italic, is_underline, is_bold)
 
 unnamed_bg_color = (80, 20, 20)
 
@@ -31,8 +33,14 @@ variable_name = _make_style(color=(100, 100, 255))
 define = _make_style(color=(120, 255, 150))
 
 identifier = _make_style(color=(150, 150, 255))
-enum = _make_style(color=identifier.color)
+enum = _make_style(color=keyword.color)
+enum_value = _make_style(color=identifier.color)
 import_ = _make_style(color=(255, 130, 130))
+
+def emphasize(style):
+    s = TextStyle.from_style(style)
+    s.is_bold = True
+    return s
 
 import nodes
 literal_style_for = {

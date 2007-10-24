@@ -1,5 +1,3 @@
-import itertools
-import weakref
 from gui.Box import VBox
 from gui.Stack import Stack
 from gui.Spacer import Spacer
@@ -28,9 +26,6 @@ class BrowserWidget(VBox):
             Spacer((0, 20)),
             keys_reflection_widget,
         ]), relay_focus=True)
-        
-        self.index_gen = itertools.count()
-        self._names = weakref.WeakKeyDictionary()
 
         def register_ctrl_key(x, func):
             self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, x), func)
@@ -58,8 +53,3 @@ class BrowserWidget(VBox):
 
     def remove_info_widget(self, info):
         self.info_stack.remove(info)
-
-    def get_name(self, x):
-        if x not in self._names:
-            self._names[x] = 'name_%d' % (self.index_gen.next(),)
-        return self._names[x]

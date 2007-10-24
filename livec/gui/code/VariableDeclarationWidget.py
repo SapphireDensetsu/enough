@@ -1,5 +1,5 @@
 from gui.Box import VBox, HBox
-from gui.code.widget_for import type_widget_for, style
+from widget_for import type_widget_for
 
 from lib.observable.List import List
 

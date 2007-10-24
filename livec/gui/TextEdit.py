@@ -4,15 +4,20 @@ import Keymap
 import gui.draw
 
 class TextStyle(object):
-    def __init__(self, color, font_size, font_name, bgcolor=None):
+    def __init__(self, color, font_size, font_name, bgcolor,
+                 is_italic, is_underline, is_bold):
         self.color = color
         self.font_size = font_size
         self.font_name = font_name
         self.bgcolor = bgcolor
+        self.is_italic = is_italic
+        self.is_underline = is_underline
+        self.is_bold = is_bold
     
     @classmethod
     def from_style(cls, style):
-        return cls(style.color, style.font_size, style.font_name, style.bgcolor)
+        return cls(style.color, style.font_size, style.font_name, style.bgcolor,
+                   style.is_italic, style.is_underline, style.is_bold)
 
 class TextEdit(Widget):
     selectable = False
@@ -123,6 +128,9 @@ class TextEdit(Widget):
             self._font = gui.draw.get_font(style.font_name, style.font_size)
         except IOError:
             self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
+        self._font.set_italic(style.is_italic)
+        self._font.set_underline(style.is_underline)
+        self._font.set_bold(style.is_bold)
 
     def update(self):
         def func(index, atom, curpos):
