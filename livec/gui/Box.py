@@ -25,13 +25,13 @@ class Box(Widget):
 
         r = self.focus_keymap.register_keydown_noarg
         if not relay_focus:
-            r(Key(0, pygame.K_RIGHT), self._enter_child)
+            r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._enter_child)
 
         self.parenting_keymap = Keymap()
 
         csr = self.parenting_keymap.register_keydown_noarg
         if not relay_focus:
-            csr(Key(0, pygame.K_LEFT), self._leave_child)
+            csr(Key(pygame.KMOD_SHIFT, pygame.K_LEFT), self._leave_child)
 
         selectables = [c for c in self.child_list if c.selectable]
         if selectables:
@@ -68,14 +68,12 @@ class Box(Widget):
         self.keymap.set_next_keymap(self.focus_keymap)
 
     def _next(self):
-        """Go to the next"""
         if not self.in_child:
             return
         self._move_selection(1)
         self._set_next_keymap()
 
     def _prev(self):
-        """Go to the prev"""
         if not self.in_child:
             return
         self._move_selection(-1)
@@ -89,13 +87,13 @@ class Box(Widget):
         csu = self.parenting_keymap.unregister_keydown
         csr = self.parenting_keymap.register_keydown_noarg
         if index == len(selectables)-1:
-            csu(Key(0, pygame.K_DOWN))
+            csu(self.next_key)
         else:
-            csr(Key(0, pygame.K_DOWN), self._next)
+            csr(self.next_key, self._next)
         if index == 0:
-            csu(Key(0, pygame.K_UP))
+            csu(self.prev_key)
         else:
-            csr(Key(0, pygame.K_UP), self._prev)
+            csr(self.prev_key, self._prev)
         self.selected_child = selectables[index]
 
     def update(self):
@@ -148,6 +146,22 @@ class Box(Widget):
 
 class VBox(Box):
     direction = Vertical
+    prev_key = Key(0, pygame.K_UP)
+    next_key = Key(0, pygame.K_DOWN)
+    def _prev(self):
+        """Go up"""
+        return Box._prev(self)
+    def _next(self):
+        """Go down"""
+        return Box._next(self)
 
 class HBox(Box):
     direction = Horizontal
+    prev_key = Key(0, pygame.K_LEFT)
+    next_key = Key(0, pygame.K_RIGHT)
+    def _prev(self):
+        """Go left"""
+        return Box._prev(self)
+    def _next(self):
+        """Go right"""
+        return Box._next(self)

@@ -26,12 +26,18 @@ class Widget(object):
         self._prev_frame_color = None
         
     def _keymap_activated(self):
+        self.got_focus()
+
+    def _keymap_deactivated(self):
+        self.lost_focus()
+
+    def got_focus(self):
         self._prev_frame_color = self.frame_color
         self._prev_bg_color = self.bg_color
         self.frame_color = self.activated_frame_color
         self.bg_color = self.activated_bg_color
 
-    def _keymap_deactivated(self):
+    def lost_focus(self):
         self.frame_color = self._prev_frame_color
         self.bg_color = self._prev_bg_color
         self._prev_frame_color = None
