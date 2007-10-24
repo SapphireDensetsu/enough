@@ -28,8 +28,8 @@ uses the func).
 import pygame
 from functools import partial
 
-import gui.draw
-from gui.Keymap import Keymap
+import draw
+from Keymap import Keymap
 from guilib import MovingValue
 from Lib.Point import Point
 
@@ -87,7 +87,7 @@ class Widget(object):
         self.pop_frame()
         
     def draw(self, surface, pos):
-        self._anim_pos.final = pos
+        self._anim_pos.final = Point(pos)
         self._anim_pos.update()
         pos = self._anim_pos.current
         
@@ -97,17 +97,17 @@ class Widget(object):
 
     def draw_background(self, surface, pos):
         if self.bg_color is not None:
-            r = pygame.Rect(pos, self.size)
-            gui.draw.rect(surface, self.bg_color, r, 0)
+            r = pygame.Rect(tuple(pos), tuple(self.size))
+            draw.rect(surface, self.bg_color, r, 0)
 
     def draw_frame(self, surface, pos):
         if self.frame_color is not None:
-            r = pygame.Rect(pos, self.size)
+            r = pygame.Rect(tuple(pos), tuple(self.size))
             r.inflate_ip(-self.frame_width, -self.frame_width) # Half of each side
             if self.use_rounded_rect:
-                dr = partial(gui.draw.rounded.rounded_rect, corner_radius=5)
+                dr = partial(draw.rounded.rounded_rect, corner_radius=5)
             else:
-                dr = gui.draw.rect
+                dr = draw.rect
             dr(surface, self.frame_color, r, self.frame_width)
 
     def _draw(self, surface, pos):

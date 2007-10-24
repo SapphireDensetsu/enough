@@ -1,7 +1,7 @@
 import pygame
 import functools
 import itertools
-from lib.observer import Observable
+from Lib.observer import Observable
 
 def discard_eventarg(func):
     @functools.wraps(func)
