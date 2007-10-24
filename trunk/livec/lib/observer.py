@@ -1,4 +1,4 @@
-from Space import attrspace_property
+from lib.Space import attrspace_property
 
 # TODO: When do we remove_observer? Use weakref?
 class Observable(object):
