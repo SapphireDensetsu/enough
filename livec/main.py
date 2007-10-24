@@ -27,5 +27,5 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
 
     import pygame
     pygame.key.set_repeat(500,30)
-    
+
     loop.loop(display, b)

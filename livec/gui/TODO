@@ -1,20 +1,7 @@
-A. Keymaps
+* Should BaseTypeWidget exist?
+* TextEdit visible movable cursor
 
-A keymap should contain:
-* Existing specific key mappings
-* Mappings of groups to funcs
-
-Groups must now conflict with specific key mappings of the same
-   keymap.
-Groups are observed as a key.
-
-Now currently Keymap exposes itself as an observable dict.
-I think that it should expose that still, but it should also expose
-   group keys.
-
-It should disallow conflicts between the specific keys and the group
-   keys.
-
+* Building all the widgets for the model is taking way too long
 
 * Have Widget allocate some space for its own rect
 

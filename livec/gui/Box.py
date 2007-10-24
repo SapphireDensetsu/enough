@@ -36,7 +36,7 @@ class Box(Widget):
         selectables = [c for c in self.child_list if c.selectable]
         if selectables:
             self.selected_child = selectables[0]
-            self._move_selection(0)
+            self._move_selection(lambda x: x)
         else:
             self.selected_child = None
 
@@ -46,10 +46,10 @@ class Box(Widget):
             self._leave_child()
 
     def _child_insert(self, index, widget):
-        self._move_selection(0)
+        self._move_selection(lambda x: x)
 
     def _child_pop(self, index):
-        self._move_selection(0)
+        self._move_selection(lambda x: x)
 
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
@@ -60,30 +60,21 @@ class Box(Widget):
         if self.selected_child is None:
             return
         self._set_next_keymap()
-        self.in_child = True
 
     def _leave_child(self):
         """Go out"""
-        self.in_child = False
         self.keymap.set_next_keymap(self.focus_keymap)
 
     def _next(self):
-        if not self.in_child:
-            return
-        self._move_selection(1)
-        self._set_next_keymap()
+        self._move_selection(lambda x: x+1)
 
     def _prev(self):
-        if not self.in_child:
-            return
-        self._move_selection(-1)
-        self._set_next_keymap()
+        self._move_selection(lambda x: x-1)
 
-    def _move_selection(self, delta):
+    def _move_selection(self, new_value):
         selectables = [c for c in self.child_list if c.selectable]
         index = selectables.index(self.selected_child)
-        index += delta
-##        index %= len(selectables)
+        index = new_value(index)%len(selectables)
         csu = self.parenting_keymap.unregister_keydown
         csr = self.parenting_keymap.register_keydown_noarg
         if index == len(selectables)-1:
@@ -95,6 +86,7 @@ class Box(Widget):
         else:
             csr(self.prev_key, self._prev)
         self.selected_child = selectables[index]
+        self._set_next_keymap()
 
     def update(self):
         for child in self.child_list:
@@ -144,24 +136,22 @@ class Box(Widget):
         total[self.direction.oaxis] = max_len+self.outspace*2
         return tuple(total)
 
+def with_doc(old_func, doc):
+    def new_func(*args, **kw):
+        return old_func(*args, **kw)
+    new_func.__doc__ = doc
+    return new_func
+
 class VBox(Box):
     direction = Vertical
     prev_key = Key(0, pygame.K_UP)
     next_key = Key(0, pygame.K_DOWN)
-    def _prev(self):
-        """Go up"""
-        return Box._prev(self)
-    def _next(self):
-        """Go down"""
-        return Box._next(self)
+    _prev = with_doc(Box._prev, """Go up""")
+    _next = with_doc(Box._next, """Go down""")
 
 class HBox(Box):
     direction = Horizontal
     prev_key = Key(0, pygame.K_LEFT)
     next_key = Key(0, pygame.K_RIGHT)
-    def _prev(self):
-        """Go left"""
-        return Box._prev(self)
-    def _next(self):
-        """Go right"""
-        return Box._next(self)
+    _prev = with_doc(Box._prev, """Go left""")
+    _next = with_doc(Box._next, """Go right""")

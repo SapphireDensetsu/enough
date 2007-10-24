@@ -19,12 +19,14 @@ class TextEdit(Widget):
     margin = [0,0]
     start_editing_key = Keymap.Key(0, pygame.K_RETURN)
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
-    def __init__(self, style, get_text, set_text=None, convertor=None):
+    def __init__(self, style, get_text, set_text=None, groups=None, convertor=None):
         Widget.__init__(self)
         self.get_text = get_text
         self.set_text = set_text
         self.convertor = convertor
+        self.key_groups = groups
         if set_text:
+            assert self.key_groups, "Must set groups when used in edit mode"
             self.selectable = True
             self._register_keys()
         self.set_style(style)
@@ -38,14 +40,16 @@ class TextEdit(Widget):
                                                  self._start_editing)
         self.focus_keymap.register_keydown_noarg(self.stop_editing_key,
                                                  self._stop_editing)
+
+        # Allow basic editing even when not in editing mode
+        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
+                                                 self._backspace)
+
         self.editing_keymap = Keymap.Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
-        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
-                                                   self._backspace)
-        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_RETURN),
-                                                   self._return)
-        self.editing_keymap.register_group(Keymap.alphanumeric,
-                                           self._insert_char)
+        for group in self.key_groups:
+            self.editing_keymap.register_group(group,
+                                               self._insert_char)
 
     def _editing_activated(self):
         self.push_frame(bg_color=(40, 80, 40))
@@ -54,16 +58,12 @@ class TextEdit(Widget):
         self.pop_frame()
 
     def _start_editing(self):
-        """Start editing"""
+        """Start editing mode"""
         self.focus_keymap.set_next_keymap(self.editing_keymap)
 
     def _stop_editing(self):
-        """Stop editing"""
+        """Stop editing mode"""
         self.focus_keymap.set_next_keymap(None)
-
-    def _return(self):
-        """Insert a newline"""
-        self._insert('\n')
 
     def _backspace(self):
         """Delete last character"""
