@@ -15,7 +15,7 @@ import style
 
 class BlockWidget(VBox):
     
-    default_folded = True
+    default_folded = False
     
     def __init__(self, block):
         self.block = block
