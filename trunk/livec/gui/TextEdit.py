@@ -19,6 +19,7 @@ class TextEdit(Widget):
     margin = [0, 0]
     start_editing_key = Keymap.Key(0, pygame.K_RETURN)
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
+    cursor_color = (255, 200, 200)
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None):
         Widget.__init__(self)
         self.get_text = get_text
@@ -30,6 +31,8 @@ class TextEdit(Widget):
             self.selectable = True
             self._register_keys()
         self.set_style(style)
+        self._cursor = len(get_text())
+        self.is_editing = False
 
         # TODO: Debuggability hack
         if get_text() is None:
@@ -43,6 +46,10 @@ class TextEdit(Widget):
 
         self.editing_keymap = Keymap.Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
+        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_LEFT),
+                                                   self._left)
+        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_RIGHT),
+                                                   self._right)
         self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
                                                    self._backspace)
         for group in self.key_groups:
@@ -62,21 +69,37 @@ class TextEdit(Widget):
     def _start_editing(self):
         """Start editing mode"""
         self.focus_keymap.set_next_keymap(self.editing_keymap)
+        self.is_editing = True
 
     def _stop_editing(self):
         """Stop editing mode"""
+        self.is_editing = False
         self.focus_keymap.set_next_keymap(None)
+
+    def _left(self):
+        """Go left once"""
+        if self._cursor > 0:
+            self._cursor -= 1
+
+    def _right(self):
+        """Go right once"""
+        if self._cursor < len(self.get_text()):
+            self._cursor += 1
 
     def _backspace(self):
         """Delete last character"""
-        self.set_text(self.get_text()[:-1])
+        o = self.get_text()
+        self.set_text(o[:self._cursor-1] + o[self._cursor:])
+        self._cursor -= 1
 
     def _insert_char(self, event):
         """Insert character"""
         self._insert(event.unicode)
 
     def _insert(self, x):
-        self.set_text(self.get_text() + x)
+        o = self.get_text()
+        self.set_text(o[:self._cursor] + x + o[self._cursor:])
+        self._cursor += 1
 
     def set_style(self, style):
         self.color = style.color
@@ -90,33 +113,41 @@ class TextEdit(Widget):
             self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
 
     def update(self):
-        def func(line, curpos):
-            return self._font.size(line)
+        def func(index, atom, curpos):
+            return self._font.size(atom)
         self.size = self._do(func)
     
     def _draw(self, surface, pos):
-        def func(line, curpos):
-            text_surface = self._font.render(line, True, self.color, *self.bgcolor)
-            gui.draw.draw_font(surface, text_surface,
-                               (pos[0]+curpos[0],
-                                pos[1]+curpos[1]))
-            return self._font.size(line)
+        def func(index, atom, curpos):
+            text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
+            size = self._font.size(atom)
+            abspos = tuple(a+b for a, b in zip(pos, curpos))
+            if self.is_editing and index == self._cursor:
+                gui.draw.line(surface, self.cursor_color, abspos,
+                              (abspos[0], abspos[1]+size[1]), 2)
+            gui.draw.draw_font(surface, text_surface, abspos)
+            return size
         self._do(func)
 
     def _convert(self, text):
         if self.convertor is None:
-            return text
-        return ''.join([self.convertor.get(i, i) for i in text])
+            return list(text)
+        return [self.convertor.get(i, i) for i in text]
 
     def _do(self, func):
         text = self._convert(self.get_text())
         pos = [self.margin[0], self.margin[1]]
-        max_width = 0
-        for line in text.split('\n'):
-            twidth, theight = func(line, pos)
-            max_width = max(max_width, twidth + self.margin[0]*2)
-            pos[1] += theight + self.margin[1]*2
-        return (max_width, pos[1])
+        max_width = pos[0]
+        for index, atom in enumerate(text + ['']):
+            if '\n' in atom:
+                assert atom == '\n', "Newlines inside atoms not supported"
+                pos[0] = self.margin[0]
+                pos[1] += theight + self.margin[1]*2
+                continue
+            twidth, theight = func(index, atom, pos)
+            pos[0] += twidth + self.margin[0]
+            max_width = max(max_width, pos[0])
+        return (max_width, pos[1] + theight + self.margin[1])
 
 def make_label(style, text, selectable=False):
     te = TextEdit(style, lambda : text)
