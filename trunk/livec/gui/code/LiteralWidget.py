@@ -17,10 +17,10 @@ class LiteralWidget(HBox):
         HBox.__init__(self, List([
             make_label(s, delimiter),
             TextEdit(s, self._get_string, self._set_string,
-                     [Keymap.alphanumeric, Keymap.text_control],
+                     [Keymap.all_printable],
                      convertor=self.escape_table),
             make_label(s, delimiter),
-        ]))
+        ]), relay_focus=True)
 
     def _get_string(self):
         return self.literal.value
