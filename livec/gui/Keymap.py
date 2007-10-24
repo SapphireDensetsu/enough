@@ -58,24 +58,28 @@ class Key(object):
         return cls(mod, event.key)
 
 class Group(object):
-    def __init__(self, name, keys):
+    def __init__(self, name, allowed_modifiers, keys):
+        self.allowed_modifiers = set(allowed_modifiers)
         self.keys = set(keys)
         self._name = name
     def name(self):
         return self._name
     def overlaps(self, key):
         if isinstance(key, Group):
-            return bool(self.keys & key.keys)
+            return bool(self.keys & key.keys) and bool(self.allowed_modifiers &
+                                                       key.allowed_modifiers)
         elif isinstance(key, Key):
-            return key.key in self.keys
+            return key in self
         else:
             return NotImplemented
     def __contains__(self, key):
-        return key.key in self.keys
+        return key.key in self.keys and key.modifier in self.allowed_modifiers
 
 # TODO: Its bad to assume anything about K_* here...
 import string
-alphanumeric = Group('Alphanumeric', [ord(x) for x in string.letters+string.digits+'_'])
+alphanumeric = Group('Alphanumeric',
+                     [pygame.KMOD_SHIFT, 0],
+                     [ord(x) for x in string.letters+string.digits+'_'])
 
 class Keymap(object):
     def __init__(self):
