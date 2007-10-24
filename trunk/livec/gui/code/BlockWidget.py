@@ -18,10 +18,10 @@ class BlockWidget(VBox):
         self.block = block
         VBox.__init__(self, CacheMap(self._widget_for, self.block.statements))
         
-        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_i),
-                                           self._add_if)
-        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_k),
-                                           self._delete_selected_child)
+        self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_i),
+                                       self._add_if)
+        self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_k),
+                                       self._delete_selected_child)
 
     def _delete_selected_child(self):
         """Delete block statement"""

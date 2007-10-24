@@ -23,13 +23,13 @@ class Box(Widget):
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
 
-        r = self.focus_keymap.register_keydown_noarg
+        r = self.focus_keymap.register_key_noarg
         if not relay_focus:
             r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._enter_child)
 
         self.parenting_keymap = Keymap()
 
-        csr = self.parenting_keymap.register_keydown_noarg
+        csr = self.parenting_keymap.register_key_noarg
         if not relay_focus:
             csr(Key(pygame.KMOD_SHIFT, pygame.K_LEFT), self._leave_child)
 
@@ -94,8 +94,8 @@ class Box(Widget):
                 self._leave_child()
                 return
         self.index = new_value
-        csu = self.parenting_keymap.unregister_keydown
-        csr = self.parenting_keymap.register_keydown_noarg
+        csu = self.parenting_keymap.unregister_key
+        csr = self.parenting_keymap.register_key_noarg
         for c in self.child_list[self.index+1:]:
             if c.selectable:
                 csr(self.next_key, self._next)

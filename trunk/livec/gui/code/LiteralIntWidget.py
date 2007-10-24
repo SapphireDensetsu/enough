@@ -13,12 +13,9 @@ class LiteralIntWidget(TextEdit):
         s = style.literal_style_for[self.literal.__class__]
         TextEdit.__init__(self, s, lambda : str(self.literal.value))
 
-        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
-                                                 self._backspace)
-        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_MINUS),
-                                                 self._minus)
-        self.focus_keymap.register_group(Keymap.digits,
-                                         self._add_digit)
+        self.focus_keymap.register_key_noarg(Keymap.Key(0, pygame.K_BACKSPACE), self._backspace)
+        self.focus_keymap.register_key_noarg(Keymap.Key(0, pygame.K_MINUS), self._minus)
+        self.focus_keymap.register_group(Keymap.digits, self._add_digit)
 
     def _backspace(self):
         """Remove the last digit from the number"""
