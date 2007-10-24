@@ -1,3 +1,18 @@
+'''
+Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
+
+It has two keymaps - one for being directly in focus, and one for when
+a child is in focus.
+
+The parenting keymap is for the active child - it`s next keymap is the
+child`s.  The box widget can have an active child, which is not
+neccesarily the widget in focus - if the focus is not on the box, the
+active child will still be remembered but it will not be in
+focus. That child`s keymap will remain chained on the parenting
+keymap, even if the box itself is not in focus.
+
+'''
+
 import pygame
 from gui.Widget import Widget
 from gui.Keymap import Keymap, Key
@@ -32,6 +47,8 @@ class Box(Widget):
         if not self.relay_focus:
             r(self.go_down_key, self._enter_child)
 
+        # parenting_keymap is the keymap that's active when one of the
+        # children is in focus (not the Box itself). IT's next keymap is the active child's keymap.
         self.parenting_keymap = Keymap()
 
         csr = self.parenting_keymap.register_key_noarg
