@@ -31,10 +31,10 @@ class Edge(object):
         self.value = value
         
 class Node(object):
-    def __init__(self, value, inc=tuple(), outc=tuple()):
+    def __init__(self, value=None, inc=tuple(), outc=tuple()):
         self.value = value
         self.connections = {'in': list(inc), 'out': list(outc)}
-        self.obs = oberver.Observable()
+        self.obs = observer.Observable()
     def __getstate__(self):
         return dict(value=self.value, connections=self.connections)
 

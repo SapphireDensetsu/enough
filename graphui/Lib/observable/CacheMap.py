@@ -1,4 +1,4 @@
-from lib.observer import Observable
+from Lib.observer import Observable
 
 class CacheMap(object):
     def __init__(self, func, l):

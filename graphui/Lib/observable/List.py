@@ -1,4 +1,4 @@
-from lib.observer import Observable
+from Lib.observer import Observable
 
 class List(object):
     def __init__(self, *args, **kw):

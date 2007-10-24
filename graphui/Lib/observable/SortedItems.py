@@ -1,4 +1,4 @@
-from lib.observer import Observable
+from Lib.observer import Observable
 import bisect
 
 class SortedItems(object):
