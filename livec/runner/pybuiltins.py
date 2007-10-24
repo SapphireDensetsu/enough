@@ -39,9 +39,22 @@ class Array(object):
     def __init__(self, elem_type, num_elems):
         self.elem_type = elem_type
         self.num_elems = num_elems
-        self.elems = [elem_type.get_default_value() for i in xrange(num_elems)]
+        self.elems = None
 
-    def set_elem(self, index):
+    def init_elems(self):
+        if self.elems is None:
+            self.elems = [elem_type.get_default_value() for i in xrange(num_elems)]
+
+    def check_index(self, index);
         if index > self.num_elems or index < 0:
             raise OutOfBoundsError(self, index)
-        self.elems.
+    
+    def set_elem(self, index, value):
+        self.init_elems()
+        self.check_index(index)
+        self.elems[index] = value
+    def get_elem(self, index):
+        self.init_elems()
+        self.check_index(index)
+        return self.elems[index]
+    
