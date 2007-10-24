@@ -18,7 +18,8 @@ ret_value.values.append(error)
 
 s = nodes.Variable(type=nodes.Ptr(pointed_type=builtins.char))
 
-argv_1 = nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
+def argv_1():
+    return nodes.ArrayDeref(expr=argv, index=nodes.LiteralInt(value=1))
 
 example = nodes.Module(
     meta=nodes.Meta(name='example.c'),
@@ -31,7 +32,7 @@ example = nodes.Module(
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),
                          if_true=nodes.Return(expr=error)),
                 nodes.Assign(lvalue=s,
-                             rvalue=nodes.Call(builtins.strchr, args=List([argv_1, nodes.LiteralChar(value=',')]))),
+                             rvalue=nodes.Call(builtins.strchr, args=List([argv_1(), nodes.LiteralChar(value=',')]))),
                 nodes.If(expr=nodes.Equals(builtins.null, s),
                    if_true=nodes.Block(statements=List([
                        nodes.Call(builtins.fprintf,
@@ -42,7 +43,7 @@ example = nodes.Module(
                 ),
                 nodes.Call(builtins.printf,
                            args=List([nodes.LiteralString("Your comma is at %d!\n"),
-                                      nodes.Subtract(s, argv_1)])),
+                                      nodes.Subtract(s, argv_1())])),
                 nodes.Return(expr=ok)
             ]))
         )

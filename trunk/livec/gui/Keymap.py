@@ -81,6 +81,8 @@ alphanumeric = Group('Alphanumeric',
                      [pygame.KMOD_SHIFT, 0],
                      [ord(x) for x in string.letters+string.digits+'_'])
 
+digits = Group('Digit', [0], [ord(x) for x in string.digits])
+
 class Keymap(object):
     def __init__(self):
         self.obs_activation = Observable()

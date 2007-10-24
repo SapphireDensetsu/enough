@@ -101,6 +101,7 @@ def widget_for(x):
     from CallWidget import CallWidget
     from ArrayDerefWidget import ArrayDerefWidget
     from LiteralWidget import LiteralWidget
+    from LiteralIntWidget import LiteralIntWidget
     
     widget_map = {
         nodes.Module: ModuleWidget,
@@ -125,7 +126,7 @@ def widget_for(x):
         nodes.Call: CallWidget,
         nodes.ArrayDeref: ArrayDerefWidget,
 
-        nodes.LiteralInt: rpartial(LiteralWidget, repr),
+        nodes.LiteralInt: rpartial(LiteralIntWidget, repr),
         nodes.LiteralChar: rpartial(LiteralWidget, lambda value: "'%c'" % c_escape_char(value)),
         nodes.LiteralString: rpartial(LiteralWidget, lambda value: '"%s"' % c_escape_str(value)),
     }
