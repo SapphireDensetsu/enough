@@ -3,6 +3,8 @@
    children to visit() results, and other widgets just return whatever
    they want.
 
+* Change Groups to have the modifiers per-key and not per-group
+
 * TextEdit should take an observable mutable string, not get/set
 
 * add the declarations to the top of module widget:
