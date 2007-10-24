@@ -6,24 +6,25 @@ from widget_for import widget_for
 import gui.draw
 import pygame
 
+from lib.observable.List import List
+
 # TODO: Maybe call it LiveCEditorWidget ?
 class BrowserWidget(VBox):
     def __init__(self, node):
         self.main_stack = Stack()
         self.main_stack.push(widget_for(node))
 
-        self.info_stack = Stack()
-        self.info_stack.selectable = False
-        self.info_stack.push(Spacer((0, 0)))
+        self.info_list = List()
+        info_box = VBox(self.info_list)
+        info_box.selectable = False
 
         from gui.loop import loop
         from KeysReflectionWidget import KeysReflectionWidget
         keys_reflection_widget = KeysReflectionWidget(loop.global_keymap)
 
-        from lib.observable.List import List
         VBox.__init__(self, List([
             self.main_stack,
-            self.info_stack,
+            info_box,
             Spacer((0, 20)),
             keys_reflection_widget,
         ]), relay_focus=True)
@@ -50,7 +51,7 @@ class BrowserWidget(VBox):
         gui.draw.offset.add_offset((0,-self.offset_speed))
 
     def add_info_widget(self, info):
-        self.info_stack.push(info)
+        self.info_list.append(info)
 
     def remove_info_widget(self, info):
-        self.info_stack.remove(info)
+        self.info_list.remove(info)

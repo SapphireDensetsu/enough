@@ -4,7 +4,7 @@ from gui.loop import loop
 class InfoIdentifierWidget(IdentifierWidget):
     def got_focus(self):
         IdentifierWidget.got_focus(self)
-        loop.browser.info_stack.push(self._type_widget)
+        loop.browser.add_info_widget(self._type_widget)
     def lost_focus(self):
         IdentifierWidget.lost_focus(self)
-        loop.browser.info_stack.remove(self._type_widget)
+        loop.browser.remove_info_widget(self._type_widget)
