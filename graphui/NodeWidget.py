@@ -4,6 +4,7 @@ from guilib import MovingValue
 from Lib.Point import Point
 from Widget import Widget
 
+from Keymap import Key
 
 class NodeWidget(Widget):
     bg_color=(10,10,150)
@@ -20,6 +21,11 @@ class NodeWidget(Widget):
         from Shapes.Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(0,0,1,1))
 
+        r = self.focus_keymap.register_key_noarg
+        r(Key(pygame.KMOD_CTRL, pygame.K_RIGHT), self._move_right)
+        r(Key(pygame.KMOD_CTRL, pygame.K_LEFT), self._move_left)
+        r(Key(pygame.KMOD_CTRL, pygame.K_UP), self._move_up)
+        r(Key(pygame.KMOD_CTRL, pygame.K_DOWN), self._move_down)
 
     def get_size(self):
         return self._size.current
@@ -47,4 +53,18 @@ class NodeWidget(Widget):
         
     def _draw(self, surface, pos_offset):
         self.shape.paint(pos_offset, surface, self.fg_color, self.bg_color)
+        
+
+    def _move_right(self):
+        '''move right'''
+        self.pos = self.pos + Point((5,0))
+    def _move_left(self):
+        '''move left'''
+        self.pos = self.pos + Point((-5,0))
+    def _move_up(self):
+        '''move up'''
+        self.pos = self.pos + Point((0,-5))
+    def _move_down(self):
+        '''move down'''
+        self.pos = self.pos + Point((0,5))
         
