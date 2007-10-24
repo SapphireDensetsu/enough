@@ -8,6 +8,51 @@ def discard_eventarg(func):
         return func()
     return handler
 
+def mod_name(x):
+    mods = []
+    if x & pygame.KMOD_CTRL:
+        mods.append('Control')
+    if x & pygame.KMOD_SHIFT:
+        mods.append('Shift')
+    if x & pygame.KMOD_META:
+        mods.append('Winkey')
+    if x & pygame.KMOD_ALT:
+        mods.append('Alt')
+    return ' + '.join(mods)
+
+class Key(object):
+    def __init__(self, modifier, key):
+        self.modifier = modifier
+        self.key = key
+
+    def _essence(self):
+        return (self.modifier, self.key)
+    def __cmp__(self, other):
+        return cmp(self._essence(), other._essence())
+    def __hash__(self):
+        return hash(self._essence())
+
+    def name(self):
+        m = mod_name(self.modifier)
+        k = pygame.key.name(self.key)
+        if m:
+            return '%s+%s' % (m, k)
+        else:
+            return k
+    
+    __repr__ = name
+
+    @classmethod
+    def from_pygame_event(cls, event):
+        mod = 0
+        if event.mod & pygame.KMOD_CTRL:
+            mod |= pygame.KMOD_CTRL
+        elif event.mod & pygame.KMOD_ALT:
+            mod |= pygame.KMOD_ALT
+        elif event.mod & pygame.KMOD_SHIFT:
+            mod |= pygame.KMOD_SHIFT
+        return cls(mod, event.key)
+
 class Keymap(object):
     def __init__(self):
         self.obs_activation = Observable()
@@ -17,9 +62,9 @@ class Keymap(object):
         self.is_active = False
 
     def __contains__(self, key):
-        if key in self.keydown_registrations:
-            return True
         if self.next_keymap is not None and key in self.next_keymap:
+            return True
+        if key in self.keydown_registrations:
             return True
         return False
 
@@ -96,42 +141,33 @@ class Keymap(object):
             self.next_keymap.deactivate()
         self.obs_activation.notify.deactivated()
 
-    def register_keydown(self, (modifiers, key), func):
-        k = (modifiers, key)
-        self.unregister_keydown(k)
+    def register_keydown(self, key, func):
+        assert isinstance(key, Key)
+        assert func.__doc__, "Must use documented functions (%r)" % (func,)
+        self.unregister_keydown(key)
         r = self.keydown_registrations
-        r[k] = func
-        if self.next_keymap is not None and k in self.next_keymap:
+        r[key] = func
+        if self.next_keymap is not None and key in self.next_keymap:
             return
-        self.obs_dict.notify.add_item(k, func)
+        self.obs_dict.notify.add_item(key, func)
 
-    def unregister_keydown(self, (modifiers, key)):
-        k = (modifiers, key)
+    def unregister_keydown(self, key):
+        assert isinstance(key, Key)
         r = self.keydown_registrations
-        old_func = r.pop(k, None)
+        old_func = r.pop(key, None)
         if old_func is not None:
-            if self.next_keymap is not None and k in self.next_keymap:
+            if self.next_keymap is not None and key in self.next_keymap:
                 return
-            self.obs_dict.notify.remove_item(k, old_func)
+            self.obs_dict.notify.remove_item(key, old_func)
             
     def keyup(self, event):
         assert False, "keyup not implemented yet"
     def keydown(self, event):
-        mkey = self._mkey(event)
+        mkey = Key.from_pygame_event(event)
         if self.next_keymap is not None and self.next_keymap.keydown(event):
             return True
         if self._activate(self.keydown_registrations, mkey, event):
             return True
-
-    def _mkey(self, event):
-        mod = 0
-        if event.mod & pygame.KMOD_CTRL:
-            mod |= pygame.KMOD_CTRL
-        elif event.mod & pygame.KMOD_ALT:
-            mod |= pygame.KMOD_ALT
-        elif event.mod & pygame.KMOD_SHIFT:
-            mod |= pygame.KMOD_SHIFT
-        return (mod, event.key)
 
     def _activate(self, keymap, mkey, *args):
         if mkey not in keymap:

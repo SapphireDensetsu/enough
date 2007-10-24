@@ -1,6 +1,6 @@
 import pygame
 from gui.Widget import Widget
-from gui.Keymap import Keymap, discard_eventarg
+from gui.Keymap import Keymap, Key, discard_eventarg
 
 class Direction(object): pass
 
@@ -25,13 +25,13 @@ class Box(Widget):
 
         r = self.focus_keymap.register_keydown
         if not relay_focus:
-            r((0, pygame.K_RIGHT), discard_eventarg(self._enter_child))
+            r(Key(0, pygame.K_RIGHT), discard_eventarg(self._enter_child))
 
         self.parenting_keymap = Keymap()
 
         csr = self.parenting_keymap.register_keydown
         if not relay_focus:
-            csr((0, pygame.K_LEFT), discard_eventarg(self._leave_child))
+            csr(Key(0, pygame.K_LEFT), discard_eventarg(self._leave_child))
 
         selectables = [c for c in self.child_list if c.selectable]
         if selectables:
@@ -89,13 +89,13 @@ class Box(Widget):
         csu = self.parenting_keymap.unregister_keydown
         csr = self.parenting_keymap.register_keydown
         if index == len(selectables)-1:
-            csu((0, pygame.K_DOWN))
+            csu(Key(0, pygame.K_DOWN))
         else:
-            csr((0, pygame.K_DOWN), discard_eventarg(self._next))
+            csr(Key(0, pygame.K_DOWN), discard_eventarg(self._next))
         if index == 0:
-            csu((0, pygame.K_UP))
+            csu(Key(0, pygame.K_UP))
         else:
-            csr((0, pygame.K_UP), discard_eventarg(self._prev))
+            csr(Key(0, pygame.K_UP), discard_eventarg(self._prev))
         self.selected_child = selectables[index]
 
     def update(self):
