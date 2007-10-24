@@ -25,7 +25,7 @@ class SortedItems(object):
         self._dict_remove_item(key, old_value)
         self._dict_add_item(key, new_value)
 
-from lib.proxyclass import proxy_class
+from Lib.proxyclass import proxy_class
 SortedItems = proxy_class(SortedItems, '_items', methods=[
     '__getitem__',
     '__len__',
