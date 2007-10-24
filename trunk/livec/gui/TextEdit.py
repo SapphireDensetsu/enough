@@ -32,12 +32,8 @@ class TextEdit(Widget):
             self.selectable = True
             self._register_keys()
         self.set_style(style)
-        self._cursor = len(get_text())
+        self._cursor = None
         self.is_editing = False
-
-        # TODO: Debuggability hack
-        if get_text() is None:
-            import pdb;pdb.set_trace()
 
     def _register_keys(self):
         self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
@@ -78,6 +74,7 @@ class TextEdit(Widget):
         self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
         self.is_editing = False
         self.focus_keymap.set_next_keymap(None)
+        self._cursor = None
 
     def _home(self):
         """Go to beginning of line"""
@@ -89,16 +86,19 @@ class TextEdit(Widget):
 
     def _left(self):
         """Go left once"""
+        self._fix_cursor()
         if self._cursor > 0:
             self._cursor -= 1
 
     def _right(self):
         """Go right once"""
+        self._fix_cursor()
         if self._cursor < len(self.get_text()):
             self._cursor += 1
 
     def _backspace(self):
         """Delete last character"""
+        self._fix_cursor()
         o = self.get_text()
         self.set_text(o[:self._cursor-1] + o[self._cursor:])
         self._cursor -= 1
@@ -108,6 +108,7 @@ class TextEdit(Widget):
         self._insert(event.unicode)
 
     def _insert(self, x):
+        self._fix_cursor()
         o = self.get_text()
         self.set_text(o[:self._cursor] + x + o[self._cursor:])
         self._cursor += 1
@@ -127,8 +128,13 @@ class TextEdit(Widget):
         def func(index, atom, curpos):
             return self._font.size(atom)
         self.size = self._do(func)
+
+    def _fix_cursor(self):
+        if self._cursor is None:
+            self._cursor = len(self.get_text())
     
     def _draw(self, surface, pos):
+        self._fix_cursor()
         def func(index, atom, curpos):
             text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
             size = self._font.size(atom)
