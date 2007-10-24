@@ -18,6 +18,8 @@ bracket = _make_style(color=(200, 200, 255))
 comma = _make_style(color=(200, 200, 255))
 operator = _make_style(color=(220, 220, 255))
 semicolon = _make_style(color=(200, 200, 255))
+ellipsis = _make_style(color=(200, 200, 255), bgcolor=(200, 20, 20),
+                       is_bold=True, is_italic=True)
 space = _make_style()
 
 keyword = _make_style(color=(255, 30, 30))

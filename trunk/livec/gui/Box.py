@@ -62,7 +62,7 @@ class Box(Widget):
         if index <= self.index:
             self.set_index(self.index+1, 1)
         else:
-            self.set_index(self.index)
+            self.set_index(self.index, 1)
 
     def _child_pop(self, index):
         if index == self.index:
@@ -113,7 +113,7 @@ class Box(Widget):
             new_value = 0
         new_value %= len(self.child_list)
         orig_value = new_value
-        
+
         assert scan_dir is not None or self.child_list[new_value].selectable, \
                "set_index used on unselectable child"
             

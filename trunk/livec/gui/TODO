@@ -1,5 +1,4 @@
 
-* Have Widget allocate some space for its own rect
 
 * TextEdit should take an observable mutable string, not get/set
 
@@ -8,6 +7,10 @@
   * option to remove them
 
 * Configuration management? Where to save it? load it?
+
+* Folding
+
+* Have Widget allocate some space for its own rect?
 
 * figure out how to expose where a node is coming from (stack: int
    argc, global: bleh)
