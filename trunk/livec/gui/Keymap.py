@@ -86,7 +86,8 @@ alphanumeric = Group('Alphanumeric',
                      [ord(x) for x in string.letters+string.digits] +
                      [pygame.K_UNDERSCORE, pygame.K_MINUS])
 
-text_control = Group('Text control symbols', [0], [pygame.K_RETURN, pygame.K_TAB])
+text_control = Group('Text control symbols', [0],
+                     [pygame.K_RETURN, pygame.K_TAB, pygame.K_SPACE])
 
 digits = Group('Digit', [0], [ord(x) for x in string.digits])
 
@@ -105,9 +106,8 @@ class Keymap(object):
             return True
         if key in self.keydown_registrations:
             return True
-        for group, func in self.group_registrations.iteritems():
-            if key in group:
-                return True
+        if key in self.group_registrations:
+            return True
         return False
 
     def iterkeys(self):
@@ -131,9 +131,8 @@ class Keymap(object):
             return self.next_keymap[key]
         if key in self.keydown_registrations:
             return self.keydown_registrations[key]
-        for group, value in self.group_registrations.iteritems():
-            if key in group:
-                return value
+        if key in self.group_registrations:
+            return self.group_registrations[key]
         raise KeyError("Unknown key", key)
 
     def set_next_keymap(self, keymap):
@@ -152,8 +151,6 @@ class Keymap(object):
         prev_keymap = self.next_keymap
         self.next_keymap = keymap
         if self.next_keymap is not None:
-            if self.is_active:
-                self.next_keymap.activate()
             self.next_keymap.obs_dict.add_observer(self, '_next_keymap_')
             for key, value in self.next_keymap.iteritems():
                 if prev_keymap is not None and isinstance(key, Key) and key in prev_keymap:
@@ -161,6 +158,8 @@ class Keymap(object):
                     self._next_keymap_set_item(key, prev_keymap[key], value)
                 else:
                     self._next_keymap_add_item(key, value)
+            if self.is_active:
+                self.next_keymap.activate()
 
     def _shadow_groups(self, key):
         for group in self.group_registrations.keys():
