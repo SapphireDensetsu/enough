@@ -75,6 +75,8 @@ class TextEdit(Widget):
 
     def _stop_editing(self):
         """Stop editing mode"""
+        if not self.is_editing:
+            return
         self.focus_keymap.unregister_key(self.stop_editing_key)
         self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
         self.is_editing = False

@@ -18,10 +18,11 @@ class BlockWidget(VBox):
         self.block = block
         VBox.__init__(self, CacheMap(self._widget_for, self.block.statements))
         
-        self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_i),
-                                       self._add_if)
-        self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_k),
-                                       self._delete_selected_child)
+        self.parenting_keymap.register_key_noarg(
+            Key(pygame.KMOD_CTRL, pygame.K_i), self._add_if)
+        
+        self.parenting_keymap.register_key_noarg(
+            Key(pygame.KMOD_CTRL, pygame.K_k), self._delete_selected_child)
 
     def _delete_selected_child(self):
         """Delete block statement"""
@@ -41,7 +42,7 @@ class BlockWidget(VBox):
     def _add_if(self):
         """Add a new 'if'"""
         _if = nodes.If(
-            expr=LiteralInt(value=1),
+            expr=nodes.LiteralInt(value=1),
             if_true=nodes.Block(statements=List()),
         )
         index = self.index

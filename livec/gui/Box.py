@@ -1,6 +1,7 @@
 import pygame
 from gui.Widget import Widget
 from gui.Keymap import Keymap, Key
+from gui.Spacer import Spacer
 
 class Direction(object): pass
 
@@ -56,15 +57,14 @@ class Box(Widget):
 
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
-        self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
+        if self.index is not None:
+            self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
 
     def selected_child(self):
         return self.child_list[self.index]
 
     def _enter_child(self):
         """Go in"""
-        if self.index is None:
-            return
         self._set_next_keymap()
 
     def _leave_child(self):
@@ -80,8 +80,10 @@ class Box(Widget):
     def set_index(self, new_value, scan_dir=None):
         if not self.child_list:
             self.index = None
-            self._leave_child()
+            self._set_next_keymap()
             return
+        if new_value is None:
+            new_value = 0
         new_value %= len(self.child_list)
         orig_value = new_value
         
@@ -93,7 +95,7 @@ class Box(Widget):
             new_value %= len(self.child_list)
             if new_value == orig_value:
                 self.index = None
-                self._leave_child()
+                self._set_next_keymap()
                 return
         self.index = new_value
         csu = self.parenting_keymap.unregister_key
@@ -145,7 +147,7 @@ class Box(Widget):
             padding_size = self.padding_widget.size
             padding = padding_size[self.direction.axis]
             max_len = max(max_len, padding_size[self.direction.oaxis])
-        
+
         for index, child in enumerate(self.child_list):
             if index > 0 and self.padding_widget is not None:
                 func(self.padding_widget, cur, padding_size)
