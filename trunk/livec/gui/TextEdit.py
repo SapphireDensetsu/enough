@@ -16,7 +16,7 @@ class TextStyle(object):
 
 class TextEdit(Widget):
     selectable = False
-    margin = [0,0]
+    margin = [0, 0]
     start_editing_key = Keymap.Key(0, pygame.K_RETURN)
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None):
@@ -41,12 +41,10 @@ class TextEdit(Widget):
         self.focus_keymap.register_keydown_noarg(self.stop_editing_key,
                                                  self._stop_editing)
 
-        # Allow basic editing even when not in editing mode
-        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
-                                                 self._backspace)
-
         self.editing_keymap = Keymap.Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
+        self.editing_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
+                                                   self._backspace)
         for group in self.key_groups:
             self.editing_keymap.register_group(group,
                                                self._insert_char)
@@ -92,21 +90,17 @@ class TextEdit(Widget):
             self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
 
     def update(self):
-        def func(line, cur_height):
-            size = list(self._font.size(line))
-            size[0] += self.margin[0]*2
-            size[1] += self.margin[1]*2
-            return size
+        def func(line, curpos):
+            return self._font.size(line)
         self.size = self._do(func)
     
     def _draw(self, surface, pos):
-        def func(line, cur_height):
+        def func(line, curpos):
             text_surface = self._font.render(line, True, self.color, *self.bgcolor)
-            gui.draw.draw_font(surface, text_surface, (pos[0]+self.margin[0], pos[1]+cur_height+self.margin[1]))
-            size = list(self._font.size(line))
-            size[0] += self.margin[0]*2
-            size[1] += self.margin[1]*2
-            return size
+            gui.draw.draw_font(surface, text_surface,
+                               (pos[0]+curpos[0],
+                                pos[1]+curpos[1]))
+            return self._font.size(line)
         self._do(func)
 
     def _convert(self, text):
@@ -116,12 +110,13 @@ class TextEdit(Widget):
 
     def _do(self, func):
         text = self._convert(self.get_text())
-        size = [0, 0]
+        pos = [self.margin[0], self.margin[1]]
+        max_width = 0
         for line in text.split('\n'):
-            twidth, theight = func(line, size[1])
-            size[0] = max(size[0], twidth)
-            size[1] += theight
-        return size
+            twidth, theight = func(line, pos)
+            max_width = max(max_width, twidth + self.margin[0]*2)
+            pos[1] += theight + self.margin[1]*2
+        return (max_width, pos[1])
 
 def make_label(style, text, selectable=False):
     te = TextEdit(style, lambda : text)
