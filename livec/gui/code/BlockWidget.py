@@ -16,7 +16,8 @@ class BlockWidget(VBox):
     start_in_child = True
     def __init__(self, block):
         self.block = block
-        VBox.__init__(self, CacheMap(self._widget_for, self.block.statements))
+        VBox.__init__(self, CacheMap(self._widget_for, self.block.statements),
+                      relay_focus=True)
         
         self.parenting_keymap.register_key_noarg(
             Key(pygame.KMOD_CTRL, pygame.K_i), self._add_if)
@@ -36,7 +37,7 @@ class BlockWidget(VBox):
             return HBox(List([
                 w,
                 make_label(style.semicolon, ';')
-            ]))
+            ]), relay_focus=True)
         return w
 
     def _add_if(self):
