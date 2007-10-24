@@ -41,10 +41,8 @@ class BlockWidget(VBox):
     def _add_if(self):
         """Add a new 'if'"""
         _if = nodes.If(
-            expr=nodes.Equals(a=nodes.LiteralInt(value=0),
-                              b=nodes.LiteralInt(value=0)),
+            expr=LiteralInt(value=1),
             if_true=nodes.Block(statements=List()),
-            if_false=nodes.Block(statements=List()),
         )
         index = self.index
         if index is None:

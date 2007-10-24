@@ -14,10 +14,10 @@ import builtins
 class ModuleWidget(VBox):
     def __init__(self, module):
         self.module = module
-        func_box = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
+        self.func_box = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, loop.namer.get_name(self.module)),
-            func_box,
+            self.func_box,
         ]))
 
         self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_f),
@@ -31,4 +31,8 @@ class ModuleWidget(VBox):
                                     parameters=List()),
             block=nodes.Block(statements=List()),
         )
-        self.module.functions.append(func)
+        index = self.func_box.index
+        if index is None:
+            index = 0
+        self.module.functions.insert(index, func)
+        self.func_box.set_index(index)
