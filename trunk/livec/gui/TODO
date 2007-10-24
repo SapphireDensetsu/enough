@@ -24,6 +24,7 @@ It should disallow conflicts between the specific keys and the group
 
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
+* How to manage UNDOs?
 
 * semicolons (not as easy as it seems!)
 

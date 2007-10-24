@@ -37,7 +37,7 @@ class TextEdit(Widget):
                                          self._insert_char)
 
     def _backspace(self):
-        """Backspace"""
+        """Delete last character"""
         self.set_text(self.get_text()[:-1])
 
     def _insert_char(self, event):
