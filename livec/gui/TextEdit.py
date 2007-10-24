@@ -57,6 +57,10 @@ class TextEdit(Widget):
     def _editing_deactivated(self):
         self.pop_frame()
 
+    def lost_focus(self):
+        Widget.lost_focus(self)
+        self._stop_editing()
+
     def _start_editing(self):
         """Start editing mode"""
         self.focus_keymap.set_next_keymap(self.editing_keymap)
