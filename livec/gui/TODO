@@ -1,4 +1,7 @@
-
+* Add a visit() to Widget so it can visit entire hierarchy, then use
+   it to search. Have Box return a BoxChildren object mapping keys of
+   children to visit() results, and other widgets just return whatever
+   they want.
 
 * TextEdit should take an observable mutable string, not get/set
 
@@ -6,7 +9,7 @@
   * emphasize them when stuff using them is in focus
   * option to remove them
 
-* Configuration management? Where to save it? load it?
+* Viewer configuration should be stored in a ConfigParser config file?
 
 * Folding
 

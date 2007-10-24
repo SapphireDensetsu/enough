@@ -15,6 +15,6 @@ class IdentifierWidget(TextEdit):
         return loop.namer.get_name(self.variable)
 
     def _set_name(self, name):
-        if name[0].isdigit():
+        if name[:1].isdigit():
             return
         self.variable.meta['name'] = name
