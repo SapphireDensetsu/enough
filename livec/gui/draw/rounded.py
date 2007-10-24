@@ -3,6 +3,7 @@ import backend
 from math import pi
 
 def _rounded_rect(surface, color, rect, width, corner_radius):
+    backend.lock(surface)
     rect.height -= width//2
     rect.width -= width//2
     diameter = corner_radius * 2
@@ -27,6 +28,7 @@ def _rounded_rect(surface, color, rect, width, corner_radius):
                     (rect.topleft[0], rect.topleft[1] + line_dist)),
                    ):
         backend.line(surface, color, p1, p2, width)
+    backend.unlock(surface)
 
 import offset
 

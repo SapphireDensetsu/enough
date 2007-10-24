@@ -14,6 +14,6 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     loop.browser = BrowserWidget(example)
 
     import pygame
-    pygame.key.set_repeat(100,10)
+    pygame.key.set_repeat(250,10)
 
     loop.loop(display, loop.browser)
