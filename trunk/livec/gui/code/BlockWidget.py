@@ -70,9 +70,9 @@ class BlockWidget(VBox):
 
     def _delete_selected_child(self):
         """Delete block statement"""
-        if self.index is None:
+        if self.statement_box.index is None or not self.block.statements:
             return
-        self.block.statements.pop(self.index)
+        self.block.statements.pop(self.statement_box.index)
 
     def _widget_for(self, x):
         w = widget_for(x)
