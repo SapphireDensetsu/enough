@@ -1,3 +1,25 @@
+'''
+Generates C text code from a model tree of nodes.
+
+The CCodeGenerator is a class (has state) because while traversing the tree, we need to remember
+what symbols the current scope contains (which variables are defined, etc.).
+
+
+Every method of CCodeGenerator that produces code, is a generator of lines of text.
+The usability method .ccode takes all these lines and joins them to a single string.
+
+To recursively find types, imports, defines, in the tree we use nodewalker. functions.
+
+Before entering any code block, we set the current "scope" by changing the set of declaration that
+matches that code block. This is done using the _declared context method:
+
+Example from function code generation:
+
+        with self._declared(node.type.parameters):
+            for line in self._ccode(node.block):
+                yield line
+'''
+
 from __future__ import with_statement
 import nodes
 import itertools
