@@ -32,12 +32,14 @@ base_type = _make_style(color=(30, 255, 30))
 func_name = _make_style(color=(220, 220, 50))
 module_name = _make_style(color=(255, 255, 255))
 variable_name = _make_style(color=(100, 100, 255))
-define = _make_style(color=(120, 255, 150))
+define_value = _make_style(color=(120, 255, 150))
 
 identifier = _make_style(color=(150, 150, 255))
 enum = _make_style(color=keyword.color)
 enum_value = _make_style(color=identifier.color)
 import_ = _make_style(color=(255, 130, 130))
+
+define = _make_style(color=(90, 255, 50))
 
 def emphasize(style):
     s = TextStyle.from_style(style)
