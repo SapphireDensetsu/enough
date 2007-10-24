@@ -106,6 +106,8 @@ class TextEdit(Widget):
     def _backspace(self):
         """Delete last character"""
         self._fix_cursor()
+        if self._cursor == 0:
+            return
         o = self.get_text()
         self.set_text(o[:self._cursor-1] + o[self._cursor:])
         self._cursor -= 1
