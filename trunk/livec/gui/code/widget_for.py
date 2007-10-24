@@ -96,6 +96,7 @@ def widget_for(x):
     from ModuleWidget import ModuleWidget
     from FunctionWidget import FunctionWidget
     from IdentifierWidget import IdentifierWidget
+    from VariableWidget import VariableWidget
     from BlockWidget import BlockWidget
     from ReturnWidget import ReturnWidget
     from IfWidget import IfWidget
@@ -109,7 +110,7 @@ def widget_for(x):
         nodes.Module: ModuleWidget,
         nodes.Function: FunctionWidget,
 
-        nodes.Variable: rpartial(IdentifierWidget, style.identifier),
+        nodes.Variable: rpartial(VariableWidget),
         nodes.Define: rpartial(IdentifierWidget, style.define),
         nodes.EnumValue: rpartial(IdentifierWidget, style.enum),
         nodes.Import: rpartial(IdentifierWidget, style.import_),
