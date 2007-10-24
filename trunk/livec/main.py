@@ -21,7 +21,7 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from gui.Spacer import Spacer
     b = VBox(List([
         loop.browser,
-        Spacer((0, 50)),
+        Spacer((0, 20)),
         keys_reflection_widget,
     ]), relay_focus=True)
 

@@ -20,7 +20,14 @@ class BlockWidget(VBox):
         
         self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_i),
                                            self._add_if)
+        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_k),
+                                           self._delete_selected_child)
 
+    def _delete_selected_child(self):
+        """Delete block statement"""
+        if self.index is None:
+            return
+        self.block.statements.pop(self.index)
 
     def _widget_for(self, x):
         w = widget_for(x)

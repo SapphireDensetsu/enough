@@ -8,10 +8,10 @@ import pygame
 
 class LiteralIntWidget(TextEdit):
     selectable = True
-    def __init__(self, literal, value_string):
+    def __init__(self, literal):
         self.literal = literal
         s = style.literal_style_for[self.literal.__class__]
-        TextEdit.__init__(self, s, lambda : value_string(self.literal.value))
+        TextEdit.__init__(self, s, lambda : str(self.literal.value))
 
         self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
                                                  self._backspace)

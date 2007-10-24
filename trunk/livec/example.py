@@ -30,7 +30,7 @@ example = nodes.Module(
                                     parameters=List([argc, argv])),
             block=nodes.Block(statements=List([
                 nodes.If(expr=nodes.NotEquals(arg_count, argc),
-                         if_true=nodes.Return(expr=error)),
+                         if_true=nodes.Block(statements=List([nodes.Return(expr=error)]))),
                 nodes.Assign(lvalue=s,
                              rvalue=nodes.Call(builtins.strchr, args=List([argv_1(), nodes.LiteralChar(value=',')]))),
                 nodes.If(expr=nodes.Equals(builtins.null, s),

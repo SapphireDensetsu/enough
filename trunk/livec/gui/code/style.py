@@ -5,9 +5,9 @@ def _make_style(color=(220, 220, 220), font_size=16, font_name='gui/fonts/FreeMo
 
 unnamed_bg_color = (80, 20, 20)
 
-key_name = _make_style(font_size=14, color=(80, 255, 80))
+key_name = _make_style(font_size=12, color=(80, 255, 80))
 key_space_width = 30
-keydoc_name = _make_style(font_size=14, color=(255, 255, 255))
+keydoc_name = _make_style(font_size=12, color=(255, 255, 255))
 
 indent_width = 40
 braces = _make_style(color=(200, 200, 255))
