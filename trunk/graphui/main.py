@@ -26,7 +26,6 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from GraphWidget import GraphWidget
 
     g = GraphWidget((800,600))
-    g.new_node(Node())
     loop.browser = g
     
     import pygame
