@@ -76,7 +76,7 @@ def set_mode(size, flags, depth=0):
 import font
 
 class FontFaker(object):
-    def __init__(self, name, size):
+    def __init__(self, name, size, **kw):
         self.name = name
         self._size = size
         self.font = pygame.font.Font(name, size)
@@ -88,7 +88,13 @@ class FontFaker(object):
         return self, text, fore_color, back_color
 
     def size(self, text):
-        return font.calc_size(text, self.chars)
+        #size = font.calc_size(text, self.chars)
+        size = self.font.size(text)
+        return size
+
+    def set_italic(self, *args, **kw): pass
+    def set_bold(self, *args, **kw): pass
+    def set_underline(self, *args, **kw): pass
 
 _font_cache = {}
 def get_font(name, size):
