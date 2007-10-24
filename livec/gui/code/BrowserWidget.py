@@ -1,13 +1,30 @@
 import itertools
 import weakref
+from gui.Box import VBox
 from gui.Stack import Stack
+from gui.Spacer import Spacer
 from gui.Keymap import Key
+from widget_for import widget_for
 import gui.draw
 import pygame
 
-class BrowserWidget(Stack):
-    def __init__(self):
-        Stack.__init__(self)
+# TODO: Maybe call it LiveCEditorWidget ?
+class BrowserWidget(VBox):
+    def __init__(self, node):
+        stack = Stack()
+        stack.push(widget_for(node))
+
+        from gui.loop import loop
+        from KeysReflectionWidget import KeysReflectionWidget
+        keys_reflection_widget = KeysReflectionWidget(loop.global_keymap)
+
+        from lib.observable.List import List
+        VBox.__init__(self, List([
+            stack,
+            Spacer((0, 20)),
+            keys_reflection_widget,
+        ]), relay_focus=True)
+        
         self.index_gen = itertools.count()
         self._names = weakref.WeakKeyDictionary()
 
