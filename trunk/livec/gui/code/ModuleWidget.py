@@ -26,7 +26,7 @@ class ModuleWidget(VBox):
     def _add_func(self):
         """Add a new function"""
         func = nodes.Function(
-            meta=nodes.Meta(name='new func'),
+            meta=nodes.Meta(name='new_func'),
             type=nodes.FunctionType(return_type=builtins.void,
                                     parameters=List()),
             block=nodes.Block(statements=List()),
