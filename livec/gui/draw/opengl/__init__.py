@@ -17,7 +17,7 @@ def fill(display, color):
 def rect(surface, color, rect, width=1):
     GL.glLoadIdentity()
     GL.glColor3f(*color)
-    GL.glLineWidth(width)
+    GL.glLineWidth(max(width,1))
     GL.glBegin(GL.GL_LINE_LOOP)
     GL.glVertex2f(*rect.topleft)
     GL.glVertex2f(*rect.topright)
@@ -27,7 +27,7 @@ def rect(surface, color, rect, width=1):
     
 def line(surface, color, startpos, endpos, width=0):
     GL.glLoadIdentity()
-    GL.glLineWidth(width)
+    GL.glLineWidth(max(width,1))
     GL.glColor3f(*color)
     GL.glBegin(GL.GL_LINES)
     GL.glVertex2f(startpos[0], startpos[1])
@@ -42,10 +42,10 @@ def arc(surface, color, rect, angle_start, angle_stop, width=0):
     sweep = angle_stop
     t = t0
     r = rect.width/2.0
-    n = 3*r #/* # of segments */
+    n = int(3*r) #/* # of segments */
     dt = (sweep - t0)/ n
     GL.glColor3f(*color)
-    GL.glLineWidth(width)
+    GL.glLineWidth(max(width,1))
     GL.glBegin(GL.GL_LINE_STRIP)
     for i in xrange(n+1):
         GL.glVertex2f(x + r*cos(t), y - r*sin(t))

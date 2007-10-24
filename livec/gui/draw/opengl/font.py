@@ -36,6 +36,8 @@ def draw_chars(line, chars, color, pos):
     pos = list(map(int, pos))
     for c in line:
         data, w, h = chars[c]
+        if data is None:
+            continue # ignore unprintable chars
         GL.glRasterPos2i(pos[0], pos[1]+h)
         GL.glDrawPixels(w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, data)
         pos[0] += w 
