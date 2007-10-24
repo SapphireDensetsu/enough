@@ -18,28 +18,45 @@ class Box(Widget):
     padding_widget = None
     is_centered = False
     start_in_child = True
+    go_down_key = Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
+    go_up_key = Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
     
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
 
+        self.relay_focus = relay_focus
+        
         r = self.focus_keymap.register_key_noarg
-        if not relay_focus:
-            r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._enter_child)
+        if not self.relay_focus:
+            r(self.go_down_key, self._enter_child)
 
         self.parenting_keymap = Keymap()
 
         csr = self.parenting_keymap.register_key_noarg
-        if not relay_focus:
-            csr(Key(pygame.KMOD_SHIFT, pygame.K_LEFT), self._leave_child)
+        if not self.relay_focus:
+            csr(self.go_up_key, self._leave_child)
 
         self.set_index(0, 1)
 
-        if relay_focus or self.start_in_child:
+        if self.relay_focus or self.start_in_child:
             self._enter_child()
         else:
             self._leave_child()
+
+    def _start_relay_focus(self):
+        if self.relay_focus:
+            return
+        self.focus_keymap.unregister_key(self.go_down_key)
+        self.parenting_keymap.unregister_key(self.go_up_key)
+        self._enter_child()
+
+    def _stop_relay_focus(self):
+        if self.relay_focus:
+            return
+        self.focus_keymap.register_key_noarg(self.go_down_key, self._enter_child)
+        self.parenting_keymap.register_key_noarg(self.go_up_key, self._leave_child)
 
     def _child_insert(self, index, widget):
         if index <= self.index:
@@ -59,6 +76,8 @@ class Box(Widget):
         self.keymap.set_next_keymap(self.parenting_keymap)
         if self.index is not None:
             self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
+        else:
+            self.parenting_keymap.set_next_keymap(self.focus_keymap)
 
     def selected_child(self):
         return self.child_list[self.index]
@@ -77,10 +96,18 @@ class Box(Widget):
     def _prev(self):
         self.set_index(self.index-1, -1)
 
+    def _set_empty_state(self):
+        self.index = None
+        self._set_next_keymap()
+        self._start_relay_focus()
+
+    def _set_nonempty_state(self):
+        self._set_next_keymap()
+        self._stop_relay_focus()
+
     def set_index(self, new_value, scan_dir=None):
         if not self.child_list:
-            self.index = None
-            self._set_next_keymap()
+            self._set_empty_state()
             return
         if new_value is None:
             new_value = 0
@@ -94,8 +121,7 @@ class Box(Widget):
             new_value += scan_dir
             new_value %= len(self.child_list)
             if new_value == orig_value:
-                self.index = None
-                self._set_next_keymap()
+                self._set_empty_state()
                 return
         self.index = new_value
         csu = self.parenting_keymap.unregister_key
@@ -112,7 +138,7 @@ class Box(Widget):
                 break
         else:
             csu(self.prev_key)
-        self._set_next_keymap()
+        self._set_nonempty_state()
 
     def update(self):
         for child in self.child_list:

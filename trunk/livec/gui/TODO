@@ -1,7 +1,3 @@
-* Should BaseTypeWidget exist?
-* TextEdit visible movable cursor
-
-* Building all the widgets for the model is taking way too long
 
 * Have Widget allocate some space for its own rect
 
@@ -19,3 +15,10 @@
   * Either observers are weakrefs -- which should make everything
    disappear when it should.
   * Or explicit detachment is used (how?)
+
+BUGS:
+* Building all the widgets for the model is taking way too long
+* Box supports parenting mode even when no children, and only in parenting
+   mode you can add stuff to the box (cause there's an insert pos) but
+   its not visually appearant that box is in parenting mode. Maybe
+   parenting mode when no children should show the box as selected?
