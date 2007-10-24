@@ -1,10 +1,16 @@
 import keyword
 from functools import partial
 
+import re
+def create_convert_name_matcher():
+    s = '|'.join(re.escape(kw + '_') for kw in keyword.kwlist)
+    return re.compile('(%s)$' % (s,))
+
+convert_name_matcher = create_convert_name_matcher()
+
 def convert_name(name):
-    for kw in keyword.kwlist:
-        if len(name) > len(kw) and kw.ljust(len(name), '_') == name:
-            return name[:-1]
+    if convert_name_matcher.search(name):
+        return name[:-1]
     return name
 
 def run_func(err, func, *args):
