@@ -46,4 +46,8 @@ class BlockWidget(VBox):
             if_true=nodes.Block(statements=List()),
             if_false=nodes.Block(statements=List()),
         )
-        self.block.statements.append(_if)
+        index = self.index
+        if index is None:
+            index = 0
+        self.block.statements.insert(index, _if)
+        self.set_index(index)

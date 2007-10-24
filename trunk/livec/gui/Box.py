@@ -33,7 +33,7 @@ class Box(Widget):
         if not relay_focus:
             csr(Key(pygame.KMOD_SHIFT, pygame.K_LEFT), self._leave_child)
 
-        self._move_selection(0, 1)
+        self.set_index(0, 1)
 
         if relay_focus or self.start_in_child:
             self._enter_child()
@@ -42,13 +42,15 @@ class Box(Widget):
 
     def _child_insert(self, index, widget):
         if index <= self.index:
-            self._move_selection(self.index+1, 1)
+            self.set_index(self.index+1, 1)
 
     def _child_pop(self, index):
         if index == self.index:
-            self._move_selection(self.index, 1)
-        if index < self.index:
-            self._move_selection(self.index-1, 1)
+            self.set_index(self.index, 1)
+        elif index < self.index:
+            self.set_index(self.index-1, 1)
+        else:
+            self.set_index(self.index)
 
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
@@ -68,18 +70,22 @@ class Box(Widget):
         self.keymap.set_next_keymap(self.focus_keymap)
 
     def _next(self):
-        self._move_selection(self.index+1, 1)
+        self.set_index(self.index+1, 1)
 
     def _prev(self):
-        self._move_selection(self.index-1, -1)
+        self.set_index(self.index-1, -1)
 
-    def _move_selection(self, new_value, scan_dir):
+    def set_index(self, new_value, scan_dir=None):
         if not self.child_list:
             self.index = None
             self._leave_child()
             return
         new_value %= len(self.child_list)
         orig_value = new_value
+        
+        assert scan_dir is not None or self.child_list[new_value].selectable, \
+               "set_index used on unselectable child"
+            
         while not self.child_list[new_value].selectable:
             new_value += scan_dir
             new_value %= len(self.child_list)
