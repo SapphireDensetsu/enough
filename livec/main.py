@@ -26,6 +26,6 @@ with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     ]), relay_focus=True)
 
     import pygame
-    pygame.key.set_repeat(500,30)
+    pygame.key.set_repeat(100,10)
 
     loop.loop(display, b)
