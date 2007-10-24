@@ -1,6 +1,6 @@
 import pygame
 from Widget import Widget
-from gui.Keymap import Key, discard_eventarg
+import Keymap
 import gui.draw
 
 class TextStyle(object):
@@ -26,9 +26,15 @@ class TextEdit(Widget):
             self._register_keys()
         self.set_style(style)
 
+        # TODO: Debuggability hack
+        if get_text() is None:
+            import pdb;pdb.set_trace()
+
     def _register_keys(self):
-        self.focus_keymap.register_keydown(Key(0, pygame.K_BACKSPACE),
-                                           discard_eventarg(self._backspace))
+        self.focus_keymap.register_keydown_noarg(Keymap.Key(0, pygame.K_BACKSPACE),
+                                                 self._backspace)
+        self.focus_keymap.register_group(Keymap.alphanumeric,
+                                         self._insert_char)
 
     def _backspace(self):
         """Backspace"""

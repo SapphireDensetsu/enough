@@ -1,6 +1,5 @@
 import nodes
 import pygame
-from gui.Keymap import discard_eventarg
 from lib.observable.List import List
 
 from gui.Box import VBox, HBox

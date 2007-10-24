@@ -4,7 +4,7 @@ from gui.code.widget_for import widget_for, style
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
 
-from gui.Keymap import Key, discard_eventarg
+from gui.Keymap import Key
 
 import pygame
 import nodes
@@ -19,8 +19,8 @@ class ModuleWidget(VBox):
             func_box,
         ]))
 
-        self.keymap.register_keydown(Key(pygame.KMOD_CTRL, pygame.K_f),
-                                     discard_eventarg(self._add_func))
+        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_f),
+                                           self._add_func)
 
     def _add_func(self):
         """Add a new function"""

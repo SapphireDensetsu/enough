@@ -1,6 +1,6 @@
 import nodes
 import pygame
-from gui.Keymap import Key, discard_eventarg
+from gui.Keymap import Key
 from lib.observable.List import List
 
 from gui.Box import VBox, HBox
@@ -15,8 +15,8 @@ class BlockWidget(VBox):
         self.block = block
         VBox.__init__(self, CacheMap(widget_for, self.block.statements))
         
-        self.keymap.register_keydown(Key(pygame.KMOD_CTRL, pygame.K_i),
-                                     discard_eventarg(self._add_if))
+        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_i),
+                                           self._add_if)
 
 
     def _add_if(self):

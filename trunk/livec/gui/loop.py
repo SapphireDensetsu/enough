@@ -1,5 +1,5 @@
 import pygame
-from Keymap import Keymap, Key, discard_eventarg
+from Keymap import Keymap, Key
 
 import gui.draw
 
@@ -8,8 +8,8 @@ class ExitLoop(Exception): pass
 class Loop(object):
     def __init__(self):
         self.global_keymap = Keymap()
-        self.global_keymap.register_keydown(Key(pygame.KMOD_CTRL, pygame.K_q),
-                                            discard_eventarg(self._quit))
+        self.global_keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_q),
+                                                  self._quit)
         
     def _handle_event(self, event):
         if event.type == pygame.QUIT:

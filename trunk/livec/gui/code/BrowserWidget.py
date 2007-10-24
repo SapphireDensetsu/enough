@@ -1,7 +1,8 @@
 import itertools
 import weakref
 from gui.Stack import Stack
-from gui.Keymap import Key, discard_eventarg
+from gui.Keymap import Key
+import gui.draw
 import pygame
 
 class BrowserWidget(Stack):
@@ -11,8 +12,7 @@ class BrowserWidget(Stack):
         self._names = weakref.WeakKeyDictionary()
 
         def register_ctrl_key(x, func):
-            self.keymap.register_keydown(Key(pygame.KMOD_CTRL, x),
-                                         discard_eventarg(func))
+            self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, x), func)
         register_ctrl_key(pygame.K_LEFT, self._offset_right)
         register_ctrl_key(pygame.K_RIGHT, self._offset_left)
         register_ctrl_key(pygame.K_UP, self._offset_down)
