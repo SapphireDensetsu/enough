@@ -1,8 +1,8 @@
 import nodes
 
-int = nodes.BuiltinType(name='int')
-char = nodes.BuiltinType(name='char')
-void = nodes.BuiltinType(name='void')
+int = nodes.BuiltinType(name='int', meta=nodes.Meta(name='int'))
+char = nodes.BuiltinType(name='char', meta=nodes.Meta(name='char'))
+void = nodes.BuiltinType(name='void', meta=nodes.Meta(name='void'))
 strchr = nodes.Import(include='<string.h>', name='strchr', meta=nodes.Meta(name='strchr'))
 fprintf = nodes.Import(include='<stdio.h>', name='fprintf', meta=nodes.Meta(name='fprintf'))
 printf = nodes.Import(include='<stdio.h>', name='printf', meta=nodes.Meta(name='printf'))

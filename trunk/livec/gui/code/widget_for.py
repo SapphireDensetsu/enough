@@ -54,8 +54,8 @@ def find_basetype(x):
         assert False, "Cannot find base type of %r" % (x,)
 
 def type_widget_for(x, variable):
-    from BaseTypeWidget import BaseTypeWidget
-    basetype_widget = BaseTypeWidget(find_basetype(x))
+    from IdentifierWidget import IdentifierWidget
+    basetype_widget = IdentifierWidget(find_basetype(x), style.base_type)
 
     type_widget = HBox(List([
         basetype_widget,
