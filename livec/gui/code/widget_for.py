@@ -128,7 +128,7 @@ def widget_for(x):
         nodes.Call: CallWidget,
         nodes.ArrayDeref: ArrayDerefWidget,
 
-        nodes.LiteralInt: rpartial(LiteralIntWidget, repr),
+        nodes.LiteralInt: rpartial(LiteralIntWidget),
         nodes.LiteralChar: rpartial(LiteralWidget, "'", c_escape_char),
         nodes.LiteralString: rpartial(LiteralWidget, '"', c_escape_str),
     }

@@ -33,12 +33,7 @@ class Box(Widget):
         if not relay_focus:
             csr(Key(pygame.KMOD_SHIFT, pygame.K_LEFT), self._leave_child)
 
-        selectables = [c for c in self.child_list if c.selectable]
-        if selectables:
-            self.selected_child = selectables[0]
-            self._move_selection(lambda x: x)
-        else:
-            self.selected_child = None
+        self._move_selection(0, 1)
 
         if relay_focus or self.start_in_child:
             self._enter_child()
@@ -46,18 +41,25 @@ class Box(Widget):
             self._leave_child()
 
     def _child_insert(self, index, widget):
-        self._move_selection(lambda x: x)
+        if index <= self.index:
+            self._move_selection(self.index+1, 1)
 
     def _child_pop(self, index):
-        self._move_selection(lambda x: x)
+        if index == self.index:
+            self._move_selection(self.index, 1)
+        if index < self.index:
+            self._move_selection(self.index-1, 1)
 
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
-        self.parenting_keymap.set_next_keymap(self.selected_child.keymap)
+        self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
+
+    def selected_child(self):
+        return self.child_list[self.index]
 
     def _enter_child(self):
         """Go in"""
-        if self.selected_child is None:
+        if self.index is None:
             return
         self._set_next_keymap()
 
@@ -66,26 +68,40 @@ class Box(Widget):
         self.keymap.set_next_keymap(self.focus_keymap)
 
     def _next(self):
-        self._move_selection(lambda x: x+1)
+        self._move_selection(self.index+1, 1)
 
     def _prev(self):
-        self._move_selection(lambda x: x-1)
+        self._move_selection(self.index-1, -1)
 
-    def _move_selection(self, new_value):
-        selectables = [c for c in self.child_list if c.selectable]
-        index = selectables.index(self.selected_child)
-        index = new_value(index)%len(selectables)
+    def _move_selection(self, new_value, scan_dir):
+        if not self.child_list:
+            self.index = None
+            self._leave_child()
+            return
+        new_value %= len(self.child_list)
+        orig_value = new_value
+        while not self.child_list[new_value].selectable:
+            new_value += scan_dir
+            new_value %= len(self.child_list)
+            if new_value == orig_value:
+                self.index = None
+                self._leave_child()
+                return
+        self.index = new_value
         csu = self.parenting_keymap.unregister_keydown
         csr = self.parenting_keymap.register_keydown_noarg
-        if index == len(selectables)-1:
+        for c in self.child_list[self.index+1:]:
+            if c.selectable:
+                csr(self.next_key, self._next)
+                break
+        else:
             csu(self.next_key)
+        for c in self.child_list[:self.index]:
+            if c.selectable:
+                csr(self.prev_key, self._prev)
+                break
         else:
-            csr(self.next_key, self._next)
-        if index == 0:
             csu(self.prev_key)
-        else:
-            csr(self.prev_key, self._prev)
-        self.selected_child = selectables[index]
         self._set_next_keymap()
 
     def update(self):
