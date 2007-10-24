@@ -22,12 +22,14 @@ def mod_name(x):
     return ' + '.join(mods)
 
 class Key(object):
-    def __init__(self, modifier, key):
+    def __init__(self, modifier, key, event_type=pygame.KEYDOWN):
         self.modifier = modifier
         self.key = key
+        assert event_type in [pygame.KEYUP, pygame.KEYDOWN]
+        self.event_type = event_type
 
     def _essence(self):
-        return (self.modifier, self.key)
+        return (self.modifier, self.key, self.event_type)
     def __cmp__(self, other):
         if isinstance(other, Key):
             return cmp(self._essence(), other._essence())
@@ -40,9 +42,12 @@ class Key(object):
         m = mod_name(self.modifier)
         k = pygame.key.name(self.key)
         if m:
-            return '%s+%s' % (m, k)
+            s = '%s+%s' % (m, k)
         else:
-            return k
+            s = k
+        if self.event_type == pygame.KEYUP:
+            s += ' (keyup)'
+        return s
     
     __repr__ = name
 
@@ -55,13 +60,14 @@ class Key(object):
             mod |= pygame.KMOD_ALT
         elif event.mod & pygame.KMOD_SHIFT:
             mod |= pygame.KMOD_SHIFT
-        return cls(mod, event.key)
+        return cls(mod, event.key, event.type)
 
 class Group(object):
-    def __init__(self, name, allowed_modifiers, keys):
+    def __init__(self, name, allowed_modifiers, keys, event_type=pygame.KEYDOWN):
         self.allowed_modifiers = set(allowed_modifiers)
         self.keys = set(self._flatten(key) for key in keys)
         self._name = name
+        self.event_type = event_type
     def _flatten(self, key):
         if isinstance(key, Group):
             return key.keys
@@ -77,7 +83,7 @@ class Group(object):
         else:
             return NotImplemented
     def __contains__(self, key):
-        return key.key in self.keys and key.modifier in self.allowed_modifiers
+        return key.key in self.keys and key.modifier in self.allowed_modifiers and key.event_type == self.event_type
 
 # TODO: Its bad to assume anything about K_* here...
 import string
@@ -95,7 +101,7 @@ class Keymap(object):
         self.obs_activation = Observable()
         self.obs_dict = Observable()
         self.next_keymap = None
-        self.keydown_registrations = {}
+        self.key_registrations = {}
         self.group_registrations = {}
         self.disabled_group_registrations = {}
         self.is_active = False
@@ -103,7 +109,7 @@ class Keymap(object):
     def __contains__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:
             return True
-        if key in self.keydown_registrations:
+        if key in self.key_registrations:
             return True
         if key in self.group_registrations:
             return True
@@ -119,7 +125,7 @@ class Keymap(object):
                 yield key, value
         for group, value in self.group_registrations.iteritems():
             yield group, value
-        for key, value in self.keydown_registrations.iteritems():
+        for key, value in self.key_registrations.iteritems():
             if self.next_keymap is None or key not in self.next_keymap:
                 yield key, value
 
@@ -128,8 +134,8 @@ class Keymap(object):
     def __getitem__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:
             return self.next_keymap[key]
-        if key in self.keydown_registrations:
-            return self.keydown_registrations[key]
+        if key in self.key_registrations:
+            return self.key_registrations[key]
         if key in self.group_registrations:
             return self.group_registrations[key]
         raise KeyError("Unknown key", key)
@@ -180,14 +186,14 @@ class Keymap(object):
 
     def _next_keymap_add_item(self, key, func):
         self._shadow_groups(key)
-        if key in self.keydown_registrations:
-            self.obs_dict.notify.set_item(key, self.keydown_registrations[key], func)
+        if key in self.key_registrations:
+            self.obs_dict.notify.set_item(key, self.key_registrations[key], func)
         else:
             self.obs_dict.notify.add_item(key, func)
 
     def _next_keymap_remove_item(self, key, func):
-        if key in self.keydown_registrations:
-            self.obs_dict.notify.set_item(key, func, self.keydown_registrations[key])
+        if key in self.key_registrations:
+            self.obs_dict.notify.set_item(key, func, self.key_registrations[key])
         else:
             self.obs_dict.notify.remove_item(key, func)
         self._unshadow_groups(key)
@@ -207,26 +213,26 @@ class Keymap(object):
             self.next_keymap.deactivate()
         self.obs_activation.notify.deactivated()
 
-    def register_keydown(self, key, func):
+    def register_key(self, key, func):
         assert isinstance(key, Key)
         assert func.__doc__, "Must use documented functions (%r)" % (func,)
         for group, func in itertools.chain(self.group_registrations.iteritems(),
                                            self.disabled_group_registrations.iteritems()):
             assert key not in group
         
-        self.unregister_keydown(key)
-        r = self.keydown_registrations
+        self.unregister_key(key)
+        r = self.key_registrations
         r[key] = func
         if self.next_keymap is not None and key in self.next_keymap:
             return
         self.obs_dict.notify.add_item(key, func)
 
-    def register_keydown_noarg(self, key, func):
-        self.register_keydown(key, discard_eventarg(func))
+    def register_key_noarg(self, key, func):
+        self.register_key(key, discard_eventarg(func))
 
-    def unregister_keydown(self, key):
+    def unregister_key(self, key):
         assert isinstance(key, Key)
-        r = self.keydown_registrations
+        r = self.key_registrations
         old_func = r.pop(key, None)
         if old_func is not None:
             if self.next_keymap is not None and key in self.next_keymap:
@@ -246,12 +252,12 @@ class Keymap(object):
         self.group_registrations.pop(group, None)
         self.disabled_group_registrations.pop(group, None)
             
-    def keydown(self, event):
+    def key_event(self, event):
         mkey = Key.from_pygame_event(event)
-        if self.next_keymap is not None and self.next_keymap.keydown(event):
+        if self.next_keymap is not None and self.next_keymap.key_event(event):
             return True
-        if mkey in self.keydown_registrations:
-            func = self.keydown_registrations[mkey]
+        if mkey in self.key_registrations:
+            func = self.key_registrations[mkey]
             func(event)
             return True
         for group, func in self.group_registrations.iteritems():

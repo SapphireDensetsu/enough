@@ -8,16 +8,14 @@ class ExitLoop(Exception): pass
 class Loop(object):
     def __init__(self):
         self.global_keymap = Keymap()
-        self.global_keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_q),
-                                                  self._quit)
+        self.global_keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_q),
+                                              self._quit)
         
     def _handle_event(self, event):
         if event.type == pygame.QUIT:
             self._quit()
-        if event.type == pygame.KEYDOWN:
-            self.global_keymap.keydown(event)
-#         elif event.type == pygame.KEYUP:
-#             self.global_keymap.keyup(event)
+        if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
+            self.global_keymap.key_event(event)
     def _quit(self):
         """Quits the program"""
         raise ExitLoop()

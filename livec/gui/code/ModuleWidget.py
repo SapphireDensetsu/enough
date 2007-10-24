@@ -19,8 +19,8 @@ class ModuleWidget(VBox):
             func_box,
         ]))
 
-        self.keymap.register_keydown_noarg(Key(pygame.KMOD_CTRL, pygame.K_f),
-                                           self._add_func)
+        self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_f),
+                                       self._add_func)
 
     def _add_func(self):
         """Add a new function"""
