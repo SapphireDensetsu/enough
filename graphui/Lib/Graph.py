@@ -18,6 +18,8 @@
 
 # Generic graph module
 
+import observer
+
 class HasCyclesError(Exception): pass
 class NodeWasntConnected(Exception): pass
 class EdgeWasntConnected(Exception): pass
@@ -32,6 +34,7 @@ class Node(object):
     def __init__(self, value, inc=tuple(), outc=tuple()):
         self.value = value
         self.connections = {'in': list(inc), 'out': list(outc)}
+        self.obs = oberver.Observable()
     def __getstate__(self):
         return dict(value=self.value, connections=self.connections)
 
@@ -43,6 +46,7 @@ class Node(object):
     def connect_edge(self, e):
         self.connections['out'].append(e)
         e.target.connections['in'].append(e)
+        self.obs.notify.connect(e)
 
     def edges_connected_to(self, other):
         for e in self.connections['out']:
@@ -59,6 +63,7 @@ class Node(object):
     def disconnect_edge(self, edge):
         self.connections['out'].remove(edge)
         edge.target.connections['in'].remove(edge)
+        self.obs.notify.disconnect(e)
         
     def disconnect_all(self):
         removed_edges = set()
