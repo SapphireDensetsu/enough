@@ -12,3 +12,9 @@ def get_font(name, size):
 
 def draw_font(surface, font_rendered_surface, pos):
     surface.blit(font_rendered_surface, pos)
+
+def lock(surface):
+    surface.lock()
+
+def unlock(surface):
+    surface.unlock()

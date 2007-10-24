@@ -22,7 +22,7 @@ ellipsis = _make_style(color=(200, 200, 255), bgcolor=(200, 20, 20),
                        is_bold=True, is_italic=True)
 space = _make_style()
 
-keyword = _make_style(color=(255, 30, 30))
+keyword = _make_style(color=(255, 90, 90))
 if_ = _make_style(color=keyword.color)
 else_ = _make_style(color=keyword.color)
 return_ = _make_style(color=keyword.color)
@@ -37,7 +37,7 @@ define_value = _make_style(color=(120, 255, 150))
 identifier = _make_style(color=(150, 150, 255))
 enum = _make_style(color=keyword.color)
 enum_value = _make_style(color=identifier.color)
-import_ = _make_style(color=(255, 130, 130))
+import_ = _make_style(color=(255, 160, 160))
 
 define = _make_style(color=(90, 255, 50))
 

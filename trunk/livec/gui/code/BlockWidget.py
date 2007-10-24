@@ -13,6 +13,12 @@ from lib.observable.List import List
 import ccode
 import style
 
+plus_keys = (Key(0, pygame.K_EQUALS),
+             Key(0, pygame.K_KP_PLUS))
+minus_keys = (Key(0, pygame.K_MINUS),
+              Key(0, pygame.K_KP_MINUS))
+
+
 class BlockWidget(VBox):
     
     default_folded = False
@@ -39,16 +45,16 @@ class BlockWidget(VBox):
     def _update_fold_state(self):
         self.proxy_list.pop()
         if self._is_folded():
-            self.parenting_keymap.register_key_noarg(
-                Key(0, pygame.K_KP_PLUS), self._unfold)
-            self.parenting_keymap.unregister_key(
-                Key(0, pygame.K_KP_MINUS))
+            for key in plus_keys:
+                self.parenting_keymap.register_key_noarg(key, self._unfold)
+            for key in minus_keys:
+                self.parenting_keymap.unregister_key(key)
             w = self.ellipsis
         else:
-            self.parenting_keymap.register_key_noarg(
-                Key(0, pygame.K_KP_MINUS), self._fold)
-            self.parenting_keymap.unregister_key(
-                Key(0, pygame.K_KP_PLUS))
+            for key in minus_keys:
+                self.parenting_keymap.register_key_noarg(key, self._fold)
+            for key in plus_keys:
+                self.parenting_keymap.unregister_key(key)
             w = self.statement_box
         self.proxy_list.append(w)
 

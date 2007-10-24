@@ -104,3 +104,10 @@ def draw_font(surface, fakefont_surface, pos):
     fakefont, text, fore_color, back_color = fakefont_surface # is not really a surface
     font.draw_chars(text, fakefont.chars, fore_color, pos)
 
+
+def lock(surface):
+    pass
+
+def unlock(surface):
+    pass
+
