@@ -21,7 +21,7 @@ class IfWidget(VBox):
             make_label(style.paren, '('),
             widget_for(self.if_node.expr),
             make_label(style.paren, ')'),
-        ]))
+        ]), relay_focus=True)
         cond_part.is_centered = True
         
         parts = [
@@ -40,4 +40,3 @@ class IfWidget(VBox):
             parts.extend(if_false_part)
             
         VBox.__init__(self, List(parts))
-
