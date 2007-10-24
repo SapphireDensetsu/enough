@@ -3,13 +3,21 @@
 
 * TextEdit should take an observable mutable string, not get/set
 
-* add the defines to the top of module
+* add the declarations to the top of module widget:
+  * emphasize them when stuff using them is in focus
+  * option to remove them
+
+* Configuration management? Where to save it? load it?
+
+* figure out how to expose where a node is coming from (stack: int
+   argc, global: bleh)
 
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
+
 * How to manage UNDOs?
 
-* semicolons (not as easy as it seems!)
+* Widgets should have a destroy?
 
 * When does an observable object die?
   * Either observers are weakrefs -- which should make everything
@@ -18,7 +26,3 @@
 
 BUGS:
 * Building all the widgets for the model is taking way too long
-* Box supports parenting mode even when no children, and only in parenting
-   mode you can add stuff to the box (cause there's an insert pos) but
-   its not visually appearant that box is in parenting mode. Maybe
-   parenting mode when no children should show the box as selected?
