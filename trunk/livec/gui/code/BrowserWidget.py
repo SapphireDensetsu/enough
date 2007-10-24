@@ -1,4 +1,4 @@
-from gui.Box import VBox
+from gui.Box import VBox, HBox
 from gui.Stack import Stack
 from gui.Spacer import Spacer
 from gui.Keymap import Key
@@ -9,24 +9,26 @@ import pygame
 from lib.observable.List import List
 
 # TODO: Maybe call it LiveCEditorWidget ?
-class BrowserWidget(VBox):
+class BrowserWidget(HBox):
     def __init__(self, node):
         self.main_stack = Stack()
         self.main_stack.push(widget_for(node))
 
-        self.info_list = List()
-        info_box = VBox(self.info_list)
-        info_box.selectable = False
 
         from gui.loop import loop
         from KeysReflectionWidget import KeysReflectionWidget
         keys_reflection_widget = KeysReflectionWidget(loop.global_keymap)
+        keys_reflection_widget.bg_color = (20,20,50)
 
-        VBox.__init__(self, List([
+        self.info_list = List([keys_reflection_widget,])
+        info_box = VBox(self.info_list)
+        info_box.selectable = False
+        info_box.bg_color = (20,50,20)
+
+        HBox.__init__(self, List([
             self.main_stack,
+            Spacer((10, 0)),
             info_box,
-            Spacer((0, 20)),
-            keys_reflection_widget,
         ]), relay_focus=True)
 
         def register_ctrl_key(x, func):
