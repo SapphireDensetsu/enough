@@ -20,8 +20,9 @@ minus_keys = (Key(0, pygame.K_MINUS),
 
 
 class BlockWidget(VBox):
-    
     default_folded = False
+    kill_stmt_key = Key(pygame.KMOD_CTRL, pygame.K_k)
+    insert_if_key = Key(pygame.KMOD_CTRL, pygame.K_i)
     
     def __init__(self, block):
         self.block = block
@@ -32,12 +33,26 @@ class BlockWidget(VBox):
         VBox.__init__(self, self.proxy_list, relay_focus=True)
         
         self.statement_box.parenting_keymap.register_key_noarg(
-            Key(pygame.KMOD_CTRL, pygame.K_i), self._add_if)
-        
-        self.statement_box.parenting_keymap.register_key_noarg(
-            Key(pygame.KMOD_CTRL, pygame.K_k), self._delete_selected_child)
+            self.insert_if_key, self._add_if)
+
+        self.block.statements.obs_list.add_observer(self, '_statement_list_')
+        self._update_delete_registration()
 
         self._update_fold_state()
+
+    def _statement_list_insert(self, index, item):
+        self._update_delete_registration()
+
+    def _statement_list_pop(self, index):
+        self._update_delete_registration()
+
+    def _update_delete_registration(self):
+        if self.block.statements:
+            self.statement_box.parenting_keymap.register_key_noarg(
+                self.kill_stmt_key, self._delete_selected_child)
+        else:
+            self.statement_box.parenting_keymap.unregister_key(
+                self.kill_stmt_key)
 
     def _is_folded(self):
         return self.block.meta.get('folded', self.default_folded)
