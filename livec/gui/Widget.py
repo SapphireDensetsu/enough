@@ -14,8 +14,8 @@ class Widget(object):
     bg_color = None
     selectable = True
     use_rounded_rect = True
-    activated_frame_color = (10, 10, 200)
-    activated_bg_color = (10, 10, 100)
+    activated_frame_color = (40, 40, 255)
+    activated_bg_color = (50, 50, 130)
 
     def __init__(self):
         # Use self.keymap.set_next_keymap and self.keymap for stealing

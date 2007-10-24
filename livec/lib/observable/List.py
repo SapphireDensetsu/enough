@@ -9,7 +9,7 @@ class List(object):
         self._items.insert(index, item)
         self.obs_list.notify.insert(index, item)
     
-    def pop(self, index):
+    def pop(self, index=-1):
         self._items.pop(index)
         self.obs_list.notify.pop(index)
 
