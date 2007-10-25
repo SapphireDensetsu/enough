@@ -19,6 +19,8 @@ from Lib import Graph
 
 from layout import Layout
 
+import loop
+
 class GraphWidget(Widget):
     bg_color=(0,0,0)
     activated_bg_color=(10,10,20)
@@ -54,8 +56,8 @@ class GraphWidget(Widget):
         self.selected_widget_index = None
         self._update_index()
 
-        self.connector_start_pos = None
-        
+        self._connector_start_pos = None
+        self._connect_source_node = None        
 
     def get_size(self):
         return self._size.current
@@ -112,6 +114,7 @@ class GraphWidget(Widget):
         node.obs.add_observer(self, '_node_')
         w.obs_loc.add_observer(self, '_node_widget_loc_', w, node)
         self.update_layout()
+        loop.loop.mouse_map.push_area(w.mouse_area, partial(self._widget_mouse_event, node, w))
         return w
     def remove_node(self, node):
         w = self.node_widgets[node]
@@ -146,11 +149,11 @@ class GraphWidget(Widget):
             # because of how NodeWidget works.
             w._draw(surface, pos)
 
-        if self.connector_start_pos is not None:
+        if self._connector_start_pos is not None:
             n,w = self.selected()
             if w is not None:
-                start_pos = self.connector_start_pos()
-                end_pos = w.rect().center
+                start_pos = self._connector_start_pos()
+                end_pos = self._connector_end_pos()
                 draw.line(surface, (50,255,50), start_pos, end_pos)
 
     def selected(self):
@@ -280,26 +283,53 @@ class GraphWidget(Widget):
         n.disconnect_all()
         self._add_index(1)
         self.remove_node(n)
-        
-        
-    def _start_connect(self):
-        '''Sets the source node to connect'''
+
+    def _node_connection_started(self):
         r = self.keymap.register_key_noarg
         ur = self.keymap.unregister_key
         start_node, start_node_widget = self.selected()
         assert start_node is not None
-        def end_connect():
+        def _end_connect():
             '''Sets the target node to connect'''
             ur(self.key_connect)
             r(self.key_connect, self._start_connect)
-        
+
             end_node, end_node_widget = self.sorted_widgets[self.selected_widget_index]
             start_node.connect_node(end_node)
-            self.connector_start_pos = None
+            self._connector_start_pos = None
+            self._connector_end_pos = None
+
+        def _end_pos():
+            n, w = self.selected()
+            if w is None:
+                return None
+            return w.rect().center
             
         ur(self.key_connect)
-        r(self.key_connect, end_connect)
-        self.connector_start_pos = lambda : start_node_widget.rect().center
+        r(self.key_connect, _end_connect)
+        self._connector_start_pos = lambda : start_node_widget.rect().center
+        self._connector_end_pos = _end_pos
+        
+    def _start_connect(self):
+        '''Sets the source node to connect'''
+        self._node_connection_started()
+
+    def _widget_mouse_event(self, node, widget, event):
+        connect_mod = pygame.key.get_mods() & pygame.KMOD_SHIFT
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            i = self._find_widget_index(widget)
+            self._set_index(i)
+            if connect_mod and self._connector_start_pos is None:
+                self._connect_source_node = node
+                self._connector_start_pos = lambda : widget.rect().center
+                self._connector_end_pos = pygame.mouse.get_pos
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if self._connector_start_pos is not None:
+                self._connector_start_pos = None
+                self._connector_end_pos = None
+                self._connect_source_node.connect_node(node)
+                self._connect_source_node = None
+                
         
         
 

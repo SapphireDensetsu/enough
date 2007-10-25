@@ -1,5 +1,6 @@
 import pygame
 from Keymap import Keymap, Key
+from MouseMap import MouseMap, MouseEvent
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 import twisted.python.log
@@ -15,6 +16,7 @@ class Loop(object):
         self.global_keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_q),
                                               self._quit)
         self.global_keymap.activate()
+        self.mouse_map = MouseMap()
         self.lc = LoopingCall(self._iteration)
         
     def _handle_event(self, event):
@@ -22,6 +24,8 @@ class Loop(object):
             self._quit()
         if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
             self.global_keymap.key_event(event)
+        if event.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION]:
+            self.mouse_map.mouse_event(MouseEvent(event))
     def _quit(self):
         """Quits the program"""
         self.lc.stop()

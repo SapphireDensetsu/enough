@@ -38,6 +38,7 @@ class EdgeWidget(Widget):
         self.line.update()
         
     def in_bounds(self, pos):
+        pos = Point(pos)
         dist = 8
         if self.draw_rect:
             if self.draw_rect.h < dist:
