@@ -1,6 +1,6 @@
-'''
+"""
 Widget does not know that it can have children. The only widget->child
-relation is in Box.
+relation is in subclasses (e.g Box).
 
 Each Widget has a keymap that handles key presses events that it
 receives. Now, why would a widget`s keymap receive key presses at all,
@@ -12,19 +12,8 @@ Lets look at loop.py:
 
 Main loop sends events to the global keymap. Now, what does global key
 map (or any other keymap) do when it gets an event like that?
+"""
 
-The things it tries to do are:
-
-1. Pass it to its "next keymap" the "next" keymap (of a child, thus
-more "specific" widget) is stronger/overrides the keymap itself.
-
-2. If the next keymap does not know the key, then it tries to handle
-it itself according to a map it holds that maps specific
-(modifier,key) to funcs, and then, also according to a map of broader
-groups to funcs (it checks group after group if thee key is in it and
-uses the func).
-
- '''
 import pygame
 from functools import partial
 
@@ -56,7 +45,7 @@ class Widget(object):
         self._prev_frame_colors = []
 
         self._anim_pos = MovingPos()
-        
+
     def _keymap_activated(self):
         self.got_focus()
 
