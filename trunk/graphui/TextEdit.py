@@ -1,7 +1,7 @@
 import pygame
 from Widget import Widget
 import Keymap
-import gui.draw
+import draw
 
 class TextStyle(object):
     def __init__(self, color, font_size, font_name, bgcolor,
@@ -129,9 +129,9 @@ class TextEdit(Widget):
         else:
             self.bgcolor = (style.bgcolor,)
         try:
-            self._font = gui.draw.get_font(style.font_name, style.font_size)
+            self._font = draw.get_font(style.font_name, style.font_size)
         except IOError:
-            self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
+            self._font = draw.get_font(pygame.font.get_default_font(), style.font_size)
         self._font.set_italic(style.is_italic)
         self._font.set_underline(style.is_underline)
         self._font.set_bold(style.is_bold)
@@ -152,9 +152,9 @@ class TextEdit(Widget):
             size = self._font.size(atom)
             abspos = tuple(a+b for a, b in zip(pos, curpos))
             if self.is_editing and index == self._cursor:
-                gui.draw.line(surface, self.cursor_color, abspos,
+                draw.line(surface, self.cursor_color, abspos,
                               (abspos[0], abspos[1]+size[1]), 2)
-            gui.draw.draw_font(surface, text_surface, abspos)
+            draw.draw_font(surface, text_surface, abspos)
             return size
         self._do(func)
 

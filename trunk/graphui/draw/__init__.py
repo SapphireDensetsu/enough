@@ -1,6 +1,6 @@
 import backend
 
-from backend import get_font, set_mode, fill
+from backend import get_font, set_mode, fill, blit
 
 import rounded
 import offset
@@ -13,6 +13,10 @@ def line(surface, color, startpos, endpos, width=1):
     startpos = offset.pos_offset(startpos)
     endpos = offset.pos_offset(endpos)
     return backend.line(surface, color, startpos, endpos, width)
+
+def lines(surface, color, closed, points, width=1):
+    points = [offset.pos_offset(p) for p in points]
+    return backend.lines(surface, color, closed, points, width)
 
 def arc(surface, color, rect, angle_start, angle_stop, width=0):
     rect = offset.rect_offset(rect)

@@ -31,7 +31,7 @@ class GraphWidget(Widget):
     key_select_node_left = Key(0, pygame.K_LEFT)
     key_select_node_up = Key(0, pygame.K_UP)
     key_select_node_down = Key(0, pygame.K_DOWN)
-    key_connect = Key(0, pygame.K_RETURN)
+    key_connect = Key(pygame.KMOD_CTRL, pygame.K_RETURN)
     
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
@@ -53,6 +53,8 @@ class GraphWidget(Widget):
         
         self.selected_widget_index = None
         self._update_index()
+
+        self.connector_start_pos = None
         
 
     def get_size(self):
@@ -143,6 +145,13 @@ class GraphWidget(Widget):
             # for our children, pos is the parent's pos offset
             # because of how NodeWidget works.
             w._draw(surface, pos)
+
+        if self.connector_start_pos is not None:
+            n,w = self.selected()
+            if w is not None:
+                start_pos = self.connector_start_pos()
+                end_pos = w.rect().center
+                draw.line(surface, (50,255,50), start_pos, end_pos)
 
     def selected(self):
         if self.selected_widget_index is None:
@@ -286,9 +295,11 @@ class GraphWidget(Widget):
         
             end_node, end_node_widget = self.sorted_widgets[self.selected_widget_index]
             start_node.connect_node(end_node)
+            self.connector_start_pos = None
             
         ur(self.key_connect)
         r(self.key_connect, end_connect)
+        self.connector_start_pos = lambda : start_node_widget.rect().center
         
         
 
