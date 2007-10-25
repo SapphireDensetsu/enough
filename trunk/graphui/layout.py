@@ -45,14 +45,15 @@ class Layout(object):
 
         for node, n_layout in n.iteritems():
             lines = []
-            if node in e:
-                last_indices = {}
-                for edge, dot_edge in e[node].iteritems():
-                    widget = edge_widgets[edge]
-                    widget.update_from_dot(dot_edge,
-                                           x_scale=x_scale,
-                                           y_scale=y_scale,
-                                           x_offset=x_offset,
-                                           y_offset=y_offset,
-                                           bezier_points=bezier_points)
+            if node not in e:
+                continue
+            last_indices = {}
+            for edge, dot_edge in e[node].iteritems():
+                widget = edge_widgets[edge]
+                widget.update_from_dot(dot_edge,
+                                       x_scale=x_scale,
+                                       y_scale=y_scale,
+                                       x_offset=x_offset,
+                                       y_offset=y_offset,
+                                       bezier_points=bezier_points)
 

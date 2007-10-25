@@ -69,21 +69,18 @@ class EdgeWidget(Widget):
         self.paint_text(surface, parent_offset)
 
     def paint_lines(self, surface, parent_offset):
-        change_stopped_now = False
+        self.line.update()
+        self.draw_rect = pygame.draw.lines(surface, self.bg_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
+
         target_widget = self.get_node_widget(self.edge.target)
         if (self.line.done and target_widget._pos.done and target_widget._size.done
             and self.cached_parent_offset and self.cached_parent_offset == parent_offset):
-            if not self.cached_arrowhead:
-                change_stopped_now = True
             changed = False
         else:
             changed = True
             self.cached_arrowhead = None
             
-        self.line.update()
-        self.draw_rect = pygame.draw.lines(surface, self.bg_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
-
-        if changed or change_stopped_now or not self.cached_arrowhead:
+        if changed or not self.cached_arrowhead:
             # If we didn't cache the found intersection or some stuff changed....
 
             # TODO: make this a binary search 
