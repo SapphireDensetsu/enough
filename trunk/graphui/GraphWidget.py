@@ -42,8 +42,12 @@ class GraphWidget(Widget):
         self._set_next_keymap()
         
         r = self.parenting_keymap.register_key_noarg
-        r(Key(0, pygame.K_RIGHT), self._next_node)
-        r(Key(0, pygame.K_LEFT), self._prev_node)
+        r(Key(0, pygame.K_TAB), self._next_node)
+        r(Key(pygame.KMOD_SHIFT, pygame.K_TAB), self._prev_node)
+        r(Key(0, pygame.K_RIGHT), self._select_node_right)
+        r(Key(0, pygame.K_LEFT), self._select_node_left)
+        r(Key(0, pygame.K_UP), self._select_node_up)
+        r(Key(0, pygame.K_DOWN), self._select_node_down)
         r(self.create_node_key, self._create_new_node)
 
         self.layout = Layout()
@@ -139,7 +143,7 @@ class GraphWidget(Widget):
 
     def selected(self):
         if self.selected_widget_index is None:
-            return None
+            return None, None
         return self.sorted_widgets[self.selected_widget_index]
     
     def _set_next_keymap(self):
@@ -155,18 +159,16 @@ class GraphWidget(Widget):
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
     def _set_index(self, index):
-        if not self.node_widgets:
-            self.selected_widget_index = None
-            return
         if self.selected_widget_index != index:
             self.selected_widget_index = index
-            self._set_next_keymap()
+        self._update_index()
 
     def _update_index(self):
         if not self.node_widgets:
             self.selected_widget_index = None
         else:
             self.selected_widget_index %= len(self.sorted_widgets)
+            self._set_next_keymap()
             
     def _find_widget_index(self, w):
         for i, (node, widget) in enumerate(self.sorted_widgets):
@@ -191,6 +193,58 @@ class GraphWidget(Widget):
         '''Previous node'''
         self._add_index(-1)
 
+    def _select_node_right(self):
+        '''Select the next node to the right'''
+        def dist(pos1, pos2):
+            if pos1.x < pos2.x:
+                return None
+            return pos1.x - pos2.x
+        self._select_node_dir(dist)
+        
+    def _select_node_left(self):
+        '''Select the next node to the left'''
+        def dist(pos1, pos2):
+            if pos1.x > pos2.x:
+                return None
+            return pos2.x - pos1.x
+        self._select_node_dir(dist)
+
+    def _select_node_up(self):
+        '''Select the next node above'''
+        def dist(pos1, pos2):
+            if pos1.y > pos2.y:
+                return None
+            return pos2.y - pos1.y
+        self._select_node_dir(dist)
+
+    def _select_node_down(self):
+        '''Select the next node below'''
+        def dist(pos1, pos2):
+            if pos1.y < pos2.y:
+                return None
+            return pos1.y - pos2.y
+        self._select_node_dir(dist)
+
+    def _select_node_dir(self, distance_between):
+        closest_right = None
+        min_dist = None
+        n, w = self.selected()
+        if not w:
+            return
+        for widget in self.node_widgets.itervalues():
+            if widget == w:
+                continue
+            dist = distance_between(widget.pos, w.pos)
+            if dist is None:
+                continue
+            if closest_right is None or dist < min_dist:
+                closest_right = widget
+                min_dist = dist
+                
+        if closest_right is not None:
+            i = self._find_widget_index(closest_right)
+            self._set_index(i)
+            
     def _create_new_node(self):
         '''Create new node'''
         n = Graph.Node()
