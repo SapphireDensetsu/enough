@@ -6,6 +6,8 @@ from Widget import Widget
 
 from Keymap import Key
 
+from Lib.observer import Observable
+
 class NodeWidget(Widget):
     bg_color=(10,10,150)
     fg_color=(30,30,150)
@@ -21,6 +23,8 @@ class NodeWidget(Widget):
         from Shapes.Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(0,0,1,1))
 
+        self.obs_loc = Observable()
+        
         r = self.focus_keymap.register_key_noarg
         r(Key(pygame.KMOD_CTRL, pygame.K_RIGHT), self._move_right)
         r(Key(pygame.KMOD_CTRL, pygame.K_LEFT), self._move_left)
@@ -30,19 +34,27 @@ class NodeWidget(Widget):
     def get_size(self):
         return self._size.current
     def set_size(self, p):
-        self._size.final = Point(p)
+        p = Point(p)
+        self._size.final = p
+        self.obs_loc.notify.size_set(p)
     size = property(get_size, set_size)
     
     def get_pos(self):
         return self._pos.current
     def set_pos(self, p):
-        self._pos.final = Point(p)
+        p = Point(p)
+        self._pos.final = p
+        self.obs_loc.notify.pos_set(p)
     pos = property(get_pos, set_pos)
 
     def rect(self):
         s = self.size
         return pygame.Rect(self.pos.x,self.pos.y,s.x,s.y)
-    
+    def final_rect(self):
+        s = self._size.final
+        p = self._pos.final
+        return pygame.Rect(p.x,p.y,s.x,s.y)
+        
     def _node_connect(self, e):
         pass
     def _node_disconnect(self, e):

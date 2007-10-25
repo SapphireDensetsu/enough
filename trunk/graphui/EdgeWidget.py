@@ -7,7 +7,7 @@ from Widget import Widget
 from Keymap import Key
 
 class EdgeWidget(Widget):
-    bg_color=(50,10,10)
+    bg_color=(150,10,10)
     fg_color=(150,30,30)
     activated_fg_color=(250,100,100)
     
@@ -102,6 +102,7 @@ class EdgeWidget(Widget):
                 return
 
         if self.cached_arrowhead:
+            print 'here'
             repaint_arrowhead(surface, *self.cached_arrowhead)
             
 
