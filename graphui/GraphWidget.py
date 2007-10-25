@@ -1,3 +1,5 @@
+from functools import partial
+
 import pygame
 import draw
 from guilib import MovingValue, MovingLine
@@ -55,23 +57,44 @@ class GraphWidget(Widget):
         for node in e.source, e.target:
             self.remove_node(node)
 
+    def _node_widget_loc_pos_set(self, widget, node, new_pos):
+        center = Point(widget.final_rect().center)
+        for edge in node.connections['in']:
+            edge_w = self.edge_widgets[edge]
+            edge_w.line.final[-1] = center.copy()
+            edge_w.line.reset()
+        for edge in node.connections['out']:
+            edge_w = self.edge_widgets[edge]
+            edge_w.line.final[0] = center.copy()
+            edge_w.line.reset()
+    def _node_widget_loc_size_set(self, widget, node, new_size):
+        pass
+        
     def add_edge(self, edge):
         self.edges.add(edge)
-        w = EdgeWidget(edge, lambda : self.node_widgets[edge.target],
-                       MovingLine([Point((0,0)), Point((10,10))], [Point((0,0)), Point((10,10))]))
+        if edge.source in self.node_widgets:
+            source = self.node_widgets[edge.source].final_rect().center
+        if edge.target in self.node_widgets:
+            target = self.node_widgets[edge.target].final_rect().center
+        w = EdgeWidget(edge, partial(self.node_widgets.get, edge.target, None),
+                       MovingLine([Point((0,0)), Point((1,1))], [Point(source), Point(target)]))
         self.edge_widgets[edge] = w
     def remove_edge(self, edge):
+        edge.obs.remove_observer(self)
         del self.edge_widgets[edge]
         self.edges.remove(edge)
 
     def add_node(self, node):
         self.nodes.add(node)
-        node.obs.add_observer(self, '_node_')
         w = NodeWidget(node)
         self.node_widgets[node] = w
+        node.obs.add_observer(self, '_node_')
+        w.obs_loc.add_observer(self, '_node_widget_loc_', w, node)
         return w
     def remove_node(self, node):
         w = self.node_widgets[node]
+        w.obj_loc.remove_observer(self)
+        node.obs.remove_observer(self)
         del self.node_widgets[node]
         self.nodes.remove(node)
         return w
@@ -79,13 +102,15 @@ class GraphWidget(Widget):
     def update(self):
         for w in self.node_widgets.values():
             w.update()
+        for w in self.edge_widgets.values():
+            w.update()
         self._size.update()
         
         
     def _draw(self, surface, pos):
-        for e, widget in self.edge_widgets.iteritems():
+        for w in self.edge_widgets.values():
             p = Point(pos)
-            widget._draw(surface, pos)
+            w._draw(surface, pos)
         for w in self.node_widgets.values():
             # for our children, pos is the parent's pos offset
             # because of how NodeWidget works.
