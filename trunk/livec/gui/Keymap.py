@@ -137,13 +137,15 @@ class Keymap(object):
             yield key
     
     def iteritems(self):
+        overridden = set()
         if self.next_keymap is not None:
             for key, value in self.next_keymap.iteritems():
+                overridden.add(key)
                 yield key, value
         for group, value in self.group_registrations.iteritems():
             yield group, value
         for key, value in self.key_registrations.iteritems():
-            if self.next_keymap is None or key not in self.next_keymap:
+            if key not in overridden:
                 yield key, value
 
     __iter__ = iterkeys
@@ -162,6 +164,7 @@ class Keymap(object):
             if self.is_active:
                 self.next_keymap.deactivate()
 
+            # TODO: How to export to function?
             for key, value in self.next_keymap.iteritems():
                 if keymap is not None and isinstance(key, Key) and key in keymap:
                     # The key will remain overrided

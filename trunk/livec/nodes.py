@@ -13,7 +13,7 @@ class Meta(dict):
     referred() graph."""
     def __init__(self, *args, **kw):
         dict.__init__(self, *args, **kw)
-        self.obs = Observable()
+        self.obs_dict = Observable()
 
 
 class Node(SlotClass):

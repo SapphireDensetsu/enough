@@ -33,11 +33,13 @@ class IfWidget(VBox):
             indented(ProxyWidget(d.map('if_true', widget_for))),
             make_label(style.braces, '}'),
         ]), relay_focus=True)
+
+        optional_false_part = ProxyWidget(d.map('if_false', self._widget_for_else))
             
         VBox.__init__(self, List([
             cond_part,
             if_true_part,
-            ProxyWidget(d.map('if_false', self._widget_for_else)),
+            optional_false_part,
         ]))
     
     def _widget_for_else(self, x):
