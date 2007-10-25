@@ -15,7 +15,7 @@ def ccode_widget_for(x):
     from gui.TextEdit import TextEdit
     from ccode import CCodeGenerator
     c = CCodeGenerator()
-    return TextEdit(partial(c.ccode, x))
+    return TextEdit(style.unknown_c_code, partial(c.ccode, x))
     
 
 def indented(widget):
