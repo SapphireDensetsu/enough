@@ -33,6 +33,7 @@ class ObservableValue(object):
     def set_value(self, value):
         self._value = value
         self.obj.notify.set_value(value)
+    value = property(get_value, set_value)
     
 class Edge(ObservableValue):
     def __init__(self, source, target, value):

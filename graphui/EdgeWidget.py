@@ -56,8 +56,8 @@ class EdgeWidget(Widget):
                        int(p[1]*y_scale+y_offset))) for p in dot_edge['points']]
 
         from Lib.Bezier import Bezier
-        line.insert(0, Point(self.get_node_widget(self.edge.source).rect().center))
-        line.append(Point(self.get_node_widget(self.edge.target).rect().center))
+        #line.insert(0, Point(self.get_node_widget(self.edge.source).rect().center))
+        line.append(Point(self.get_node_widget(self.edge.target).final_rect().center))
 
         curve = Bezier(line, bezier_points)
         self.line.final = curve
