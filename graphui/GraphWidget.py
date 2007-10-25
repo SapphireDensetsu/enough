@@ -83,7 +83,7 @@ class GraphWidget(Widget):
             source = self.node_widgets[edge.source].final_rect().center
         if edge.target in self.node_widgets:
             target = self.node_widgets[edge.target].final_rect().center
-        w = EdgeWidget(edge, partial(self.node_widgets.get, edge.target, None),
+        w = EdgeWidget(edge, partial(self.node_widgets.get),
                        MovingLine([Point((0,0)), Point((1,1))], [Point(source), Point(target)]))
         self.edge_widgets[edge] = w
         self.update_layout()

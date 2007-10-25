@@ -5,6 +5,7 @@ from functools import partial
 from Lib.Dot import Dot, OutOfDate
 
 class Layout(object):
+    preserve_aspect_ratio = True
     def __init__(self):
         self.dot = Dot()
         
@@ -34,13 +35,13 @@ class Layout(object):
         
         for node, n_layout in n.iteritems():
             widget = node_widgets[node]
-            widget.pos.final.x = n_layout['x'] * x_scale + x_offset
-            widget.pos.final.y = n_layout['y'] * y_scale + y_offset
-            widget.size.final.x = n_layout['width'] * x_scale 
-            widget.size.final.y = n_layout['height'] * y_scale
-            widget.pos.final = widget.pos.final - widget.size.final * 0.5 
-            widget.pos.reset()
-            widget.size.reset()
+            widget._pos.final.x = n_layout['x'] * x_scale + x_offset
+            widget._pos.final.y = n_layout['y'] * y_scale + y_offset
+            widget._size.final.x = n_layout['width'] * x_scale 
+            widget._size.final.y = n_layout['height'] * y_scale
+            widget._pos.final = widget._pos.final - widget._size.final * 0.5 
+            widget._pos.reset()
+            widget._size.reset()
 
         for node, n_layout in n.iteritems():
             lines = []
