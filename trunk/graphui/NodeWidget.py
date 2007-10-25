@@ -9,7 +9,7 @@ import Keymap
 
 from Lib.observer import Observable
 
-def _make_style(color=(220, 220, 220), font_size=16, font_name='fonts/FreeMonoBold.ttf',
+def _make_style(color=(220, 220, 220), font_size=16, font_name='fonts/FreeSansBold.ttf',
                 bgcolor=None, is_italic=False, is_underline=False, is_bold=False):
     return TextStyle(color, font_size, font_name, bgcolor,
                      is_italic, is_underline, is_bold)
@@ -45,6 +45,9 @@ class NodeWidget(Widget):
         r(Key(0, pygame.K_RETURN), self._edit_value)
         self.keymap.register_key_noarg(Key(0, pygame.K_ESCAPE), self._stop_edit_value)
 
+    def in_bounds(self, p):
+        return self.rect().collidepoint(tuple(p))
+        
     def _get_text(self):
         if self.node.value is None:
             return ''

@@ -30,6 +30,7 @@ from functools import partial
 
 import draw
 from Keymap import Keymap
+from MouseMap import MouseArea
 from guilib import MovingValue
 from Lib.Point import Point
 
@@ -59,6 +60,7 @@ class Widget(object):
         self._prev_frame_colors = []
 
         self._anim_pos = MovingValue(Point((0,0)), Point((0,00)))
+        self.mouse_area = MouseArea(self.in_bounds)
         
     def _keymap_activated(self):
         self.got_focus()
@@ -110,6 +112,10 @@ class Widget(object):
                 dr = draw.rect
             dr(surface, self.frame_color, r, self.frame_width)
 
+        
+    def in_bounds(self, p):
+        raise NotImplementedError()
+    
     def _draw(self, surface, pos):
         raise NotImplementedError()
 
