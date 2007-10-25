@@ -1,3 +1,13 @@
+"""The things a keymap does:
+
+1. Pass given keys to 'next' keymap (considered more 'specific') which
+is stronger/overrides the keymap itself.
+
+2. If the next keymap does not know the key, then it tries to handle
+   it itself according to a map it holds that maps specific (modifier,
+   key) to funcs, and then, also according to a map of broader groups
+   to funcs."""
+
 import pygame
 import functools
 import itertools
