@@ -80,6 +80,7 @@ class GraphWidget(Widget):
         self.update_edges_lines(widget, node)
         
     def add_edge(self, edge):
+        edge.obs.add_observer(self, '_edge_')
         self.edges.add(edge)
         if edge.source in self.node_widgets:
             source = self.node_widgets[edge.source].final_rect().center
@@ -109,10 +110,8 @@ class GraphWidget(Widget):
         node.obs.remove_observer(self)
         del self.node_widgets[node]
         self.nodes.remove(node)
+        self._update_index()
         self.update_layout()
-        if (node,w) == self.selected():
-            self.selected_widget_index = None
-            self._set_next_keymap()
         return w
 
     def update_layout(self):
@@ -139,6 +138,8 @@ class GraphWidget(Widget):
             w._draw(surface, pos)
 
     def selected(self):
+        if self.selected_widget_index is None:
+            return None
         return self.sorted_widgets[self.selected_widget_index]
     
     def _set_next_keymap(self):
@@ -153,13 +154,20 @@ class GraphWidget(Widget):
             self.parenting_keymap.unregister_key(self.connect_node_right_key)
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
-    def _set_selected_widget(self, index = None):
-        if index is None:
-            index = self.selected_widget_index
-        else:
+    def _set_index(self, index):
+        if not self.node_widgets:
+            self.selected_widget_index = None
+            return
+        if self.selected_widget_index != index:
             self.selected_widget_index = index
-        self._set_next_keymap()
+            self._set_next_keymap()
 
+    def _update_index(self):
+        if not self.node_widgets:
+            self.selected_widget_index = None
+        else:
+            self.selected_widget_index %= len(self.sorted_widgets)
+            
     def _find_widget_index(self, w):
         for i, (node, widget) in enumerate(self.sorted_widgets):
             if w == widget:
@@ -167,8 +175,6 @@ class GraphWidget(Widget):
             
     def _add_index(self, amount):
         if self.selected_widget_index is None:
-            if not self.node_widgets:
-                return
             index = 0
         else:
             index = self.selected_widget_index
@@ -177,10 +183,6 @@ class GraphWidget(Widget):
             index %= l
         self._set_index(index)
 
-    def _set_index(self, index):
-        if self.selected_widget_index != index:
-            self.selected_widget_index = index
-            self._set_selected_widget()
 
     def _next_node(self):
         '''Next node'''
@@ -194,6 +196,7 @@ class GraphWidget(Widget):
         n = Graph.Node()
         w = self.add_node(n)
         self._set_index(self._find_widget_index(w))
+        
     def _delete_selected_node(self):
         '''Delete selected node'''
         n, w = self.sorted_widgets[self.selected_widget_index]

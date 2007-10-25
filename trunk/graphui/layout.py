@@ -34,7 +34,11 @@ class Layout(object):
 
         
         for node, n_layout in n.iteritems():
-            widget = node_widgets[node]
+            try:
+                widget = node_widgets[node]
+            except KeyError:
+                # because of lag issues, we may be working with a new dictionary but old Dot results
+                continue 
             widget._pos.final.x = n_layout['x'] * x_scale + x_offset
             widget._pos.final.y = n_layout['y'] * y_scale + y_offset
             widget._size.final.x = n_layout['width'] * x_scale 
@@ -49,7 +53,11 @@ class Layout(object):
                 continue
             last_indices = {}
             for edge, dot_edge in e[node].iteritems():
-                widget = edge_widgets[edge]
+                try:
+                    widget = edge_widgets[edge]
+                except KeyError:
+                    # because of lag issues, we may be working with a new dictionary but old Dot results
+                    continue 
                 widget.update_from_dot(dot_edge,
                                        x_scale=x_scale,
                                        y_scale=y_scale,
