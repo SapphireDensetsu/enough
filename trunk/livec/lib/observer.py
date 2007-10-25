@@ -1,11 +1,26 @@
 from lib.Space import attrspace_property
 
-# TODO: When do we remove_observer? Use weakref?
+import weakref
+
 class Observable(object):
     def __init__(self):
-        self.observers = {}
+        self.observers = weakref.WeakKeyDictionary()
+
+    # It may be desirable in the future to have add_strong_observer
+    # too that does keep observer alive.
+
     def add_observer(self, observer, prefix, *args, **kw):
+        """Adds the given observer to this observable.
+
+        The observer will be notified of events by calling its methods
+        prefixed by the given prefix (suffix is the event
+        identifier). The given args are prepended to the event args,
+        and the given kw are added to the event keywords.
+
+        Note: The observer is weakly referenced. It is likely
+        desirable that given args/kw are also not strong references."""
         self.observers[observer] = (prefix, args, kw)
+
     def remove_observer(self, observer):
         del self.observers[observer]
 
