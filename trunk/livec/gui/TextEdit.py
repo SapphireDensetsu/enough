@@ -19,6 +19,9 @@ class TextStyle(object):
         return cls(style.color, style.font_size, style.font_name, style.bgcolor,
                    style.is_italic, style.is_underline, style.is_bold)
 
+    def __repr__(self):
+        return '%s(color=%r, font_size=%r, font_name=%r, bgcolor=%r, is_italic=%r, is_underline=%r, is_bold=%r)' % (self.__class__.__name__, self.color, self.font_size, self.font_name, self.bgcolor, self.is_italic, self.is_underline, self.is_bold)
+
 class TextEdit(Widget):
     selectable = False
     margin = [0, 0]
@@ -129,12 +132,9 @@ class TextEdit(Widget):
         else:
             self.bgcolor = (style.bgcolor,)
         try:
-            self._font = gui.draw.get_font(style.font_name, style.font_size)
+            self._font = gui.draw.get_font(style.font_name, style.font_size, style.is_bold, style.is_underline, style.is_italic)
         except IOError:
-            self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size)
-        self._font.set_italic(style.is_italic)
-        self._font.set_underline(style.is_underline)
-        self._font.set_bold(style.is_bold)
+            self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size, style.is_bold, style.is_underline, style.is_italic)
 
     def update(self):
         def func(index, atom, curpos):
