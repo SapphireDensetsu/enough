@@ -38,6 +38,10 @@ class NodeWidget(Widget):
     def set_pos(self, p):
         self._pos.final = Point(p)
     pos = property(get_pos, set_pos)
+
+    def rect(self):
+        s = self.size
+        return pygame.Rect(self.pos.x,self.pos.y,s.x,s.y)
     
     def _node_connect(self, e):
         pass
@@ -48,8 +52,7 @@ class NodeWidget(Widget):
     def update(self):
         self._size.update()
         self._pos.update()
-        s = self.size
-        self.shape.rect = pygame.Rect(self.pos.x,self.pos.y,s.x,s.y)
+        self.shape.rect = self.rect()
         
     def _draw(self, surface, pos_offset):
         self.shape.paint(pos_offset, surface, self.fg_color, self.bg_color)
