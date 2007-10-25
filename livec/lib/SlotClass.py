@@ -1,4 +1,4 @@
-class SlotClass:
+class SlotClass(object):
     defaults = None
     avoid_repr = ()
     def __init__(self, *args, **kw):
@@ -21,9 +21,13 @@ class SlotClass:
         if kw:
             raise TypeError("Unknown keyword arguments", kw)
 
-    def __getinitargs__(self):
+    def __getstate__(self):
         return tuple(getattr(self, field_name)
                      for field_name in self.__slots__)
+
+    def __setstate__(self, state):
+        for name, value in zip(self.__slots__, state):
+            setattr(self, name, value)
 
     def __repr__(self):
         t = tuple((field_name, getattr(self, field_name))
