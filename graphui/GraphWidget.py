@@ -1,9 +1,10 @@
 import pygame
 import draw
-from guilib import MovingValue
+from guilib import MovingValue, MovingLine
 from Lib.Point import Point
 from Widget import Widget
 from NodeWidget import NodeWidget
+from EdgeWidget import EdgeWidget
 
 from Lib import observer
 
@@ -22,9 +23,9 @@ class GraphWidget(Widget):
         self._size = MovingValue(Point((0,0)), Point(size))
         self.nodes = set()
         self.edges = set()
-        self.widgets = Dict()
-        self.widgets.obs = observer.Observable()
-        self.sorted_widgets = SortedItems(self.widgets)
+        self.node_widgets = Dict()
+        self.edge_widgets = Dict()
+        self.sorted_widgets = SortedItems(self.node_widgets)
 
         self.selected_widget_index = None
 
@@ -35,6 +36,7 @@ class GraphWidget(Widget):
         r(Key(0, pygame.K_RIGHT), self._next_node)
         r(Key(0, pygame.K_LEFT), self._prev_node)
         r(Key(pygame.KMOD_CTRL, pygame.K_a), self._create_new_node)
+        r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._connect_right)
 
     def get_size(self):
         return self._size.current
@@ -55,43 +57,47 @@ class GraphWidget(Widget):
 
     def add_edge(self, edge):
         self.edges.add(edge)
-        #w = EdgeWidget(edge)
-        #self.widgets[edge] = w
-    def remove_node(self, node):
-        #del self.widgets[node]
-        self.nodes.remove(node)
+        w = EdgeWidget(edge, lambda : self.node_widgets[edge.target],
+                       MovingLine([Point((0,0)), Point((10,10))], [Point((0,0)), Point((10,10))]))
+        self.edge_widgets[edge] = w
+    def remove_edge(self, edge):
+        del self.edge_widgets[edge]
+        self.edges.remove(edge)
 
     def add_node(self, node):
         self.nodes.add(node)
+        node.obs.add_observer(self, '_node_')
         w = NodeWidget(node)
-        self.widgets[node] = w
+        self.node_widgets[node] = w
         return w
     def remove_node(self, node):
-        w = self.widgets[node]
-        del self.widgets[node]
+        w = self.node_widgets[node]
+        del self.node_widgets[node]
         self.nodes.remove(node)
         return w
         
     def update(self):
-        for w in self.widgets.values():
+        for w in self.node_widgets.values():
             w.update()
         self._size.update()
         
         
     def _draw(self, surface, pos):
-        for w in self.widgets.values():
+        for e, widget in self.edge_widgets.iteritems():
+            p = Point(pos)
+            widget._draw(surface, pos)
+        for w in self.node_widgets.values():
             # for our children, pos is the parent's pos offset
             # because of how NodeWidget works.
             w._draw(surface, pos)
 
-    def selected_child(self):
-        node, widget = self.sorted_widgets[self.selected_widget_index]
-        return widget
+    def selected(self):
+        return self.sorted_widgets[self.selected_widget_index]
     
     def _set_next_keymap(self):
         self.keymap.set_next_keymap(self.parenting_keymap)
         if self.selected_widget_index is not None:
-            self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
+            self.parenting_keymap.set_next_keymap(self.selected()[1].keymap)
         else:
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
@@ -109,7 +115,7 @@ class GraphWidget(Widget):
             
     def _add_index(self, amount):
         if self.selected_widget_index is None:
-            if not self.widgets:
+            if not self.node_widgets:
                 return
             index = 0
         else:
@@ -137,4 +143,13 @@ class GraphWidget(Widget):
         w = self.add_node(n)
         self._set_index(self._find_widget_index(w))
         
+        
+    def _connect_right(self):
+        '''Connects to the node on the right'''
+        node, widget = self.sorted_widgets[self.selected_widget_index]
+        n1 = self.selected()[0]
+        self._next_node()
+        n2 = self.selected()[0]
+
+        n1.connect_node(n2)
         

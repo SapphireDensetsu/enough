@@ -24,15 +24,28 @@ class HasCyclesError(Exception): pass
 class NodeWasntConnected(Exception): pass
 class EdgeWasntConnected(Exception): pass
 
-class Edge(object):
+class ObservableValue(object):
+    def __init__(self, value):
+        self._value = value
+        self.obs = observer.Observable()
+    def get_value(self):
+        return self._value
+    def set_value(self, value):
+        self._value = value
+        self.obj.notify.set_value(value)
+    
+class Edge(ObservableValue):
     def __init__(self, source, target, value):
+        ObservableValue.__init__(self, value)
         self.source = source
         self.target = target
-        self.value = value
+        self._value = value
+        self.obs = observer.Observable()
         
-class Node(object):
+        
+class Node(ObservableValue):
     def __init__(self, value=None, inc=tuple(), outc=tuple()):
-        self.value = value
+        ObservableValue.__init__(self, value)
         self.connections = {'in': list(inc), 'out': list(outc)}
         self.obs = observer.Observable()
     def __getstate__(self):
