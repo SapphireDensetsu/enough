@@ -26,7 +26,7 @@ uses the func).
 
  '''
 import pygame
-from functools import partial
+from Lib.Func import PicklablePartial as partial
 
 import draw
 from Keymap import Keymap

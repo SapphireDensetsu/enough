@@ -1,5 +1,5 @@
 import keyword
-from functools import partial
+from Func import PicklablePartial as partial
 
 import re
 def create_convert_name_matcher():

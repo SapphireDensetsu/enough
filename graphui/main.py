@@ -27,7 +27,8 @@ with pygame_display(res, pygame.DOUBLEBUF) as display:
     from GraphWidget import GraphWidget
     from BrowserWidget import BrowserWidget
 
-    b = BrowserWidget(GraphWidget((800,400)))
+    g = GraphWidget((800,400))
+    b = BrowserWidget(g)
     loop.browser = b
     
     import pygame

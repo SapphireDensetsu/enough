@@ -103,15 +103,29 @@ class Keymap(object):
 
         # Cache these cause they are rather expensive to generate and
         # used a LOT.
-        self.notify_remove_item = self.obs_dict.notify.remove_item
-        self.notify_add_item = self.obs_dict.notify.add_item
-        self.notify_set_item = self.obs_dict.notify.set_item
+        self._cache_notifiers()
         
         self.next_keymap = None
         self.key_registrations = {}
         self.group_registrations = {}
         self.disabled_group_registrations = {}
         self.is_active = False
+
+    def _cache_notifiers(self):
+        self.notify_remove_item = self.obs_dict.notify.remove_item
+        self.notify_add_item = self.obs_dict.notify.add_item
+        self.notify_set_item = self.obs_dict.notify.set_item
+        
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        for key in d.keys():
+            if key.startswith('notify_'):
+                del d[key]
+        return d
+    def __setstate__(self, d):
+        for k,v in d.iteritems():
+            self.__dict__[k] = v
+        self._cache_notifiers()
 
     def __contains__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:

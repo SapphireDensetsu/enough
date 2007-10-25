@@ -1,7 +1,7 @@
 import twisted
 
 from Lib import Graph
-from functools import partial
+from Lib.Func import PicklablePartial as partial
 from Lib.Dot import Dot, OutOfDate
 
 class Layout(object):
