@@ -23,9 +23,15 @@ class GraphWidget(Widget):
     bg_color=(0,0,0)
     activated_bg_color=(10,10,20)
 
-    create_node_key = Key(pygame.KMOD_CTRL, pygame.K_a)
-    delete_node_key = Key(pygame.KMOD_CTRL, pygame.K_d)
-    connect_node_right_key = Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
+    key_create_node = Key(pygame.KMOD_CTRL, pygame.K_a)
+    key_delete_node = Key(pygame.KMOD_CTRL, pygame.K_d)
+    key_next_node = Key(0, pygame.K_TAB)
+    key_prev_node = Key(pygame.KMOD_SHIFT, pygame.K_TAB)
+    key_select_node_right = Key(0, pygame.K_RIGHT)
+    key_select_node_left = Key(0, pygame.K_LEFT)
+    key_select_node_up = Key(0, pygame.K_UP)
+    key_select_node_down = Key(0, pygame.K_DOWN)
+    key_connect = Key(0, pygame.K_RETURN)
     
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
@@ -36,21 +42,18 @@ class GraphWidget(Widget):
         self.edge_widgets = Dict()
         self.sorted_widgets = SortedItems(self.node_widgets)
 
-        self.selected_widget_index = None
-
         self.parenting_keymap = Keymap()
-        self._set_next_keymap()
+
         
-        r = self.parenting_keymap.register_key_noarg
-        r(Key(0, pygame.K_TAB), self._next_node)
-        r(Key(pygame.KMOD_SHIFT, pygame.K_TAB), self._prev_node)
-        r(Key(0, pygame.K_RIGHT), self._select_node_right)
-        r(Key(0, pygame.K_LEFT), self._select_node_left)
-        r(Key(0, pygame.K_UP), self._select_node_up)
-        r(Key(0, pygame.K_DOWN), self._select_node_down)
-        r(self.create_node_key, self._create_new_node)
+        r = self.keymap.register_key_noarg
+        r(self.key_connect, self._start_connect)
+        r(self.key_create_node, self._create_new_node)
 
         self.layout = Layout()
+        
+        self.selected_widget_index = None
+        self._update_index()
+        
 
     def get_size(self):
         return self._size.current
@@ -151,11 +154,22 @@ class GraphWidget(Widget):
         if self.selected_widget_index is not None:
             self.parenting_keymap.set_next_keymap(self.selected()[1].keymap)
             r = self.parenting_keymap.register_key_noarg
-            r(self.delete_node_key, self._delete_selected_node)
-            r(self.connect_node_right_key, self._connect_right)
+            r(self.key_delete_node, self._delete_selected_node)
+            r(self.key_next_node, self._next_node)
+            r(self.key_prev_node, self._prev_node)
+            r(self.key_select_node_right, self._select_node_right)
+            r(self.key_select_node_left, self._select_node_left)
+            r(self.key_select_node_up, self._select_node_up)
+            r(self.key_select_node_down, self._select_node_down)
         else:
-            self.parenting_keymap.unregister_key(self.delete_node_key)
-            self.parenting_keymap.unregister_key(self.connect_node_right_key)
+            ur = self.parenting_keymap.unregister_key
+            ur(self.key_next_node)
+            ur(self.key_prev_node)
+            ur(self.key_select_node_right)
+            ur(self.key_select_node_left)
+            ur(self.key_select_node_up)
+            ur(self.key_select_node_down)
+            ur(self.key_delete_node)
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
     def _set_index(self, index):
@@ -259,12 +273,23 @@ class GraphWidget(Widget):
         self.remove_node(n)
         
         
-    def _connect_right(self):
-        '''Connects to the node on the right'''
-        node, widget = self.sorted_widgets[self.selected_widget_index]
-        n1 = self.selected()[0]
-        self._next_node()
-        n2 = self.selected()[0]
+    def _start_connect(self):
+        '''Sets the source node to connect'''
+        r = self.keymap.register_key_noarg
+        ur = self.keymap.unregister_key
+        start_node, start_node_widget = self.selected()
+        assert start_node is not None
+        def end_connect():
+            '''Sets the target node to connect'''
+            ur(self.key_connect)
+            r(self.key_connect, self._start_connect)
+        
+            end_node, end_node_widget = self.sorted_widgets[self.selected_widget_index]
+            start_node.connect_node(end_node)
+            
+        ur(self.key_connect)
+        r(self.key_connect, end_connect)
+        
+        
 
-        n1.connect_node(n2)
         
