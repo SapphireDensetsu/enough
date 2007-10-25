@@ -37,7 +37,7 @@ class GraphWidget(Widget):
     
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
-        self._size = MovingValue(Point((0,0)), Point(size))
+        self._size = MovingValue(Point, final=Point(size))
         self.nodes = set()
         self.edges = set()
         self.node_widgets = Dict()

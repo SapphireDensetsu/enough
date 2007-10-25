@@ -25,9 +25,10 @@ res = (800, 600)
 with pygame_display(res, pygame.DOUBLEBUF) as display:
     from loop import loop
     from GraphWidget import GraphWidget
+    from BrowserWidget import BrowserWidget
 
-    g = GraphWidget(res)
-    loop.browser = g
+    b = BrowserWidget(GraphWidget((800,400)))
+    loop.browser = b
     
     import pygame
     pygame.key.set_repeat(250,10)
