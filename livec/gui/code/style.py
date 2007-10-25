@@ -52,3 +52,5 @@ literal_style_for = {
     nodes.LiteralChar : _make_style(color=(100, 255, 255)),
     nodes.LiteralString : _make_style(color=(0, 255, 255)),
 }
+
+unknown_c_code = _make_style(color=(20, 255, 255), bgcolor=(100, 0, 0))
