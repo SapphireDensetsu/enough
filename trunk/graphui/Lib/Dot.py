@@ -62,7 +62,6 @@ class _DotProtocol(LineReceiver):
         self._process = process
 
     def lineReceived(self, line):
-        print line
         if self._current_graph_parser is None:
             raise Error("Dot outputs stuff, we're not expecting it", line)
         self._current_graph_parser.lineReceived(line)
@@ -88,7 +87,6 @@ class _DotProtocol(LineReceiver):
         return d
 
     def _start(self, dot_graph_text, d):
-        print dot_graph_text
         self._process.write(dot_graph_text + '\n')
         d.addBoth(self._completed_current)
         self._current_graph_parser = _GraphParser(d)
@@ -101,7 +99,6 @@ class _GraphParser(object):
         self.edges = {} # by heads
 
     def lineReceived(self, line):
-        print line
         graph, nodes, edges = self.graph, self.nodes, self.edges
         words = line.split()
         if words[0] == 'graph':

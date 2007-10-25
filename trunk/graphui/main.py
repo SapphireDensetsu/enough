@@ -21,11 +21,12 @@ def pygame_display(*args, **kw):
     finally:
         pygame.quit()
 
-with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
+res = (800, 600)
+with pygame_display(res, pygame.DOUBLEBUF) as display:
     from loop import loop
     from GraphWidget import GraphWidget
 
-    g = GraphWidget((800,600))
+    g = GraphWidget(res)
     loop.browser = g
     
     import pygame

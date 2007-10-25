@@ -14,7 +14,7 @@ class Layout(object):
 
     def update(self, groups, size, node_widgets, edge_widgets, bezier_points = 30):
         d = Graph.get_drawing_data(self.dot, groups)
-        d.addCallbacks(partial(self._layout, size=size, node_widgets=node_widgets, edge_widgets=edge_widgets, bezier_points=bezier_points),
+        d.addCallbacks(partial(self._layout, size, node_widgets, edge_widgets, bezier_points),
                        self._out_of_date)
         d.addErrback(twisted.python.log.err)
 
