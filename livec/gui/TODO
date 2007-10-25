@@ -29,10 +29,5 @@
 
 * How to manage UNDOs?
 
-* When does an observable object die?
-  * Either observers are weakrefs -- which should make everything
-   disappear when it should.
-  * Or explicit detachment is used (how?)
-
 BUGS:
 * Building all the widgets for the model is taking way too long
