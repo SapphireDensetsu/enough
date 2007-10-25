@@ -1,9 +1,9 @@
 import nodes
 import pygame
 from gui.Keymap import Key
-from lib.observable.List import List
 
 from gui.Box import VBox, HBox
+from gui.Stack import Stack
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, ccode_widget_for
 
@@ -18,8 +18,7 @@ plus_keys = (Key(0, pygame.K_EQUALS),
 minus_keys = (Key(0, pygame.K_MINUS),
               Key(0, pygame.K_KP_MINUS))
 
-
-class BlockWidget(VBox):
+class BlockWidget(Stack):
     default_folded = False
     kill_stmt_key = Key(pygame.KMOD_CTRL, pygame.K_k)
     insert_if_key = Key(pygame.KMOD_CTRL, pygame.K_i)
@@ -29,10 +28,10 @@ class BlockWidget(VBox):
         self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
                              relay_focus=True)
         self.ellipsis = make_label(style.ellipsis, '...')
-        self.proxy_list = List([self.statement_box])
-        VBox.__init__(self, self.proxy_list, relay_focus=True)
+        Stack.__init__(self)
+        self.push(self.statement_box)
         
-        self.statement_box.parenting_keymap.register_key_noarg(
+        self.statement_box.keymap.register_key_noarg(
             self.insert_if_key, self._add_if)
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
@@ -48,30 +47,30 @@ class BlockWidget(VBox):
 
     def _update_delete_registration(self):
         if self.block.statements:
-            self.statement_box.parenting_keymap.register_key_noarg(
+            self.statement_box.keymap.register_key_noarg(
                 self.kill_stmt_key, self._delete_selected_child)
         else:
-            self.statement_box.parenting_keymap.unregister_key(
+            self.statement_box.keymap.unregister_key(
                 self.kill_stmt_key)
 
     def _is_folded(self):
         return self.block.meta.get('folded', self.default_folded)
 
     def _update_fold_state(self):
-        self.proxy_list.pop()
+        self.pop()
         if self._is_folded():
             for key in plus_keys:
-                self.parenting_keymap.register_key_noarg(key, self._unfold)
+                self.keymap.register_key_noarg(key, self._unfold)
             for key in minus_keys:
-                self.parenting_keymap.unregister_key(key)
+                self.keymap.unregister_key(key)
             w = self.ellipsis
         else:
             for key in minus_keys:
-                self.parenting_keymap.register_key_noarg(key, self._fold)
+                self.keymap.register_key_noarg(key, self._fold)
             for key in plus_keys:
-                self.parenting_keymap.unregister_key(key)
+                self.keymap.unregister_key(key)
             w = self.statement_box
-        self.proxy_list.append(w)
+        self.push(w)
 
     def _fold(self):
         """Fold the code block"""

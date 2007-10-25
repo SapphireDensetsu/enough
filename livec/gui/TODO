@@ -5,6 +5,8 @@
    children to visit() results, and other widgets just return whatever
    they want.
 
+* Observable List needs a replace_item too
+
 * Change Groups to have the modifiers per-key and not per-group
 
 * TextEdit should take an observable mutable string, not get/set
