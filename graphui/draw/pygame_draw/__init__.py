@@ -12,7 +12,11 @@ def get_font(name, size):
     global _font_cache
     f = _font_cache.get((name,size), None)
     if not f:
-        f = pygame.font.Font(name, size)
+        try:
+            f = pygame.font.Font(name, size)
+        except IOError:
+            print 'Error loading font', name, size
+            raise
         _font_cache[(name,size)] = f
     return f
 
