@@ -44,6 +44,9 @@ from math import pi, sin, cos
 def arc(surface, color, rect, angle_start, angle_stop, width=0):
     # TODO implement
     x,y = rect.center
+    rx = rect.width/2.0
+    ry = rect.height/2.0
+    
     t0 = angle_start
     sweep = angle_stop
     t = t0
@@ -54,10 +57,14 @@ def arc(surface, color, rect, angle_start, angle_stop, width=0):
     GL.glLineWidth(max(width,1))
     GL.glBegin(GL.GL_LINE_STRIP)
     for i in xrange(n+1):
-        GL.glVertex2f(x + r*cos(t), y - r*sin(t))
+        GL.glVertex2f(x + rx*cos(t), y - ry*sin(t))
         t += dt
     GL.glEnd()
 
+
+def ellipse(surface, color, rect, width=0):
+    # todo implement filling the eliipse if width=0
+    arc(surface, color, rect, 0, 2*pi, width)
 
 def set_mode(size, flags, depth=0):
     surface = pygame.display.set_mode(size, flags | pygame.DOUBLEBUF | pygame.OPENGL, depth)

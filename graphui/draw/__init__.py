@@ -22,6 +22,10 @@ def arc(surface, color, rect, angle_start, angle_stop, width=0):
     rect = offset.rect_offset(rect)
     return backend.arc(surface, color, rect, angle_start, angle_stop, width)
 
+def ellipse(surface, color, rect, width=0):
+    rect = offset.rect_offset(rect)
+    return backend.ellipse(surface, color, rect, width)
+
 
 def draw_font(surface, fakefont_surface, pos):
     pos = offset.pos_offset(pos)
