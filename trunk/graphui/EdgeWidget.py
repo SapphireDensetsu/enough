@@ -1,6 +1,7 @@
+import math
 import pygame
 import draw
-from guilib import MovingLine
+from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead, get_default
 from Lib.Point import Point, from_polar, point_near_polyline
 from Widget import Widget
 
@@ -11,9 +12,9 @@ class EdgeWidget(Widget):
     fg_color=(150,30,30)
     activated_fg_color=(250,100,100)
     
-    def __init__(self, edge, get_target_widget, line, *args, **kw):
+    def __init__(self, edge, get_node_widget, line, *args, **kw):
         self.edge = edge
-        self.get_target_widget = get_target_widget
+        self.get_node_widget = get_node_widget
         self.edge.obs.add_observer(self, '_edge_')
         Widget.__init__(self, *args, **kw)
         self.line = line
@@ -21,6 +22,7 @@ class EdgeWidget(Widget):
         self.cached_arrowhead = None
         self.cached_parent_offset = None
         self.font = draw.get_font(pygame.font.get_default_font(), 14)
+        self.rendered_text = self.font.render('', True, self.fg_color)
 
     def get_size(self):
         return self._size.current
@@ -30,7 +32,7 @@ class EdgeWidget(Widget):
 
     def _edge_set_value(self, value):
         self.text = str(value)
-        self.rendered_text = self.font.render(text)
+        self.rendered_text = self.font.render(text, True, self.fg_color)
 
     def update(self):
         self.line.update()
@@ -54,8 +56,8 @@ class EdgeWidget(Widget):
                        int(p[1]*y_scale+y_offset))) for p in dot_edge['points']]
 
         from Lib.Bezier import Bezier
-        line.insert(0, (self.edge.source.value.widget.center_pos(False)))
-        line.append((self.edge.target.value.widget.center_pos(False)))
+        line.insert(0, Point(self.get_node_widget(self.edge.source).rect().center))
+        line.append(Point(self.get_node_widget(self.edge.target).rect().center))
 
         curve = Bezier(line, bezier_points)
         self.line.final = curve
@@ -68,7 +70,7 @@ class EdgeWidget(Widget):
 
     def paint_lines(self, surface, parent_offset):
         change_stopped_now = False
-        target_widget = self.get_target_widget()
+        target_widget = self.get_node_widget(self.edge.target)
         if (self.line.done and target_widget._pos.done and target_widget._size.done
             and self.cached_parent_offset and self.cached_parent_offset == parent_offset):
             if not self.cached_arrowhead:
@@ -102,7 +104,6 @@ class EdgeWidget(Widget):
                 return
 
         if self.cached_arrowhead:
-            print 'here'
             repaint_arrowhead(surface, *self.cached_arrowhead)
             
 
