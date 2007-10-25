@@ -19,9 +19,9 @@ class SortedItems(object):
             pdb.set_trace()
         assert self._items[index] == (key, value)
         self._items.pop(index)
-        self.obs_list.notify.pop(index)
+        self.obs_list.notify.pop(index, (key, value))
 
-    def _dict_set_item(self, key, old_value, new_value):
+    def _dict_replace_item(self, key, old_value, new_value):
         self._dict_remove_item(key, old_value)
         self._dict_add_item(key, new_value)
 
