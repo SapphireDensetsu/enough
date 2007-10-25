@@ -21,6 +21,7 @@ class ValueProxy(object):
             self.obs_value.notify.added(new_value)
         else:
             self.obs_value.notify.changed(old_value, new_value)
+    # TODO: delete->clear
     def delete(self):
         old_value = self.value
         self.value = _missing

@@ -1,3 +1,4 @@
+# TODO: This is c-specific
 import nodes
 
 int = nodes.BuiltinType(name='int', meta=nodes.Meta(name='int'))

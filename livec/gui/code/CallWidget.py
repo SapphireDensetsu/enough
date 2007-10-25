@@ -11,7 +11,7 @@ class CallWidget(HBox):
     def __init__(self, call):
         self.call = call
         comma = make_label(style.comma, ', ')
-        args_box = HBox(CacheMap(widget_for, self.call.args))
+        args_box = HBox(CacheMap(widget_for, self.call.args), relay_focus=True)
         args_box.padding_widget = comma
         HBox.__init__(self, List([
             widget_for(self.call.func),
