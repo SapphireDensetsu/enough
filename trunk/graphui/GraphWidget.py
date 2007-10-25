@@ -1,4 +1,4 @@
-from functools import partial
+from Lib.Func import PicklablePartial as partial
 
 import pygame
 import draw
@@ -34,7 +34,10 @@ class GraphWidget(Widget):
     key_select_node_up = Key(0, pygame.K_UP)
     key_select_node_down = Key(0, pygame.K_DOWN)
     key_connect = Key(pygame.KMOD_CTRL, pygame.K_RETURN)
-    key_cycle_layout = Key(pygame.KMOD_CTRL, pygame.K_l)
+    key_cycle_layout = Key(pygame.KMOD_CTRL, pygame.K_k)
+
+    key_save = Key(pygame.KMOD_CTRL, pygame.K_s)
+    key_load = Key(pygame.KMOD_CTRL, pygame.K_l)
     
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
@@ -52,6 +55,8 @@ class GraphWidget(Widget):
         r(self.key_create_node, self._create_new_node)
         r(self.key_connect, self._start_connect)
         r(self.key_cycle_layout, self._cycle_layout_engine)
+        r(self.key_save, self._save)
+        r(self.key_load, self._load)
 
         self.layout = Layout()
         
@@ -337,3 +342,17 @@ class GraphWidget(Widget):
         '''Change to the next layout engine'''
         self.layout.cycle_layout_engines()
         self.update_layout()
+
+    def _save(self):
+        '''Save'''
+        import pickle
+        f=open('save.pkl', 'wb')
+        pickle.dump(self,f,2)
+
+    def _load(self):
+        '''Load'''
+        import pickle
+        f=open('save.pkl', 'rb')
+        newself = pickle.load(f,2)
+        loop.browser.main_stack.pop()
+        loop.browser.main_stack.push(newself)
