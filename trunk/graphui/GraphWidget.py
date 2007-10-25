@@ -17,6 +17,8 @@ from Lib.observable.Dict import Dict
 
 from Lib import Graph
 
+from layout import Layout
+
 class GraphWidget(Widget):
     bg_color=(0,0,0)
     activated_bg_color=(10,10,20)
@@ -40,6 +42,8 @@ class GraphWidget(Widget):
         r(Key(pygame.KMOD_CTRL, pygame.K_a), self._create_new_node)
         r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._connect_right)
 
+        self.layout = Layout()
+
     def get_size(self):
         return self._size.current
     def set_size(self, p):
@@ -57,7 +61,7 @@ class GraphWidget(Widget):
         for node in e.source, e.target:
             self.remove_node(node)
 
-    def _node_widget_loc_pos_set(self, widget, node, new_pos):
+    def update_edges_lines(self, widget, node):
         center = Point(widget.final_rect().center)
         for edge in node.connections['in']:
             edge_w = self.edge_widgets[edge]
@@ -67,8 +71,11 @@ class GraphWidget(Widget):
             edge_w = self.edge_widgets[edge]
             edge_w.line.final[0] = center.copy()
             edge_w.line.reset()
+        
+    def _node_widget_loc_pos_set(self, widget, node, new_pos):
+        self.update_edges_lines(widget, node)
     def _node_widget_loc_size_set(self, widget, node, new_size):
-        pass
+        self.update_edges_lines(widget, node)
         
     def add_edge(self, edge):
         self.edges.add(edge)
@@ -79,10 +86,12 @@ class GraphWidget(Widget):
         w = EdgeWidget(edge, partial(self.node_widgets.get, edge.target, None),
                        MovingLine([Point((0,0)), Point((1,1))], [Point(source), Point(target)]))
         self.edge_widgets[edge] = w
+        self.update_layout()
     def remove_edge(self, edge):
         edge.obs.remove_observer(self)
         del self.edge_widgets[edge]
         self.edges.remove(edge)
+        self.update_layout()
 
     def add_node(self, node):
         self.nodes.add(node)
@@ -90,6 +99,7 @@ class GraphWidget(Widget):
         self.node_widgets[node] = w
         node.obs.add_observer(self, '_node_')
         w.obs_loc.add_observer(self, '_node_widget_loc_', w, node)
+        self.update_layout()
         return w
     def remove_node(self, node):
         w = self.node_widgets[node]
@@ -97,7 +107,14 @@ class GraphWidget(Widget):
         node.obs.remove_observer(self)
         del self.node_widgets[node]
         self.nodes.remove(node)
+        self.update_layout()
         return w
+
+    def update_layout(self):
+        groups = {0:[]}
+        for node in self.nodes:
+            groups[0].append(node) 
+        self.layout.update(groups, self.size, self.node_widgets, self.edge_widgets)
         
     def update(self):
         for w in self.node_widgets.values():
