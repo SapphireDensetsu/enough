@@ -1,3 +1,5 @@
+import twisted
+
 from Lib import Graph
 from functools import partial
 from Lib.Dot import Dot, OutOfDate
@@ -6,9 +8,14 @@ class Layout(object):
     def __init__(self):
         self.dot = Dot()
         
+    def _out_of_date(self, failure):
+        failure.trap(OutOfDate)
+        return None
+
     def update(self, groups, size, node_widgets, edge_widgets, bezier_points = 30):
         d = Graph.get_drawing_data(self.dot, groups)
-        d.addCallbacks(partial(self._layout, size=size, node_widgets=node_widgets, edge_widgets=edge_widgets, bezier_points=bezier_points), self._out_of_date)
+        d.addCallbacks(partial(self._layout, size=size, node_widgets=node_widgets, edge_widgets=edge_widgets, bezier_points=bezier_points),
+                       self._out_of_date)
         d.addErrback(twisted.python.log.err)
 
     def _layout(self, size, node_widgets, edge_widgets, bezier_points, (g, n, e)):

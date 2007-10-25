@@ -191,12 +191,12 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
             group_name = 'no_cluster'
         out += 'subgraph %s {\n' % (group_name,)
         for node in nodes:
-            props_str = _repr_properties(node.value.dot_properties())
+            props_str = ''#_repr_properties(node.value.dot_properties())
                 
             out += '%s [%s];\n' % (id(node), props_str)
             for edge in node.connections['out']:
                 other = edge.target
-                edge_props = edge.value.dot_properties()
+                edge_props = {}#edge.value.dot_properties()
                 # OVERRIDE the real label with the id(edge), so we can
                 # later correlate in dot's plain output which edge is
                 # which.
