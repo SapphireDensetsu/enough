@@ -25,7 +25,7 @@ from math import atan2, sqrt, sin, cos, pi
 class VectorsNotColinear(Exception): pass
 
 class Point(object):
-    def __init__(self, (x, y)):
+    def __init__(self, (x, y)=(0,0)):
         self.x = x
         self.y = y
 

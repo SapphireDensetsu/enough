@@ -1,4 +1,4 @@
-from gui.Widget import Widget
+from Widget import Widget
 
 class Spacer(Widget):
     selectable = False

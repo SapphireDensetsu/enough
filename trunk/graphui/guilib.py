@@ -26,9 +26,12 @@ def get_default(val, default):
 
 
 class MovingValue(object):
-    def __init__(self, current, final, step=0.3, delta=0.1):
-        self._current = current
+    def __init__(self, factory, final=None, step=0.3, delta=0.1):
+        self.factory = factory
+        self._current = None
         self._final = final
+        if self._final is None:
+            self._final = factory()
         self.step = step
         self.done = False
         self.delta = delta
@@ -37,7 +40,7 @@ class MovingValue(object):
         return self._final
     def set_final(self, value):
         self._final = value
-        self.done = False
+        self.reset()
     final = property(get_final, set_final)
     def get_current(self):
         return self._current
@@ -48,10 +51,14 @@ class MovingValue(object):
 
     def reset(self):
         self.done = False
+        if self._current is None:
+            self._current = self.factory(self._final)
         
     def update(self):
         if self.done:
             return
+        if self._current is None:
+            self._current = self.factory(self._final)
         diff = (self._final - self._current)
         if abs(diff) < self.delta:
             self.done = True

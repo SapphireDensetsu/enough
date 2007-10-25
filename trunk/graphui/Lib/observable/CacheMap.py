@@ -16,10 +16,10 @@ class CacheMap(object):
     def observe_pop(self, index):
         # TODO: Should call destroy() here?
         result = self._cache.pop(index)
-        self.obs_list.notify.pop(index)
+        self.obs_list.notify.pop(index, result)
         return result
 
-from lib.proxyclass import proxy_class
+from Lib.proxyclass import proxy_class
 CacheMap = proxy_class(CacheMap, '_cache', methods=[
     '__getitem__',
     '__len__',

@@ -9,28 +9,23 @@ import Keymap
 
 from Lib.observer import Observable
 
-def _make_style(color=(220, 220, 220), font_size=16, font_name='fonts/FreeSansBold.ttf',
-                bgcolor=None, is_italic=False, is_underline=False, is_bold=False):
-    return TextStyle(color, font_size, font_name, bgcolor,
-                     is_italic, is_underline, is_bold)
-
-style = _make_style()
+import style
 
 class NodeWidget(Widget):
-    bg_color=(10,10,150)
-    fg_color=(30,30,150)
+    bg_color=(10,10,130)
+    fg_color=(70,70,150)
     activated_fg_color=(100,100,250)
     
     def __init__(self, node, *args, **kw):
         self.node = node
-        self.style = _make_style()
+        self.style = style._make_style()
         self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [Keymap.all_printable])
         
         self.node.obs.add_observer(self, '_node_')
         Widget.__init__(self, *args, **kw)
         
-        self._size = MovingValue(Point((20,20)), Point((20,20)))
-        self._pos = MovingValue(Point((20,20)), Point((20,20)))
+        self._size = MovingValue(Point)
+        self._pos = MovingValue(Point)
         from Shapes.Ellipse import Ellipse
         self.shape = Ellipse(pygame.Rect(0,0,1,1))
 

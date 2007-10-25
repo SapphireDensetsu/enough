@@ -19,7 +19,7 @@ class List(object):
     def append(self, item):
         self.insert(len(self), item)
 
-from lib.proxyclass import proxy_class
+from Lib.proxyclass import proxy_class
 List = proxy_class(List, '_items', methods=[
     '__getitem__',
     '__len__',

@@ -59,7 +59,7 @@ class Widget(object):
         
         self._prev_frame_colors = []
 
-        self._anim_pos = MovingValue(Point((0,0)), Point((0,00)))
+        self._anim_pos = MovingValue(Point)
         self.mouse_area = MouseArea(self.in_bounds)
         
     def _keymap_activated(self):
