@@ -1,10 +1,12 @@
 from gui.Box import VBox, HBox
-from gui.TextEdit import make_label
+from gui.TextEdit import TextEdit, make_label
 from gui.loop import loop
 from gui.code.widget_for import widget_for, indented
 import style
 
 from lib.observable.List import List
+
+from functools import partial
 
 class EnumWidget(VBox):
     def __init__(self, enum, emphasize_value=None):
@@ -12,13 +14,12 @@ class EnumWidget(VBox):
 
         comma = make_label(style.comma, ',')
         def value_widget(value, with_comma):
+            s = style.enum_value
             if value is emphasize_value:
-                f = style.emphasize
-            else:
-                f = lambda x: x
+                s = style.emphasize(s)
             l = [
-                make_label(f(style.enum_value), loop.namer.get_name(value)),
-                make_label(f(style.operator), ' = '),
+                TextEdit(s, partial(loop.namer.get_name, value)),
+                make_label(style.operator, ' = '),
                 widget_for(value.value),
             ]
             if with_comma:

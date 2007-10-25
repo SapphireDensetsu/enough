@@ -112,9 +112,9 @@ def widget_for(x):
         nodes.Module: ModuleWidget,
         nodes.Function: FunctionWidget,
 
-        nodes.Variable: rpartial(VariableWidget),
-        nodes.Define: rpartial(DefineValueWidget),
-        nodes.EnumValue: rpartial(EnumValueWidget),
+        nodes.Variable: VariableWidget,
+        nodes.Define: DefineValueWidget,
+        nodes.EnumValue: EnumValueWidget,
         nodes.Import: rpartial(IdentifierWidget, style.import_),
     
         nodes.Block: BlockWidget,
@@ -136,7 +136,7 @@ def widget_for(x):
         nodes.LiteralString: rpartial(LiteralWidget, '"', c_escape_str),
     }
 
-    for type_,factory in widget_map.iteritems():
+    for type_, factory in widget_map.iteritems():
         if isinstance(x, type_):
             return factory(x)
         
