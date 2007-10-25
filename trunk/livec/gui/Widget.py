@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 """
 Widget does not know that it can have children. The only widget->child
 relation is in subclasses (e.g Box).

@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.Box import VBox, HBox
 from widget_for import type_widget_for
 

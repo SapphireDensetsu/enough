@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 
 class MovingPos(object):
     def __init__(self, target_pos=None):

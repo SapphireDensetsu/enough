@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from GraphWidget import GraphWidget
 from Box import VBox, HBox
 from Stack import Stack
@@ -44,6 +47,7 @@ class BrowserWidget(VBox):
         draw.offset.add_offset((self.offset_speed,0))
     def _offset_right(self):
         """Moves screen right"""
+
         draw.offset.add_offset((-self.offset_speed,0))
     def _offset_up(self):
         """Moves screen up"""

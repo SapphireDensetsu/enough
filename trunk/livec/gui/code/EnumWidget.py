@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.Box import VBox, HBox
 from gui.TextEdit import TextEdit, make_label
 from gui.loop import loop

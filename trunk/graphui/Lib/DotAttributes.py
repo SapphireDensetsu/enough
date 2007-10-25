@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 dot_args = '''
       Name      UsedBy     Type         
  Damping         G       double      0.99              0.0       neato only

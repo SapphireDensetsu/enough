@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.Box import VBox, HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, type_widget_for, declaration_widget_for, indented

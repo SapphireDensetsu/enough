@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 # prerequisites:
 # PyOpenGL - http://pyopengl.sourceforge.net/
 # * setuptools http://pypi.python.org/pypi/setuptools#downloads

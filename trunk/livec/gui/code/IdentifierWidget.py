@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.TextEdit import TextEdit, TextStyle
 from gui.loop import loop
 from gui import Keymap

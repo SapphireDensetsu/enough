@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 import nodes
 import builtins
 from lib.observable.List import List

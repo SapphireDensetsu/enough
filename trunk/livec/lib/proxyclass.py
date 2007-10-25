@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 def proxy_method(name, attrname):
     def proxy(self, *args, **kw):
         realobj = getattr(self, attrname)

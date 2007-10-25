@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from distutils.core import setup, Extension
 
 if __name__ == '__main__':

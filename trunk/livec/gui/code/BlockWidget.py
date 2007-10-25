@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 import nodes
 import pygame
 from gui.Keymap import Key

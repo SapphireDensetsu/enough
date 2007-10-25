@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from Lib.Space import attrspace_property
 
 # TODO: When do we remove_observer? Use weakref?

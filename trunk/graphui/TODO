@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 * Implement load/save and export to dot
 * put the node value in a string property of the node when exporting
    to dot for layout

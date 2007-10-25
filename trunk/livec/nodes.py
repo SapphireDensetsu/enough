@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 import itertools
 from lib.SlotClass import SlotClass
 

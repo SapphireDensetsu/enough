@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 """The things a keymap does:
 
 1. Pass given keys to 'next' keymap (considered more 'specific') which

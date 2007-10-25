@@ -46,4 +46,7 @@ class PicklablePartial(object):
         self._args = a
         self._kw = k
         self._set_partial()
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
         

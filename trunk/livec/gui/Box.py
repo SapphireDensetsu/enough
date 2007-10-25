@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 '''
 Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
 
