@@ -8,6 +8,11 @@ class Layout(object):
     preserve_aspect_ratio = True
     def __init__(self):
         self.dot = Dot()
+        self.dot_prog_num = 0
+
+    def cycle_layout_engines(self):
+        self.dot_prog_num = (self.dot_prog_num + 1) % len(self.dot.layout_programs)
+        self.dot.set_process(self.dot.layout_programs[self.dot_prog_num])
         
     def _out_of_date(self, failure):
         failure.trap(OutOfDate)
