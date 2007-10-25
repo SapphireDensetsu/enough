@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 '''
 Generates C text code from a model tree of nodes.
 

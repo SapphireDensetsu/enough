@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.Box import VBox, HBox
 from gui.Stack import Stack
 from gui.Spacer import Spacer

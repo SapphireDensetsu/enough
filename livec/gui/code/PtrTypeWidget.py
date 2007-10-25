@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.TextEdit import make_label
 from gui.Box import HBox
 from gui.code.widget_for import posttype_widget_for

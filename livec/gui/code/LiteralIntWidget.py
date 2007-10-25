@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.TextEdit import TextEdit
 from gui.code.widget_for import widget_for
 from gui import Keymap

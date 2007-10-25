@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from InfoIdentifierWidget import InfoIdentifierWidget
 from DefineWidget import DefineWidget
 import style

@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from __future__ import with_statement
 from gui.main import pygame_display
 

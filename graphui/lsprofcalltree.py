@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 # lsprofcalltree.py: lsprof output which is readable by kcachegrind
 # David Allouche
 # Jp Calderone & Itamar Shtull-Trauring

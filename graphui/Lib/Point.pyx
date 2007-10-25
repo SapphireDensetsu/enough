@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 ## /* Copyright 2007, Noam Lewis, enoughmail@googlegroups.com */
 ## /*
 ##     This file is part of Enough.

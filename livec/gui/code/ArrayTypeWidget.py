@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 from gui.Box import HBox
 from gui.code.widget_for import posttype_widget_for, widget_for
 from gui.code import style
