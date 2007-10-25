@@ -1,3 +1,5 @@
+* Widgets should have a destroy?
+
 * Add a visit() to Widget so it can visit entire hierarchy, then use
    it to search. Have Box return a BoxChildren object mapping keys of
    children to visit() results, and other widgets just return whatever
@@ -23,9 +25,9 @@
 * observable.ValueProxy and use that so made child widgets can be
    replaced when they should be.
 
-* How to manage UNDOs?
+* Document the observable interfaces.
 
-* Widgets should have a destroy?
+* How to manage UNDOs?
 
 * When does an observable object die?
   * Either observers are weakrefs -- which should make everything

@@ -43,7 +43,7 @@ class BlockWidget(VBox):
     def _statement_list_insert(self, index, item):
         self._update_delete_registration()
 
-    def _statement_list_pop(self, index):
+    def _statement_list_pop(self, index, value):
         self._update_delete_registration()
 
     def _update_delete_registration(self):

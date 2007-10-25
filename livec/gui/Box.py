@@ -81,7 +81,7 @@ class Box(Widget):
         else:
             self.set_index(self.index, 1)
 
-    def _child_pop(self, index):
+    def _child_pop(self, index, value):
         if index == self.index:
             self.set_index(self.index, 1)
         elif index < self.index:

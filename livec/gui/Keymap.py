@@ -105,7 +105,7 @@ class Keymap(object):
         # used a LOT.
         self.notify_remove_item = self.obs_dict.notify.remove_item
         self.notify_add_item = self.obs_dict.notify.add_item
-        self.notify_set_item = self.obs_dict.notify.set_item
+        self.notify_replace_item = self.obs_dict.notify.replace_item
         
         self.next_keymap = None
         self.key_registrations = {}
@@ -167,7 +167,7 @@ class Keymap(object):
             for key, value in self.next_keymap.iteritems():
                 if prev_keymap is not None and isinstance(key, Key) and key in prev_keymap:
                     # The key was overridden and remains so, but with a new value
-                    self._next_keymap_set_item(key, prev_keymap[key], value)
+                    self._next_keymap_replace_item(key, prev_keymap[key], value)
                 else:
                     self._next_keymap_add_item(key, value)
             if self.is_active:
@@ -194,19 +194,19 @@ class Keymap(object):
     def _next_keymap_add_item(self, key, func):
         self._shadow_groups(key)
         if key in self.key_registrations:
-            self.notify_set_item(key, self.key_registrations[key], func)
+            self.notify_replace_item(key, self.key_registrations[key], func)
         else:
             self.notify_add_item(key, func)
 
     def _next_keymap_remove_item(self, key, func):
         if key in self.key_registrations:
-            self.notify_set_item(key, func, self.key_registrations[key])
+            self.notify_replace_item(key, func, self.key_registrations[key])
         else:
             self.notify_remove_item(key, func)
         self._unshadow_groups(key)
 
-    def _next_keymap_set_item(self, key, old_func, new_func):
-        self.notify_set_item(key, old_func, new_func)
+    def _next_keymap_replace_item(self, key, old_func, new_func):
+        self.notify_replace_item(key, old_func, new_func)
 
     def activate(self):
         self.is_active = True

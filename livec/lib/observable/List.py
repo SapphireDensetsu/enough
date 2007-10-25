@@ -10,8 +10,8 @@ class List(object):
         self.obs_list.notify.insert(index, item)
     
     def pop(self, index=-1):
-        self._items.pop(index)
-        self.obs_list.notify.pop(index)
+        value = self._items.pop(index)
+        self.obs_list.notify.pop(index, value)
 
     def remove(self, item):
         self.pop(self.index(item))
