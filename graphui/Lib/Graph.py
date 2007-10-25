@@ -76,7 +76,7 @@ class Node(ObservableValue):
     def disconnect_edge(self, edge):
         self.connections['out'].remove(edge)
         edge.target.connections['in'].remove(edge)
-        self.obs.notify.disconnect(e)
+        self.obs.notify.disconnect(edge)
         
     def disconnect_all(self):
         removed_edges = set()

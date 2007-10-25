@@ -23,8 +23,9 @@ class Dict(object):
             self.obs_dict.notify.set_item(key, value)
         
     def __delitem__(self, key):
+        val = self._dict[key]
         del self._dict[key]
-        self.obs_dict.notify.remove_item(key)
+        self.obs_dict.notify.remove_item(key, val)
     
     
 Dict = proxy_class(Dict, '_dict', methods=[

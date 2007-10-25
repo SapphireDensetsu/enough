@@ -22,6 +22,11 @@ from layout import Layout
 class GraphWidget(Widget):
     bg_color=(0,0,0)
     activated_bg_color=(10,10,20)
+
+    create_node_key = Key(pygame.KMOD_CTRL, pygame.K_a)
+    delete_node_key = Key(pygame.KMOD_CTRL, pygame.K_d)
+    connect_node_right_key = Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
+    
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
         self._size = MovingValue(Point((0,0)), Point(size))
@@ -39,8 +44,7 @@ class GraphWidget(Widget):
         r = self.parenting_keymap.register_key_noarg
         r(Key(0, pygame.K_RIGHT), self._next_node)
         r(Key(0, pygame.K_LEFT), self._prev_node)
-        r(Key(pygame.KMOD_CTRL, pygame.K_a), self._create_new_node)
-        r(Key(pygame.KMOD_SHIFT, pygame.K_RIGHT), self._connect_right)
+        r(self.create_node_key, self._create_new_node)
 
         self.layout = Layout()
 
@@ -58,8 +62,6 @@ class GraphWidget(Widget):
             self.add_edge(e)
     def _node_disconnect(self, e):
         self.remove_edge(e)
-        for node in e.source, e.target:
-            self.remove_node(node)
 
     def update_edges_lines(self, widget, node):
         center = Point(widget.final_rect().center)
@@ -103,11 +105,14 @@ class GraphWidget(Widget):
         return w
     def remove_node(self, node):
         w = self.node_widgets[node]
-        w.obj_loc.remove_observer(self)
+        w.obs_loc.remove_observer(self)
         node.obs.remove_observer(self)
         del self.node_widgets[node]
         self.nodes.remove(node)
         self.update_layout()
+        if (node,w) == self.selected():
+            self.selected_widget_index = None
+            self._set_next_keymap()
         return w
 
     def update_layout(self):
@@ -140,7 +145,12 @@ class GraphWidget(Widget):
         self.keymap.set_next_keymap(self.parenting_keymap)
         if self.selected_widget_index is not None:
             self.parenting_keymap.set_next_keymap(self.selected()[1].keymap)
+            r = self.parenting_keymap.register_key_noarg
+            r(self.delete_node_key, self._delete_selected_node)
+            r(self.connect_node_right_key, self._connect_right)
         else:
+            self.parenting_keymap.unregister_key(self.delete_node_key)
+            self.parenting_keymap.unregister_key(self.connect_node_right_key)
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
     def _set_selected_widget(self, index = None):
@@ -184,12 +194,16 @@ class GraphWidget(Widget):
         n = Graph.Node()
         w = self.add_node(n)
         self._set_index(self._find_widget_index(w))
+    def _delete_selected_node(self):
+        '''Delete selected node'''
+        n, w = self.sorted_widgets[self.selected_widget_index]
+        n.disconnect_all()
+        self._add_index(1)
+        self.remove_node(n)
         
         
     def _connect_right(self):
         '''Connects to the node on the right'''
-        if self.selected_widget_index is None:
-            return
         node, widget = self.sorted_widgets[self.selected_widget_index]
         n1 = self.selected()[0]
         self._next_node()
