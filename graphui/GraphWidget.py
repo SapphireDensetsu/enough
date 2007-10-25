@@ -49,6 +49,7 @@ class GraphWidget(Widget):
         
         r = self.keymap.register_key_noarg
         r(self.key_create_node, self._create_new_node)
+        r(self.key_connect, self._start_connect)
 
         self.layout = Layout()
         
@@ -165,7 +166,6 @@ class GraphWidget(Widget):
         if self.selected_widget_index is not None:
             self.parenting_keymap.set_next_keymap(self.selected()[1].keymap)
             r = self.parenting_keymap.register_key_noarg
-            r(self.key_connect, self._start_connect)
             r(self.key_delete_node, self._delete_selected_node)
             r(self.key_next_node, self._next_node)
             r(self.key_prev_node, self._prev_node)
@@ -175,7 +175,6 @@ class GraphWidget(Widget):
             r(self.key_select_node_down, self._select_node_down)
         else:
             ur = self.parenting_keymap.unregister_key
-            ur(self.key_connect)
             ur(self.key_next_node)
             ur(self.key_prev_node)
             ur(self.key_select_node_right)
