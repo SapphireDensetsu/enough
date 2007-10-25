@@ -15,7 +15,8 @@ class NodeWidget(Widget):
     bg_color=(10,10,130)
     fg_color=(70,70,150)
     activated_fg_color=(100,100,250)
-    
+
+    key_stop_edit=Key(0, pygame.K_ESCAPE)
     def __init__(self, node, *args, **kw):
         self.node = node
         self.style = style._make_style()
@@ -38,7 +39,6 @@ class NodeWidget(Widget):
         r(Key(pygame.KMOD_CTRL, pygame.K_DOWN), self._move_down)
 
         r(Key(0, pygame.K_RETURN), self._edit_value)
-        self.keymap.register_key_noarg(Key(0, pygame.K_ESCAPE), self._stop_edit_value)
 
     def in_bounds(self, p):
         return self.rect().collidepoint(tuple(p))
@@ -124,8 +124,10 @@ class NodeWidget(Widget):
         '''Edit value'''
         self.keymap.set_next_keymap(self.text_widget.focus_keymap)
         self.text_widget._start_editing()
+        self.keymap.register_key_noarg(self.key_stop_edit, self._stop_edit_value)
 
     def _stop_edit_value(self):
         '''Stop editing value'''
         self.text_widget._stop_editing()
         self.keymap.set_next_keymap(self.focus_keymap)
+        self.keymap.unregister_key(self.key_stop_edit)
