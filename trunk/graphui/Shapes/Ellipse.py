@@ -1,6 +1,7 @@
 from __future__ import division
 
 import math
+import draw
 from Lib.Point import Point
 from Lib.image import fast_scale
 
@@ -17,11 +18,11 @@ class Ellipse(object):
             scaled = fast_scale(use_image, (self.rect.w,self.rect.h))
             surface.blit(scaled, (rect.x,rect.y))
         else:
-            pygame.draw.ellipse(surface, back_color, rect, 0)
+            draw.ellipse(surface, back_color, rect, 0)
             
             if rect[2] > 5 and rect[3] > 5:
                 # otherwise we get a pygame error for using a width that's larger than the elipse radius
-                pygame.draw.ellipse(surface, fore_color, rect, 2)
+                draw.ellipse(surface, fore_color, rect, 2)
         
     def intersections(self, src, dest):
         """Returns the point of the intersection between the infinite
