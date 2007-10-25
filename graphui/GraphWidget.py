@@ -98,7 +98,7 @@ class GraphWidget(Widget):
         if edge.target in self.node_widgets:
             target = self.node_widgets[edge.target].final_rect().center
         w = EdgeWidget(edge, partial(self.node_widgets.get),
-                       MovingLine([Point((0,0)), Point((1,1))], [Point(source), Point(target)]))
+                       MovingLine(list, [Point(source), Point(target)]))
         self.edge_widgets[edge] = w
         self.update_layout()
     def remove_edge(self, edge):

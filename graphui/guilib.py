@@ -37,6 +37,8 @@ class MovingValue(object):
         self.delta = delta
 
     def get_final(self):
+        if self._current is None:
+            self._current = self.factory(self._final)
         return self._final
     def set_final(self, value):
         self._final = value
