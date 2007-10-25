@@ -111,9 +111,9 @@ class GraphWidget(Widget):
         return w
 
     def update_layout(self):
-        groups = {0:[]}
+        groups = {'0':[]}
         for node in self.nodes:
-            groups[0].append(node) 
+            groups['0'].append(node) 
         self.layout.update(groups, self.size, self.node_widgets, self.edge_widgets)
         
     def update(self):
