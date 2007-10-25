@@ -70,7 +70,7 @@ class EdgeWidget(Widget):
 
     def paint_lines(self, surface, parent_offset):
         self.line.update()
-        self.draw_rect = pygame.draw.lines(surface, self.bg_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
+        self.draw_rect = draw.lines(surface, self.bg_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
 
         target_widget = self.get_node_widget(self.edge.target)
         if (self.line.done and target_widget._pos.done and target_widget._size.done
@@ -132,5 +132,5 @@ class EdgeWidget(Widget):
                                               text_centering_length)
                 
         pos = tuple(desired_topleft - topleft + parent_offset)
-        surface.blit(rt, map(int, pos))
+        draw.blit(surface, rt, map(int, pos))
 

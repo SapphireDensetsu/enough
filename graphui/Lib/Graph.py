@@ -27,12 +27,12 @@ class EdgeWasntConnected(Exception): pass
 class ObservableValue(object):
     def __init__(self, value):
         self._value = value
-        self.obs = observer.Observable()
+        self.obs_value = observer.Observable()
     def get_value(self):
         return self._value
     def set_value(self, value):
         self._value = value
-        self.obj.notify.set_value(value)
+        self.obs_value.notify.set_value(value)
     value = property(get_value, set_value)
     
 class Edge(ObservableValue):
