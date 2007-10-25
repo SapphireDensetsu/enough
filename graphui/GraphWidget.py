@@ -34,6 +34,7 @@ class GraphWidget(Widget):
     key_select_node_up = Key(0, pygame.K_UP)
     key_select_node_down = Key(0, pygame.K_DOWN)
     key_connect = Key(pygame.KMOD_CTRL, pygame.K_RETURN)
+    key_cycle_layout = Key(pygame.KMOD_CTRL, pygame.K_l)
     
     def __init__(self, size, *args, **kw):
         Widget.__init__(self, *args, **kw)
@@ -50,6 +51,7 @@ class GraphWidget(Widget):
         r = self.keymap.register_key_noarg
         r(self.key_create_node, self._create_new_node)
         r(self.key_connect, self._start_connect)
+        r(self.key_cycle_layout, self._cycle_layout_engine)
 
         self.layout = Layout()
         
@@ -331,6 +333,7 @@ class GraphWidget(Widget):
                 self._connect_source_node = None
                 
         
-        
-
-        
+    def _cycle_layout_engine(self):
+        '''Change to the next layout engine'''
+        self.layout.cycle_layout_engines()
+        self.update_layout()

@@ -1,0 +1,4 @@
+* Implement load/save and export to dot
+* put the node value in a string property of the node when exporting
+   to dot for layout
+* add zoom/pan

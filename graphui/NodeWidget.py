@@ -20,7 +20,7 @@ class NodeWidget(Widget):
     def __init__(self, node, *args, **kw):
         self.node = node
         self.style = style._make_style()
-        self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [Keymap.all_printable])
+        self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [Keymap.all_printable], {'\r':'\n'})
         
         self.node.obs.add_observer(self, '_node_')
         Widget.__init__(self, *args, **kw)
@@ -55,11 +55,14 @@ class NodeWidget(Widget):
         max_font_size = 72
         min_font_size = 2
         ratio = 0.7
-        while self.text_widget.size[0] < self._size.final.x*ratio and self.style.font_size < max_font_size:
+        yratio = 1
+        while (self.text_widget.size[0] < self._size.final.x*ratio
+               or self.text_widget.size[1] < self._size.final.y*yratio) and self.style.font_size < max_font_size:
             self.style.font_size = min(self.style.font_size + 1, 72)
             self.text_widget.set_style(self.style)
             self.text_widget.update()
-        while self.text_widget.size[0] > self._size.final.x*ratio and self.style.font_size > min_font_size:
+        while (self.text_widget.size[0] > self._size.final.x*ratio
+               or self.text_widget.size[1] > self._size.final.y*yratio) and self.style.font_size > min_font_size:
             self.style.font_size -= 1
             self.text_widget.set_style(self.style)
             self.text_widget.update()
