@@ -188,6 +188,8 @@ class GraphWidget(Widget):
         
     def _connect_right(self):
         '''Connects to the node on the right'''
+        if self.selected_widget_index is None:
+            return
         node, widget = self.sorted_widgets[self.selected_widget_index]
         n1 = self.selected()[0]
         self._next_node()
