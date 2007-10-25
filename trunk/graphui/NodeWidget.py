@@ -23,8 +23,8 @@ class NodeWidget(Widget):
     
     def __init__(self, node, *args, **kw):
         self.node = node
-        
-        self.text_widget = TextEdit(style, self._get_text, self._set_text, [Keymap.all_printable])
+        self.style = _make_style()
+        self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [Keymap.all_printable])
         
         self.node.obs.add_observer(self, '_node_')
         Widget.__init__(self, *args, **kw)
@@ -54,12 +54,27 @@ class NodeWidget(Widget):
         return str(self.node.value)
     def _set_text(self, text):
         self.node.value = text
+        self._update_text_size()
+
+    def _update_text_size(self):
+        max_font_size = 72
+        min_font_size = 2
+        ratio = 0.7
+        while self.text_widget.size[0] < self._size.final.x*ratio and self.style.font_size < max_font_size:
+            self.style.font_size = min(self.style.font_size + 1, 72)
+            self.text_widget.set_style(self.style)
+            self.text_widget.update()
+        while self.text_widget.size[0] > self._size.final.x*ratio and self.style.font_size > min_font_size:
+            self.style.font_size -= 1
+            self.text_widget.set_style(self.style)
+            self.text_widget.update()
         
     def get_size(self):
         return self._size.current
     def set_size(self, p):
         p = Point(p)
         self._size.final = p
+        self._update_text_size()
         self.obs_loc.notify.size_set(p)
     size = property(get_size, set_size)
     
@@ -87,6 +102,7 @@ class NodeWidget(Widget):
         
     def update(self):
         self.text_widget.update()
+        self._update_text_size()
         self._size.update()
         self._pos.update()
         self.shape.rect = self.rect()
