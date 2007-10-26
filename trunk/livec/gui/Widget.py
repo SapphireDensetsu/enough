@@ -37,13 +37,17 @@ class Widget(object):
     activated_frame_color = (40, 40, 255)
     activated_bg_color = (30, 30, 90)
 
-    def __init__(self):
+    def __init__(self, bridge_keymap=False):
         # Use self.keymap.set_next_keymap and self.keymap for stealing
         # keys when you are above the focus.
-        self.keymap = Keymap()
         self.focus_keymap = Keymap()
         self.focus_keymap.obs_activation.add_observer(self, '_keymap_')
-        self.keymap.set_next_keymap(self.focus_keymap)
+
+        if bridge_keymap:
+            self.keymap = Keymap()
+            self.keymap.set_next_keymap(self.focus_keymap)
+        else:
+            self.keymap = self.focus_keymap
         
         self._prev_frame_colors = []
 

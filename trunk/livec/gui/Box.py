@@ -40,7 +40,7 @@ class Box(Widget):
     go_up_key = Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
     
     def __init__(self, child_list, relay_focus=False):
-        Widget.__init__(self)
+        Widget.__init__(self, bridge_keymap=True)
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
 
@@ -85,6 +85,8 @@ class Box(Widget):
             self.set_index(self.index, 1)
 
     def _child_pop(self, index, value):
+        if self.index is None:
+            return
         if index == self.index:
             self.set_index(self.index, 1)
         elif index < self.index:
@@ -209,6 +211,8 @@ class Box(Widget):
         return tuple(total)
 
 def with_doc(old_func, doc):
+    from functools import wraps
+    @wraps(old_func, assigned=('__module__', '__name__'))
     def new_func(*args, **kw):
         return old_func(*args, **kw)
     new_func.__doc__ = doc
