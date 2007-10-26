@@ -4,17 +4,23 @@
 from gui.Box import HBox
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for
+from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
+from lib.observable.DictOfAttrs import DictOfAttrs
+from lib.DictMap import DictMap
 
 import style
 
 class ArrayDerefWidget(HBox):
     def __init__(self, array_deref):
         self.array_deref = array_deref
+
+        d = DictMap(DictOfAttrs(self.array_deref))
+
         HBox.__init__(self, List([
-            widget_for(self.array_deref.expr),
+            ProxyWidget(d.map('expr', widget_for)),
             make_label(style.bracket, "["),
-            widget_for(self.array_deref.index),
+            ProxyWidget(d.map('index', widget_for)),
             make_label(style.bracket, "]"),
         ]))

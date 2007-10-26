@@ -1,3 +1,18 @@
+* KeysReflectionWidget -> gui/
+
+* Rename FunctionTypeWidget->FunctionPostTypeWidget
+         PtrTypeWidget->PtrPostTypeWidget
+         ArrayTypeWidget->ArrayPostTypeWidget
+
+* Use a common base for Proxy widgets instead of inheriting Stack?
+
+* add the declarations to the top of module widget:
+  * emphasize them when stuff using them is in focus
+  * option to remove them
+  * how to have an observable find_set_of_types_used?
+
+* how to have an observable find_basetype?
+
 * Widgets should have a destroy?
 
 * Add a visit() to Widget so it can visit entire hierarchy, then use
@@ -10,10 +25,6 @@
 * Change Groups to have the modifiers per-key and not per-group
 
 * TextEdit should take an observable mutable string, not get/set
-
-* add the declarations to the top of module widget:
-  * emphasize them when stuff using them is in focus
-  * option to remove them
 
 * Viewer configuration should be stored in a ConfigParser config file?
 
