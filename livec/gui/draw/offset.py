@@ -3,7 +3,7 @@
 
 import pygame
 
-# todo put this in a class
+# TODO: put this in a class
 
 target_offset = [0,0]
 cur_offset = [0,0]

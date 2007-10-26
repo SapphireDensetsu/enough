@@ -1,8 +1,8 @@
-* KeysReflectionWidget -> gui/
-
 * Rename FunctionTypeWidget->FunctionPostTypeWidget
          PtrTypeWidget->PtrPostTypeWidget
          ArrayTypeWidget->ArrayPostTypeWidget
+
+* Dynamicism of the type widgets
 
 * Use a common base for Proxy widgets instead of inheriting Stack?
 
