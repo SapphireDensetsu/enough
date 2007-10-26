@@ -10,7 +10,7 @@ from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
 from lib.DictMap import DictMap
 
-class ArrayTypeWidget(HBox):
+class ArrayPostTypeWidget(HBox):
     def __init__(self, _type, variable):
         self.type = _type
 

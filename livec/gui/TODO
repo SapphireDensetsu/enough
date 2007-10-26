@@ -1,9 +1,3 @@
-* Rename FunctionTypeWidget->FunctionPostTypeWidget
-         PtrTypeWidget->PtrPostTypeWidget
-         ArrayTypeWidget->ArrayPostTypeWidget
-
-* Dynamicism of the type widgets
-
 * Use a common base for Proxy widgets instead of inheriting Stack?
 
 * add the declarations to the top of module widget:
@@ -21,6 +15,8 @@
    they want.
 
 * Observable List needs a replace_item too
+
+* Dynamicism of the type widgets
 
 * Change Groups to have the modifiers per-key and not per-group
 

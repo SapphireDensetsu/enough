@@ -33,14 +33,14 @@ def posttype_widget_for(x, variable):
         from IdentifierWidget import IdentifierWidget
         return IdentifierWidget(variable, style.identifier)
     elif isinstance(x, nodes.Ptr):
-        from PtrTypeWidget import PtrTypeWidget
-        return PtrTypeWidget(x, variable)
+        from PtrPostTypeWidget import PtrPostTypeWidget
+        return PtrPostTypeWidget(x, variable)
     elif isinstance(x, nodes.Array):
-        from ArrayTypeWidget import ArrayTypeWidget
-        return ArrayTypeWidget(x, variable)
+        from ArrayPostTypeWidget import ArrayPostTypeWidget
+        return ArrayPostTypeWidget(x, variable)
     elif isinstance(x, nodes.FunctionType):
-        from FunctionTypeWidget import FunctionTypeWidget
-        return FunctionTypeWidget(x, variable)
+        from FunctionPostTypeWidget import FunctionPostTypeWidget
+        return FunctionPostTypeWidget(x, variable)
     else:
         assert False
 
