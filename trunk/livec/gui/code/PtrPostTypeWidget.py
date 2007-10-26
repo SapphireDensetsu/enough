@@ -8,7 +8,7 @@ from gui.code import style
 
 from lib.observable.List import List
 
-class PtrTypeWidget(HBox):
+class PtrPostTypeWidget(HBox):
     def __init__(self, _type, variable):
         self.type = _type
         HBox.__init__(self, List([

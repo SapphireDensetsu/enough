@@ -9,7 +9,7 @@ from gui.code import style
 from lib.observable.List import List
 from lib.observable.CacheMap import CacheMap
         
-class FunctionTypeWidget(HBox):
+class FunctionPostTypeWidget(HBox):
     is_centered = True
     def __init__(self, function_type, variable):
         self.function_type = function_type
