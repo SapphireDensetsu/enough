@@ -7,7 +7,7 @@ from lib.observable.ValueProxy import ValueProxy
 
 class Stack(ProxyWidget):
     def __init__(self):
-        ProxyWidget.__init__(self, ValueProxy())
+        ProxyWidget.__init__(self)
         self.items = []
     def push(self, widget):
         self.items.append(widget)

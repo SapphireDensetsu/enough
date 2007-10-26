@@ -3,13 +3,16 @@
 
 from Widget import Widget
 from Spacer import Spacer
+from lib.observable.ValueProxy import ValueProxy
 
 class ProxyWidget(Widget):
     """A widget that contains a proxy value widget that can change its
     value."""
     _spacer = Spacer((0, 0))
-    def __init__(self, value_proxy):
+    def __init__(self, value_proxy=None):
         Widget.__init__(self)
+        if value_proxy is None:
+            value_proxy = ValueProxy()
         self._value_proxy = value_proxy
         self._value_proxy.obs_value.add_observer(self, '_value_')
         self._update_proxy()
@@ -42,4 +45,4 @@ class ProxyWidget(Widget):
 
     def _proxy_to(self, widget):
         self.selectable = widget.selectable
-        self.keymap = widget.keymap
+        self.keymap.set_next_keymap(widget.keymap)

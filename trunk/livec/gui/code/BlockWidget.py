@@ -32,7 +32,8 @@ class BlockWidget(ProxyWidget):
         self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
                              relay_focus=True)
         self.ellipsis = make_label(style.ellipsis, '...')
-        ProxyWidget.__init__(self, ValueProxy(self.statement_box))
+        ProxyWidget.__init__(self)
+        self._value_proxy.set(self.statement_box)
         
         self.statement_box.keymap.register_key_noarg(
             self.insert_if_key, self._add_if)

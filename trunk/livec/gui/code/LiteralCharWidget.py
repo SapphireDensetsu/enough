@@ -15,7 +15,7 @@ class LiteralCharWidget(LiteralWidget):
         full = s.ljust(4, '\x00')
         assert len(full) == 4
         int_val, = struct.unpack('<L', full)
-        return str(int_val)
+        return '%d\n0x%X' % (int_val, int_val)
 
     def allowed_text(self, value):
         return len(value) <= 4
