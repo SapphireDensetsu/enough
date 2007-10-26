@@ -5,7 +5,7 @@ import pygame
 from ProxyWidget import ProxyWidget
 from lib.observable.ValueProxy import ValueProxy
 
-class Stack(ProxyWidget):
+class StackWidget(ProxyWidget):
     def __init__(self):
         ProxyWidget.__init__(self)
         self.items = []

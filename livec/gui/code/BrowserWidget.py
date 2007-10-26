@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from gui.Box import VBox, HBox
-from gui.Stack import Stack
+from gui.StackWidget import StackWidget
 from gui.Spacer import Spacer
 from gui import Keymap
 from gui.KeysReflectionWidget import KeysReflectionWidget
@@ -21,7 +21,7 @@ class BrowserWidget(HBox):
     offset_down_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_DOWN)
 
     def __init__(self, node):
-        self.main_stack = Stack()
+        self.main_stack = StackWidget()
         self.main_stack.push(widget_for(node))
 
 
