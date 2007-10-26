@@ -4,15 +4,15 @@
 '''
 Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
 
-Like all widgets, it has two keymaps - one (self.keymap) for being directly in
-focus, and one for when a child is in focus.
+Box creates an extra keymap (on top of the usual 2 Widget keymaps),
+called the parenting_keymap.
 
-The parenting keymap is for the active child - it`s next keymap is the
-child`s.  The box widget can have an active child, which is not
-neccesarily the widget in focus - if the focus is not on the box, the
-active child will still be remembered but it will not be in
-focus. That child`s keymap will remain chained on the parenting
-keymap, even if the box itself is not in focus.
+The parenting keymap is active when a child is active.  for the active
+child - it`s next keymap is the child`s.  The box widget can have an
+active child, which is not neccesarily the widget in focus - if the
+focus is not on the box, the active child will still be remembered but
+it will not be in focus. That child`s keymap will remain chained on
+the parenting keymap, even if the box itself is not in focus.
 
 '''
 

@@ -18,7 +18,7 @@ class SortedItems(object):
     def _dict_remove_item(self, key, value):
         index = bisect.bisect_left(self._items, (key, value))
         # TODO: Remove this
-        if self._items[index] != (key, value):
+        if index >= len(self._items) or self._items[index] != (key, value):
             import pdb
             pdb.set_trace()
         assert self._items[index] == (key, value)
