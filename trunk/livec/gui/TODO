@@ -1,7 +1,7 @@
-* Only expose register_groupdown
-
-* Group of one for all keys
-* Group collects (event_type, modifier, key)
+Simon:
+  * Only expose register_group
+  * Group of one for all keys
+  * Group collects (event_type, modifier, key)
 
 
 * Hafifa Box
