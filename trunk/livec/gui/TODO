@@ -2,15 +2,11 @@ Simon:
   * Only expose register_group
   * Group of one for all keys
   * Group collects (event_type, modifier, key)
+  * Hafifa Box
+    * Should anyone stick stuff in parenting_keymap?
+    * Should parenting_keymap be set when no children exist?
 
-
-* Hafifa Box
-  * Should anyone stick stuff in parenting_keymap?
-  * Should parenting_keymap be set when no children exist?
-
-* Stack->StackWidget
-* selectable should become selectable() and observable
-* Why is Ellipsis currently selectable? Fix bug.
+* selectable should become selectable() and observable. Box should use it
 * Ellipsis should be selectable
 * Ellipsis info widget should be the folded code
 
