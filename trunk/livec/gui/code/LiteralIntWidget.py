@@ -13,6 +13,7 @@ class LiteralIntWidget(TextEdit):
     selectable = True
     def __init__(self, literal):
         self.literal = literal
+        # TODO: When necessary, use DictMap to access self.literal.value
         s = style.literal_style_for[self.literal.__class__]
         TextEdit.__init__(self, s, lambda : str(self.literal.value))
 

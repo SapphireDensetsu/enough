@@ -41,5 +41,8 @@ class EnumWidget(VBox):
             ]), relay_focus=True),
             make_label(style.braces, '{'),
             indented(values_box),
-            make_label(style.braces, '}'),
+            HBox(List([
+                make_label(style.braces, '}'),
+                make_label(style.semicolon, ';'),
+            ]), relay_focus=True)
         ]))
