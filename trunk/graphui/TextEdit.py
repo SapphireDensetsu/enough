@@ -43,6 +43,18 @@ class TextEdit(Widget):
         self._cursor = None
         self.is_editing = False
 
+    def __getstate__(self):
+        d= self.__dict__.copy()
+        del d['editing_keymap']
+        kmap = d['focus_keymap']
+        for k in tuple(kmap.iterkeys()):
+            kmap.unregister_key(k)
+        return d
+    def __setstate__(self, d):
+        for k,v in d.iteritems:
+            self.__dict__[k] = v
+        self._register_keys()
+    
     def _register_keys(self):
         self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
 

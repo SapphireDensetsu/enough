@@ -54,6 +54,29 @@ class GraphWidget(Widget):
         self.parenting_keymap = Keymap()
 
         
+        self.layout = Layout()
+        
+        self.selected_widget_index = None
+        self._update_index()
+
+        self._connector_start_pos = None
+        self._connect_source_node = None
+
+        self._register_keys()
+
+    def __getstate__(self):
+        d= self.__dict__.copy()
+        del d['focus_keymap']
+        del d['keymap']
+        return d
+    def __setstate__(self, d):
+        for k,v in d.iteritems:
+            self.__dict__[k] = v
+        self.focus_keymap = Keymap()
+        self.keymap = Keymap()
+        self._register_keys()
+
+    def _register_keys(self):
         r = self.keymap.register_key_noarg
         r(self.key_create_node, self._create_new_node)
         r(self.key_connect, self._start_connect)
@@ -61,14 +84,7 @@ class GraphWidget(Widget):
         r(self.key_save, self._save)
         r(self.key_load, self._load)
 
-        self.layout = Layout()
         
-        self.selected_widget_index = None
-        self._update_index()
-
-        self._connector_start_pos = None
-        self._connect_source_node = None        
-
     def get_size(self):
         return self._size.current
     def set_size(self, p):
