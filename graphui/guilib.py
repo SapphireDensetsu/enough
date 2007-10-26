@@ -48,6 +48,8 @@ class MovingValue(object):
         self.reset()
     final = property(get_final, set_final)
     def get_current(self):
+        if self._current is None:
+            self._current = self.factory(self._final)
         return self._current
     def set_current(self, value):
         self._current = value

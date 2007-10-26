@@ -34,7 +34,21 @@ class NodeWidget(Widget):
         self.shape = Ellipse(pygame.Rect(0,0,1,1))
 
         self.obs_loc = Observable()
-        
+        self._register_keys()
+
+    def __getstate__(self):
+        d= self.__dict__.copy()
+        del d['focus_keymap']
+        del d['keymap']
+        return d
+    def __setstate__(self, d):
+        for k,v in d.iteritems:
+            self.__dict__[k] = v
+        self.focus_keymap = Keymap()
+        self.keymap = Keymap()
+        self._register_keys()
+
+    def _register_keys(self):
         r = self.focus_keymap.register_key_noarg
         r(Key(pygame.KMOD_CTRL, pygame.K_RIGHT), self._move_right)
         r(Key(pygame.KMOD_CTRL, pygame.K_LEFT), self._move_left)
@@ -42,6 +56,7 @@ class NodeWidget(Widget):
         r(Key(pygame.KMOD_CTRL, pygame.K_DOWN), self._move_down)
 
         r(Key(0, pygame.K_RETURN), self._edit_value)
+        
 
     def in_bounds(self, p):
         return self.rect().collidepoint(tuple(p))
