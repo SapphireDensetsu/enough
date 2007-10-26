@@ -13,7 +13,6 @@ from lib.observable.List import List
 
 import pygame
 
-# TODO: Maybe call it LiveCEditorWidget ?
 class BrowserWidget(HBox):
     def __init__(self, node):
         self.main_stack = Stack()
