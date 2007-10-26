@@ -32,10 +32,12 @@ class TextEdit(Widget):
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
     cursor_color = (255, 10, 10)
     
-    def __init__(self, style, get_text, set_text=None, groups=None, convertor=None):
+    def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
+                 allowed_text=None):
         Widget.__init__(self)
         self.get_text = get_text
         self.set_text = set_text
+        self.allowed_text = allowed_text
         self.convertor = convertor
         self.key_groups = groups
         if set_text:
@@ -115,17 +117,28 @@ class TextEdit(Widget):
         if self._cursor == 0:
             return
         o = self.get_text()
-        self.set_text(o[:self._cursor-1] + o[self._cursor:])
+        new_text = o[:self._cursor-1] + o[self._cursor:]
+        if not self._allowed(new_text):
+            return
+        self.set_text(new_text)
         self._cursor -= 1
 
     def _insert_char(self, event):
         """Insert character"""
         self._insert(event.unicode)
 
+    def _allowed(self, text):
+        if self.allowed_text is None:
+            return True
+        return self.allowed_text(text)
+
     def _insert(self, x):
         self._fix_cursor()
         o = self.get_text()
-        self.set_text(o[:self._cursor] + x + o[self._cursor:])
+        new_text = o[:self._cursor] + x + o[self._cursor:]
+        if not self._allowed(new_text):
+            return
+        self.set_text(new_text)
         self._cursor += 1
 
     def set_style(self, style):

@@ -255,3 +255,16 @@ class CCodeGenerator(object):
             yield 'else'
             for line in self._indented_ccode(node.if_false):
                 yield line
+
+c_escape_common = {
+    '\\' : '\\\\',
+    '\t' : '\\t',
+    '\r' : '\\r',
+    '\n' : '\\n',
+}
+
+c_escape_char = c_escape_common.copy()
+c_escape_char["'"] = "\\'"
+
+c_escape_str = c_escape_common.copy()
+c_escape_str['"'] = '\\"'

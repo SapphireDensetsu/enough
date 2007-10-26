@@ -1,3 +1,4 @@
+* use a NULL widget instead of all the Spacers
 * folded code on the info_box
 * add the declarations to the top of module widget:
   * emphasize them when stuff using them is in focus

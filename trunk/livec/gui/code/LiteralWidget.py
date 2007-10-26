@@ -3,41 +3,39 @@
 
 from gui.Box import HBox
 from gui.TextEdit import TextEdit, make_label
-from gui.code.widget_for import widget_for
-from gui.loop import loop
 from gui import Keymap
+from InfoMixin import InfoMixin
 
 from lib.observable.List import List
 
-import style
-
-class _LiteralTextEdit(TextEdit):
-    def got_focus(self):
-        TextEdit.got_focus(self)
-        loop.browser.add_info_widget(self._string_widget)
-
-    def lost_focus(self):
-        TextEdit.lost_focus(self)
-        loop.browser.remove_info_widget(self._string_widget)
+class _LiteralTextEdit(InfoMixin, TextEdit): pass
 
 class LiteralWidget(HBox):
-    def __init__(self, literal, delimiter, escape_table):
+    example_frame_color = None
+    def __init__(self, literal):
         self.literal = literal
-        self.delimiter = delimiter
-        self.escape_table = escape_table
-        s = style.literal_style_for[self.literal.__class__]
-        text_edit = _LiteralTextEdit(s, self._get_string, self._set_string,
-                                     [Keymap.all_printable],
-                                     convertor=self.escape_table)
-        text_edit._string_widget = TextEdit(s, self._get_string)
+        self.text_edit = _LiteralTextEdit(self.literal_style,
+                                          self._get_string, self._set_string,
+                                          [Keymap.all_printable],
+                                          convertor=self.escape_table,
+                                          allowed_text=self.allowed_text)
+        example = TextEdit(self.example_style, self._get_example_str)
+        example.frame_color = self.example_frame_color
+        self.text_edit._info_widget = example
         HBox.__init__(self, List([
-            make_label(s, delimiter),
-            text_edit,
-            make_label(s, delimiter),
+            make_label(self.delimiter_style, self.delimiter),
+            self.text_edit,
+            make_label(self.delimiter_style, self.delimiter),
         ]), relay_focus=True)
 
     def _get_string(self):
         return self.literal.value
 
     def _set_string(self, value):
-        self.literal.value = value.replace('\r', '\n')
+        self.literal.value = self._convert_string(value)
+
+    def _convert_string(self, value):
+        return value.replace('\r', '\n')
+
+    def allowed_text(self, value):
+        return True
