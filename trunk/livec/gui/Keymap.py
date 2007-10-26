@@ -163,6 +163,8 @@ class Keymap(object):
         raise KeyError("Unknown key", key)
 
     def set_next_keymap(self, keymap):
+        if self.next_keymap is keymap:
+            return
         if self.next_keymap is not None:
             if self.is_active:
                 self.next_keymap.deactivate()
