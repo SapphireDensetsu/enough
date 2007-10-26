@@ -1,11 +1,11 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from InfoIdentifierWidget import InfoIdentifierWidget
 from DefineWidget import DefineWidget
+from IdentifierWidget import IdentifierWidget
 import style
 
-class DefineValueWidget(InfoIdentifierWidget):
+class DefineValueWidget(IdentifierWidget):
     def __init__(self, variable):
-        InfoIdentifierWidget.__init__(self, variable, style.define_value)
-        self._type_widget = DefineWidget(self.variable)
+        IdentifierWidget.__init__(self, variable, style.define_value)
+        self._info_widget = DefineWidget(self.variable)

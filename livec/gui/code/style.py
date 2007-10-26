@@ -48,11 +48,14 @@ def emphasize(style):
     s.is_bold = True
     return s
 
-import nodes
-literal_style_for = {
-    nodes.LiteralInt : _make_style(color=(180, 255, 255)),
-    nodes.LiteralChar : _make_style(color=(100, 255, 255)),
-    nodes.LiteralString : _make_style(color=(0, 255, 255)),
-}
+literal_int = _make_style(color=(180, 255, 255))
+literal_char = _make_style(color=(100, 255, 255))
+literal_string = _make_style(color=(0, 255, 255))
+
+literal_string_delimiter = _make_style(color=(200, 200, 255))
+literal_char_delimiter = _make_style(color=(200, 200, 255))
+
+example_string = literal_string
+example_char_int = _make_style(color=(255, 255, 255))
 
 unknown_c_code = _make_style(color=(20, 255, 255), bgcolor=(100, 0, 0))

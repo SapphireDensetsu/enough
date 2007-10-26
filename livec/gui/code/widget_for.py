@@ -75,19 +75,6 @@ def declaration_widget_for(x):
     else:
         return widget_for(x)
 
-c_escape_common = {
-    '\\' : '\\\\',
-    '\t' : '\\t',
-    '\r' : '\\r',
-    '\n' : '\\n',
-}
-
-c_escape_char = c_escape_common.copy()
-c_escape_char["'"] = "\\'"
-
-c_escape_str = c_escape_common.copy()
-c_escape_str['"'] = '\\"'
-
 from functools import partial, wraps
 
 def rpartial(func, *fargs, **fkw):
@@ -108,7 +95,8 @@ def widget_for(x):
     from BinaryOpWidget import EqualsWidget, NotEqualsWidget, AssignWidget, SubtractWidget
     from CallWidget import CallWidget
     from ArrayDerefWidget import ArrayDerefWidget
-    from LiteralWidget import LiteralWidget
+    from LiteralStrWidget import LiteralStrWidget
+    from LiteralCharWidget import LiteralCharWidget
     from LiteralIntWidget import LiteralIntWidget
     
     widget_map = {
@@ -134,9 +122,9 @@ def widget_for(x):
         nodes.Call: CallWidget,
         nodes.ArrayDeref: ArrayDerefWidget,
 
-        nodes.LiteralInt: rpartial(LiteralIntWidget),
-        nodes.LiteralChar: rpartial(LiteralWidget, "'", c_escape_char),
-        nodes.LiteralString: rpartial(LiteralWidget, '"', c_escape_str),
+        nodes.LiteralInt: LiteralIntWidget,
+        nodes.LiteralChar: LiteralCharWidget,
+        nodes.LiteralString: LiteralStrWidget,
     }
 
     for type_, factory in widget_map.iteritems():

@@ -14,7 +14,7 @@ class LiteralIntWidget(TextEdit):
     def __init__(self, literal):
         self.literal = literal
         # TODO: When necessary, use DictMap to access self.literal.value
-        s = style.literal_style_for[self.literal.__class__]
+        s = style.literal_int
         TextEdit.__init__(self, s, lambda : str(self.literal.value))
 
         self.focus_keymap.register_key_noarg(Keymap.Key(0, pygame.K_BACKSPACE), self._backspace)
