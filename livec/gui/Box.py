@@ -1,7 +1,7 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-'''
+"""
 Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
 
 Box creates an extra keymap (on top of the usual 2 Widget keymaps),
@@ -14,11 +14,11 @@ focus is not on the box, the active child will still be remembered but
 it will not be in focus. That child`s keymap will remain chained on
 the parenting keymap, even if the box itself is not in focus.
 
-'''
+"""
 
 import pygame
 from gui.Widget import Widget
-from gui.Keymap import Keymap, Key
+from gui import Keymap
 from gui.Spacer import Spacer
 
 class Direction(object): pass
@@ -36,8 +36,8 @@ class Box(Widget):
     padding_widget = None
     is_centered = False
     start_in_child = True
-    go_down_key = Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
-    go_up_key = Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
+    enter_child_key = Keymap.Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
+    leave_child_key = Keymap.Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
     
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
@@ -46,17 +46,15 @@ class Box(Widget):
 
         self.relay_focus = relay_focus
         
-        r = self.focus_keymap.register_key_noarg
         if not self.relay_focus:
-            r(self.go_down_key, self._enter_child)
+            self._allow_enter_child()
 
         # parenting_keymap is the keymap that's active when one of the
         # children is in focus (not the Box itself). IT's next keymap is the active child's keymap.
-        self.parenting_keymap = Keymap()
+        self.parenting_keymap = Keymap.Keymap()
 
-        csr = self.parenting_keymap.register_key_noarg
         if not self.relay_focus:
-            csr(self.go_up_key, self._leave_child)
+            self._allow_leave_child()
 
         self.set_index(0, 1)
 
@@ -65,18 +63,30 @@ class Box(Widget):
         else:
             self._leave_child()
 
+    def _allow_enter_child(self):
+        self.focus_keymap.register_key(
+            self.enter_child_key,
+            Keymap.keydown_noarg(self._enter_child)
+        )
+
+    def _allow_leave_child(self):
+        self.parenting_keymap.register_key(
+            self.leave_child_key,
+            Keymap.keydown_noarg(self._leave_child)
+        )
+
     def _start_relay_focus(self):
         if self.relay_focus:
             return
-        self.focus_keymap.unregister_key(self.go_down_key)
-        self.parenting_keymap.unregister_key(self.go_up_key)
+        self.focus_keymap.unregister_key(self.enter_child_key)
+        self.parenting_keymap.unregister_key(self.leave_child_key)
         self._enter_child()
 
     def _stop_relay_focus(self):
         if self.relay_focus:
             return
-        self.focus_keymap.register_key_noarg(self.go_down_key, self._enter_child)
-        self.parenting_keymap.register_key_noarg(self.go_up_key, self._leave_child)
+        self._allow_enter_child()
+        self._allow_leave_child()
 
     def _child_insert(self, index, widget):
         if index <= self.index:
@@ -128,6 +138,7 @@ class Box(Widget):
         self._stop_relay_focus()
 
     def set_index(self, new_value, scan_dir=None):
+        # TODO: Split this function
         if not self.child_list:
             self._set_empty_state()
             return
@@ -146,21 +157,31 @@ class Box(Widget):
                 self._set_empty_state()
                 return
         self.index = new_value
-        csu = self.parenting_keymap.unregister_key
-        csr = self.parenting_keymap.register_key_noarg
-        for c in self.child_list[self.index+1:]:
-            if c.selectable:
-                csr(self.next_key, self._next)
-                break
-        else:
-            csu(self.next_key)
-        for c in self.child_list[:self.index]:
-            if c.selectable:
-                csr(self.prev_key, self._prev)
-                break
-        else:
-            csu(self.prev_key)
+
+        self._update_next_prev_keys()
         self._set_nonempty_state()
+
+    def _update_next_prev_keys(self):
+        for selectability, key, func in [
+            (self._next_selectable, self.next_key, self._next),
+            (self._prev_selectable, self.prev_key, self._prev),
+        ]:
+            if selectability():
+                self.parenting_keymap.register_key(key, Keymap.keydown_noarg(func))
+            else:
+                self.parenting_keymap.unregister_key(key)
+
+    def _have_selectable(self, child_list):
+        for child in child_list:
+            if child.selectable:
+                return True
+        return False
+
+    def _next_selectable(self):
+        return self._have_selectable(self.child_list[self.index+1:])
+
+    def _prev_selectable(self):
+        return self._have_selectable(self.child_list[:self.index])
 
     def update(self):
         for child in self.child_list:
@@ -220,14 +241,14 @@ def with_doc(old_func, doc):
 
 class VBox(Box):
     direction = Vertical
-    prev_key = Key(0, pygame.K_UP)
-    next_key = Key(0, pygame.K_DOWN)
+    prev_key = Keymap.Key(0, pygame.K_UP)
+    next_key = Keymap.Key(0, pygame.K_DOWN)
     _prev = with_doc(Box._prev, """Go up""")
     _next = with_doc(Box._next, """Go down""")
 
 class HBox(Box):
     direction = Horizontal
-    prev_key = Key(0, pygame.K_LEFT)
-    next_key = Key(0, pygame.K_RIGHT)
+    prev_key = Keymap.Key(0, pygame.K_LEFT)
+    next_key = Keymap.Key(0, pygame.K_RIGHT)
     _prev = with_doc(Box._prev, """Go left""")
     _next = with_doc(Box._next, """Go right""")

@@ -3,7 +3,7 @@
 
 import nodes
 import pygame
-from gui.Keymap import Key
+from gui import Keymap
 
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
@@ -17,15 +17,13 @@ from lib.observable.ValueProxy import ValueProxy
 import ccode
 import style
 
-plus_keys = (Key(0, pygame.K_EQUALS),
-             Key(0, pygame.K_KP_PLUS))
-minus_keys = (Key(0, pygame.K_MINUS),
-              Key(0, pygame.K_KP_MINUS))
-
 class BlockWidget(ProxyWidget):
     default_folded = False
-    kill_stmt_key = Key(pygame.KMOD_CTRL, pygame.K_k)
-    insert_if_key = Key(pygame.KMOD_CTRL, pygame.K_i)
+    kill_stmt_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_k)
+    insert_if_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_i)
+    
+    plus_keys = (Keymap.Key(0, pygame.K_EQUALS), Keymap.Key(0, pygame.K_KP_PLUS))
+    minus_keys = (Keymap.Key(0, pygame.K_MINUS), Keymap.Key(0, pygame.K_KP_MINUS))
     
     def __init__(self, block):
         self.block = block
@@ -35,8 +33,10 @@ class BlockWidget(ProxyWidget):
         ProxyWidget.__init__(self)
         self._value_proxy.set(self.statement_box)
         
-        self.statement_box.keymap.register_key_noarg(
-            self.insert_if_key, self._add_if)
+        self.statement_box.keymap.register_key(
+            self.insert_if_key,
+            Keymap.keydown_noarg(self._add_if)
+        )
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
         self._update_delete_registration()
@@ -51,8 +51,10 @@ class BlockWidget(ProxyWidget):
 
     def _update_delete_registration(self):
         if self.block.statements:
-            self.statement_box.keymap.register_key_noarg(
-                self.kill_stmt_key, self._delete_selected_child)
+            self.statement_box.keymap.register_key(
+                self.kill_stmt_key,
+                Keymap.keydown_noarg(self._delete_selected_child)
+            )
         else:
             self.statement_box.keymap.unregister_key(
                 self.kill_stmt_key)
@@ -62,18 +64,18 @@ class BlockWidget(ProxyWidget):
 
     def _update_fold_state(self):
         if self._is_folded():
-            for key in plus_keys:
-                self.keymap.register_key_noarg(key, self._unfold)
-            for key in minus_keys:
+            for key in self.plus_keys:
+                self.keymap.register_key(key, Keymap.keydown_noarg(self._unfold))
+            for key in self.minus_keys:
                 self.keymap.unregister_key(key)
-            w = self.ellipsis
+            widget = self.ellipsis
         else:
-            for key in minus_keys:
-                self.keymap.register_key_noarg(key, self._fold)
-            for key in plus_keys:
+            for key in self.minus_keys:
+                self.keymap.register_key(key, Keymap.keydown_noarg(self._fold))
+            for key in self.plus_keys:
                 self.keymap.unregister_key(key)
-            w = self.statement_box
-        self._value_proxy.set(w)
+            widget = self.statement_box
+        self._value_proxy.set(widget)
 
     def _fold(self):
         """Fold the code block"""
