@@ -4,8 +4,8 @@
 '''
 Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
 
-It has two keymaps - one for being directly in focus, and one for when
-a child is in focus.
+Like all widgets, it has two keymaps - one (self.keymap) for being directly in
+focus, and one for when a child is in focus.
 
 The parenting keymap is for the active child - it`s next keymap is the
 child`s.  The box widget can have an active child, which is not
@@ -40,7 +40,7 @@ class Box(Widget):
     go_up_key = Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
     
     def __init__(self, child_list, relay_focus=False):
-        Widget.__init__(self, bridge_keymap=True)
+        Widget.__init__(self)
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
 
