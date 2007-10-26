@@ -6,12 +6,13 @@ import pygame
 from gui.Keymap import Key
 
 from gui.Box import VBox, HBox
-from gui.Stack import Stack
+from gui.ProxyWidget import ProxyWidget
 from gui.TextEdit import make_label
 from gui.code.widget_for import widget_for, ccode_widget_for
 
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
+from lib.observable.ValueProxy import ValueProxy
 
 import ccode
 import style
@@ -21,7 +22,7 @@ plus_keys = (Key(0, pygame.K_EQUALS),
 minus_keys = (Key(0, pygame.K_MINUS),
               Key(0, pygame.K_KP_MINUS))
 
-class BlockWidget(Stack):
+class BlockWidget(ProxyWidget):
     default_folded = False
     kill_stmt_key = Key(pygame.KMOD_CTRL, pygame.K_k)
     insert_if_key = Key(pygame.KMOD_CTRL, pygame.K_i)
@@ -31,8 +32,7 @@ class BlockWidget(Stack):
         self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
                              relay_focus=True)
         self.ellipsis = make_label(style.ellipsis, '...')
-        Stack.__init__(self)
-        self.push(self.statement_box)
+        ProxyWidget.__init__(self, ValueProxy(self.statement_box))
         
         self.statement_box.keymap.register_key_noarg(
             self.insert_if_key, self._add_if)
@@ -60,7 +60,6 @@ class BlockWidget(Stack):
         return self.block.meta.get('folded', self.default_folded)
 
     def _update_fold_state(self):
-        self.pop()
         if self._is_folded():
             for key in plus_keys:
                 self.keymap.register_key_noarg(key, self._unfold)
@@ -73,7 +72,7 @@ class BlockWidget(Stack):
             for key in plus_keys:
                 self.keymap.unregister_key(key)
             w = self.statement_box
-        self.push(w)
+        self._value_proxy.set(w)
 
     def _fold(self):
         """Fold the code block"""

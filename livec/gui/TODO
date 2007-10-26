@@ -1,5 +1,3 @@
-* Use a common base for Proxy widgets instead of inheriting Stack?
-
 * add the declarations to the top of module widget:
   * emphasize them when stuff using them is in focus
   * option to remove them

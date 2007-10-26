@@ -33,7 +33,7 @@ class DictMap(object):
         if key not in self._mapping:
             return
         func, value_proxy = self._mapping[key]
-        value_proxy.delete()
+        value_proxy.clear()
 
     def _dict_replace_item(self, key, old_value, new_value):
         if key not in self._mapping:

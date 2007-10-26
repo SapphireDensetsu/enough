@@ -2,17 +2,13 @@
 # See LICENSE for details.
 
 import pygame
-from Widget import Widget
+from ProxyWidget import ProxyWidget
+from lib.observable.ValueProxy import ValueProxy
 
-class Stack(Widget):
+class Stack(ProxyWidget):
     def __init__(self):
-        Widget.__init__(self)
+        ProxyWidget.__init__(self, ValueProxy())
         self.items = []
-    def draw(self, surface, pos):
-        self.top().draw(surface, pos)
-    def update(self):
-        self.top().update()
-        self.size = self.top().size
     def push(self, widget):
         self.items.append(widget)
         self._update_state()
@@ -23,12 +19,12 @@ class Stack(Widget):
         self.items.pop()
         self._update_state()
     def top(self):
+        if not self.items:
+            return None
         return self.items[-1]
     def _update_state(self):
-        if self.items:
-            top = self.top()
-            self.selectable = top.selectable
-            self.keymap.set_next_keymap(top.keymap)
+        top = self.top()
+        if top is not None:
+            self._value_proxy.set(top)
         else:
-            self.selectable = False
-            self.keymap.set_next_keymap(None)
+            self._value_proxy.clear()

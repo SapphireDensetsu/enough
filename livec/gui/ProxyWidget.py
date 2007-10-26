@@ -1,31 +1,45 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from Stack import Stack
+from Widget import Widget
 from Spacer import Spacer
 
-class ProxyWidget(Stack):
+class ProxyWidget(Widget):
     """A widget that contains a proxy value widget that can change its
     value."""
-    def __init__(self, proxy_value):
-        Stack.__init__(self)
-        self._spacer = Spacer((0, 0))
-        proxy_value.obs_value.add_observer(self, '_value_')
-        if proxy_value.exists():
-            self.push(proxy_value.get())
-        else:
-            self.push(self._spacer)
+    _spacer = Spacer((0, 0))
+    def __init__(self, value_proxy):
+        Widget.__init__(self)
+        self._value_proxy = value_proxy
+        self._value_proxy.obs_value.add_observer(self, '_value_')
+        self._update_proxy()
+
+    def draw(self, surface, pos):
+        self._current_widget().draw(surface, pos)
     
+    def update(self):
+        cw = self._current_widget()
+        cw.update()
+        self.size = cw.size
+
     def _value_changed(self, old_value, new_value):
-        assert old_value is self.pop()
-        assert not self.items
-        self.push(new_value)
+        self._update_proxy()
 
     def _value_added(self, new_value):
-        assert self._spacer is self.pop()
-        assert not self.items
-        self.push(new_value)
+        self._update_proxy()
 
     def _value_deleted(self, old_value):
-        assert old_value is self.pop()
-        self.push(self._spacer)
+        self._update_proxy()
+
+    def _update_proxy(self):
+        self._proxy_to(self._current_widget())
+    
+    def _current_widget(self):
+        if self._value_proxy.exists():
+            return self._value_proxy.get()
+        else:
+            return self._spacer
+
+    def _proxy_to(self, widget):
+        self.selectable = widget.selectable
+        self.keymap.set_next_keymap(widget.keymap)
