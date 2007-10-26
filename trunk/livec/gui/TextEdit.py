@@ -32,6 +32,14 @@ class TextEdit(Widget):
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
     cursor_color = (255, 10, 10)
     
+    left_key = Keymap.Key(0, pygame.K_LEFT)
+    right_key = Keymap.Key(0, pygame.K_RIGHT)
+    home_key = Keymap.Key(0, pygame.K_HOME)
+    end_key = Keymap.Key(0, pygame.K_END)
+    a_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_a)
+    e_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_e)
+    backspace_key = Keymap.Key(0, pygame.K_BACKSPACE)
+    
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
                  allowed_text=None):
         Widget.__init__(self)
@@ -49,20 +57,25 @@ class TextEdit(Widget):
         self.is_editing = False
 
     def _register_keys(self):
-        self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
+        self.focus_keymap.register_key(self.start_editing_key,
+                                       Keymap.keydown_noarg(self._start_editing))
 
         self.editing_keymap = Keymap.Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_LEFT), self._left)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_RIGHT), self._right)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_HOME), self._home)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_END), self._end)
-        self.editing_keymap.register_key_noarg(Keymap.Key(pygame.KMOD_CTRL, pygame.K_a), self._home)
-        self.editing_keymap.register_key_noarg(Keymap.Key(pygame.KMOD_CTRL, pygame.K_e), self._end)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_BACKSPACE), self._backspace)
+        def register_editing_key(key, func):
+            self.editing_keymap.register_key(key, Keymap.keydown_noarg(func))
+        register_editing_key(self.left_key, self._left)
+        register_editing_key(self.right_key, self._right)
+        register_editing_key(self.home_key, self._home)
+        register_editing_key(self.end_key, self._end)
+        register_editing_key(self.a_key, self._home)
+        register_editing_key(self.e_key, self._end)
+        register_editing_key(self.backspace_key, self._backspace)
         for group in self.key_groups:
-            self.editing_keymap.register_group(group,
-                                               self._insert_char)
+            self.editing_keymap.register_group(
+                group,
+                Keymap.handler(include_event=True)(self._handle_char_key)
+            )
 
     def _editing_activated(self):
         self.push_frame(bg_color=(40, 80, 40))
@@ -77,7 +90,8 @@ class TextEdit(Widget):
     def _start_editing(self):
         """Start editing mode"""
         self.focus_keymap.unregister_key(self.start_editing_key)
-        self.focus_keymap.register_key_noarg(self.stop_editing_key, self._stop_editing)
+        self.focus_keymap.register_key(self.stop_editing_key,
+                                       Keymap.keydown_noarg(self._stop_editing))
         self.focus_keymap.set_next_keymap(self.editing_keymap)
         self.is_editing = True
 
@@ -86,7 +100,8 @@ class TextEdit(Widget):
         if not self.is_editing:
             return
         self.focus_keymap.unregister_key(self.stop_editing_key)
-        self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
+        self.focus_keymap.register_key(self.start_editing_key,
+                                       Keymap.keydown_noarg(self._start_editing))
         self.is_editing = False
         self.focus_keymap.set_next_keymap(None)
         self._cursor = None
@@ -123,7 +138,7 @@ class TextEdit(Widget):
         self.set_text(new_text)
         self._cursor -= 1
 
-    def _insert_char(self, event):
+    def _handle_char_key(self, event):
         """Insert character"""
         self._insert(event.unicode)
 

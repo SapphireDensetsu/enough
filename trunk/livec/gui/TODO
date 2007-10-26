@@ -1,8 +1,15 @@
+* Only expose register_groupdown
+
+* Group of one for all keys
+* Group collects (event_type, modifier, key)
+
+
 * Hafifa Box
   * Should anyone stick stuff in parenting_keymap?
   * Should parenting_keymap be set when no children exist?
 
 * Stack->StackWidget
+* selectable should become selectable() and observable
 * Why is Ellipsis currently selectable? Fix bug.
 * Ellipsis should be selectable
 * Ellipsis info widget should be the folded code
@@ -38,6 +45,7 @@ Questions:
 
 BUGS:
 * Building all the widgets for the model is taking way too long
+* Performance in general
 
 Cleanups:
 * Observable List needs a replace_item too

@@ -22,6 +22,30 @@ def discard_eventarg(func):
         return func()
     return handler
 
+def filter_eventtypes(event_types):
+    """Returns a decorator that takes pygame events and passes them on
+    to the decorated function only if they are within the given event
+    types"""
+    def decorate(func):
+        @functools.wraps(func)
+        def new_func(event):
+            if event.type in event_types:
+                return func(event)
+        return new_func
+    return decorate
+
+def handler(include_keyup=False,
+            include_event=False):
+    def decorate(func):
+        if not include_event:
+            func = discard_eventarg(func)
+        if not include_keyup:
+            func = filter_eventtypes([pygame.KEYDOWN])(func)
+        return func
+    return decorate
+
+keydown_noarg = handler()
+
 def mod_name(x):
     mods = []
     if x & pygame.KMOD_CTRL:
@@ -35,14 +59,12 @@ def mod_name(x):
     return ' + '.join(mods)
 
 class Key(object):
-    def __init__(self, modifier, key, event_type=pygame.KEYDOWN):
+    def __init__(self, modifier, key):
         self.modifier = modifier
         self.key = key
-        assert event_type in [pygame.KEYUP, pygame.KEYDOWN]
-        self.event_type = event_type
 
     def _essence(self):
-        return (self.modifier, self.key, self.event_type)
+        return (self.modifier, self.key)
     def __cmp__(self, other):
         if isinstance(other, Key):
             return cmp(self._essence(), other._essence())
@@ -52,16 +74,12 @@ class Key(object):
         return hash(self._essence())
 
     def name(self):
-        m = mod_name(self.modifier)
-        k = pygame.key.name(self.key)
-        if m:
-            s = '%s+%s' % (m, k)
+        key_name = pygame.key.name(self.key)
+        if self.modifier:
+            return '%s+%s' % (mod_name(self.modifier), key_name)
         else:
-            s = k
-        if self.event_type == pygame.KEYUP:
-            s += ' (keyup)'
-        return s
-    
+            return key_name
+
     __repr__ = name
 
     @classmethod
@@ -73,20 +91,22 @@ class Key(object):
             mod |= pygame.KMOD_ALT
         elif event.mod & pygame.KMOD_SHIFT:
             mod |= pygame.KMOD_SHIFT
-        return cls(mod, event.key, event.type)
+        return cls(mod, event.key)
 
 class Group(object):
-    def __init__(self, name, allowed_modifiers, keys, event_type=pygame.KEYDOWN):
+    def __init__(self, name, allowed_modifiers, keys):
         self.allowed_modifiers = set(allowed_modifiers)
         self.keys = set(self._flatten(key) for key in keys)
         self._name = name
-        self.event_type = event_type
+        
     def _flatten(self, key):
         if isinstance(key, Group):
             return key.keys
         return key
+    
     def name(self):
         return self._name
+    
     def overlaps(self, key):
         if isinstance(key, Group):
             return bool(self.keys & key.keys) and bool(self.allowed_modifiers &
@@ -95,8 +115,9 @@ class Group(object):
             return key in self
         else:
             return NotImplemented
+        
     def __contains__(self, key):
-        return key.key in self.keys and key.modifier in self.allowed_modifiers and key.event_type == self.event_type
+        return key.key in self.keys and key.modifier in self.allowed_modifiers
 
 # TODO: Its bad to assume anything about K_* here...
 import string
@@ -252,9 +273,6 @@ class Keymap(object):
             return
         self.notify_add_item(key, func)
 
-    def register_key_noarg(self, key, func):
-        self.register_key(key, discard_eventarg(func))
-
     def unregister_key(self, key):
         assert isinstance(key, Key)
         r = self.key_registrations
@@ -278,15 +296,16 @@ class Keymap(object):
         self.disabled_group_registrations.pop(group, None)
             
     def key_event(self, event):
-        mkey = Key.from_pygame_event(event)
+        assert event.type in [pygame.KEYUP, pygame.KEYDOWN]
+        key = Key.from_pygame_event(event)
         if self.next_keymap is not None and self.next_keymap.key_event(event):
             return True
-        if mkey in self.key_registrations:
-            func = self.key_registrations[mkey]
+        if key in self.key_registrations:
+            func = self.key_registrations[key]
             func(event)
             return True
         for group, func in self.group_registrations.iteritems():
-            if mkey in group:
+            if key in group:
                 func(event)
                 return True
         return False

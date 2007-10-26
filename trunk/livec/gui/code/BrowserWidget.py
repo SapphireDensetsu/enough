@@ -4,7 +4,7 @@
 from gui.Box import VBox, HBox
 from gui.Stack import Stack
 from gui.Spacer import Spacer
-from gui.Keymap import Key
+from gui import Keymap
 from gui.KeysReflectionWidget import KeysReflectionWidget
 from widget_for import widget_for
 import gui.draw
@@ -14,6 +14,12 @@ from lib.observable.List import List
 import pygame
 
 class BrowserWidget(HBox):
+
+    offset_right_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_LEFT)
+    offset_left_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_RIGHT)
+    offset_up_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_UP)
+    offset_down_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_DOWN)
+
     def __init__(self, node):
         self.main_stack = Stack()
         self.main_stack.push(widget_for(node))
@@ -36,12 +42,11 @@ class BrowserWidget(HBox):
             info_box,
         ]), relay_focus=True)
 
-        def register_ctrl_key(x, func):
-            self.keymap.register_key_noarg(Key(pygame.KMOD_CTRL, x), func)
-        register_ctrl_key(pygame.K_LEFT, self._offset_right)
-        register_ctrl_key(pygame.K_RIGHT, self._offset_left)
-        register_ctrl_key(pygame.K_UP, self._offset_down)
-        register_ctrl_key(pygame.K_DOWN, self._offset_up)
+        register_key = self.keymap.register_key
+        register_key(self.offset_right_key, Keymap.keydown_noarg(self._offset_right))
+        register_key(self.offset_left_key, Keymap.keydown_noarg(self._offset_left))
+        register_key(self.offset_up_key, Keymap.keydown_noarg(self._offset_down))
+        register_key(self.offset_down_key, Keymap.keydown_noarg(self._offset_up))
 
     offset_speed = 25
     def _offset_left(self):
