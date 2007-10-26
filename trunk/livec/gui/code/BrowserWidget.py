@@ -5,11 +5,13 @@ from gui.Box import VBox, HBox
 from gui.Stack import Stack
 from gui.Spacer import Spacer
 from gui.Keymap import Key
+from gui.KeysReflectionWidget import KeysReflectionWidget
 from widget_for import widget_for
 import gui.draw
-import pygame
-
+import style
 from lib.observable.List import List
+
+import pygame
 
 # TODO: Maybe call it LiveCEditorWidget ?
 class BrowserWidget(HBox):
@@ -19,8 +21,9 @@ class BrowserWidget(HBox):
 
 
         from gui.loop import loop
-        from KeysReflectionWidget import KeysReflectionWidget
-        keys_reflection_widget = KeysReflectionWidget(loop.global_keymap)
+        keys_reflection_widget = KeysReflectionWidget(loop.global_keymap,
+                                                      style.key_name,
+                                                      style.keydoc_name)
         keys_reflection_widget.bg_color = (20,20,50)
 
         self.info_list = List([keys_reflection_widget,])
