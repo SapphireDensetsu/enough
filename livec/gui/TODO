@@ -1,6 +1,19 @@
+* Hafifa Box
+  * Should anyone stick stuff in parenting_keymap?
+  * Should parenting_keymap be set when no children exist?
+
 * Stack->StackWidget
+* Why is Ellipsis currently selectable? Fix bug.
+* Ellipsis should be selectable
+* Ellipsis info widget should be the folded code
+
+Multichildren:
+  * Select multichildren -> Allow to put them in subblock
+  * Allow subblocks to be converted to functions
+  * Allow to play with inline-ness of called functions
+  * Consider uniting Function/Block
+
 * use a NULL widget instead of all the Spacers
-* folded code on the info_box
 * add the declarations to the top of module widget:
   * emphasize them when stuff using them is in focus
   * option to remove them
