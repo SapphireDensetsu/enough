@@ -42,4 +42,4 @@ class ProxyWidget(Widget):
 
     def _proxy_to(self, widget):
         self.selectable = widget.selectable
-        self.keymap.set_next_keymap(widget.keymap)
+        self.keymap = widget.keymap
