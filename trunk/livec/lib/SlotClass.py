@@ -6,7 +6,9 @@ from lib import observer
 class MetaSlotClass(type):
     def __new__(cls, name, bases, namespace):
         if '__slots__' in namespace:
-            namespace['__slots__'].append('obs_dict')
+            slots = namespace['__slots__']
+            if 'obs_dict' not in slots:
+                slots.append('obs_dict')
         return type.__new__(cls, name, bases, namespace)
 
 class SlotClass(object):

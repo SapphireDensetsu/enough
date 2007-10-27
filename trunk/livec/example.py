@@ -26,7 +26,7 @@ def argv_1():
 
 example = nodes.Module(
     meta=nodes.Meta(name='example.c'),
-    functions=List([
+    declarations=List([
         nodes.Function(
             meta=nodes.Meta(name='main'),
             type=nodes.FunctionType(return_type=builtins.int,

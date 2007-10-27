@@ -103,11 +103,20 @@ class LiteralChar(Node):
     __slots__ = ['value', 'meta']
     defaults = dict(meta=Meta)
 
-class Module(Node):
-    __slots__ = ['functions', 'variables', 'meta']
-    defaults = dict(meta=Meta, functions=List, variables=List)
+class DeclarationsContainer(Node):
+    __slots__ = ['declarations']
+
+class Module(DeclarationsContainer):
+    __slots__ = DeclarationsContainer.__slots__ + ['meta']
+    defaults = dict(declarations=List, meta=Meta)
     def referred(self):
-        return itertools.chain(self.functions, self.variables)
+        return itertools.chain(self.declarations)
+
+class Block(DeclarationsContainer):
+    __slots__ = ['statements'] + DeclarationsContainer.__slots__ + ['meta']
+    defaults = dict(declarations=List, meta=Meta)
+    def referred(self):
+        return self.statements
 
 class NotEquals(Node):
     __slots__ = ['a', 'b', 'meta']
@@ -116,12 +125,6 @@ class NotEquals(Node):
 class Equals(Node):
     __slots__ = ['a', 'b', 'meta']
     defaults = dict(meta=Meta)
-
-class Block(Node):
-    __slots__ = ['statements', 'meta']
-    defaults = dict(meta=Meta)
-    def referred(self):
-        return self.statements
 
 class If(Node):
     __slots__ = ['expr', 'if_true', 'if_false', 'meta']
