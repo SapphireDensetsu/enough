@@ -35,3 +35,6 @@ def unlock(surface):
 
 def blit(surface, blit_surface, pos):
     surface.blit(blit_surface, pos)
+
+def save(surface, filename):
+    pygame.image.save(surface, filename)

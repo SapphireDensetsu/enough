@@ -38,6 +38,8 @@ class GraphWidget(Widget):
     key_select_node_down = Key(0, pygame.K_DOWN)
     key_connect = Key(pygame.KMOD_CTRL, pygame.K_RETURN)
     key_cycle_layout = Key(pygame.KMOD_CTRL, pygame.K_k)
+    #key_export_dot = Key(pygame.KMOD_CTRL, pygame.K_)
+    key_export_snapshot = Key(pygame.KMOD_CTRL, pygame.K_x)
 
     key_save = Key(pygame.KMOD_CTRL, pygame.K_s)
     key_load = Key(pygame.KMOD_CTRL, pygame.K_l)
@@ -60,7 +62,8 @@ class GraphWidget(Widget):
         self._connect_source_node = None
 
         self._register_keys()
-
+        self._save_next_display_update = False
+        
     def __getstate__(self):
         d= self.__dict__.copy()
         del d['parenting_keymap']
@@ -82,6 +85,7 @@ class GraphWidget(Widget):
         r(self.key_cycle_layout, self._cycle_layout_engine)
         r(self.key_save, self._save)
         r(self.key_load, self._load)
+        r(self.key_export_snapshot, self._export_snapshot)
         self._set_next_keymap()
 
     def get_size(self):
@@ -151,10 +155,14 @@ class GraphWidget(Widget):
         self.update_layout()
         return w
 
-    def update_layout(self):
+    def generate_groups(self):
         groups = {'0':[]}
         for node in self.nodes:
-            groups['0'].append(node) 
+            groups['0'].append(node)
+        return groups
+
+    def update_layout(self):
+        groups = self.generate_groups()
         self.layout.update(groups, self.size, self.node_widgets, self.edge_widgets)
         
     def update(self):
@@ -180,6 +188,10 @@ class GraphWidget(Widget):
                 start_pos = self._connector_start_pos()
                 end_pos = self._connector_end_pos()
                 draw.line(surface, (50,255,50), start_pos, end_pos)
+
+        if self._save_next_display_update:
+            draw.save(surface, self._save_next_display_update)
+            self._save_next_display_update = None
 
     def selected(self):
         if self.selected_widget_index is None:
@@ -374,3 +386,13 @@ class GraphWidget(Widget):
         newself = pickle.load(f)
         loop.loop.browser.main_stack.pop()
         loop.loop.browser.main_stack.push(newself)
+
+    def _export_dot(self):
+        '''Export the graph to a .dot file'''
+        d = Graph.generate_dot(self.generate_groups())
+        print d
+        open('save.dot', 'wb').write(d)
+
+    def _export_snapshot(self):
+        '''Export the graph to a snapshot image'''
+        self._save_next_display_update = 'snapshot.bmp'
