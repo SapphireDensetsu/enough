@@ -1,9 +1,13 @@
-* Ellipsis info widget should be the folded code
+* figure out how to expose where a node is coming from (stack: int
+   argc, global: bleh)
 
-* Spacer->SpacerWidget
+* add the declarations to the top of module widget:
+  * emphasize them when stuff using them is in focus
+  * option to remove them
+  * how to have an observable find_set_of_types_used?
 
-* Block should have its own {}
-* If should not indent
+* Dynamicism of the type widgets
+* how to have an observable find_basetype?
 
 Multichildren:
   * Select multichildren -> Allow to put them in subblock
@@ -19,21 +23,8 @@ Simon:
     * Should anyone stick stuff in parenting_keymap?
     * Should parenting_keymap be set when no children exist?
 
-* use a NULL widget instead of all the Spacers
-* add the declarations to the top of module widget:
-  * emphasize them when stuff using them is in focus
-  * option to remove them
-  * how to have an observable find_set_of_types_used?
-* figure out how to expose where a node is coming from (stack: int
-   argc, global: bleh)
-
+Later:
 * Viewer configuration should be stored in a ConfigParser config file?
-
-* Dynamicism of the type widgets
-* how to have an observable find_basetype?
-
-* Change Groups to have the modifiers per-key and not per-group
-
 * Command usage statistics
 
 Documentation:

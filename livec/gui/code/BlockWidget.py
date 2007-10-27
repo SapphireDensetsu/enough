@@ -8,7 +8,7 @@ from gui import Keymap
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
 from gui.TextEdit import make_label
-from widget_for import widget_for, ccode_widget_for
+from widget_for import indented, widget_for
 from InfoShower import InfoShower
 
 from lib.observable.CacheMap import CacheMap
@@ -18,7 +18,7 @@ from lib.observable.ValueProxy import ValueProxy
 import ccode
 import style
 
-class BlockWidget(ProxyWidget):
+class BlockWidget(VBox):
     default_folded = False
     kill_stmt_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_k)
     insert_if_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_i)
@@ -30,11 +30,16 @@ class BlockWidget(ProxyWidget):
         self.block = block
         self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements))
         self.ellipsis = make_label(style.ellipsis, '...', True)
-        ProxyWidget.__init__(self)
+        self.proxy_widget = ProxyWidget()
+        self.proxy_widget.value_proxy.set(self.statement_box)
+        VBox.__init__(self, List([
+            make_label(style.braces, '{'),
+            indented(self.proxy_widget),
+            make_label(style.braces, '}'),
+        ]), relay_focus=True)
         self.info_shower = InfoShower(self.ellipsis.focus_keymap.obs_activation)
         self.info_shower.info_widget = self.statement_box
-        self._value_proxy.set(self.statement_box)
-        
+
         self.statement_box.keymap.register_key(
             self.insert_if_key,
             Keymap.keydown_noarg(self._add_if)
@@ -42,7 +47,6 @@ class BlockWidget(ProxyWidget):
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
         self._update_delete_registration()
-
         self._update_fold_state()
 
     def _statement_list_insert(self, index, item):
@@ -77,7 +81,7 @@ class BlockWidget(ProxyWidget):
             for key in self.plus_keys:
                 self.keymap.unregister_key(key)
             widget = self.statement_box
-        self._value_proxy.set(widget)
+        self.proxy_widget.value_proxy.set(widget)
 
     def _fold(self):
         """Fold the code block"""

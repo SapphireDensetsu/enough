@@ -18,10 +18,10 @@ class KeysReflectionWidget(VBox):
         VBox.__init__(self, CacheMap(self._widget, SortedItems(self.root)))
 
     def _widget(self, (key, func)):
-        from gui.Spacer import Spacer
+        from gui.SpacerWidget import SpacerWidget
         f = func.__doc__
         return HBox(List([
             make_label(self.keydoc_name_style, f),
-            Spacer((self.key_space_width, 0)),
+            SpacerWidget((self.key_space_width, 0)),
             make_label(self.key_name_style, key.name()),
         ]))
