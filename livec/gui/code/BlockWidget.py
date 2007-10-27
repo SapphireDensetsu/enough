@@ -28,11 +28,13 @@ class BlockWidget(VBox):
     
     def __init__(self, block):
         self.block = block
-        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
-                                  relay_focus=True)
         self.ellipsis = make_label(style.ellipsis, '...', True)
         self.proxy_widget = ProxyWidget()
+
+        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
+                                  relay_focus=True)
         self.proxy_widget.value_proxy.set(self.statement_box)
+
         VBox.__init__(self, List([
             make_label(style.braces, '{'),
             indented(self.proxy_widget),
@@ -41,9 +43,9 @@ class BlockWidget(VBox):
         self.info_shower = InfoShower(self.ellipsis.focus_keymap.obs_activation)
         self.info_shower.info_widget = self.statement_box
 
-        self.statement_box.keymap.register_key(
+        self.keymap.register_key(
             self.insert_if_key,
-            Keymap.keydown_noarg(self._add_if)
+            Keymap.keydown_noarg(self._insert_if)
         )
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
@@ -109,7 +111,7 @@ class BlockWidget(VBox):
             ]), relay_focus=True)
         return w
 
-    def _add_if(self):
+    def _insert_if(self):
         """Add a new 'if'"""
         _if = nodes.If(
             expr=nodes.LiteralInt(value=1),

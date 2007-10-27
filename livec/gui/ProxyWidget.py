@@ -17,6 +17,9 @@ class ProxyWidget(Widget):
         self.value_proxy.obs_value.add_observer(self, '_value_')
         self._update_proxy()
 
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, self.value_proxy)
+
     def draw(self, surface, pos):
         self._current_widget().draw(surface, pos)
     

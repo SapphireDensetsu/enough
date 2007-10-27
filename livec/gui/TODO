@@ -1,7 +1,4 @@
-* Module subclasses block.
 * Variables defined in block, refer to block they're defined in.
-* 
-  
 
 * figure out how to expose where a node is coming from (stack: int
    argc, global: bleh)
