@@ -28,7 +28,8 @@ class BlockWidget(VBox):
     
     def __init__(self, block):
         self.block = block
-        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements))
+        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
+                                  relay_focus=True)
         self.ellipsis = make_label(style.ellipsis, '...', True)
         self.proxy_widget = ProxyWidget()
         self.proxy_widget.value_proxy.set(self.statement_box)
@@ -36,7 +37,7 @@ class BlockWidget(VBox):
             make_label(style.braces, '{'),
             indented(self.proxy_widget),
             make_label(style.braces, '}'),
-        ]), relay_focus=True)
+        ]))
         self.info_shower = InfoShower(self.ellipsis.focus_keymap.obs_activation)
         self.info_shower.info_widget = self.statement_box
 
