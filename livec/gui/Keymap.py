@@ -69,7 +69,7 @@ class Key(object):
         if isinstance(other, Key):
             return cmp(self._essence(), other._essence())
         else:
-            return NotImplemented
+            return cmp(type(self), type(other))
     def __hash__(self):
         return hash(self._essence())
 
@@ -96,14 +96,9 @@ class Key(object):
 class Group(object):
     def __init__(self, name, allowed_modifiers, keys):
         self.allowed_modifiers = set(allowed_modifiers)
-        self.keys = set(self._flatten(key) for key in keys)
+        self.keys = set(keys)
         self._name = name
         
-    def _flatten(self, key):
-        if isinstance(key, Group):
-            return key.keys
-        return key
-    
     def name(self):
         return self._name
     

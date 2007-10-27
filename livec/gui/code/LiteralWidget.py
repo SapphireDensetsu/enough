@@ -28,12 +28,15 @@ class LiteralWidget(HBox):
         self._info_shower.info_widget = example
 
     def _get_string(self):
-        return self.literal.value
+        return self._string_of_value(self.literal.value)
 
     def _set_string(self, value):
-        self.literal.value = self._convert_string(value)
+        self.literal.value = self._value_of_string(value)
 
-    def _convert_string(self, value):
+    def _string_of_value(self, value):
+        return value
+
+    def _value_of_string(self, value):
         return value.replace('\r', '\n')
 
     def allowed_text(self, value):

@@ -57,5 +57,6 @@ literal_char_delimiter = _make_style(color=(200, 200, 255))
 
 example_string = literal_string
 example_char_int = _make_style(color=(255, 255, 255))
+example_int = _make_style(color=(255, 255, 255))
 
 unknown_c_code = _make_style(color=(20, 255, 255), bgcolor=(100, 0, 0))

@@ -1,43 +1,26 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from gui.TextEdit import TextEdit
-from gui.code.widget_for import widget_for
-from gui import Keymap
-from lib.observable.List import List
+from ccode import c_escape_char
+from LiteralWidget import LiteralWidget
 import style
+import struct
 
-import pygame
+class LiteralIntWidget(LiteralWidget):
+    escape_table = None
+    delimiter = ""
+    literal_style = style.literal_int
+    delimiter_style = style.literal_int
+    example_style = style.example_int
+    
+    def _get_example_str(self):
+        int_val = self.literal.value
+        return '%d\n0x%X' % (int_val, int_val)
 
-class LiteralIntWidget(TextEdit):
-    backspace = Keymap.Key(0, pygame.K_BACKSPACE)
-    negate_key = Keymap.Key(0, pygame.K_MINUS)
-    def __init__(self, literal):
-        self.literal = literal
-        # TODO: When necessary, use DictMap to access self.literal.value
-        s = style.literal_int
-        TextEdit.__init__(self, s, lambda : str(self.literal.value))
-        self.selectable.set(True)
+    def _value_of_string(self, value):
+        return int(value)
+    def _string_of_value(self, value):
+        return str(value)
 
-        self.focus_keymap.register_key(self.backspace_key, Keymap.keydown_noarg(self._backspace))
-        self.focus_keymap.register_key(self.negate_key, Keymap.keydown_noarg(self._minus))
-        self.focus_keymap.register_group(
-            Keymap.digits,
-            Keymap.handler(include_event=True)(self._add_digit)
-        )
-
-    def _backspace(self):
-        """Remove the last digit from the number"""
-        self.literal.value /= 10
-        
-    def _minus(self):
-        """Negate the number"""
-        self.literal.value *= -1
-        
-    def _add_digit(self, event):
-        """Add a digit to the number"""
-        self.literal.value *= 10
-        if self.literal.value >= 0:
-            self.literal.value += (event.key - pygame.K_0)
-        else:
-            self.literal.value -= (event.key - pygame.K_0)
+    def allowed_text(self, value):
+        return value.isdigit()
