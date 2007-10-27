@@ -1,8 +1,9 @@
+* Ellipsis info widget should be the folded code
+
 * Spacer->SpacerWidget
 
-* selectable should become selectable() and observable. Box should use it
-* Ellipsis should be selectable
-* Ellipsis info widget should be the folded code
+* Block should have its own {}
+* If should not indent
 
 Multichildren:
   * Select multichildren -> Allow to put them in subblock

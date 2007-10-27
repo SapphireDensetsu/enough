@@ -33,10 +33,8 @@ class TextEdit(Widget):
     
     left_key = Keymap.Key(0, pygame.K_LEFT)
     right_key = Keymap.Key(0, pygame.K_RIGHT)
-    home_key = Keymap.Key(0, pygame.K_HOME)
-    end_key = Keymap.Key(0, pygame.K_END)
-    a_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_a)
-    e_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_e)
+    home_keys = [Keymap.Key(0, pygame.K_HOME), Keymap.Key(pygame.KMOD_CTRL, pygame.K_a)]
+    end_keys = [Keymap.Key(0, pygame.K_END), Keymap.Key(pygame.KMOD_CTRL, pygame.K_e)]
     backspace_key = Keymap.Key(0, pygame.K_BACKSPACE)
     
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
@@ -66,10 +64,10 @@ class TextEdit(Widget):
             self.editing_keymap.register_key(key, Keymap.keydown_noarg(func))
         register_editing_key(self.left_key, self._left)
         register_editing_key(self.right_key, self._right)
-        register_editing_key(self.home_key, self._home)
-        register_editing_key(self.end_key, self._end)
-        register_editing_key(self.a_key, self._home)
-        register_editing_key(self.e_key, self._end)
+        for home_key in self.home_keys:
+            register_editing_key(home_key, self._home)
+        for end_key in self.end_keys:
+            register_editing_key(end_key, self._end)
         register_editing_key(self.backspace_key, self._backspace)
         for group in self.key_groups:
             self.editing_keymap.register_group(

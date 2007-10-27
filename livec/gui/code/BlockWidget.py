@@ -8,7 +8,8 @@ from gui import Keymap
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
 from gui.TextEdit import make_label
-from gui.code.widget_for import widget_for, ccode_widget_for
+from widget_for import widget_for, ccode_widget_for
+from InfoShower import InfoShower
 
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
@@ -28,8 +29,10 @@ class BlockWidget(ProxyWidget):
     def __init__(self, block):
         self.block = block
         self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements))
-        self.ellipsis = make_label(style.ellipsis, '...', selectable=True)
+        self.ellipsis = make_label(style.ellipsis, '...', True)
         ProxyWidget.__init__(self)
+        self.info_shower = InfoShower(self.ellipsis.focus_keymap.obs_activation)
+        self.info_shower.info_widget = self.statement_box
         self._value_proxy.set(self.statement_box)
         
         self.statement_box.keymap.register_key(

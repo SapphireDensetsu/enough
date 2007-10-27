@@ -15,7 +15,7 @@ class EnumValueWidget(IdentifierWidget):
 
         d = DictMap(DictOfAttrs(self.variable))
 
-        self._info_widget = ProxyWidget(d.map('enum', self._widget_for))
+        self._info_shower.info_widget = ProxyWidget(d.map('enum', self._widget_for))
 
     def _widget_for(self, enum):
         return EnumWidget(enum, self.variable)
