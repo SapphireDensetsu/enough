@@ -26,15 +26,20 @@ class ProxyWidget(Widget):
         self.size = cw.size
 
     def _value_changed(self, old_value, new_value):
+        old_value.selectable.obs_value.remove_observer(self)
         self._update_proxy()
 
     def _value_added(self, new_value):
         self._update_proxy()
 
     def _value_deleted(self, old_value):
+        old_value.selectable.obs_value.remove_observer(self)
         self._update_proxy()
 
     def _update_proxy(self):
+        if self._value_proxy.exists():
+            widget = self._value_proxy.get()
+            widget.selectable.obs_value.add_observer(self, '_selectable_')
         self._proxy_to(self._current_widget())
     
     def _current_widget(self):
@@ -44,5 +49,8 @@ class ProxyWidget(Widget):
             return self._spacer
 
     def _proxy_to(self, widget):
-        self.selectable = widget.selectable
+        self.selectable.set(widget.selectable.get())
         self.keymap.set_next_keymap(widget.keymap)
+
+    def _selectable_changed(self, old_value, new_value):
+        self.selectable.set(new_value)

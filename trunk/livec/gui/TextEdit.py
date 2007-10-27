@@ -26,7 +26,6 @@ class TextStyle(object):
         return '%s(color=%r, font_size=%r, font_name=%r, bgcolor=%r, is_italic=%r, is_underline=%r, is_bold=%r)' % (self.__class__.__name__, self.color, self.font_size, self.font_name, self.bgcolor, self.is_italic, self.is_underline, self.is_bold)
 
 class TextEdit(Widget):
-    selectable = False
     margin = [0, 0]
     start_editing_key = Keymap.Key(0, pygame.K_RETURN)
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
@@ -43,6 +42,7 @@ class TextEdit(Widget):
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
                  allowed_text=None):
         Widget.__init__(self)
+        self.selectable.set(False)
         self.get_text = get_text
         self.set_text = set_text
         self.allowed_text = allowed_text
@@ -50,7 +50,7 @@ class TextEdit(Widget):
         self.key_groups = groups
         if set_text:
             assert self.key_groups, "Must set groups when used in edit mode"
-            self.selectable = True
+            self.selectable.set(True)
             self._register_keys()
         self.set_style(style)
         self._cursor = None
@@ -211,5 +211,5 @@ class TextEdit(Widget):
 
 def make_label(style, text, selectable=False):
     te = TextEdit(style, lambda : text)
-    te.selectable = selectable
+    te.selectable.set(selectable)
     return te

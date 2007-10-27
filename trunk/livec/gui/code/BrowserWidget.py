@@ -33,7 +33,7 @@ class BrowserWidget(HBox):
 
         self.info_list = List([keys_reflection_widget,])
         info_box = VBox(self.info_list)
-        info_box.selectable = False
+        info_box.selectable.set(False)
         info_box.bg_color = (20,50,20)
 
         HBox.__init__(self, List([
