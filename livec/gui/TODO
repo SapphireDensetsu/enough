@@ -1,10 +1,4 @@
-Simon:
-  * Only expose register_group
-  * Group of one for all keys
-  * Group collects (event_type, modifier, key)
-  * Hafifa Box
-    * Should anyone stick stuff in parenting_keymap?
-    * Should parenting_keymap be set when no children exist?
+* Spacer->SpacerWidget
 
 * selectable should become selectable() and observable. Box should use it
 * Ellipsis should be selectable
@@ -15,6 +9,14 @@ Multichildren:
   * Allow subblocks to be converted to functions
   * Allow to play with inline-ness of called functions
   * Consider uniting Function/Block
+
+Simon:
+  * Only expose register_group
+  * Group of one for all keys
+  * Group collects (event_type, modifier, key)
+  * Hafifa Box
+    * Should anyone stick stuff in parenting_keymap?
+    * Should parenting_keymap be set when no children exist?
 
 * use a NULL widget instead of all the Spacers
 * add the declarations to the top of module widget:
@@ -30,6 +32,8 @@ Multichildren:
 * how to have an observable find_basetype?
 
 * Change Groups to have the modifiers per-key and not per-group
+
+* Command usage statistics
 
 Documentation:
 * Document the observable interfaces.

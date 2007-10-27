@@ -27,9 +27,8 @@ class BlockWidget(ProxyWidget):
     
     def __init__(self, block):
         self.block = block
-        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
-                             relay_focus=True)
-        self.ellipsis = make_label(style.ellipsis, '...')
+        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements))
+        self.ellipsis = make_label(style.ellipsis, '...', selectable=True)
         ProxyWidget.__init__(self)
         self._value_proxy.set(self.statement_box)
         

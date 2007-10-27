@@ -10,7 +10,6 @@ import style
 import pygame
 
 class LiteralIntWidget(TextEdit):
-    selectable = True
     backspace = Keymap.Key(0, pygame.K_BACKSPACE)
     negate_key = Keymap.Key(0, pygame.K_MINUS)
     def __init__(self, literal):
@@ -18,6 +17,7 @@ class LiteralIntWidget(TextEdit):
         # TODO: When necessary, use DictMap to access self.literal.value
         s = style.literal_int
         TextEdit.__init__(self, s, lambda : str(self.literal.value))
+        self.selectable.set(True)
 
         self.focus_keymap.register_key(self.backspace_key, Keymap.keydown_noarg(self._backspace))
         self.focus_keymap.register_key(self.negate_key, Keymap.keydown_noarg(self._minus))

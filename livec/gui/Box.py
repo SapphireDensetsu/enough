@@ -43,6 +43,8 @@ class Box(Widget):
         Widget.__init__(self)
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
+        for child in self.child_list:
+            child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
 
         self.relay_focus = relay_focus
         
@@ -75,26 +77,19 @@ class Box(Widget):
             Keymap.keydown_noarg(self._leave_child)
         )
 
-    def _start_relay_focus(self):
-        if self.relay_focus:
-            return
-        self.focus_keymap.unregister_key(self.enter_child_key)
-        self.parenting_keymap.unregister_key(self.leave_child_key)
-        self._enter_child()
+    def _child_selectable_changed(self, child, old_value, new_value):
+        if not new_value and self.selected_child() is child:
+            self.set_index(self.index+1, 1)
 
-    def _stop_relay_focus(self):
-        if self.relay_focus:
-            return
-        self._allow_enter_child()
-        self._allow_leave_child()
-
-    def _child_insert(self, index, widget):
+    def _child_insert(self, index, child):
+        child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
         if index <= self.index:
             self.set_index(self.index+1, 1)
         else:
             self.set_index(self.index, 1)
 
-    def _child_pop(self, index, value):
+    def _child_pop(self, index, child):
+        child.selectable.obs_value.remove_observer(self)
         if self.index is None:
             return
         if index == self.index:
@@ -109,9 +104,11 @@ class Box(Widget):
         if self.index is not None:
             self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
         else:
-            self.parenting_keymap.set_next_keymap(self.focus_keymap)
+            self.parenting_keymap.set_next_keymap(None)
 
     def selected_child(self):
+        if self.index is None:
+            return None
         return self.child_list[self.index]
 
     def _enter_child(self):
@@ -131,11 +128,12 @@ class Box(Widget):
     def _set_empty_state(self):
         self.index = None
         self._set_next_keymap()
-        self._start_relay_focus()
+        self._leave_child()
+        self.selectable.set(False)
 
     def _set_nonempty_state(self):
         self._set_next_keymap()
-        self._stop_relay_focus()
+        self.selectable.set(True)
 
     def set_index(self, new_value, scan_dir=None):
         # TODO: Split this function
@@ -147,15 +145,16 @@ class Box(Widget):
         new_value %= len(self.child_list)
         orig_value = new_value
 
-        assert scan_dir is not None or self.child_list[new_value].selectable, \
+        assert scan_dir is not None or self.child_list[new_value].selectable.get(), \
                "set_index used on unselectable child"
             
-        while not self.child_list[new_value].selectable:
+        while not self.child_list[new_value].selectable.get():
             new_value += scan_dir
             new_value %= len(self.child_list)
             if new_value == orig_value:
                 self._set_empty_state()
                 return
+
         self.index = new_value
 
         self._update_next_prev_keys()
@@ -173,7 +172,7 @@ class Box(Widget):
 
     def _have_selectable(self, child_list):
         for child in child_list:
-            if child.selectable:
+            if child.selectable.get():
                 return True
         return False
 

@@ -23,6 +23,7 @@ from functools import partial
 import gui.draw
 from gui.Keymap import Keymap
 from animation import MovingPos
+from lib.observable.ValueProxy import ValueProxy
 
 class _dontchange: pass
 
@@ -32,7 +33,6 @@ class Widget(object):
     frame_color = None
     frame_width = 1
     bg_color = None
-    selectable = True
     use_rounded_rect = True
     activated_frame_color = (40, 40, 255)
     activated_bg_color = (30, 30, 90)
@@ -47,6 +47,8 @@ class Widget(object):
         self._prev_frame_colors = []
 
         self._anim_pos = MovingPos()
+
+        self.selectable = ValueProxy(True)
 
     def _keymap_activated(self):
         self.got_focus()
