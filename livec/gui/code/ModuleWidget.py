@@ -19,7 +19,7 @@ class ModuleWidget(VBox):
     
     def __init__(self, module):
         self.module = module
-        self.func_box = VBox(CacheMap(widget_for, self.module.functions), relay_focus=True)
+        self.func_box = VBox(CacheMap(widget_for, self.module.declarations), relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, loop.namer.get_name(self.module)),
             self.func_box,
@@ -41,5 +41,5 @@ class ModuleWidget(VBox):
         index = self.func_box.index
         if index is None:
             index = 0
-        self.module.functions.insert(index, func)
+        self.module.declarations.insert(index, func)
         self.func_box.set_index(index)

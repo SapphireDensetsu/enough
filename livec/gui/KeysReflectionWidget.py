@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Enough Project.
+# See LICENSE for details.
+
 import pygame
 from gui.Box import HBox, VBox
 from gui.TextEdit import make_label
