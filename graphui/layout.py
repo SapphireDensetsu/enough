@@ -10,9 +10,21 @@ from Lib.Dot import Dot, OutOfDate
 class Layout(object):
     preserve_aspect_ratio = True
     def __init__(self):
-        self.dot = Dot()
         self.dot_prog_num = 0
+        self.init_dot()
 
+    def init_dot(self):
+        self.dot = Dot()
+        
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        del d['dot']
+        return d
+    def __setstate__(self, d):
+        for k,v in d.iteritems():
+            self.__dict__[k] = v
+        self.init_dot()
+        
     def cycle_layout_engines(self):
         self.dot_prog_num = (self.dot_prog_num + 1) % len(self.dot.layout_programs)
         self.dot.set_process(self.dot.layout_programs[self.dot_prog_num])

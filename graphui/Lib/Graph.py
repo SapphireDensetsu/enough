@@ -52,8 +52,6 @@ class Node(ObservableValue):
         ObservableValue.__init__(self, value)
         self.connections = {'in': list(inc), 'out': list(outc)}
         self.obs = observer.Observable()
-    def __getstate__(self):
-        return dict(value=self.value, connections=self.connections)
 
     def connect_node(self, other, edge_value=None):
         e = Edge(self, other, edge_value)
