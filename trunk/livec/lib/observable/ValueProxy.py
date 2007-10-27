@@ -11,6 +11,8 @@ class ValueProxy(object):
     def __init__(self, value=_missing):
         self.value = value
         self.obs_value = Observable()
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__.__name__, self.value)
     def exists(self):
         return self.value is not _missing
     def get(self):

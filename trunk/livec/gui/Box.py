@@ -48,9 +48,6 @@ class Box(Widget):
 
         self.relay_focus = relay_focus
         
-        if not self.relay_focus:
-            self._allow_enter_child()
-
         # parenting_keymap is the keymap that's active when one of the
         # children is in focus (not the Box itself). IT's next keymap is the active child's keymap.
         self.parenting_keymap = Keymap.Keymap()
@@ -71,6 +68,9 @@ class Box(Widget):
             Keymap.keydown_noarg(self._enter_child)
         )
 
+    def _disallow_enter_child(self):
+        self.focus_keymap.unregister_key(self.enter_child_key)
+
     def _allow_leave_child(self):
         self.parenting_keymap.register_key(
             self.leave_child_key,
@@ -78,8 +78,12 @@ class Box(Widget):
         )
 
     def _child_selectable_changed(self, child, old_value, new_value):
-        if not new_value and self.selected_child() is child:
-            self.set_index(self.index+1, 1)
+        if not new_value:
+            if self.selected_child() is child:
+                self.set_index(self.index+1, 1)
+        else:
+            if self.index is None:
+                self.set_index(0, 1)
 
     def _child_insert(self, index, child):
         child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
@@ -100,8 +104,8 @@ class Box(Widget):
             self.set_index(self.index)
 
     def _set_next_keymap(self):
-        self.keymap.set_next_keymap(self.parenting_keymap)
         if self.index is not None:
+            self.keymap.set_next_keymap(self.parenting_keymap)
             self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
         else:
             self.parenting_keymap.set_next_keymap(None)
@@ -127,13 +131,17 @@ class Box(Widget):
 
     def _set_empty_state(self):
         self.index = None
-        self._set_next_keymap()
-        self._leave_child()
-        self.selectable.set(False)
+        self._disallow_enter_child()
+        if self.relay_focus:
+            self.selectable.set(False)
+        else:
+            self._leave_child()
 
     def _set_nonempty_state(self):
-        self._set_next_keymap()
-        self.selectable.set(True)
+        if self.relay_focus:
+            self.selectable.set(True)
+        else:
+            self._allow_enter_child()
 
     def set_index(self, new_value, scan_dir=None):
         # TODO: Split this function
@@ -159,6 +167,7 @@ class Box(Widget):
 
         self._update_next_prev_keys()
         self._set_nonempty_state()
+        self._set_next_keymap()
 
     def _update_next_prev_keys(self):
         for selectability, key, func in [

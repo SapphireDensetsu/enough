@@ -31,7 +31,7 @@ class BrowserWidget(HBox):
                                                       style.keydoc_name)
         keys_reflection_widget.bg_color = (20,20,50)
 
-        self.info_list = List([keys_reflection_widget,])
+        self.info_list = List([keys_reflection_widget])
         info_box = VBox(self.info_list)
         info_box.selectable.set(False)
         info_box.bg_color = (20,50,20)
