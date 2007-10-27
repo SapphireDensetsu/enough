@@ -3,7 +3,7 @@
 
 from gui.Widget import Widget
 
-class Spacer(Widget):
+class SpacerWidget(Widget):
     def __init__(self, size):
         Widget.__init__(self)
         self.selectable.set(False)

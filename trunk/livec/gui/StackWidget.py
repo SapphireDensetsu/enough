@@ -25,6 +25,6 @@ class StackWidget(ProxyWidget):
     def _update_state(self):
         top = self.top()
         if top is not None:
-            self._value_proxy.set(top)
+            self.value_proxy.set(top)
         else:
-            self._value_proxy.clear()
+            self.value_proxy.clear()

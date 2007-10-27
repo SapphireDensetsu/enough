@@ -19,7 +19,7 @@ the parenting keymap, even if the box itself is not in focus.
 import pygame
 from gui.Widget import Widget
 from gui import Keymap
-from gui.Spacer import Spacer
+from gui.SpacerWidget import SpacerWidget
 
 class Direction(object): pass
 

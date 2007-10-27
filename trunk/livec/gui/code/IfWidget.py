@@ -6,9 +6,9 @@ import pygame
 
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
-from gui.Spacer import Spacer
+from gui.SpacerWidget import SpacerWidget
 from gui.TextEdit import make_label
-from gui.code.widget_for import widget_for, indented
+from gui.code.widget_for import widget_for
 from gui.code import style
 
 from lib.observable.List import List
@@ -31,27 +31,17 @@ class IfWidget(VBox):
         ]), relay_focus=True)
         cond_part.is_centered = True
 
-        if_true_part = VBox(List([
-            make_label(style.braces, '{'),
-            indented(ProxyWidget(d.map('if_true', widget_for))),
-            make_label(style.braces, '}'),
-        ]), relay_focus=True)
-
-        optional_false_part = ProxyWidget(d.map('if_false', self._widget_for_else))
-            
         VBox.__init__(self, List([
             cond_part,
-            if_true_part,
-            optional_false_part,
+            ProxyWidget(d.map('if_true', widget_for)),
+            ProxyWidget(d.map('if_false', self._widget_for_else)),
         ]))
     
     def _widget_for_else(self, x):
         if x is not None:
             return VBox(List([
                 make_label(style.else_, 'else'),
-                make_label(style.braces, '{'),
-                indented(widget_for(x)),
-                make_label(style.braces, '}'),
+                widget_for(x),
             ]), relay_focus=True)
         else:
-            return Spacer((0, 0))
+            return SpacerWidget((0, 0))

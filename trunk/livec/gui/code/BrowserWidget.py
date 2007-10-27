@@ -3,7 +3,7 @@
 
 from gui.Box import VBox, HBox
 from gui.StackWidget import StackWidget
-from gui.Spacer import Spacer
+from gui.SpacerWidget import SpacerWidget
 from gui import Keymap
 from gui.KeysReflectionWidget import KeysReflectionWidget
 from widget_for import widget_for
@@ -38,7 +38,7 @@ class BrowserWidget(HBox):
 
         HBox.__init__(self, List([
             self.main_stack,
-            Spacer((10, 0)),
+            SpacerWidget((10, 0)),
             info_box,
         ]), relay_focus=True)
 
