@@ -3,7 +3,7 @@
 
 import pygame
 from Widget import Widget
-import Keymap
+from Keymap import Keymap, Key
 import draw
 
 class TextStyle(object):
@@ -25,8 +25,8 @@ class TextStyle(object):
 class TextEdit(Widget):
     selectable = False
     margin = [0, 0]
-    start_editing_key = Keymap.Key(0, pygame.K_RETURN)
-    stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
+    start_editing_key = Key(0, pygame.K_RETURN)
+    stop_editing_key = Key(0, pygame.K_ESCAPE)
     cursor_color = (255, 10, 10)
     
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None):
@@ -45,28 +45,31 @@ class TextEdit(Widget):
 
     def __getstate__(self):
         d= self.__dict__.copy()
+        del d['keymap']
         del d['editing_keymap']
-        kmap = d['focus_keymap']
-        for k in tuple(kmap.iterkeys()):
-            kmap.unregister_key(k)
+        del d['focus_keymap']
+        del d['_font']
         return d
     def __setstate__(self, d):
-        for k,v in d.iteritems:
+        for k,v in d.iteritems():
             self.__dict__[k] = v
+        self.focus_keymap = Keymap()
+        self.keymap = Keymap()
+        self.set_style(self._style)
         self._register_keys()
     
     def _register_keys(self):
         self.focus_keymap.register_key_noarg(self.start_editing_key, self._start_editing)
 
-        self.editing_keymap = Keymap.Keymap()
+        self.editing_keymap = Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_LEFT), self._left)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_RIGHT), self._right)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_HOME), self._home)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_END), self._end)
-        self.editing_keymap.register_key_noarg(Keymap.Key(pygame.KMOD_CTRL, pygame.K_a), self._home)
-        self.editing_keymap.register_key_noarg(Keymap.Key(pygame.KMOD_CTRL, pygame.K_e), self._end)
-        self.editing_keymap.register_key_noarg(Keymap.Key(0, pygame.K_BACKSPACE), self._backspace)
+        self.editing_keymap.register_key_noarg(Key(0, pygame.K_LEFT), self._left)
+        self.editing_keymap.register_key_noarg(Key(0, pygame.K_RIGHT), self._right)
+        self.editing_keymap.register_key_noarg(Key(0, pygame.K_HOME), self._home)
+        self.editing_keymap.register_key_noarg(Key(0, pygame.K_END), self._end)
+        self.editing_keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_a), self._home)
+        self.editing_keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_e), self._end)
+        self.editing_keymap.register_key_noarg(Key(0, pygame.K_BACKSPACE), self._backspace)
         for group in self.key_groups:
             self.editing_keymap.register_group(group,
                                                self._insert_char)
@@ -138,6 +141,7 @@ class TextEdit(Widget):
         self._cursor += 1
 
     def set_style(self, style):
+        self._style = style
         self.color = style.color
         if style.bgcolor is None:
             self.bgcolor = ()

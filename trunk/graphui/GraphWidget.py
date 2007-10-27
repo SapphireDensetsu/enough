@@ -51,9 +51,6 @@ class GraphWidget(Widget):
         self.edge_widgets = Dict()
         self.sorted_widgets = SortedItems(self.node_widgets)
 
-        self.parenting_keymap = Keymap()
-
-        
         self.layout = Layout()
         
         self.selected_widget_index = None
@@ -66,25 +63,27 @@ class GraphWidget(Widget):
 
     def __getstate__(self):
         d= self.__dict__.copy()
+        del d['parenting_keymap']
         del d['focus_keymap']
         del d['keymap']
         return d
     def __setstate__(self, d):
-        for k,v in d.iteritems:
+        for k,v in d.iteritems():
             self.__dict__[k] = v
         self.focus_keymap = Keymap()
         self.keymap = Keymap()
         self._register_keys()
 
     def _register_keys(self):
+        self.parenting_keymap = Keymap()
         r = self.keymap.register_key_noarg
         r(self.key_create_node, self._create_new_node)
         r(self.key_connect, self._start_connect)
         r(self.key_cycle_layout, self._cycle_layout_engine)
         r(self.key_save, self._save)
         r(self.key_load, self._load)
+        self._set_next_keymap()
 
-        
     def get_size(self):
         return self._size.current
     def set_size(self, p):
@@ -372,6 +371,6 @@ class GraphWidget(Widget):
         '''Load'''
         import pickle
         f=open('save.pkl', 'rb')
-        newself = pickle.load(f,2)
-        loop.browser.main_stack.pop()
-        loop.browser.main_stack.push(newself)
+        newself = pickle.load(f)
+        loop.loop.browser.main_stack.pop()
+        loop.loop.browser.main_stack.push(newself)

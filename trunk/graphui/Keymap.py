@@ -120,15 +120,16 @@ class Keymap(object):
         self.notify_set_item = self.obs_dict.notify.set_item
         
     def __getstate__(self):
-        d = self.__dict__.copy()
-        for key in d.keys():
-            if key.startswith('notify_'):
-                del d[key]
-        return d
-    def __setstate__(self, d):
-        for k,v in d.iteritems():
-            self.__dict__[k] = v
-        self._cache_notifiers()
+        raise Exception("Cant pickle keymap", self)
+##         d = self.__dict__.copy()
+##         for key in d.keys():
+##             if key.startswith('notify_'):
+##                 del d[key]
+##         return d
+##     def __setstate__(self, d):
+##         for k,v in d.iteritems():
+##             self.__dict__[k] = v
+##         self._cache_notifiers()
 
     def __contains__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:

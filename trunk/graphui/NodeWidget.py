@@ -7,8 +7,7 @@ from guilib import MovingValue
 from Lib.Point import Point
 from Widget import Widget
 from TextEdit import TextEdit, TextStyle
-from Keymap import Key
-import Keymap
+from Keymap import Key, Keymap, all_printable
 
 from Lib.observer import Observable
 
@@ -23,7 +22,7 @@ class NodeWidget(Widget):
     def __init__(self, node, *args, **kw):
         self.node = node
         self.style = style._make_style()
-        self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [Keymap.all_printable], {'\r':'\n'})
+        self.text_widget = TextEdit(self.style, self._get_text, self._set_text, [all_printable], {'\r':'\n'})
         
         self.node.obs.add_observer(self, '_node_')
         Widget.__init__(self, *args, **kw)
@@ -42,7 +41,7 @@ class NodeWidget(Widget):
         del d['keymap']
         return d
     def __setstate__(self, d):
-        for k,v in d.iteritems:
+        for k,v in d.iteritems():
             self.__dict__[k] = v
         self.focus_keymap = Keymap()
         self.keymap = Keymap()
