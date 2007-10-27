@@ -8,4 +8,4 @@ import style
 class DefineValueWidget(IdentifierWidget):
     def __init__(self, variable):
         IdentifierWidget.__init__(self, variable, style.define_value)
-        self._info_widget = DefineWidget(self.variable)
+        self._info_shower.info_widget = DefineWidget(self.variable)

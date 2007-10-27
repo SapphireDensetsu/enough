@@ -8,4 +8,4 @@ from VariableDeclarationWidget import VariableDeclarationWidget
 class VariableWidget(IdentifierWidget):
     def __init__(self, variable):
         IdentifierWidget.__init__(self, variable, style.variable_name)
-        self._info_widget = VariableDeclarationWidget(self.variable)
+        self._info_shower.info_widget = VariableDeclarationWidget(self.variable)
