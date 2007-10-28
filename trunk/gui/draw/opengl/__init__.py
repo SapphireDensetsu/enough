@@ -94,12 +94,15 @@ import font
 
 
 _font_cache = {}
-def get_font(name, size):
+def get_font(name, size, is_bold=False, is_underline=False, is_italic=False):
     global _font_cache
-    f = _font_cache.get((name,size), None)
+    f = _font_cache.get((name, size, is_bold, is_underline, is_italic), None)
     if not f:
         f = pygame.font.Font(name, size)
-        _font_cache[(name,size)] = f
+        f.set_underline(is_underline)
+        f.set_bold(is_bold)
+        f.set_italic(is_italic)
+        _font_cache[(name, size, is_bold, is_underline, is_italic)] = f
     return f
 
 def draw_font(surface, rendered_surface, pos):
@@ -114,3 +117,6 @@ def lock(surface):
 def unlock(surface):
     pass
 
+
+def save(surface, filename):
+    pass
