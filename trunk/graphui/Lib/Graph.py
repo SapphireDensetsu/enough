@@ -273,7 +273,6 @@ def _data_received((g, n, e), groups):
             for edge in node.connections['out']:
                 edge_sid = edge.id
                 assert edge_sid not in ids_to_edges
-                assert edge_sid not in ids_to_nodes
                 ids_to_edges[edge_sid] = edge
                 
             if sid in n:
