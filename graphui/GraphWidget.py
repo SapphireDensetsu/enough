@@ -166,9 +166,32 @@ class GraphWidget(Widget):
         self.layout.update(groups, self.size, self.node_widgets, self.edge_widgets)
         
     def update(self):
-        for w in self.node_widgets.values():
-            w.update()
-        for w in self.edge_widgets.values():
+        if self.node_widgets:
+            #  Todo rewrite this highly-unoptimized code!
+            font_size_average = 0
+            font_sizes = {}
+            dists = {}
+            for w in self.node_widgets.itervalues():
+                size = w.reset_max_text_size()
+                font_size_average += size
+                font_sizes[w] = size
+            font_size_average /= len(self.node_widgets)
+            variance = 0
+            for w in self.node_widgets.itervalues():
+                size = font_sizes[w]
+                dist = (size - font_size_average)**2
+                dists[w] = dist
+                variance += dist
+            variance /= len(self.node_widgets)
+            for w in self.node_widgets.itervalues():
+                if variance != 0:
+                    size = font_sizes[w]
+                    dist = dists[w]
+                    if  dist / variance > 0.3:
+                        if size > font_size_average:
+                            w._update_text_size(font_size_average)
+                w.update()
+        for w in self.edge_widgets.itervalues():
             w.update()
         self._size.update()
         

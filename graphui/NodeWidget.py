@@ -13,12 +13,15 @@ from Lib.observer import Observable
 
 import style
 
+FONT_SIZE_ABSOLUTE_MAX = 72
+
 class NodeWidget(Widget):
     bg_color=(10,10,130)
     fg_color=(70,70,150)
     activated_fg_color=(100,100,250)
 
     key_stop_edit=Key(0, pygame.K_ESCAPE)
+    
     def __init__(self, node, *args, **kw):
         self.node = node
         self.style = style._make_style()
@@ -34,6 +37,9 @@ class NodeWidget(Widget):
 
         self.obs_loc = Observable()
         self._register_keys()
+
+        self.reset_max_text_size()
+        
 
     def __getstate__(self):
         d= self.__dict__.copy()
@@ -68,21 +74,38 @@ class NodeWidget(Widget):
         self.node.value = text
         self._update_text_size()
 
-    def _update_text_size(self):
-        max_font_size = 72
+    def reset_max_text_size(self, value=None):
+        # returns the calculated actual size
+        if value is None:
+            value = FONT_SIZE_ABSOLUTE_MAX
+        self.max_font_size = value
+        return self.calc_text_size()
+        
+    def calc_text_size(self):
         min_font_size = 2
         ratio = 0.7
         yratio = 1
-        while (self.text_widget.size[0] < self._size.final.x*ratio
-               or self.text_widget.size[1] < self._size.final.y*yratio) and self.style.font_size < max_font_size:
-            self.style.font_size = min(self.style.font_size + 1, 72)
-            self.text_widget.set_style(self.style)
-            self.text_widget.update()
-        while (self.text_widget.size[0] > self._size.final.x*ratio
-               or self.text_widget.size[1] > self._size.final.y*yratio) and self.style.font_size > min_font_size:
+        size = self.style.font_size
+        self.text_widget.update()
+        while ((self.text_widget.size[0] < self._size.final.x*ratio
+               or self.text_widget.size[1] < self._size.final.y*yratio)
+               and self.style.font_size < min(self.max_font_size, FONT_SIZE_ABSOLUTE_MAX)):
+            self.style.font_size = min(self.style.font_size + 1, FONT_SIZE_ABSOLUTE_MAX)
+            self._update_text_size()
+            
+        while ((self.text_widget.size[0] > self._size.final.x*ratio
+               or self.text_widget.size[1] > self._size.final.y*yratio)
+               and self.style.font_size > min_font_size or self.style.font_size > self.max_font_size):
             self.style.font_size -= 1
-            self.text_widget.set_style(self.style)
-            self.text_widget.update()
+            self._update_text_size()
+            
+        return self.style.font_size
+    
+    def _update_text_size(self, new_size=None):
+        if new_size is not None:
+            self.style.font_size = new_size
+        self.text_widget.set_style(self.style)
+        self.text_widget.update()
         
     def get_size(self):
         return self._size.current
