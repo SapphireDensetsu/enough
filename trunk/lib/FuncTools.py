@@ -20,19 +20,3 @@ class PicklablePartial(object):
         self._args = a
         self._kw = k
         self._set_partial()
-
-        
-
-def none_func(*args, **kw):
-    return None
-
-def identity(x):
-    return x
-
-class ReturnThis(object):
-    # picklable alternative to lambda : x
-    def __init__(self, ret_val):
-        self.ret_val = ret_val
-    def __call__(self):
-        return self.ret_val
-    
