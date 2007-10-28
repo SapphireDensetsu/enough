@@ -33,13 +33,16 @@ class Loop(object):
     def _quit(self):
         """Quits the program"""
         self.lc.stop()
+    def _stop(self, e):
+        reactor.stop()
+        
     def loop(self, display, widget):
         self.display = display
         self.widget = widget
         self.global_keymap.set_next_keymap(self.widget.keymap)
 
         d = self.lc.start(1. / self.fps)
-        d.addCallback(partial(reactor.stop))
+        d.addCallback(self._stop)
         d.addErrback(twisted.python.log.err)
         reactor.run()
     
