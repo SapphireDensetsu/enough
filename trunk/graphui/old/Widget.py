@@ -18,8 +18,7 @@
 
 import pygame
 
-from Lib.Func import PicklablePartial as partial
-#from functools import partial
+from functools import partial
 
 from Lib.Point import Point
 from Lib import Func
