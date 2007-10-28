@@ -20,5 +20,5 @@ class LiteralCharWidget(LiteralWidget):
         int_val, = struct.unpack('<L', full)
         return '%d\n0x%X' % (int_val, int_val)
 
-    def allowed_text(self, value):
+    def _allowed_text(self, value):
         return len(value) <= 4

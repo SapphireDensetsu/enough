@@ -36,6 +36,7 @@ class TextEdit(Widget):
     home_keys = [Keymap.Key(0, pygame.K_HOME), Keymap.Key(pygame.KMOD_CTRL, pygame.K_a)]
     end_keys = [Keymap.Key(0, pygame.K_END), Keymap.Key(pygame.KMOD_CTRL, pygame.K_e)]
     backspace_key = Keymap.Key(0, pygame.K_BACKSPACE)
+    del_key = Keymap.Key(0, pygame.K_DELETE)
     
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
                  allowed_text=None):
@@ -54,6 +55,9 @@ class TextEdit(Widget):
         self._cursor = None
         self.is_editing = False
 
+    def set_cursor(self, val):
+        self._cursor = min(val, len(self.get_text()))
+
     def _register_keys(self):
         self.focus_keymap.register_key(self.start_editing_key,
                                        Keymap.keydown_noarg(self._start_editing))
@@ -69,6 +73,7 @@ class TextEdit(Widget):
         for end_key in self.end_keys:
             register_editing_key(end_key, self._end)
         register_editing_key(self.backspace_key, self._backspace)
+        register_editing_key(self.del_key, self._delete)
         for group in self.key_groups:
             self.editing_keymap.register_group(
                 group,
@@ -114,19 +119,19 @@ class TextEdit(Widget):
 
     def _left(self):
         """Go left once"""
-        self._fix_cursor()
+        self.fix_cursor()
         if self._cursor > 0:
             self._cursor -= 1
 
     def _right(self):
         """Go right once"""
-        self._fix_cursor()
+        self.fix_cursor()
         if self._cursor < len(self.get_text()):
             self._cursor += 1
 
     def _backspace(self):
         """Delete last character"""
-        self._fix_cursor()
+        self.fix_cursor()
         if self._cursor == 0:
             return
         o = self.get_text()
@@ -135,6 +140,17 @@ class TextEdit(Widget):
             return
         self.set_text(new_text)
         self._cursor -= 1
+
+    def _delete(self):
+        """Delete next character"""
+        self.fix_cursor()
+        o = self.get_text()
+        if self._cursor == len(o):
+            return
+        new_text = o[:self._cursor] + o[self._cursor+1:]
+        if not self._allowed(new_text):
+            return
+        self.set_text(new_text)
 
     def _handle_char_key(self, event):
         """Insert character"""
@@ -146,7 +162,7 @@ class TextEdit(Widget):
         return self.allowed_text(text)
 
     def _insert(self, x):
-        self._fix_cursor()
+        self.fix_cursor()
         o = self.get_text()
         new_text = o[:self._cursor] + x + o[self._cursor:]
         if not self._allowed(new_text):
@@ -170,12 +186,13 @@ class TextEdit(Widget):
             return self._font.size(atom)
         self.size = self._do(func)
 
-    def _fix_cursor(self):
+    def fix_cursor(self):
         if self._cursor is None:
             self._cursor = len(self.get_text())
+        self._cursor = min(self._cursor, len(self.get_text()))
     
     def _draw(self, surface, pos):
-        self._fix_cursor()
+        self.fix_cursor()
         def func(index, atom, curpos):
             text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
             size = self._font.size(atom)

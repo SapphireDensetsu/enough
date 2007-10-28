@@ -16,7 +16,7 @@ class LiteralWidget(HBox):
                                   self._get_string, self._set_string,
                                   [Keymap.all_printable],
                                   convertor=self.escape_table,
-                                  allowed_text=self.allowed_text)
+                                  allowed_text=self._allowed_text)
         example = TextEdit(self.example_style, self._get_example_str)
         example.frame_color = self.example_frame_color
         HBox.__init__(self, List([
@@ -39,5 +39,5 @@ class LiteralWidget(HBox):
     def _value_of_string(self, value):
         return value.replace('\r', '\n')
 
-    def allowed_text(self, value):
+    def _allowed_text(self, value):
         return True
