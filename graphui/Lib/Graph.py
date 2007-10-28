@@ -43,11 +43,11 @@ class ObservableValue(object):
     def __setstate__(self, d):
         self._value = d['_value']
         
-
+pid = 0
 def persistent_id(obj):
-    import time
-    pid = '%s_%s_%s' % (time.time(), id(type(obj)), id(obj))
-    return str(abs(hash(pid)))
+    global pid
+    pid += 1
+    return str(pid)
 
 class Edge(ObservableValue):
     def __init__(self, source, target, value):
@@ -249,7 +249,6 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
                 out += '%s -> %s [%s];\n' % (node.id, other.id, _repr_properties(edge_props))
                 
         out += '}\n'
-    print out
     return out + '}\n'
 
 # This uses DOT to find the position of nodes in a graph
