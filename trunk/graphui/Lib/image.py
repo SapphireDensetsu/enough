@@ -2,14 +2,14 @@
 # See LICENSE for details.
 
 
-from lib.FuncTools import cached
+#from lib.FuncTools import cached
 import pygame
 
-@cached
+#@cached
 def load_image(filename):
     return pygame.image.load(filename)
 
-@cached
+#@cached
 def _cached_scale(surface, (w,h)):
     return pygame.transform.scale(surface, (w,h))
 
