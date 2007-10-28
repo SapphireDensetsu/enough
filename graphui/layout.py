@@ -43,14 +43,14 @@ class Layout(object):
         if not n:
             return
         g_height, g_width = float(g['height']), float(g['width'])
-        x_scale = size.x / g_width 
-        y_scale = size.y / g_height
+        x_scale = size[0] / g_width 
+        y_scale = size[1] / g_height
         x_offset = 0
         y_offset = 0
         if self.preserve_aspect_ratio:
             x_scale = y_scale = min(x_scale, y_scale)
-            x_offset += (size.x - (x_scale * g_width)) / 2
-            y_offset += (size.y - (y_scale * g_height)) / 2
+            x_offset += (size[0] - (x_scale * g_width)) / 2
+            y_offset += (size[1] - (y_scale * g_height)) / 2
 
         
         for node, n_layout in n.iteritems():

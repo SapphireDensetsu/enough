@@ -9,6 +9,7 @@ from Lib.Point import Point, from_polar, point_near_polyline
 from gui.Widget import Widget
 
 from gui.Keymap import Key, keydown_noarg
+from gui.Mousemap import MouseArea
 
 class EdgeWidget(Widget):
     bg_color=(150,10,10)
@@ -26,6 +27,7 @@ class EdgeWidget(Widget):
         self.cached_parent_offset = None
         self.font = draw.get_font(pygame.font.get_default_font(), 14)
         self.rendered_text = self.font.render('', True, self.fg_color)
+        self.mouse_area = MouseArea(self.in_bounds)
 
     def get_size(self):
         return self._size.current
@@ -73,8 +75,9 @@ class EdgeWidget(Widget):
         self.paint_text(surface, parent_offset)
 
     def paint_lines(self, surface, parent_offset):
+        parent_offset = Point(parent_offset)
         self.line.update()
-        self.draw_rect = draw.lines(surface, self.bg_color, False, [tuple(p + parent_offset) for p in self.line.current], 2)
+        self.draw_rect = draw.lines(surface, self.bg_color, False, [tuple(Point(p) + parent_offset) for p in self.line.current], 2)
 
         target_widget = self.get_node_widget(self.edge.target)
         if (self.line.done and target_widget._pos.done and target_widget._size.done
@@ -91,7 +94,7 @@ class EdgeWidget(Widget):
             shape = target_widget.shape
             i = len(self.line.current)/2
             while i + 1 < len(self.line.current):
-                a, b = self.line.current[i], self.line.current[i+1]
+                a, b = map(Point, (self.line.current[i], self.line.current[i+1]))
                 i += 1
                 for intersection in shape.intersections(a, b):
                     break
@@ -109,6 +112,7 @@ class EdgeWidget(Widget):
             
 
     def paint_text(self, surface, parent_offset):
+        parent_offset = Point(parent_offset)
         mid = len(self.line.current)/2
         midvalues = self.line.current[mid:mid+2]
         if len(midvalues) < 2:
