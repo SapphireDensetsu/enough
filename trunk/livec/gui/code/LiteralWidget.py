@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from gui.Box import HBox
-from gui.TextEdit import TextEdit, make_label
+from gui.TextEdit import TextEdit
 from gui import Keymap
 from InfoShower import InfoShower
 
@@ -20,9 +20,9 @@ class LiteralWidget(HBox):
         example = TextEdit(self.example_style, self._get_example_str)
         example.frame_color = self.example_frame_color
         HBox.__init__(self, List([
-            make_label(self.delimiter_style, self.delimiter),
+            TextEdit(self.ldelimiter_style, lambda : self.ldelimiter),
             self.text_edit,
-            make_label(self.delimiter_style, self.delimiter),
+            TextEdit(self.rdelimiter_style, lambda : self.rdelimiter),
         ]), relay_focus=True)
         self._info_shower = InfoShower(self.text_edit.focus_keymap.obs_activation)
         self._info_shower.info_widget = example

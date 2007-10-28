@@ -8,9 +8,9 @@ import struct
 
 class LiteralCharWidget(LiteralWidget):
     escape_table = c_escape_char
-    delimiter = "'"
+    ldelimiter = rdelimiter = "'"
+    ldelimiter_style = rdelimiter_style = style.literal_char_delimiter
     literal_style = style.literal_char
-    delimiter_style = style.literal_char_delimiter
     example_style = style.example_char_int
     
     def _get_example_str(self):
