@@ -17,7 +17,8 @@ import style
 FONT_SIZE_ABSOLUTE_MAX = 72
 
 class NodeWidget(Widget):
-    bg_color=(10,10,130)
+    bg_color=(10,10,100)
+    activated_bg_color=(40,40,160)
     fg_color=(70,70,150)
     activated_fg_color=(100,100,250)
 
@@ -156,13 +157,13 @@ class NodeWidget(Widget):
         self.pos = Point(self.pos) + Point((5,0))
     def _move_left(self):
         '''move left'''
-        self.pos = self.pos + Point((-5,0))
+        self.pos = Point(self.pos) + Point((-5,0))
     def _move_up(self):
         '''move up'''
-        self.pos = self.pos + Point((0,-5))
+        self.pos = Point(self.pos) + Point((0,-5))
     def _move_down(self):
         '''move down'''
-        self.pos = self.pos + Point((0,5))
+        self.pos = Point(self.pos) + Point((0,5))
         
     def _edit_value(self):
         '''Edit value'''

@@ -171,39 +171,34 @@ class GraphWidget(Widget):
         
     def update(self):
         if self.node_widgets:
-##             import math
-##             # todo rewrite this shitty code
-##             sizes = {}
-##             slots = {}
-##             slots_size = {}
-##             slot_places = {}
-##             average = 0
-##             num = len(self.node_widgets)
-##             for w in self.node_widgets.values():
-##                 size = w.reset_max_text_size()
-##                 sizes[w] = size
-##             for w, size in sizes.iteritems():
-##                 dist = int(round(math.log(size + 1)))
-##                 slot = dist 
-##                 slots.setdefault(slot, 0)
-##                 slots_size.setdefault(slot, 0)
-                
-##                 slot_places[w] = slot
-##                 slots[slot] += size
-##                 slots_size[slot] += 1
-
-##             for slot in slots:
-##                 if slot in slots_size:
-##                     num = slots_size[slot]
-##                     if num > 0:
-##                         slots[slot] /= slots_size[slot]
-##             for w,slot in slot_places.iteritems():
-##                 size = sizes[w]
-##                 new_max_size = slots[slot]
-##                 if new_max_size < size:
-##                     w.reset_max_text_size(new_max_size)
+            import math
+            # todo rewrite this shitty code
+            sizes = {}
+            slots = {}
+            slot_places = {}
+            average = 0
+            num = len(self.node_widgets)
             for w in self.node_widgets.values():
+                size = w.reset_max_text_size()
+                sizes[w] = size
+            for w, size in sizes.iteritems():
+                dist = int(round(math.log(size + 1)/2.))
+                slot = dist 
+                slots.setdefault(slot, size)
+                slots[slot] = min(slots[slot],size)
+                
+                slot_places[w] = slot
+
+            for w,slot in slot_places.iteritems():
+                size = sizes[w]
+                new_max_size = slots[slot]
+                if new_max_size < size:
+                    w.reset_max_text_size(new_max_size)
                 w.update()
+
+##             for w in self.node_widgets.values():
+##                 w.reset_max_text_size()
+##                 w.update()
         for w in self.edge_widgets.itervalues():
             w.update()
         self._size.update()
@@ -306,7 +301,7 @@ class GraphWidget(Widget):
     def _select_node_left(self):
         '''Select the next node to the left'''
         def dist(pos1, pos2):
-            if pos1[0] > pos2[1]:
+            if pos1[0] > pos2[0]:
                 return None
             return pos2[0] - pos1[0]
         self._select_node_dir(dist)
@@ -430,6 +425,8 @@ class GraphWidget(Widget):
             self.remove_node(node)
         self._set_next_keymap()
         for node in nodes:
+            # TODO if we are loading nodes in addition to existing nodes,
+            # make sure ID's are re-allocated to prevent collisions.
             self.add_node(node)
             
 
