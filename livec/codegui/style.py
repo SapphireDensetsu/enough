@@ -1,12 +1,7 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
-
 from gui.TextEdit import TextStyle
-
-def _make_style(color=(220, 220, 220), font_size=16, font_name='../gui/fonts/FreeMonoBold.ttf',
-                bgcolor=None, is_italic=False, is_underline=False, is_bold=False):
-    return TextStyle(color, font_size, font_name, bgcolor,
-                     is_italic, is_underline, is_bold)
+from gui.default_style import _make_style
 
 unnamed_bg_color = (80, 20, 20)
 

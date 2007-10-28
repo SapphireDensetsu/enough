@@ -6,9 +6,8 @@ from gui.StackWidget import StackWidget
 from gui.SpacerWidget import SpacerWidget
 from gui import Keymap
 from gui.KeysReflectionWidget import KeysReflectionWidget
-from widget_for import widget_for
 import gui.draw
-import style
+import default_style
 from lib.observable.List import List
 
 import pygame
@@ -20,15 +19,15 @@ class BrowserWidget(HBox):
     offset_up_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_UP)
     offset_down_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_DOWN)
 
-    def __init__(self, node):
+    def __init__(self, widget, style_module=default_style):
         self.main_stack = StackWidget()
-        self.main_stack.push(widget_for(node))
+        self.main_stack.push(widget)
 
 
         from codegui.loop import loop
         keys_reflection_widget = KeysReflectionWidget(loop.global_keymap,
-                                                      style.key_name,
-                                                      style.keydoc_name)
+                                                      style_module.key_name,
+                                                      style_module.keydoc_name)
         keys_reflection_widget.bg_color = (20,20,50)
 
         self.info_list = List([keys_reflection_widget])
