@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from __future__ import with_statement
-from codegui.main import pygame_display
+from gui.main import pygame_display
 
 import pygame
 

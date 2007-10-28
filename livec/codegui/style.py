@@ -60,4 +60,6 @@ example_string = literal_string
 example_char_int = _make_style(color=(255, 255, 255))
 example_int = _make_style(color=(255, 255, 255))
 
+filler = _make_style(color=(20, 50, 255), bgcolor=(200, 0, 0))
+
 unknown_c_code = _make_style(color=(20, 255, 255), bgcolor=(100, 0, 0))

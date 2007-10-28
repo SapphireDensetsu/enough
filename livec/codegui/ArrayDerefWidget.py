@@ -8,7 +8,7 @@ from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 import style
 
@@ -16,7 +16,7 @@ class ArrayDerefWidget(HBox):
     def __init__(self, array_deref):
         self.array_deref = array_deref
 
-        d = DictMap(DictOfAttrs(self.array_deref))
+        d = DictProxy(DictOfAttrs(self.array_deref))
 
         HBox.__init__(self, List([
             ProxyWidget(d.map('expr', widget_for)),

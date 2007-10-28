@@ -5,7 +5,7 @@ from gui.Box import VBox, HBox
 from widget_for import type_widget_for
 from gui.ProxyWidget import ProxyWidget
 
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
 
@@ -14,7 +14,7 @@ class VariableDeclarationWidget(HBox):
     def __init__(self, variable):
         self.variable = variable
 
-        d = DictMap(DictOfAttrs(self.variable))
+        d = DictProxy(DictOfAttrs(self.variable))
 
         HBox.__init__(self, List([
             ProxyWidget(d.map('type', self._widget_for_type)),

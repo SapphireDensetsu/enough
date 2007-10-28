@@ -1,2 +1,47 @@
+* how to do incremental search?
+  * Probably need various trie's and the ability to use a combination
+   of such.
+
+* add the declarations to the top of module widget:
+  * emphasize them when stuff using them is in focus
+  * option to remove them
+  * how to have an observable find_set_of_types_used?
+
+* Dynamicism of the type widgets
+* how to have an observable find_basetype?
+
+Multichildren:
+  * Select multichildren -> Allow to put them in subblock
+  * Allow subblocks to be converted to functions
+  * Allow to play with inline-ness of called functions
+  * Consider uniting Function/Block
+
+Simon:
+  * Only expose register_group
+  * Group of one for all keys
+  * Group collects (event_type, modifier, key)
+  * Hafifa Box
+    * Should anyone stick stuff in parenting_keymap?
+    * Should parenting_keymap be set when no children exist?
+
+Later:
+* Viewer configuration should be stored in a ConfigParser config file?
+* Command usage statistics
 * Linkage (currently we can derive #include's but not which objs to
    link)
+
+Documentation:
+* Document the observable interfaces.
+
+Questions:
+* How to manage searches/hierarchy walks?
+* How to manage UNDOs?
+* Should widgets have a destroy()?
+
+BUGS:
+* Building all the widgets for the model is taking way too long
+* Performance in general
+
+Cleanups:
+* TextEdit should take an observable mutable string, not get/set
+* TextEdit should use subclassing instead of functions in __init__

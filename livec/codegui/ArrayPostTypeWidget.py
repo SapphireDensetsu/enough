@@ -8,13 +8,13 @@ from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 class ArrayPostTypeWidget(HBox):
     def __init__(self, _type, variable):
         self.type = _type
 
-        d = DictMap(DictOfAttrs(self.type))
+        d = DictProxy(DictOfAttrs(self.type))
 
         HBox.__init__(self, List([
             make_label(style.paren, '('),

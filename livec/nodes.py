@@ -26,29 +26,30 @@ class Node(SlotClass):
             if isinstance(x, Node):
                 yield x
 
-class Named(Node):
-    def __init__(self, *args, **kw):
-        Node.__init__(self, *args, **kw)
+class Missing(Node):
+    """A node is missing in this position"""
+    __slots__ = ['meta']
+    defaults = dict(meta=Meta)
 
-class Variable(Named):
+class Variable(Node):
     __slots__ = ['type', 'meta']
     defaults = dict(meta=Meta)
 
-class Define(Named):
+class Define(Node):
     __slots__ = ['expr', 'meta']
     defaults = dict(meta=Meta)
 
-class Enum(Named):
+class Enum(Node):
     __slots__ = ['meta', 'values']
     defaults = dict(meta=Meta, values=List)
     def referred(self):
         return self.values
 
-class EnumValue(Named):
+class EnumValue(Node):
     __slots__ = ['value', 'enum', 'meta']
     defaults = dict(meta=Meta)
 
-class Function(Named):
+class Function(Node):
     __slots__ = ['type', 'block', 'meta']
     defaults = dict(meta=Meta)
     def referred(self):

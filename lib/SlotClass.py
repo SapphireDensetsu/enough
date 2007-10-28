@@ -40,13 +40,12 @@ class SlotClass(object):
             raise TypeError("Unknown keyword arguments", kw)
 
     def __setattr__(self, name, value):
+        super(SlotClass, self).__setattr__(name, value)
         if name != 'obs_dict':
             if hasattr(self, name):
                 self.obs_dict.notify.replace_item(name, getattr(self, name), value)
             else:
                 self.obs_dict.notify.add_item(name, value)
-        
-        super(SlotClass, self).__setattr__(name, value)
 
     def __getstate__(self):
         return tuple(getattr(self, field_name)

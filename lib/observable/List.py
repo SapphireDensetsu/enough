@@ -8,6 +8,9 @@ class List(object):
         self.obs_list = Observable()
         self._items = list(*args, **kw)
 
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__, self._items)
+
     def insert(self, index, item):
         self._items.insert(index, item)
         self.obs_list.notify.insert(index, item)
@@ -21,6 +24,14 @@ class List(object):
 
     def append(self, item):
         self.insert(len(self), item)
+
+    def __setitem__(self, index, new_value):
+        old_value = self._items[index]
+        self._items[index] = new_value
+        self.obs_list.notify.replace(index, old_value, new_value)
+
+    def __delitem__(self, index):
+        self.pop(index)
 
 from lib.proxyclass import proxy_class
 List = proxy_class(List, '_items', methods=[

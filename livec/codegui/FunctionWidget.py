@@ -8,13 +8,13 @@ from codegui.widget_for import widget_for, type_widget_for, declaration_widget_f
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
         
 class FunctionWidget(VBox):
     def __init__(self, function):
         self.function = function
 
-        d = DictMap(DictOfAttrs(self.function))
+        d = DictProxy(DictOfAttrs(self.function))
 
         VBox.__init__(self, List([
             ProxyWidget(d.map('type', self._widget_for_prototype)),
