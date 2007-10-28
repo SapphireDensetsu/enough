@@ -3,7 +3,7 @@
 
 from lib.observable.ValueContainer import ValueProxy
 from lib.observable.FuncCall import FuncCall
-from lib.FuncTools import PicklablePartial as partial
+from functools import partial
 
 class AlreadyMapped(Exception): pass
 
