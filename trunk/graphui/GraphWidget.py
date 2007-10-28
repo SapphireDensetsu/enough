@@ -65,16 +65,12 @@ class GraphWidget(Widget):
         self._save_next_display_update = False
         
     def __getstate__(self):
-        d= self.__dict__.copy()
+        d = Widget.__getstate__(self)
         del d['parenting_keymap']
-        del d['focus_keymap']
-        del d['keymap']
+        print d.keys()
         return d
     def __setstate__(self, d):
-        for k,v in d.iteritems():
-            self.__dict__[k] = v
-        self.focus_keymap = Keymap()
-        self.keymap = Keymap()
+        Widget.__setstate__(self, d)
         self._register_keys()
 
     def _register_keys(self):
