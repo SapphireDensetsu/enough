@@ -48,31 +48,42 @@ class LiteralIntWidget(LiteralWidget):
         int_val = self.literal.value
         return '%d\n0x%X\n0%o' % (int_val, int_val, int_val)
 
-    def _value_of_string(self, value):
-        return getattr(self, '_%s__value_of_string' % (self._mode,))(value)
+    def _value_of_string(self, text):
+        return getattr(self, '_%s__value_of_string' % (self._mode,))(text)
     def _string_of_value(self, value):
         return getattr(self, '_%s__string_of_value' % (self._mode,))(value)
-    def _allowed_text(self, value):
-        return getattr(self, '_%s__allowed_text' % (self._mode,))(value)
+    def _allowed_text(self, text):
+        is_allowed = getattr(self, '_%s__allowed_text' % (self._mode,))(text)
+        if not is_allowed:
+            return False
+        value = self._value_of_string(text)
+        transformed_text = self._string_of_value(value)
+        return transformed_text == text
 
-    def _dec__value_of_string(self, value):
-        return int(value)
+    def _dec__value_of_string(self, text):
+        if not text:
+            return 0
+        return int(text)
     def _dec__string_of_value(self, value):
         return str(value)
     def _dec__allowed_text(self, value):
         return value.isdigit()
 
-    def _oct__value_of_string(self, value):
-        return int(value, 8)
+    def _oct__value_of_string(self, text):
+        if not text:
+            return 0
+        return int(text, 8)
     def _oct__string_of_value(self, value):
         return oct(long(value))[1:-1]
     def _oct__allowed_text(self, value):
-        return all(c in '01234567' for c in value[1:])
+        return all(c in '01234567' for c in value)
 
-    def _hex__value_of_string(self, value):
-        return int(value, 16)
+    def _hex__value_of_string(self, text):
+        if not text:
+            return 0
+        return int(text, 16)
     def _hex__string_of_value(self, value):
         return hex(long(value))[2:-1]
     def _hex__allowed_text(self, value):
         return all((c.isdigit() or c in 'abcdef')
-                   for c in value[2:].lower())
+                   for c in value.lower())
