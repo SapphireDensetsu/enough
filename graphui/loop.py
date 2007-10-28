@@ -1,11 +1,11 @@
 import pygame
-from Keymap import Keymap, Key
+from gui.Keymap import Keymap, Key, keydown_noarg
 from MouseMap import MouseMap, MouseEvent
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 import twisted.python.log
 
-import draw
+from gui import draw
 
 class ExitLoop(Exception): pass
 
@@ -13,8 +13,8 @@ class Loop(object):
     fps = 20
     def __init__(self):
         self.global_keymap = Keymap()
-        self.global_keymap.register_key_noarg(Key(pygame.KMOD_CTRL, pygame.K_q),
-                                              self._quit)
+        self.global_keymap.register_key(Key(pygame.KMOD_CTRL, pygame.K_q),
+                                        keydown_noarg(self._quit))
         self.global_keymap.activate()
         self.mouse_map = MouseMap()
         self.lc = LoopingCall(self._iteration)

@@ -5,7 +5,7 @@ from __future__ import with_statement
 
 import pygame
 import contextlib
-import draw
+from gui import draw
 
 from Lib.Graph import Node, Edge
 

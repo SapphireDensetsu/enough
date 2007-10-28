@@ -4,7 +4,7 @@
 from __future__ import division
 
 import math
-import draw
+from gui import draw
 from Lib.Point import Point
 from Lib.image import fast_scale
 

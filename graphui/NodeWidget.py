@@ -2,12 +2,12 @@
 # See LICENSE for details.
 
 import pygame
-import draw
+from gui import draw
 from guilib import MovingValue
 from Lib.Point import Point
 from gui.Widget import Widget
 from gui.TextEdit import TextEdit, TextStyle
-from gui.Keymap import Key, Keymap, all_printable
+from gui.Keymap import Key, Keymap, all_printable, keydown_noarg
 
 from Lib.observer import Observable
 
@@ -54,13 +54,13 @@ class NodeWidget(Widget):
         self._register_keys()
 
     def _register_keys(self):
-        r = self.focus_keymap.register_key_noarg
-        r(Key(pygame.KMOD_CTRL, pygame.K_RIGHT), self._move_right)
-        r(Key(pygame.KMOD_CTRL, pygame.K_LEFT), self._move_left)
-        r(Key(pygame.KMOD_CTRL, pygame.K_UP), self._move_up)
-        r(Key(pygame.KMOD_CTRL, pygame.K_DOWN), self._move_down)
+        r = self.focus_keymap.register_key
+        r(Key(pygame.KMOD_CTRL, pygame.K_RIGHT), keydown_noarg(self._move_right))
+        r(Key(pygame.KMOD_CTRL, pygame.K_LEFT), keydown_noarg(self._move_left))
+        r(Key(pygame.KMOD_CTRL, pygame.K_UP), keydown_noarg(self._move_up))
+        r(Key(pygame.KMOD_CTRL, pygame.K_DOWN), keydown_noarg(self._move_down))
 
-        r(Key(0, pygame.K_RETURN), self._edit_value)
+        r(Key(0, pygame.K_RETURN), keydown_noarg(self._edit_value))
         
 
     def in_bounds(self, p):
@@ -167,7 +167,7 @@ class NodeWidget(Widget):
         '''Edit value'''
         self.keymap.set_next_keymap(self.text_widget.focus_keymap)
         self.text_widget._start_editing()
-        self.keymap.register_key_noarg(self.key_stop_edit, self._stop_edit_value)
+        self.keymap.register_key(self.key_stop_edit, keydown_noarg(self._stop_edit_value))
 
     def _stop_edit_value(self):
         '''Stop editing value'''

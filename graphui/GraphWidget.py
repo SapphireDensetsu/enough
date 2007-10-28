@@ -4,7 +4,7 @@
 from Lib.Func import PicklablePartial as partial
 
 import pygame
-import draw
+from gui import draw
 from guilib import MovingValue, MovingLine
 from Lib.Point import Point
 from gui.Widget import Widget
@@ -13,7 +13,7 @@ from EdgeWidget import EdgeWidget
 
 from lib import observer
 
-from Keymap import Keymap, Key
+from gui.Keymap import Keymap, Key,keydown_noarg
 
 from lib.observable.SortedItems import SortedItems
 from lib.observable.Dict import Dict
@@ -79,13 +79,13 @@ class GraphWidget(Widget):
 
     def _register_keys(self):
         self.parenting_keymap = Keymap()
-        r = self.keymap.register_key_noarg
-        r(self.key_create_node, self._create_new_node)
-        r(self.key_connect, self._start_connect)
-        r(self.key_cycle_layout, self._cycle_layout_engine)
-        r(self.key_save, self._save)
-        r(self.key_load, self._load)
-        r(self.key_export_snapshot, self._export_snapshot)
+        r = self.keymap.register_key
+        r(self.key_create_node, keydown_noarg(self._create_new_node))
+        r(self.key_connect, keydown_noarg(self._start_connect))
+        r(self.key_cycle_layout, keydown_noarg(self._cycle_layout_engine))
+        r(self.key_save, keydown_noarg(self._save))
+        r(self.key_load, keydown_noarg(self._load))
+        r(self.key_export_snapshot, keydown_noarg(self._export_snapshot))
         self._set_next_keymap()
 
     def get_size(self):
@@ -233,14 +233,14 @@ class GraphWidget(Widget):
         self.keymap.set_next_keymap(self.parenting_keymap)
         if self.selected_widget_index is not None:
             self.parenting_keymap.set_next_keymap(self.selected()[1].keymap)
-            r = self.parenting_keymap.register_key_noarg
-            r(self.key_delete_node, self._delete_selected_node)
-            r(self.key_next_node, self._next_node)
-            r(self.key_prev_node, self._prev_node)
-            r(self.key_select_node_right, self._select_node_right)
-            r(self.key_select_node_left, self._select_node_left)
-            r(self.key_select_node_up, self._select_node_up)
-            r(self.key_select_node_down, self._select_node_down)
+            r = self.parenting_keymap.register_key
+            r(self.key_delete_node, keydown_noarg(self._delete_selected_node))
+            r(self.key_next_node, keydown_noarg(self._next_node))
+            r(self.key_prev_node, keydown_noarg(self._prev_node))
+            r(self.key_select_node_right, keydown_noarg(self._select_node_right))
+            r(self.key_select_node_left, keydown_noarg(self._select_node_left))
+            r(self.key_select_node_up, keydown_noarg(self._select_node_up))
+            r(self.key_select_node_down, keydown_noarg(self._select_node_down))
         else:
             ur = self.parenting_keymap.unregister_key
             ur(self.key_next_node)
@@ -353,14 +353,14 @@ class GraphWidget(Widget):
         self.remove_node(n)
 
     def _node_connection_started(self):
-        r = self.keymap.register_key_noarg
+        r = self.keymap.register_key
         ur = self.keymap.unregister_key
         start_node, start_node_widget = self.selected()
         assert start_node is not None
         def _end_connect():
             '''Sets the target node to connect'''
             ur(self.key_connect)
-            r(self.key_connect, self._start_connect)
+            r(self.key_connect, keydown_noarg(self._start_connect))
 
             end_node, end_node_widget = self.sorted_widgets[self.selected_widget_index]
             start_node.connect_node(end_node)
