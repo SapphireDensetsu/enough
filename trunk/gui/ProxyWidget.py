@@ -3,7 +3,7 @@
 
 from Widget import Widget
 from SpacerWidget import SpacerWidget
-from lib.observable.ValueProxy import ValueProxy
+from lib.observable.ValueContainer import ValueContainer
 
 class ProxyWidget(Widget):
     """A widget that contains a proxy value widget that can change its
@@ -12,7 +12,7 @@ class ProxyWidget(Widget):
     def __init__(self, value_proxy=None):
         Widget.__init__(self)
         if value_proxy is None:
-            value_proxy = ValueProxy()
+            value_proxy = ValueContainer()
         self.value_proxy = value_proxy
         self.value_proxy.obs_value.add_observer(self, '_value_')
         self._update_proxy()

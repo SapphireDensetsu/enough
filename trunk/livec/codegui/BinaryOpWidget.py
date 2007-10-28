@@ -9,7 +9,7 @@ from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 from itertools import chain
 
@@ -18,7 +18,7 @@ class BinaryOpWidget(HBox):
     def __init__(self, node):
         self.node = node
 
-        d = DictMap(DictOfAttrs(self.node))
+        d = DictProxy(DictOfAttrs(self.node))
 
         left, right = self.operand_attrs
         HBox.__init__(self, List([

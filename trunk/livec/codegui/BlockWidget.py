@@ -13,7 +13,7 @@ from InfoShower import InfoShower
 
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
-from lib.observable.ValueProxy import ValueProxy
+from lib.ListProxy import ListProxy
 
 import ccode
 import style
@@ -21,7 +21,8 @@ import style
 class BlockWidget(VBox):
     default_folded = False
     kill_stmt_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_k)
-    insert_if_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_i)
+    insert_statement_key = Keymap.Key(0, pygame.K_i)
+    append_statement_key = Keymap.Key(0, pygame.K_o)
     
     plus_keys = (Keymap.Key(0, pygame.K_EQUALS), Keymap.Key(0, pygame.K_KP_PLUS))
     minus_keys = (Keymap.Key(0, pygame.K_MINUS), Keymap.Key(0, pygame.K_KP_MINUS))
@@ -31,8 +32,11 @@ class BlockWidget(VBox):
         self.ellipsis = make_label(style.ellipsis, '...', True)
         self.proxy_widget = ProxyWidget()
 
-        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
+        self.statement_box = VBox(CacheMap(self._widget_for,
+                                           self.block.statements,
+                                           with_index=True),
                                   relay_focus=True)
+        self.statement_proxy = ListProxy(self.block.statements)
         self.proxy_widget.value_proxy.set(self.statement_box)
 
         VBox.__init__(self, List([
@@ -44,9 +48,13 @@ class BlockWidget(VBox):
         self.info_shower.info_widget = self.statement_box
 
         self.keymap.register_key(
-            self.insert_if_key,
-            Keymap.keydown_noarg(self._insert_if)
+            self.insert_statement_key,
+            Keymap.keydown_noarg(self._insert_statement)
         )
+#         self.keymap.register_key(
+#             self.append_statement_key,
+#             Keymap.keydown_noarg(self._append_statement)
+#         )
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
         self._update_delete_registration()
@@ -56,6 +64,9 @@ class BlockWidget(VBox):
         self._update_delete_registration()
 
     def _statement_list_pop(self, index, value):
+        self._update_delete_registration()
+
+    def _statement_list_replace(self, index, old_value, new_value):
         self._update_delete_registration()
 
     def _update_delete_registration(self):
@@ -102,7 +113,10 @@ class BlockWidget(VBox):
             return
         self.block.statements.pop(self.statement_box.index)
 
-    def _widget_for(self, x):
+    def _widget_for(self, (index, x)):
+        if isinstance(x, nodes.Missing):
+            from StatementFillerWidget import StatementFillerWidget
+            return StatementFillerWidget(self.statement_proxy.proxy(index))
         w = widget_for(x)
         if ccode.is_expr(x):
             return HBox(List([
@@ -111,14 +125,20 @@ class BlockWidget(VBox):
             ]), relay_focus=True)
         return w
 
-    def _insert_if(self):
-        """Add a new 'if'"""
-        _if = nodes.If(
-            expr=nodes.LiteralInt(value=1),
-            if_true=nodes.Block(statements=List()),
-        )
+    def _statement_index(self):
         index = self.statement_box.index
         if index is None:
-            index = 0
-        self.block.statements.insert(index, _if)
+            return 0
+        return index
+
+    def _insert_statement(self):
+        """New statement before cursor"""
+        index = self._statement_index()
+        self.block.statements.insert(index, nodes.Missing())
+        self.statement_box.set_index(index)
+
+    def _append_statement(self):
+        """New statement after cursor"""
+        index = self._statement_index()+1
+        self.block.statements.insert(index, nodes.Missing())
         self.statement_box.set_index(index)

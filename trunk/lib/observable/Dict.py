@@ -11,8 +11,8 @@ class Dict(object):
         
     def __cmp__(self, other):
         if isinstance(other, Dict):
-            return self._dict.__comp__(other._dict)
-        return self._dict.__cmp__(other)
+            return cmp(self._dict, other._dict)
+        return cmp(self._dict, other)
 
     def __setitem__(self, key, value):
         if key not in self._dict:
@@ -33,15 +33,9 @@ class Dict(object):
     
 Dict = proxy_class(Dict, '_dict', methods=[
     '__contains__',
-    '__eq__',
-    '__ge__',
     '__getitem__',
-    '__gt__',
     '__iter__',
-    '__le__',
     '__len__',
-    '__lt__',
-    '__ne__',
     'get',
     'has_key',
     'items',

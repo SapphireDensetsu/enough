@@ -23,7 +23,7 @@ from functools import partial
 import gui.draw
 from gui.Keymap import Keymap
 from animation import MovingPos
-from lib.observable.ValueProxy import ValueProxy
+from lib.observable.ValueContainer import ValueContainer
 
 class _dontchange: pass
 
@@ -48,7 +48,7 @@ class Widget(object):
 
         self._anim_pos = MovingPos()
 
-        self.selectable = ValueProxy(True)
+        self.selectable = ValueContainer(True)
 
     def __getstate__(self):
         d = self.__dict__.copy()

@@ -13,7 +13,7 @@ from codegui import style
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 from itertools import chain
 
@@ -22,7 +22,7 @@ class IfWidget(VBox):
     def __init__(self, if_node):
         self.if_node = if_node
 
-        d = DictMap(DictOfAttrs(self.if_node))
+        d = DictProxy(DictOfAttrs(self.if_node))
         cond_part = HBox(List([
             make_label(style.if_, 'if'),
             make_label(style.paren, '('),

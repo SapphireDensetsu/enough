@@ -8,7 +8,7 @@ from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 import style
 
@@ -16,7 +16,7 @@ class ReturnWidget(HBox):
     def __init__(self, return_):
         self.return_ = return_
 
-        d = DictMap(DictOfAttrs(self.return_))
+        d = DictProxy(DictOfAttrs(self.return_))
 
         HBox.__init__(self, List([
             make_label(style.return_, "return "),

@@ -93,6 +93,10 @@ class Box(Widget):
             if self.index is None:
                 self.set_index(0, 1)
 
+    def _child_replace(self, index, old_value, new_value):
+        self._child_pop(index, old_value)
+        self._child_insert(index, new_value)
+
     def _child_insert(self, index, child):
         child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
         if index <= self.index:

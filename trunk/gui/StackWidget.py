@@ -3,7 +3,6 @@
 
 import pygame
 from ProxyWidget import ProxyWidget
-from lib.observable.ValueProxy import ValueProxy
 
 class StackWidget(ProxyWidget):
     def __init__(self):

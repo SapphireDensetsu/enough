@@ -11,7 +11,7 @@ import style
 from lib.observable.List import List
 from lib.observable.DictOfAttrs import DictOfAttrs
 
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 from functools import partial
 
@@ -19,7 +19,7 @@ class DefineWidget(HBox):
     def __init__(self, define):
         self.define = define
 
-        d = DictMap(DictOfAttrs(self.define))
+        d = DictProxy(DictOfAttrs(self.define))
         HBox.__init__(self, List([
             make_label(style.define, '#define'),
             make_label(style.space, ' '),

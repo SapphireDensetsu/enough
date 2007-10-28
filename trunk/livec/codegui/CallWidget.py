@@ -9,7 +9,7 @@ from gui.ProxyWidget import ProxyWidget
 from lib.observable.List import List
 from lib.observable.CacheMap import CacheMap
 from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictMap import DictMap
+from lib.DictProxy import DictProxy
 
 import style
 
@@ -17,7 +17,7 @@ class CallWidget(HBox):
     def __init__(self, call):
         self.call = call
 
-        d = DictMap(DictOfAttrs(self.call))
+        d = DictProxy(DictOfAttrs(self.call))
 
         comma = make_label(style.comma, ', ')
         args_box = HBox(CacheMap(widget_for, self.call.args), relay_focus=True)
