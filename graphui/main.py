@@ -28,7 +28,7 @@ res = (800, 600)
 with pygame_display(res, pygame.DOUBLEBUF) as display:
     from loop import loop
     from GraphWidget import GraphWidget
-    from BrowserWidget import BrowserWidget
+    from gui.BrowserWidget import BrowserWidget
 
     g = GraphWidget((800,400))
     b = BrowserWidget(g)

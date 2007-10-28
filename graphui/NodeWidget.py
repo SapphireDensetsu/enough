@@ -5,9 +5,9 @@ import pygame
 import draw
 from guilib import MovingValue
 from Lib.Point import Point
-from Widget import Widget
-from TextEdit import TextEdit, TextStyle
-from Keymap import Key, Keymap, all_printable
+from gui.Widget import Widget
+from gui.TextEdit import TextEdit, TextStyle
+from gui.Keymap import Key, Keymap, all_printable
 
 from Lib.observer import Observable
 

@@ -1,25 +1,25 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-'''
+"""
 Box widget - contains sub-widgets arranged in a row (HBox) or a column (VBox).
 
-It has two keymaps - one for being directly in focus, and one for when
-a child is in focus.
+Box creates an extra keymap (on top of the usual 2 Widget keymaps),
+called the parenting_keymap.
 
-The parenting keymap is for the active child - it`s next keymap is the
-child`s.  The box widget can have an active child, which is not
-neccesarily the widget in focus - if the focus is not on the box, the
-active child will still be remembered but it will not be in
-focus. That child`s keymap will remain chained on the parenting
-keymap, even if the box itself is not in focus.
+The parenting keymap is active when a child is active.  for the active
+child - it`s next keymap is the child`s.  The box widget can have an
+active child, which is not neccesarily the widget in focus - if the
+focus is not on the box, the active child will still be remembered but
+it will not be in focus. That child`s keymap will remain chained on
+the parenting keymap, even if the box itself is not in focus.
 
-'''
+"""
 
 import pygame
-from Widget import Widget
-from Keymap import Keymap, Key
-from Spacer import Spacer
+from gui.Widget import Widget
+from gui import Keymap
+from gui.SpacerWidget import SpacerWidget
 
 class Direction(object): pass
 
@@ -36,27 +36,24 @@ class Box(Widget):
     padding_widget = None
     is_centered = False
     start_in_child = True
-    go_down_key = Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
-    go_up_key = Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
+    enter_child_key = Keymap.Key(pygame.KMOD_SHIFT, pygame.K_RIGHT)
+    leave_child_key = Keymap.Key(pygame.KMOD_SHIFT, pygame.K_LEFT)
     
     def __init__(self, child_list, relay_focus=False):
         Widget.__init__(self)
         self.child_list = child_list
         self.child_list.obs_list.add_observer(self, '_child_')
+        for child in self.child_list:
+            child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
 
         self.relay_focus = relay_focus
         
-        r = self.focus_keymap.register_key_noarg
-        if not self.relay_focus:
-            r(self.go_down_key, self._enter_child)
-
         # parenting_keymap is the keymap that's active when one of the
         # children is in focus (not the Box itself). IT's next keymap is the active child's keymap.
-        self.parenting_keymap = Keymap()
+        self.parenting_keymap = Keymap.Keymap()
 
-        csr = self.parenting_keymap.register_key_noarg
         if not self.relay_focus:
-            csr(self.go_up_key, self._leave_child)
+            self._allow_leave_child()
 
         self.set_index(0, 1)
 
@@ -65,26 +62,40 @@ class Box(Widget):
         else:
             self._leave_child()
 
-    def _start_relay_focus(self):
-        if self.relay_focus:
-            return
-        self.focus_keymap.unregister_key(self.go_down_key)
-        self.parenting_keymap.unregister_key(self.go_up_key)
-        self._enter_child()
+    def _allow_enter_child(self):
+        self.focus_keymap.register_key(
+            self.enter_child_key,
+            Keymap.keydown_noarg(self._enter_child)
+        )
 
-    def _stop_relay_focus(self):
-        if self.relay_focus:
-            return
-        self.focus_keymap.register_key_noarg(self.go_down_key, self._enter_child)
-        self.parenting_keymap.register_key_noarg(self.go_up_key, self._leave_child)
+    def _disallow_enter_child(self):
+        self.focus_keymap.unregister_key(self.enter_child_key)
 
-    def _child_insert(self, index, widget):
+    def _allow_leave_child(self):
+        self.parenting_keymap.register_key(
+            self.leave_child_key,
+            Keymap.keydown_noarg(self._leave_child)
+        )
+
+    def _child_selectable_changed(self, child, old_value, new_value):
+        if not new_value:
+            if self.selected_child() is child:
+                self.set_index(self.index+1, 1)
+        else:
+            if self.index is None:
+                self.set_index(0, 1)
+
+    def _child_insert(self, index, child):
+        child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
         if index <= self.index:
             self.set_index(self.index+1, 1)
         else:
             self.set_index(self.index, 1)
 
-    def _child_pop(self, index, value):
+    def _child_pop(self, index, child):
+        child.selectable.obs_value.remove_observer(self)
+        if self.index is None:
+            return
         if index == self.index:
             self.set_index(self.index, 1)
         elif index < self.index:
@@ -93,13 +104,15 @@ class Box(Widget):
             self.set_index(self.index)
 
     def _set_next_keymap(self):
-        self.keymap.set_next_keymap(self.parenting_keymap)
         if self.index is not None:
+            self.keymap.set_next_keymap(self.parenting_keymap)
             self.parenting_keymap.set_next_keymap(self.selected_child().keymap)
         else:
-            self.parenting_keymap.set_next_keymap(self.focus_keymap)
+            self.parenting_keymap.set_next_keymap(None)
 
     def selected_child(self):
+        if self.index is None:
+            return None
         return self.child_list[self.index]
 
     def _enter_child(self):
@@ -118,14 +131,20 @@ class Box(Widget):
 
     def _set_empty_state(self):
         self.index = None
-        self._set_next_keymap()
-        self._start_relay_focus()
+        self._disallow_enter_child()
+        if self.relay_focus:
+            self.selectable.set(False)
+        else:
+            self._leave_child()
 
     def _set_nonempty_state(self):
-        self._set_next_keymap()
-        self._stop_relay_focus()
+        if self.relay_focus:
+            self.selectable.set(True)
+        else:
+            self._allow_enter_child()
 
     def set_index(self, new_value, scan_dir=None):
+        # TODO: Split this function
         if not self.child_list:
             self._set_empty_state()
             return
@@ -134,31 +153,43 @@ class Box(Widget):
         new_value %= len(self.child_list)
         orig_value = new_value
 
-        assert scan_dir is not None or self.child_list[new_value].selectable, \
+        assert scan_dir is not None or self.child_list[new_value].selectable.get(), \
                "set_index used on unselectable child"
             
-        while not self.child_list[new_value].selectable:
+        while not self.child_list[new_value].selectable.get():
             new_value += scan_dir
             new_value %= len(self.child_list)
             if new_value == orig_value:
                 self._set_empty_state()
                 return
+
         self.index = new_value
-        csu = self.parenting_keymap.unregister_key
-        csr = self.parenting_keymap.register_key_noarg
-        for c in self.child_list[self.index+1:]:
-            if c.selectable:
-                csr(self.next_key, self._next)
-                break
-        else:
-            csu(self.next_key)
-        for c in self.child_list[:self.index]:
-            if c.selectable:
-                csr(self.prev_key, self._prev)
-                break
-        else:
-            csu(self.prev_key)
+
+        self._update_next_prev_keys()
         self._set_nonempty_state()
+        self._set_next_keymap()
+
+    def _update_next_prev_keys(self):
+        for selectability, key, func in [
+            (self._next_selectable, self.next_key, self._next),
+            (self._prev_selectable, self.prev_key, self._prev),
+        ]:
+            if selectability():
+                self.parenting_keymap.register_key(key, Keymap.keydown_noarg(func))
+            else:
+                self.parenting_keymap.unregister_key(key)
+
+    def _have_selectable(self, child_list):
+        for child in child_list:
+            if child.selectable.get():
+                return True
+        return False
+
+    def _next_selectable(self):
+        return self._have_selectable(self.child_list[self.index+1:])
+
+    def _prev_selectable(self):
+        return self._have_selectable(self.child_list[:self.index])
 
     def update(self):
         for child in self.child_list:
@@ -209,6 +240,8 @@ class Box(Widget):
         return tuple(total)
 
 def with_doc(old_func, doc):
+    from functools import wraps
+    @wraps(old_func, assigned=('__module__', '__name__'))
     def new_func(*args, **kw):
         return old_func(*args, **kw)
     new_func.__doc__ = doc
@@ -216,14 +249,14 @@ def with_doc(old_func, doc):
 
 class VBox(Box):
     direction = Vertical
-    prev_key = Key(0, pygame.K_UP)
-    next_key = Key(0, pygame.K_DOWN)
+    prev_key = Keymap.Key(0, pygame.K_UP)
+    next_key = Keymap.Key(0, pygame.K_DOWN)
     _prev = with_doc(Box._prev, """Go up""")
     _next = with_doc(Box._next, """Go down""")
 
 class HBox(Box):
     direction = Horizontal
-    prev_key = Key(0, pygame.K_LEFT)
-    next_key = Key(0, pygame.K_RIGHT)
+    prev_key = Keymap.Key(0, pygame.K_LEFT)
+    next_key = Keymap.Key(0, pygame.K_RIGHT)
     _prev = with_doc(Box._prev, """Go left""")
     _next = with_doc(Box._next, """Go right""")
