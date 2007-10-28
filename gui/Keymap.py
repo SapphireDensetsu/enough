@@ -143,6 +143,9 @@ class Keymap(object):
         self.disabled_group_registrations = {}
         self.is_active = False
 
+    def __getstate__(self):
+        raise Exception("Not picklable!", self)
+    
     def __contains__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:
             return True
