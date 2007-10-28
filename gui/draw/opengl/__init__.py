@@ -37,10 +37,19 @@ def line(surface, color, startpos, endpos, width=0):
     GL.glVertex2f(endpos[0], endpos[1])
     GL.glEnd()
 
+def lines(surface, color, closed, points, width=1):
+    for p1, p2 in zip(points, points[1:]):
+        line(surface, color, p1, p2, width)
+    if closed:
+        line(surface, color, points[-1], points[0], width)
+    
 from math import pi, sin, cos
 def arc(surface, color, rect, angle_start, angle_stop, width=0):
     # TODO implement
     x,y = rect.center
+    rx = rect.width/2.0
+    ry = rect.height/2.0
+    
     t0 = angle_start
     sweep = angle_stop
     t = t0
@@ -51,10 +60,14 @@ def arc(surface, color, rect, angle_start, angle_stop, width=0):
     GL.glLineWidth(max(width,1))
     GL.glBegin(GL.GL_LINE_STRIP)
     for i in xrange(n+1):
-        GL.glVertex2f(x + r*cos(t), y - r*sin(t))
+        GL.glVertex2f(x + rx*cos(t), y - ry*sin(t))
         t += dt
     GL.glEnd()
 
+
+def ellipse(surface, color, rect, width=0):
+    # todo implement filling the eliipse if width=0
+    arc(surface, color, rect, 0, 2*pi, width)
 
 def set_mode(size, flags, depth=0):
     surface = pygame.display.set_mode(size, flags | pygame.DOUBLEBUF | pygame.OPENGL, depth)
@@ -78,41 +91,22 @@ def set_mode(size, flags, depth=0):
 
 import font
 
-class FontFaker(object):
-    def __init__(self, name, size, **kw):
-        self.name = name
-        self._size = size
-        self.font = pygame.font.Font(name, size)
-        # TODO find a way to colorify the textures even though they were painted white
-        self.chars = font.make_chars(self.font)
 
-    def render(self, text, antialias, fore_color, back_color=None):
-        # todo return a fake surface used later for drawing the font
-        return self, text, fore_color, back_color
-
-    def size(self, text):
-        #size = font.calc_size(text, self.chars)
-        size = self.font.size(text)
-        return size
-
-    def set_italic(self, *args, **kw): pass
-    def set_bold(self, *args, **kw): pass
-    def set_underline(self, *args, **kw): pass
 
 _font_cache = {}
 def get_font(name, size):
     global _font_cache
-    if (name,size) in _font_cache:
-        return _font_cache[(name,size)]
-
-    f = FontFaker(name,size)
-    _font_cache[(name,size)] = f
+    f = _font_cache.get((name,size), None)
+    if not f:
+        f = pygame.font.Font(name, size)
+        _font_cache[(name,size)] = f
     return f
 
-def draw_font(surface, fakefont_surface, pos):
-    fakefont, text, fore_color, back_color = fakefont_surface # is not really a surface
-    font.draw_chars(text, fakefont.chars, fore_color, pos)
+def draw_font(surface, rendered_surface, pos):
+    pass
 
+def blit(surface, blit_surface, pos):
+    pass
 
 def lock(surface):
     pass
