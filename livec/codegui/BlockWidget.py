@@ -51,10 +51,10 @@ class BlockWidget(VBox):
             self.insert_statement_key,
             Keymap.keydown_noarg(self._insert_statement)
         )
-#         self.keymap.register_key(
-#             self.append_statement_key,
-#             Keymap.keydown_noarg(self._append_statement)
-#         )
+        self.keymap.register_key(
+            self.append_statement_key,
+            Keymap.keydown_noarg(self._append_statement)
+        )
 
         self.block.statements.obs_list.add_observer(self, '_statement_list_')
         self._update_delete_registration()
