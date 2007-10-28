@@ -7,9 +7,9 @@ import style
 
 class LiteralStrWidget(LiteralWidget):
     escape_table = c_escape_str
-    delimiter = '"'
+    ldelimiter = rdelimiter = '"'
+    ldelimiter_style = rdelimiter_style = style.literal_string_delimiter
     literal_style = style.literal_string
-    delimiter_style = style.literal_string_delimiter
     example_frame_color = (255, 255, 255)
     example_style = style.example_string
 
