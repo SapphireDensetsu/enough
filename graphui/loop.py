@@ -3,7 +3,7 @@
 
 import pygame
 from gui.Keymap import Keymap, Key, keydown_noarg
-from MouseMap import MouseMap, MouseEvent
+from gui.Mousemap import MouseMap, MouseEvent
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 import twisted.python.log
