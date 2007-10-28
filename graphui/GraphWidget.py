@@ -367,6 +367,8 @@ class GraphWidget(Widget):
             self._connector_start_pos = None
             self._connector_end_pos = None
 
+        def _start_pos():
+            return start_node_widget.rect().center
         def _end_pos():
             n, w = self.selected()
             if w is None:
@@ -375,7 +377,7 @@ class GraphWidget(Widget):
             
         ur(self.key_connect)
         r(self.key_connect, keydown_noarg(_end_connect))
-        self._connector_start_pos = lambda : start_node_widget.rect().center
+        self._connector_start_pos = _start_pos
         self._connector_end_pos = _end_pos
         
     def _start_connect(self):
@@ -388,8 +390,10 @@ class GraphWidget(Widget):
             i = self._find_widget_index(widget)
             self._set_index(i)
             if connect_mod and self._connector_start_pos is None:
+                def _start_pos():
+                    return widget.rect().center
                 self._connect_source_node = node
-                self._connector_start_pos = lambda : widget.rect().center
+                self._connector_start_pos = _start_pos
                 self._connector_end_pos = pygame.mouse.get_pos
         elif event.type == pygame.MOUSEBUTTONUP:
             if self._connector_start_pos is not None:

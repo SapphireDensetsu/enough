@@ -7,7 +7,8 @@
 from OpenGL  import GL
 
 import OpenGL.error
-OpenGL.error.ErrorChecker.registerChecker(lambda : None)
+def nonefunc(): return None
+OpenGL.error.ErrorChecker.registerChecker(nonefunc)
 
 import pygame
 

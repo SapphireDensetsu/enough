@@ -7,6 +7,7 @@ from gui.Mousemap import MouseMap, MouseEvent
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 import twisted.python.log
+from lib.FuncTools import PicklablePartial as partial
 
 from gui import draw
 
@@ -38,7 +39,7 @@ class Loop(object):
         self.global_keymap.set_next_keymap(self.widget.keymap)
 
         d = self.lc.start(1. / self.fps)
-        d.addCallback(lambda result: reactor.stop())
+        d.addCallback(partial(reactor.stop))
         d.addErrback(twisted.python.log.err)
         reactor.run()
     

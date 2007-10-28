@@ -7,6 +7,7 @@ from gui import Keymap
 from InfoShower import InfoShower
 
 from lib.observable.List import List
+from lib.FuncTools import ReturnThis
 
 class LiteralWidget(HBox):
     example_frame_color = None
@@ -21,9 +22,9 @@ class LiteralWidget(HBox):
         example = TextEdit(self.example_style, self._get_example_str)
         example.frame_color = self.example_frame_color
         HBox.__init__(self, List([
-            TextEdit(self.ldelimiter_style, lambda : self.ldelimiter),
+            TextEdit(self.ldelimiter_style, ReturnThis(self.ldelimiter)),
             self.text_edit,
-            TextEdit(self.rdelimiter_style, lambda : self.rdelimiter),
+            TextEdit(self.rdelimiter_style, ReturnThis(self.rdelimiter)),
         ]), relay_focus=True)
         self._info_shower = InfoShower(self.text_edit.focus_keymap.obs_activation)
         self._info_shower.info_widget = example

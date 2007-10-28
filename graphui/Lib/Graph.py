@@ -121,8 +121,10 @@ class Node(ObservableValue):
         for e in self.connections['in']:
             yield e
             
-        
-def copy(orig_nodes, node_value_copier=lambda x:x, edge_value_copier=lambda x:x):
+
+from lib.FuncTools import identity
+
+def copy(orig_nodes, node_value_copier=identity, edge_value_copier=identity):
     nodes = []
     nodes_map = {}
     nodes_reverse_map = {}

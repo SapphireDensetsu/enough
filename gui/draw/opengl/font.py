@@ -30,7 +30,7 @@ def calc_size(line, chars):
     return pos
     
 def draw_chars(line, chars, color, pos):
-    r,g,b = map(lambda x:x/255.0, color)
+    r,g,b = [x/255.0 for x in color]
     GL.glPushMatrix()
     GL.glPixelTransferf(GL.GL_RED_SCALE, r)
     GL.glPixelTransferf(GL.GL_GREEN_SCALE, g)

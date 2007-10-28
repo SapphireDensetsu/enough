@@ -235,7 +235,8 @@ class TextEdit(Widget):
             max_width = max(max_width, pos[0])
         return (max_width, pos[1] + theight + self.margin[1])
 
+from lib.FuncTools import ReturnThis
 def make_label(style, text, selectable=False):
-    te = TextEdit(style, lambda : text)
+    te = TextEdit(style, ReturnThis(text))
     te.selectable.set(selectable)
     return te

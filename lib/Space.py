@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 import keyword
-from functools import partial
+from lib.FuncTools import PicklablePartial as partial
 
 import re
 def create_convert_name_matcher():

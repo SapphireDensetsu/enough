@@ -8,6 +8,7 @@ from lib.observer import Observable
 from lib.proxyclass import proxy_class
 
 from lib.observable.List import List
+from lib.FuncTools import none_func
 
 class Meta(dict):
     """This is a special kind of node that does not affect the
@@ -129,7 +130,7 @@ class Equals(Node):
 
 class If(Node):
     __slots__ = ['expr', 'if_true', 'if_false', 'meta']
-    defaults = dict(meta=Meta, if_false=lambda: None)
+    defaults = dict(meta=Meta, if_false=none_func)
 
 class Return(Node):
     __slots__ = ['expr', 'meta']
