@@ -37,14 +37,40 @@ class ObservableValue(object):
         self._value = value
         self.obs_value.notify.set_value(value)
     value = property(get_value, set_value)
-    
+
+    def __getstate__(self):
+        return dict(_value=self._value)
+    def __setstate__(self, d):
+        self._value = d['_value']
+        
+
+def persistent_id(obj):
+    import time
+    pid = '%s_%s_%s' % (time.time(), id(type(obj)), id(obj))
+    return str(abs(hash(pid)))
+
 class Edge(ObservableValue):
     def __init__(self, source, target, value):
         ObservableValue.__init__(self, value)
         self.source = source
         self.target = target
-        self._value = value
         self.obs = observer.Observable()
+        # this is for pickling. If we dont' do this, after pickling each edge will have a different ID than before.
+        self.id = persistent_id(self) 
+
+    def __getstate__(self):
+        d=ObservableValue.__getstate__(self)
+        d['source'] = self.source
+        d['target'] = self.target
+        d['id'] = self.id
+        return d
+    def __setstate__(self, d):
+        ObservableValue.__setstate__(self,d)
+        self.source = d['source']
+        self.target = d['target']
+        self.id = d['id']
+        self.obs = observer.Observable()
+        
         
         
 class Node(ObservableValue):
@@ -52,7 +78,20 @@ class Node(ObservableValue):
         ObservableValue.__init__(self, value)
         self.connections = {'in': list(inc), 'out': list(outc)}
         self.obs = observer.Observable()
+        # this is for pickling. If we dont' do this, after pickling each edge will have a different ID than before.
+        self.id = persistent_id(self) 
 
+    def __getstate__(self):
+        d=ObservableValue.__getstate__(self)
+        d['connections'] = self.connections
+        d['id'] = self.id
+        return d
+    def __setstate__(self, d):
+        ObservableValue.__setstate__(self,d)
+        self.connections = d['connections']
+        self.id = d['id']
+        self.obs = observer.Observable()
+        
     def connect_node(self, other, edge_value=None):
         e = Edge(self, other, edge_value)
         self.connect_edge(e)
@@ -197,19 +236,20 @@ def generate_dot(groups, graph_params=None, edge_font_size=1):
         for node in nodes:
             props_str = ''#_repr_properties(node.value.dot_properties())
                 
-            out += '%s [%s];\n' % (id(node), props_str)
+            out += '%s [%s];\n' % (node.id, props_str)
             for edge in node.connections['out']:
                 other = edge.target
                 edge_props = {}#edge.value.dot_properties()
                 # OVERRIDE the real label with the id(edge), so we can
                 # later correlate in dot's plain output which edge is
                 # which.
-                edge_props['label'] = id(edge)
+                edge_props['label'] = edge.id
                 edge_props['fontsize'] = 3
                 
-                out += '%s -> %s [%s];\n' % (id(node), id(other), _repr_properties(edge_props))
+                out += '%s -> %s [%s];\n' % (node.id, other.id, _repr_properties(edge_props))
                 
         out += '}\n'
+    print out
     return out + '}\n'
 
 # This uses DOT to find the position of nodes in a graph
@@ -226,14 +266,14 @@ def _data_received((g, n, e), groups):
     ids_to_edges = {}
     for group_name, nodes in groups.iteritems():
         for node in nodes:
-            sid = str(id(node))
+            sid = node.id
 
             assert sid not in ids_to_edges
             assert sid not in ids_to_nodes
             ids_to_nodes[sid] = node
             
             for edge in node.connections['out']:
-                edge_sid = str(id(edge))
+                edge_sid = edge.id
                 assert edge_sid not in ids_to_edges
                 assert edge_sid not in ids_to_nodes
                 ids_to_edges[edge_sid] = edge
