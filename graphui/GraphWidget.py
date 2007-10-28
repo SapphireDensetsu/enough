@@ -425,7 +425,7 @@ class GraphWidget(Widget):
             if self._node_link_source_node is not None:
                 self._node_link_start_pos = None
                 self._node_link_end_pos = None
-                self._node_link_func(start_node, end_node)
+                self._node_link_func(self._node_link_source_node, node)
                 self._node_link_source_node = None
                 self._node_link_color = None
                 
