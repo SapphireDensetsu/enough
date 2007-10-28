@@ -59,16 +59,16 @@ def rec_point_on_curve(cp, t):
         return PointOnCubicBezier(cp, t)
     return point_on_curve(cp[:-1], t)*(1-t) + point_on_curve(cp[1:], t)*t
 
-from Func import cached
+#from Func import cached
 
-@cached
+#@cached
 def factorial(n):
     r = 1
     for i in xrange(2,n+1):
         r *= i
     return r
 
-@cached
+#@cached
 def choose(k, n):
     assert k <= n, "K must be < N"
     return factorial(n)/(factorial(k)*factorial(n-k))
