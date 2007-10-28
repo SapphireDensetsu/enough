@@ -1,8 +1,8 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from Lib.observer import Observable
-from Lib.proxyclass import proxy_class
+from lib.observer import Observable
+from lib.proxyclass import proxy_class
 
 class Dict(object):
     def __init__(self, *args, **kw):

@@ -21,7 +21,7 @@
 
 # Generic graph module
 
-import observer
+from lib import observer
 
 class HasCyclesError(Exception): pass
 class NodeWasntConnected(Exception): pass

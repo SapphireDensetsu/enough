@@ -9,6 +9,18 @@ class Observable(object):
     def __init__(self):
         self.observers = weakref.WeakKeyDictionary()
 
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        oldobs = d['observers']
+        newobs = {}
+        for k,v in oldobs.items():
+            newobs[k] = v
+        d['observers'] = newobs
+        return d
+    def __setstate__(self, d):
+        d['observers'] = weakref.WeakKeyDictionary(d['observers'])
+        for k,v in d.iteritems():
+            self.__dict__[k] = v
     # It may be desirable in the future to have add_strong_observer
     # too that does keep observer alive.
 

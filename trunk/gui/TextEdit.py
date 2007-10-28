@@ -47,6 +47,7 @@ class TextEdit(Widget):
         self.allowed_text = allowed_text
         self.convertor = convertor
         self.key_groups = groups
+        self.editing_keymap = Keymap.Keymap()
         if set_text:
             assert self.key_groups, "Must set groups when used in edit mode"
             self.selectable.set(True)
@@ -59,17 +60,13 @@ class TextEdit(Widget):
         self._cursor = min(val, len(self.get_text()))
 
     def __getstate__(self):
-        d= self.__dict__.copy()
-        del d['keymap']
-        del d['editing_keymap']
-        del d['focus_keymap']
+        d = Widget.__getstate__(self)
         del d['_font']
+        del d['editing_keymap']
         return d
     def __setstate__(self, d):
-        for k,v in d.iteritems():
-            self.__dict__[k] = v
-        self.focus_keymap = Keymap()
-        self.keymap = Keymap()
+        d['editing_keymap'] = Keymap.Keymap()
+        Widget.__setstate__(self, d)
         self.set_style(self._style)
         self._register_keys()
     
@@ -77,7 +74,6 @@ class TextEdit(Widget):
         self.focus_keymap.register_key(self.start_editing_key,
                                        Keymap.keydown_noarg(self._start_editing))
 
-        self.editing_keymap = Keymap.Keymap()
         self.editing_keymap.obs_activation.add_observer(self, "_editing_")
         def register_editing_key(key, func):
             self.editing_keymap.register_key(key, Keymap.keydown_noarg(func))
