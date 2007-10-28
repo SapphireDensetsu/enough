@@ -12,7 +12,7 @@ from lib.observable.List import List
 
 import pygame
 
-class BrowserWidget(HBox):
+class BrowserWidget(VBox):
 
     offset_right_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_LEFT)
     offset_left_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_RIGHT)
@@ -31,11 +31,11 @@ class BrowserWidget(HBox):
         keys_reflection_widget.bg_color = (20,20,50)
 
         self.info_list = List([keys_reflection_widget])
-        info_box = VBox(self.info_list)
+        info_box = HBox(self.info_list)
         info_box.selectable.set(False)
         info_box.bg_color = (20,50,20)
 
-        HBox.__init__(self, List([
+        VBox.__init__(self, List([
             self.main_stack,
             SpacerWidget((10, 0)),
             info_box,
