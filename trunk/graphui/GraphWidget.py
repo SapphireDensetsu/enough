@@ -167,29 +167,37 @@ class GraphWidget(Widget):
         
     def update(self):
         if self.node_widgets:
-            #  Todo rewrite this highly-unoptimized code!
-            font_size_average = 0
-            font_sizes = {}
-            dists = {}
-            for w in self.node_widgets.itervalues():
+            import math
+            # todo rewrite this shitty code
+            sizes = {}
+            slots = {}
+            slots_size = {}
+            slot_places = {}
+            average = 0
+            num = len(self.node_widgets)
+            for w in self.node_widgets.values():
                 size = w.reset_max_text_size()
-                font_size_average += size
-                font_sizes[w] = size
-            font_size_average /= len(self.node_widgets)
-            variance = 0
-            for w in self.node_widgets.itervalues():
-                size = font_sizes[w]
-                dist = (size - font_size_average)**2
-                dists[w] = dist
-                variance += dist
-            variance /= len(self.node_widgets)
-            for w in self.node_widgets.itervalues():
-                if variance != 0:
-                    size = font_sizes[w]
-                    dist = dists[w]
-                    if  dist / variance > 0.3:
-                        if size > font_size_average:
-                            w._update_text_size(font_size_average)
+                sizes[w] = size
+            for w, size in sizes.iteritems():
+                dist = int(round(math.log(size + 1)))
+                slot = dist 
+                slots.setdefault(slot, 0)
+                slots_size.setdefault(slot, 0)
+                
+                slot_places[w] = slot
+                slots[slot] += size
+                slots_size[slot] += 1
+
+            for slot in slots:
+                if slot in slots_size:
+                    num = slots_size[slot]
+                    if num > 0:
+                        slots[slot] /= slots_size[slot]
+            for w,slot in slot_places.iteritems():
+                size = sizes[w]
+                new_max_size = slots[slot]
+                if new_max_size < size:
+                    w.reset_max_text_size(new_max_size)
                 w.update()
         for w in self.edge_widgets.itervalues():
             w.update()
