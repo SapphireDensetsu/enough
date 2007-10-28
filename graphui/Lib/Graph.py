@@ -267,8 +267,7 @@ def _data_received((g, n, e), groups):
         for node in nodes:
             sid = node.id
 
-            assert sid not in ids_to_edges
-            assert sid not in ids_to_nodes
+            assert sid not in ids_to_nodes, "Duplicate nodes: id %s, node %s" %(sid, node)
             ids_to_nodes[sid] = node
             
             for edge in node.connections['out']:
