@@ -1,7 +1,7 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from TextEdit import TextEdit, TextStyle
+from gui.TextEdit import TextEdit, TextStyle
 
 
 def _make_style(color=(220, 220, 220), font_size=16, font_name='fonts/FreeSansBold.ttf',

@@ -6,9 +6,9 @@ import pygame
 import draw
 from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead, get_default
 from Lib.Point import Point, from_polar, point_near_polyline
-from Widget import Widget
+from gui.Widget import Widget
 
-from Keymap import Key
+from gui.Keymap import Key
 
 class EdgeWidget(Widget):
     bg_color=(150,10,10)

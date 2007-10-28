@@ -7,16 +7,16 @@ import pygame
 import draw
 from guilib import MovingValue, MovingLine
 from Lib.Point import Point
-from Widget import Widget
+from gui.Widget import Widget
 from NodeWidget import NodeWidget
 from EdgeWidget import EdgeWidget
 
-from Lib import observer
+from lib import observer
 
 from Keymap import Keymap, Key
 
-from Lib.observable.SortedItems import SortedItems
-from Lib.observable.Dict import Dict
+from lib.observable.SortedItems import SortedItems
+from lib.observable.Dict import Dict
 
 from Lib import Graph
 
