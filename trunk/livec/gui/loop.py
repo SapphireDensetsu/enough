@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 import pygame
-import Keymap
+from gui import Keymap
 
 import gui.draw
 
