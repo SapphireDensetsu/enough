@@ -10,7 +10,7 @@ from gui.TextEdit import TextEdit, TextStyle
 from gui.Keymap import Key, Keymap, all_printable, keydown_noarg
 from gui.Mousemap import MouseArea
 
-from Lib.observer import Observable
+from lib.observer import Observable
 
 import style
 
