@@ -24,7 +24,7 @@ class BrowserWidget(HBox):
         self.main_stack.push(widget)
 
 
-        from codegui.loop import loop
+        from loop import loop
         keys_reflection_widget = KeysReflectionWidget(loop.global_keymap,
                                                       style.key_name,
                                                       style.keydoc_name)
