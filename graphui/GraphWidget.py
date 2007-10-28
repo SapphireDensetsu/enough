@@ -89,7 +89,7 @@ class GraphWidget(Widget):
         self._set_next_keymap()
 
     def get_size(self):
-        return self._size.current
+        return tuple(self._size.current)
     def set_size(self, p):
         self._size.final = p 
     size = property(get_size, set_size)

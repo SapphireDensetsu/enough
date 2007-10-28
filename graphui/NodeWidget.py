@@ -108,7 +108,7 @@ class NodeWidget(Widget):
         self.text_widget.update()
         
     def get_size(self):
-        return self._size.current
+        return tuple(self._size.current)
     def set_size(self, p):
         p = Point(p)
         self._size.final = p
@@ -117,7 +117,7 @@ class NodeWidget(Widget):
     size = property(get_size, set_size)
     
     def get_pos(self):
-        return self._pos.current
+        return tuple(self._pos.current)
     def set_pos(self, p):
         p = Point(p)
         self._pos.final = p
