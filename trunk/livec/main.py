@@ -8,7 +8,7 @@ import pygame
 
 with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from codegui.loop import loop
-    from gui.BrowserWidget import BrowserWidget
+    from codegui.BrowserWidget import BrowserWidget
 
     from codegui.Namer import Namer
     from codegui.widget_for import widget_for
