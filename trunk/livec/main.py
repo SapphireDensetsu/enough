@@ -8,13 +8,14 @@ import pygame
 
 with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
     from codegui.loop import loop
-    from codegui.BrowserWidget import BrowserWidget
+    from gui.BrowserWidget import BrowserWidget
 
     from codegui.Namer import Namer
+    from codegui.widget_for import widget_for
     loop.namer = Namer()
     
     from example import example
-    loop.browser = BrowserWidget(example)
+    loop.browser = BrowserWidget(widget_for(example))
 
     import pygame
     pygame.key.set_repeat(250,10)
