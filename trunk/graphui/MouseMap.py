@@ -26,6 +26,7 @@ class MouseMap(object):
 
     def push_area(self, mouse_area, handler):
         assert mouse_area not in self.area_to_handler
+        # TODO make intelligent code that intersects areas for optimal finding
         self.area_to_handler[handler] = mouse_area
         self.mouse_areas.insert(0, (mouse_area, handler))
     def remove_area(self, area):
