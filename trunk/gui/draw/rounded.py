@@ -15,7 +15,7 @@ def _rounded_rect(surface, color, rect, width, corner_radius):
                                    ((-diameter,-diameter), (3./2*pi, 2*pi), rect.bottomright),
                                    ((0,        -diameter), (pi, 3./2*pi), rect.bottomleft),
                                    ):
-        corner = map(lambda a,b:a+b, offset, corner)
+        corner = [a+b for a,b in zip(offset, corner)]
         corner_rect = pygame.Rect(corner[0], corner[1], diameter, diameter)
         backend.arc(surface, color, corner_rect, angles[0], angles[1], width)
         
