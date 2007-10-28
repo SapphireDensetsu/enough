@@ -227,8 +227,8 @@ class GraphWidget(Widget):
                 draw.line(surface, self._node_link_color, start_pos, end_pos)
 
         if self._save_next_display_update:
-            draw.save(surface, self._save_next_display_update)
             self._save_next_display_update = None
+            draw.save(surface.subsurface(pygame.Rect(pos, self.size)), self._save_next_display_update)
 
     def selected(self):
         if self.selected_widget_index is None:
@@ -452,6 +452,10 @@ class GraphWidget(Widget):
         for node in nodes:
             # TODO if we are loading nodes in addition to existing nodes,
             # make sure ID's are re-allocated to prevent collisions.
+            node.id = Graph.persistent_id(node)
+            for edge in node.iter_all_connections():
+                edge.id = Graph.persistent_id(edge)
+        for node in nodes:
             self.add_node(node)
             
 
