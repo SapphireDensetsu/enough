@@ -67,7 +67,6 @@ class GraphWidget(Widget):
     def __getstate__(self):
         d = Widget.__getstate__(self)
         del d['parenting_keymap']
-        print d.keys()
         return d
     def __setstate__(self, d):
         Widget.__setstate__(self, d)
@@ -77,7 +76,6 @@ class GraphWidget(Widget):
         self.parenting_keymap = Keymap()
         r = self.keymap.register_key
         r(self.key_create_node, keydown_noarg(self._create_new_node))
-        r(self.key_connect, keydown_noarg(self._start_connect))
         r(self.key_cycle_layout, keydown_noarg(self._cycle_layout_engine))
         r(self.key_save, keydown_noarg(self._save))
         r(self.key_load, keydown_noarg(self._load))
@@ -133,6 +131,8 @@ class GraphWidget(Widget):
         self.update_layout()
 
     def add_node(self, node):
+        if node in self.nodes:
+            return
         self.nodes.add(node)
         w = NodeWidget(node)
         self.node_widgets[node] = w
@@ -140,15 +140,23 @@ class GraphWidget(Widget):
         w.obs_loc.add_observer(self, '_node_widget_loc_', w, node)
         self.update_layout()
         loop.loop.mouse_map.push_area(w.mouse_area, partial(self._widget_mouse_event, node, w))
+        # They might be adding a node that is connected to some other,
+        # yet-to-be added nodes
+        for edge in node.iter_all_connections():
+            self.add_edge(edge)
         return w
     def remove_node(self, node):
+        node.disconnect_all()
         w = self.node_widgets[node]
+        loop.loop.mouse_map.remove_area(w.mouse_area)
         w.obs_loc.remove_observer(self)
         node.obs.remove_observer(self)
         del self.node_widgets[node]
         self.nodes.remove(node)
         self._update_index()
         self.update_layout()
+        if self._connect_source_node:
+            self._connect_source_node = None
         return w
 
     def generate_groups(self):
@@ -163,37 +171,38 @@ class GraphWidget(Widget):
         
     def update(self):
         if self.node_widgets:
-            import math
-            # todo rewrite this shitty code
-            sizes = {}
-            slots = {}
-            slots_size = {}
-            slot_places = {}
-            average = 0
-            num = len(self.node_widgets)
-            for w in self.node_widgets.values():
-                size = w.reset_max_text_size()
-                sizes[w] = size
-            for w, size in sizes.iteritems():
-                dist = int(round(math.log(size + 1)))
-                slot = dist 
-                slots.setdefault(slot, 0)
-                slots_size.setdefault(slot, 0)
+##             import math
+##             # todo rewrite this shitty code
+##             sizes = {}
+##             slots = {}
+##             slots_size = {}
+##             slot_places = {}
+##             average = 0
+##             num = len(self.node_widgets)
+##             for w in self.node_widgets.values():
+##                 size = w.reset_max_text_size()
+##                 sizes[w] = size
+##             for w, size in sizes.iteritems():
+##                 dist = int(round(math.log(size + 1)))
+##                 slot = dist 
+##                 slots.setdefault(slot, 0)
+##                 slots_size.setdefault(slot, 0)
                 
-                slot_places[w] = slot
-                slots[slot] += size
-                slots_size[slot] += 1
+##                 slot_places[w] = slot
+##                 slots[slot] += size
+##                 slots_size[slot] += 1
 
-            for slot in slots:
-                if slot in slots_size:
-                    num = slots_size[slot]
-                    if num > 0:
-                        slots[slot] /= slots_size[slot]
-            for w,slot in slot_places.iteritems():
-                size = sizes[w]
-                new_max_size = slots[slot]
-                if new_max_size < size:
-                    w.reset_max_text_size(new_max_size)
+##             for slot in slots:
+##                 if slot in slots_size:
+##                     num = slots_size[slot]
+##                     if num > 0:
+##                         slots[slot] /= slots_size[slot]
+##             for w,slot in slot_places.iteritems():
+##                 size = sizes[w]
+##                 new_max_size = slots[slot]
+##                 if new_max_size < size:
+##                     w.reset_max_text_size(new_max_size)
+            for w in self.node_widgets.values():
                 w.update()
         for w in self.edge_widgets.itervalues():
             w.update()
@@ -237,6 +246,8 @@ class GraphWidget(Widget):
             r(self.key_select_node_left, keydown_noarg(self._select_node_left))
             r(self.key_select_node_up, keydown_noarg(self._select_node_up))
             r(self.key_select_node_down, keydown_noarg(self._select_node_down))
+            if self.key_connect not in self.parenting_keymap:
+                r(self.key_connect, keydown_noarg(self._start_connect))
         else:
             ur = self.parenting_keymap.unregister_key
             ur(self.key_next_node)
@@ -246,6 +257,7 @@ class GraphWidget(Widget):
             ur(self.key_select_node_up)
             ur(self.key_select_node_down)
             ur(self.key_delete_node)
+            ur(self.key_connect)
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
     def _set_index(self, index):
@@ -256,7 +268,7 @@ class GraphWidget(Widget):
     def _update_index(self):
         if not self.node_widgets:
             self.selected_widget_index = None
-        else:
+        elif self.selected_widget_index is not None:
             self.selected_widget_index %= len(self.sorted_widgets)
             self._set_next_keymap()
             
@@ -344,13 +356,12 @@ class GraphWidget(Widget):
     def _delete_selected_node(self):
         '''Delete selected node'''
         n, w = self.sorted_widgets[self.selected_widget_index]
-        n.disconnect_all()
         self._add_index(1)
         self.remove_node(n)
 
     def _node_connection_started(self):
-        r = self.keymap.register_key
-        ur = self.keymap.unregister_key
+        r = self.parenting_keymap.register_key
+        ur = self.parenting_keymap.unregister_key
         start_node, start_node_widget = self.selected()
         assert start_node is not None
         def _end_connect():
@@ -370,7 +381,7 @@ class GraphWidget(Widget):
             if w is None:
                 return None
             return w.rect().center
-            
+
         ur(self.key_connect)
         r(self.key_connect, keydown_noarg(_end_connect))
         self._connector_start_pos = _start_pos
@@ -392,7 +403,7 @@ class GraphWidget(Widget):
                 self._connector_start_pos = _start_pos
                 self._connector_end_pos = pygame.mouse.get_pos
         elif event.type == pygame.MOUSEBUTTONUP:
-            if self._connector_start_pos is not None:
+            if self._connect_source_node is not None:
                 self._connector_start_pos = None
                 self._connector_end_pos = None
                 self._connect_source_node.connect_node(node)
@@ -408,15 +419,19 @@ class GraphWidget(Widget):
         '''Save'''
         import pickle
         f=open('save.pkl', 'wb')
-        pickle.dump(self,f,2)
+        pickle.dump(self.nodes,f,2)
 
     def _load(self):
         '''Load'''
         import pickle
         f=open('save.pkl', 'rb')
-        newself = pickle.load(f)
-        loop.loop.browser.main_stack.pop()
-        loop.loop.browser.main_stack.push(newself)
+        nodes = pickle.load(f)
+        for node in tuple(self.nodes):
+            self.remove_node(node)
+        self._set_next_keymap()
+        for node in nodes:
+            self.add_node(node)
+            
 
     def _export_dot(self):
         '''Export the graph to a .dot file'''
