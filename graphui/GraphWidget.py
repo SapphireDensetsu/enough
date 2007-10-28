@@ -1,7 +1,7 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from lib.FuncTools import PicklablePartial as partial
+from functools import partial
 
 import pygame
 from gui import draw
@@ -37,6 +37,7 @@ class GraphWidget(Widget):
     key_select_node_up = Key(0, pygame.K_UP)
     key_select_node_down = Key(0, pygame.K_DOWN)
     key_connect = Key(pygame.KMOD_CTRL, pygame.K_RETURN)
+    key_disconnect = Key(pygame.KMOD_CTRL, pygame.K_BACKSPACE)
     key_cycle_layout = Key(pygame.KMOD_CTRL, pygame.K_k)
     #key_export_dot = Key(pygame.KMOD_CTRL, pygame.K_)
     key_export_snapshot = Key(pygame.KMOD_CTRL, pygame.K_x)
@@ -58,9 +59,10 @@ class GraphWidget(Widget):
         self.selected_widget_index = None
         self._update_index()
 
-        self._connector_start_pos = None
-        self._connect_source_node = None
-
+        self._node_link_start_pos = None
+        self._node_link_source_node = None
+        self._node_link_color = None
+        
         self._register_keys()
         self._save_next_display_update = False
         
@@ -116,10 +118,14 @@ class GraphWidget(Widget):
     def add_edge(self, edge):
         edge.obs.add_observer(self, '_edge_')
         self.edges.add(edge)
-        if edge.source in self.node_widgets:
-            source = self.node_widgets[edge.source].final_rect().center
-        if edge.target in self.node_widgets:
-            target = self.node_widgets[edge.target].final_rect().center
+        if edge.source not in self.node_widgets:
+            self.add_node(edge.source)
+            
+        source = self.node_widgets[edge.source].final_rect().center
+        if edge.target not in self.node_widgets:
+            self.add_node(edge.target)
+            
+        target = self.node_widgets[edge.target].final_rect().center
         w = EdgeWidget(edge, partial(self.node_widgets.get),
                        MovingLine(list, [Point(source), Point(target)]))
         self.edge_widgets[edge] = w
@@ -138,12 +144,12 @@ class GraphWidget(Widget):
         self.node_widgets[node] = w
         node.obs.add_observer(self, '_node_')
         w.obs_loc.add_observer(self, '_node_widget_loc_', w, node)
-        self.update_layout()
         loop.loop.mouse_map.push_area(w.mouse_area, partial(self._widget_mouse_event, node, w))
         # They might be adding a node that is connected to some other,
         # yet-to-be added nodes
         for edge in node.iter_all_connections():
             self.add_edge(edge)
+        self.update_layout()
         return w
     def remove_node(self, node):
         node.disconnect_all()
@@ -154,9 +160,9 @@ class GraphWidget(Widget):
         del self.node_widgets[node]
         self.nodes.remove(node)
         self._update_index()
+        if self._node_link_source_node:
+            self._node_link_source_node = None
         self.update_layout()
-        if self._connect_source_node:
-            self._connect_source_node = None
         return w
 
     def generate_groups(self):
@@ -213,12 +219,12 @@ class GraphWidget(Widget):
             # because of how NodeWidget works.
             w._draw(surface, pos)
 
-        if self._connector_start_pos is not None:
+        if self._node_link_start_pos is not None:
             n,w = self.selected()
             if w is not None:
-                start_pos = self._connector_start_pos()
-                end_pos = self._connector_end_pos()
-                draw.line(surface, (50,255,50), start_pos, end_pos)
+                start_pos = self._node_link_start_pos()
+                end_pos = self._node_link_end_pos()
+                draw.line(surface, self._node_link_color, start_pos, end_pos)
 
         if self._save_next_display_update:
             draw.save(surface, self._save_next_display_update)
@@ -243,6 +249,8 @@ class GraphWidget(Widget):
             r(self.key_select_node_down, keydown_noarg(self._select_node_down))
             if self.key_connect not in self.parenting_keymap:
                 r(self.key_connect, keydown_noarg(self._start_connect))
+            if self.key_disconnect not in self.parenting_keymap:
+                r(self.key_disconnect, keydown_noarg(self._start_disconnect))
         else:
             ur = self.parenting_keymap.unregister_key
             ur(self.key_next_node)
@@ -253,6 +261,7 @@ class GraphWidget(Widget):
             ur(self.key_select_node_down)
             ur(self.key_delete_node)
             ur(self.key_connect)
+            ur(self.key_disconnect)
             self.parenting_keymap.set_next_keymap(self.focus_keymap)
     
     def _set_index(self, index):
@@ -354,21 +363,21 @@ class GraphWidget(Widget):
         self._add_index(1)
         self.remove_node(n)
 
-    def _node_connection_started(self):
+    def _node_linking_started(self, key, start_func, connect_func, color, doc):
         r = self.parenting_keymap.register_key
         ur = self.parenting_keymap.unregister_key
         start_node, start_node_widget = self.selected()
         assert start_node is not None
         def _end_connect():
-            '''Sets the target node to connect'''
-            ur(self.key_connect)
-            r(self.key_connect, keydown_noarg(self._start_connect))
+            ur(key)
+            r(key, keydown_noarg(start_func))
 
             end_node, end_node_widget = self.sorted_widgets[self.selected_widget_index]
-            start_node.connect_node(end_node)
-            self._connector_start_pos = None
-            self._connector_end_pos = None
-
+            self._node_link_func(start_node, end_node)
+            self._node_link_start_pos = None
+            self._node_link_end_pos = None
+        _end_connect.__doc__ = doc
+        
         def _start_pos():
             return start_node_widget.rect().center
         def _end_pos():
@@ -377,32 +386,48 @@ class GraphWidget(Widget):
                 return None
             return w.rect().center
 
-        ur(self.key_connect)
-        r(self.key_connect, keydown_noarg(_end_connect))
-        self._connector_start_pos = _start_pos
-        self._connector_end_pos = _end_pos
+        ur(key)
+        r(key, keydown_noarg(_end_connect))
+        self._node_link_start_pos = _start_pos
+        self._node_link_end_pos = _end_pos
+        self._node_link_color = color
+        self._node_link_func = connect_func
+        
+    def _connect_func(self, node1, node2):
+        node1.connect_node(node2)
+    def _disconnect_func(self, node1, node2):
+        node1.disconnect_node(node2)
         
     def _start_connect(self):
         '''Sets the source node to connect'''
-        self._node_connection_started()
+        self._node_linking_started(self.key_connect, self._start_connect, self._connect_func, (0,255,0), "Sets the target node to connect")
+
+    def _start_disconnect(self):
+        '''Sets the source node to disconnect'''
+        self._node_linking_started(self.key_disconnect, self._start_disconnect, self._disconnect_func, (255,0,0), "Sets the target node to disconnect")
 
     def _widget_mouse_event(self, node, widget, event):
-        connect_mod = pygame.key.get_mods() & pygame.KMOD_SHIFT
+        #print event
+        connect_mod = pygame.key.get_mods() & pygame.KMOD_SHIFT 
+        #disconnect_mod = pygame.key.get_modes() & pygame.KMOD_SHIFT 
         if event.type == pygame.MOUSEBUTTONDOWN:
             i = self._find_widget_index(widget)
             self._set_index(i)
-            if connect_mod and self._connector_start_pos is None:
+            if connect_mod and self._node_link_start_pos is None:
                 def _start_pos():
                     return widget.rect().center
-                self._connect_source_node = node
-                self._connector_start_pos = _start_pos
-                self._connector_end_pos = pygame.mouse.get_pos
+                self._node_link_source_node = node
+                self._node_link_start_pos = _start_pos
+                self._node_link_end_pos = pygame.mouse.get_pos
+                self._node_link_color = (0,255,0)
+                self._node_link_func = self._connect_func
         elif event.type == pygame.MOUSEBUTTONUP:
-            if self._connect_source_node is not None:
-                self._connector_start_pos = None
-                self._connector_end_pos = None
-                self._connect_source_node.connect_node(node)
-                self._connect_source_node = None
+            if self._node_link_source_node is not None:
+                self._node_link_start_pos = None
+                self._node_link_end_pos = None
+                self._node_link_func(start_node, end_node)
+                self._node_link_source_node = None
+                self._node_link_color = None
                 
         
     def _cycle_layout_engine(self):

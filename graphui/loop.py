@@ -7,7 +7,7 @@ from gui.Mousemap import MouseMap, MouseEvent
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 import twisted.python.log
-from lib.FuncTools import PicklablePartial as partial
+from functools import partial
 
 from gui import draw
 

@@ -42,6 +42,7 @@ class ObservableValue(object):
         return dict(_value=self._value)
     def __setstate__(self, d):
         self._value = d['_value']
+        self.obs_value = observer.Observable()
         
 pid = 0
 def persistent_id(obj):
@@ -161,8 +162,7 @@ class Node(ObservableValue):
             yield e
             
 
-from lib.FuncTools import identity
-
+identity = lambda x:x
 def copy(orig_nodes, node_value_copier=identity, edge_value_copier=identity):
     nodes = []
     nodes_map = {}
