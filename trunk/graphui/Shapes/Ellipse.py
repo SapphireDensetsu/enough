@@ -16,10 +16,10 @@ class Ellipse(object):
 
     def paint(self, offset, surface, fore_color, back_color, use_image=None):
         import pygame
-        rect = pygame.Rect(self.rect.x+offset.x, self.rect.y+offset.y, self.rect.w, self.rect.h)
+        rect = pygame.Rect(self.rect[0]+offset[0], self.rect[1]+offset[1], self.rect.w, self.rect.h)
         if use_image:
             scaled = fast_scale(use_image, (self.rect.w,self.rect.h))
-            surface.blit(scaled, (rect.x,rect.y))
+            surface.blit(scaled, (rect[0],rect[1]))
         else:
             draw.ellipse(surface, back_color, rect, 0)
             
@@ -35,8 +35,8 @@ class Ellipse(object):
             raise ValueError("Line is not defined by a single point")
         cx, cy = self.rect.center
         w, h = self.rect.size
-        x1, y1 = src.x, src.y
-        x2, y2 = dest.x, dest.y
+        x1, y1 = src[0], src[1]
+        x2, y2 = dest[0], dest[1]
         if x1==x2:
             # x = my + n
             m = 1. * (x2-x1)/(y2-y1)
@@ -71,16 +71,16 @@ class Ellipse(object):
 
         margin_error = 0.0001
         for i in [i1, i2]:
-            if (((x1-margin_error <= i.x <= x2+margin_error) or
-                 (x2-margin_error <= i.x <= x1+margin_error)) and
-                ((y1-margin_error <= i.y <= y2+margin_error)) or
-                (y2-margin_error <= i.y <= y1+margin_error)):
+            if (((x1-margin_error <= i[0] <= x2+margin_error) or
+                 (x2-margin_error <= i[0] <= x1+margin_error)) and
+                ((y1-margin_error <= i[1] <= y2+margin_error)) or
+                (y2-margin_error <= i[1] <= y1+margin_error)):
                 yield i
 
     # Dead code, delete:?
     def inside(self, p):
         cx, cy = self.rect.center
-        return ((2.*(p.x-cx)/self.rect.width)**2 + (2.*(p.y-cy)/self.rect.height)**2 <= 1)
+        return ((2.*(p[0]-cx)/self.rect.width)**2 + (2.*(p[1]-cy)/self.rect.height)**2 <= 1)
 
 
 

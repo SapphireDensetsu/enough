@@ -8,6 +8,7 @@ from Lib.Point import Point
 from gui.Widget import Widget
 from gui.TextEdit import TextEdit, TextStyle
 from gui.Keymap import Key, Keymap, all_printable, keydown_noarg
+from gui.Mousemap import MouseArea
 
 from Lib.observer import Observable
 
@@ -39,7 +40,7 @@ class NodeWidget(Widget):
         self._register_keys()
 
         self.reset_max_text_size()
-        
+        self.mouse_area = MouseArea(self.in_bounds)
 
     def __getstate__(self):
         d= self.__dict__.copy()
@@ -87,14 +88,14 @@ class NodeWidget(Widget):
         yratio = 1
         size = self.style.font_size
         self.text_widget.update()
-        while ((self.text_widget.size[0] < self._size.final.x*ratio
-               or self.text_widget.size[1] < self._size.final.y*yratio)
+        while ((self.text_widget.size[0] < self._size.final[0]*ratio
+               or self.text_widget.size[1] < self._size.final[1]*yratio)
                and self.style.font_size < min(self.max_font_size, FONT_SIZE_ABSOLUTE_MAX)):
             self.style.font_size = min(self.style.font_size + 1, FONT_SIZE_ABSOLUTE_MAX)
             self._update_text_size()
             
-        while ((self.text_widget.size[0] > self._size.final.x*ratio
-               or self.text_widget.size[1] > self._size.final.y*yratio)
+        while ((self.text_widget.size[0] > self._size.final[0]*ratio
+               or self.text_widget.size[1] > self._size.final[1]*yratio)
                and self.style.font_size > min_font_size or self.style.font_size > self.max_font_size):
             self.style.font_size -= 1
             self._update_text_size()
@@ -126,11 +127,11 @@ class NodeWidget(Widget):
 
     def rect(self):
         s = self.size
-        return pygame.Rect(self.pos.x,self.pos.y,s.x,s.y)
+        return pygame.Rect(self.pos[0],self.pos[1],s[0],s[1])
     def final_rect(self):
         s = self._size.final
         p = self._pos.final
-        return pygame.Rect(p.x,p.y,s.x,s.y)
+        return pygame.Rect(p[0],p[1],s[0],s[1])
         
     def _node_connect(self, e):
         pass
@@ -147,12 +148,12 @@ class NodeWidget(Widget):
         
     def _draw(self, surface, pos_offset):
         self.shape.paint(pos_offset, surface, self.fg_color, self.bg_color)
-        self.text_widget.draw(surface, tuple(Point(pos_offset + Point(self.rect().center) - Point(self.text_widget.size)/2)))
+        self.text_widget.draw(surface, tuple(Point(pos_offset) + Point(self.rect().center) - Point(self.text_widget.size)/2))
         
 
     def _move_right(self):
         '''move right'''
-        self.pos = self.pos + Point((5,0))
+        self.pos = Point(self.pos) + Point((5,0))
     def _move_left(self):
         '''move left'''
         self.pos = self.pos + Point((-5,0))

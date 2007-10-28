@@ -290,33 +290,33 @@ class GraphWidget(Widget):
     def _select_node_right(self):
         '''Select the next node to the right'''
         def dist(pos1, pos2):
-            if pos1.x < pos2.x:
+            if pos1[0] < pos2[0]:
                 return None
-            return pos1.x - pos2.x
+            return pos1[0] - pos2[0]
         self._select_node_dir(dist)
         
     def _select_node_left(self):
         '''Select the next node to the left'''
         def dist(pos1, pos2):
-            if pos1.x > pos2.x:
+            if pos1[0] > pos2[1]:
                 return None
-            return pos2.x - pos1.x
+            return pos2[0] - pos1[0]
         self._select_node_dir(dist)
 
     def _select_node_up(self):
         '''Select the next node above'''
         def dist(pos1, pos2):
-            if pos1.y > pos2.y:
+            if pos1[1] > pos2[1]:
                 return None
-            return pos2.y - pos1.y
+            return pos2[1] - pos1[1]
         self._select_node_dir(dist)
 
     def _select_node_down(self):
         '''Select the next node below'''
         def dist(pos1, pos2):
-            if pos1.y < pos2.y:
+            if pos1[1] < pos2[1]:
                 return None
-            return pos1.y - pos2.y
+            return pos1[1] - pos2[1]
         self._select_node_dir(dist)
 
     def _select_node_dir(self, distance_between):
@@ -374,7 +374,7 @@ class GraphWidget(Widget):
             return w.rect().center
             
         ur(self.key_connect)
-        r(self.key_connect, _end_connect)
+        r(self.key_connect, keydown_noarg(_end_connect))
         self._connector_start_pos = lambda : start_node_widget.rect().center
         self._connector_end_pos = _end_pos
         
