@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 
-from Func import cached
+from lib.FuncTools import cached
 import pygame
 
 @cached

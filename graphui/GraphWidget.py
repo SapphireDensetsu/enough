@@ -1,7 +1,7 @@
 # Copyright (c) 2007 Enough Project.
 # See LICENSE for details.
 
-from Lib.Func import PicklablePartial as partial
+from lib.FuncTools import PicklablePartial as partial
 
 import pygame
 from gui import draw
