@@ -124,6 +124,7 @@ all_printable = Group('Printable symbols', [pygame.KMOD_SHIFT, 0],
                       [ord(x) for x in string.printable])
 
 digits = Group('Digit', [0], [ord(x) for x in string.digits])
+extended_digits = Group('Digit', [0], [ord(x) for x in string.digits+'abcdef'])
 
 class Keymap(object):
     def __init__(self):
