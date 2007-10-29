@@ -2,12 +2,36 @@
 # See LICENSE for details.
 
 import pygame
-from pygame.draw import *
 
-def fill(display, *args, **kw):
-    display.fill(*args, **kw)
+def fill(display, color, rect=None):
+    if rect is None:
+        display.fill(color)
+    else:
+        display.fill(color, rect)
+        
 
+circle = pygame.draw.circle
+ellipse = pygame.draw.ellipse
+arc = pygame.draw.arc
+rect = pygame.draw.rect
+
+def lines(surface, color, closed, points, width=1, antialias=False):
+    if antialias:
+        width = 1
+        f = pygame.draw.aalines
+    else:
+        f = pygame.draw.lines
+    return f(surface, color, closed, points, width)
+
+def line(surface, color, startpos, endpos, width=1, antialias=False):
+    if antialias:
+        width = 1
+        f = pygame.draw.aaline
+    else:
+        f = pygame.draw.line
+    return f(surface, color, startpos, endpos, width)
     
+
 set_mode = pygame.display.set_mode
 
 _font_cache = {}
