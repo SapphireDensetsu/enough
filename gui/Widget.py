@@ -75,7 +75,7 @@ class Widget(object):
         
     def draw(self, surface, pos):
         self._anim_pos.set_target(pos)
-        self._anim_pos.update(0.4)
+        self._anim_pos.update(0.6)
         pos = self._anim_pos.current_pos
         
         self.draw_background(surface, pos)

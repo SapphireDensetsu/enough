@@ -13,7 +13,7 @@ class MovingPos(object):
         if self.current_pos is None:
             self.current_pos = list(target_pos)
 
-    def update(self, step=0.1):
+    def update(self, step=0.2):
         if self.target_pos is None:
             raise ValueError('Target pos was not set')
         for i in xrange(len(self.target_pos)):
