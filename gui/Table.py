@@ -13,18 +13,18 @@ class Table(Widget):
         #        child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
 
 
-    def _child_selectable_changed(self, child, old_value, new_value):
-        pass
+##     def _child_selectable_changed(self, child, old_value, new_value):
+##         pass
 
-    def _child_replace(self, index, old_value, new_value):
-        self._child_pop(index, old_value)
-        self._child_insert(index, new_value)
+##     def _child_replace(self, index, old_value, new_value):
+##         self._child_pop(index, old_value)
+##         self._child_insert(index, new_value)
 
-    def _child_insert(self, index, child):
-        child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
+##     def _child_insert(self, index, child):
+##         child.selectable.obs_value.add_observer(self, '_child_selectable_', child)
 
-    def _child_pop(self, index, child):
-        child.selectable.obs_value.remove_observer(self)
+##     def _child_pop(self, index, child):
+##         child.selectable.obs_value.remove_observer(self)
 
     def update(self):
         total = [0,0]
