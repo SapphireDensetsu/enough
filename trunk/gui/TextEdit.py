@@ -57,8 +57,9 @@ class TextEdit(Widget):
         self._cursor = None
         self.is_editing = False
 
-        self._prev_text = None
-        self._cached_atoms = {}
+        self._prev_text_and_style = None
+        self._cached_surface = None
+        self._converted_text = None
 
 
     def set_cursor(self, val):
@@ -176,6 +177,7 @@ class TextEdit(Widget):
         self._cursor += 1
 
     def set_style(self, style):
+        self.style = style
         self.color = style.color
         if style.bgcolor is None:
             self.bgcolor = ()
@@ -189,28 +191,50 @@ class TextEdit(Widget):
     def update(self):
         def func(index, atom, curpos):
             return self._font.size(atom)
+
+        raw_text = self.get_text()
+        if self._prev_text_and_style == (raw_text, self.style):
+            return self.size
+            
+        self._cached_surface = None
+        self._prev_text_and_style = raw_text, self.style
+        self._converted_text = self._convert(raw_text)
+        
         self.size = self._do(func)
 
     def fix_cursor(self):
         if self._cursor is None:
             self._cursor = len(self.get_text())
         self._cursor = min(self._cursor, len(self.get_text()))
-    
+
+    def _fill_cached_surface(self):
+        bgcolor = (0,0,0)
+        if self.bgcolor:
+            bgcolor = self.bgcolor[0]
+        gui.draw.fill(self._cached_surface, bgcolor)
+        
     def _draw(self, surface, pos):
         self.fix_cursor()
+
+        if self._cached_surface is not None:
+            gui.draw.blit(surface, self._cached_surface, pos)
+            return
+
+        
         def func(index, atom, curpos):
-            text_surface, size = self._cached_atoms.get((atom, self.color, self.bgcolor, self._font), (None,None))
-            if text_surface is None:
-                text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
-                size = self._font.size(atom)
-                self._cached_atoms[(atom, self.color, self.bgcolor, self._font)] = text_surface, size
-            abspos = tuple(a+b for a, b in zip(pos, curpos))
+            text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
+            size = self._font.size(atom)
+            #abspos = [a+b for a, b in zip(pos, curpos)]
             if self.is_editing and index == self._cursor:
-                gui.draw.line(surface, self.cursor_color, abspos,
-                              (abspos[0], abspos[1]+size[1]), 2)
-            gui.draw.draw_font(surface, text_surface, abspos)
+                gui.draw.line(self._cached_surface, self.cursor_color, curpos,
+                              (curpos[0], curpos[1]+size[1]), 2)
+            gui.draw.draw_font(self._cached_surface, text_surface, curpos)
             return size
+
+        self._cached_surface = pygame.Surface(self.size)
+        self._fill_cached_surface()
         self._do(func)
+        gui.draw.blit(surface, self._cached_surface, pos)
 
     def _convert(self, text):
         if self.convertor is None:
@@ -218,12 +242,7 @@ class TextEdit(Widget):
         return [self.convertor.get(i, i) for i in text]
 
     def _do(self, func):
-        text = self._convert(self.get_text())
-        if (self._prev_text != text):
-            # if the text has changed, clear the cache.
-            self._cached_atoms.clear()
-            self._prev_text = text
-            
+        text = self._converted_text
         pos = [self.margin[0], self.margin[1]]
         max_width = pos[0]
         for index, atom in enumerate(text + ['']):
