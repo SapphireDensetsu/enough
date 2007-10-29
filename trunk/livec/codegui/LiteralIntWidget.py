@@ -15,7 +15,7 @@ class LiteralIntWidget(LiteralWidget):
     ldelimiter_style = rdelimiter_style = style.literal_int
     literal_style = style.literal_int
     example_style = style.example_int
-    _mode = 'dec'
+    _default_mode = 'dec'
     keymap_group = Keymap.extended_digits
     
     hex_mode_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_x)
@@ -33,15 +33,17 @@ class LiteralIntWidget(LiteralWidget):
             self.negate_key,
             Keymap.keydown_noarg(self._negate)
         )
+        self._set_mode(self.literal.meta.get('mode', self._default_mode))
 
     def _negate(self):
         """Negate the number"""
         self.literal.value = -self.literal.value
         self._fix_ldelimiter()
 
-    def _set_mode(self, new_mode, ldelimiter):
+    def _set_mode(self, new_mode):
+        self.literal.meta['mode'] = new_mode
         self._mode = new_mode
-        self.ldelimiter = ldelimiter
+        self.ldelimiter = getattr(self, '_%s__ldelimiter' % (new_mode,))
         self._fix_ldelimiter()
         self.text_edit.set_cursor(len(self._get_string()))
 
@@ -53,15 +55,15 @@ class LiteralIntWidget(LiteralWidget):
         
     def _set_hex_mode(self):
         """Hex mode"""
-        self._set_mode('hex', '0x')
+        self._set_mode('hex')
 
     def _set_dec_mode(self):
         """Decimal mode"""
-        self._set_mode('dec', '')
+        self._set_mode('dec')
         
     def _set_oct_mode(self):
         """Octal mode"""
-        self._set_mode('oct', '0')
+        self._set_mode('oct')
     
     def _get_example_str(self):
         if self.literal.value < 0:
@@ -91,6 +93,7 @@ class LiteralIntWidget(LiteralWidget):
         return str(abs(value))
     def _dec__allowed_text(self, value):
         return not value or value.isdigit()
+    _dec__ldelimiter = ''
 
     def _oct__value_of_string(self, text):
         return int(text, 8)
@@ -98,6 +101,7 @@ class LiteralIntWidget(LiteralWidget):
         return oct(long(abs(value)))[1:-1]
     def _oct__allowed_text(self, value):
         return all(c in '01234567' for c in value)
+    _oct__ldelimiter = '0'
 
     def _hex__value_of_string(self, text):
         return int(text, 16)
@@ -106,3 +110,4 @@ class LiteralIntWidget(LiteralWidget):
     def _hex__allowed_text(self, value):
         return all((c.isdigit() or c in 'abcdef')
                    for c in value.lower())
+    _hex__ldelimiter = '0x'
