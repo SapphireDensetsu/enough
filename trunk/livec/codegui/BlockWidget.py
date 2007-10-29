@@ -136,3 +136,4 @@ class BlockWidget(VBox):
         index = self._statement_index()+1
         self.block.statements.insert(index, nodes.Missing())
         self.statement_box.set_index(index)
+NormalWidgetMaker.register(nodes.Block, BlockWidget)

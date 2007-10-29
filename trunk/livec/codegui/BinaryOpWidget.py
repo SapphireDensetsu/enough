@@ -5,6 +5,7 @@ from gui.Box import VBox, HBox
 from codegui.widget_for import NormalWidgetMaker
 from gui.TextEdit import make_label
 from codegui import style
+import nodes
 
 from lib.observable.List import List
 
@@ -27,15 +28,19 @@ class BinaryOpWidget(HBox):
 class EqualsWidget(BinaryOpWidget):
     op_string = '=='
     operand_attrs = 'a', 'b'
+NormalWidgetMaker.register(nodes.Equals, EqualsWidget)
 
 class NotEqualsWidget(BinaryOpWidget):
     op_string = '!='
     operand_attrs = 'a', 'b'
+NormalWidgetMaker.register(nodes.NotEquals, NotEqualsWidget)
 
 class AssignWidget(BinaryOpWidget):
     op_string = '='
     operand_attrs = 'lvalue', 'rvalue'
+NormalWidgetMaker.register(nodes.Assign, AssignWidget)
 
 class SubtractWidget(BinaryOpWidget):
     op_string = '-'
     operand_attrs = 'lexpr', 'rexpr'
+NormalWidgetMaker.register(nodes.Subtract, SubtractWidget)

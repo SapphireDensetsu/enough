@@ -18,3 +18,5 @@ class PtrPostTypeWidget(HBox):
             make_label(style.paren, ')'),
         ]))
         self.is_centered = True
+import nodes
+PostTypeWidgetMaker.register(nodes.Ptr, PtrPostTypeWidget)

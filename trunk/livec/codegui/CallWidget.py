@@ -23,3 +23,5 @@ class CallWidget(HBox):
             args_box,
             make_label(style.paren, ")"),
         ]))
+import nodes
+NormalWidgetMaker.register(nodes.Call, CallWidget)

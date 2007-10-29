@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from gui.Box import VBox, HBox
-from widget_for import TypeWidgetMaker
+from widget_for import TypeWidgetMaker, DeclarationWidgetMaker
 
 from lib.observable.List import List
 
@@ -15,3 +15,5 @@ class VariableDeclarationWidget(HBox):
         HBox.__init__(self, List([
             TypeWidgetMaker.make(self.variable.type, self.variable_proxy),
         ]))
+import nodes
+DeclarationWidgetMaker.register(nodes.Variable, VariableDeclarationWidget)

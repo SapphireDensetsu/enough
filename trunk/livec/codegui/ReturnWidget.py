@@ -18,3 +18,5 @@ class ReturnWidget(HBox):
             NormalWidgetMaker.make(self.return_.expr),
             make_label(style.semicolon, ";"),
         ]))
+import nodes
+NormalWidgetMaker.register(nodes.Return, ReturnWidget)

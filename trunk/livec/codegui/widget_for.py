@@ -10,13 +10,14 @@ from gui.TextEdit import TextEdit, make_label
 from gui.ProxyWidget import ProxyWidget
 from lib.observable.List import List
 from lib.observable.FuncCall import FuncCall
+from IdentifierWidget import IdentifierWidget
 
 import ccode
 
-def ccode_widget_for(x):
-    # TODO TEMP CODE
+def ccode_widget_for(proxy):
+    print "Unknown widget type", proxy.get(), "using ccode"
     c = ccode.CCodeGenerator()
-    return TextEdit(style.unknown_c_code, partial(c.ccode, x))
+    return TextEdit(style.unknown_c_code, partial(c.ccode, proxy))
     
 def indented(widget):
     from gui.SpacerWidget import SpacerWidget
@@ -30,30 +31,55 @@ class WidgetMaker(object):
     def make(cls, *proxies):
         return ProxyWidget(FuncCall(partial(cls._make, *proxies), *proxies))
 
+    @classmethod
+    def register(cls, node_type, factory):
+        assert node_type not in cls.registrations, \
+               "%r already handled by %r" % (node_type, cls.registrations[node_type])
+        cls.registrations[node_type] = factory
+
+    @classmethod
+    def _find(cls, node_type, default):
+        return cls.registrations.get(node_type, default)
+
 class PostTypeWidgetMaker(WidgetMaker):
+    registrations = {}
     @classmethod
     def _make(cls, posttype_proxy, variable_proxy, posttype, variable):
         node_type = type(posttype)
-        if issubclass(node_type, nodes.BuiltinType):
-            from IdentifierWidget import IdentifierWidget
-            return IdentifierWidget(variable_proxy, style.identifier)
-        elif issubclass(node_type, nodes.Ptr):
-            from PtrPostTypeWidget import PtrPostTypeWidget
-            return PtrPostTypeWidget(posttype_proxy, variable_proxy)
-        elif issubclass(node_type, nodes.Array):
-            from ArrayPostTypeWidget import ArrayPostTypeWidget
-            return ArrayPostTypeWidget(posttype_proxy, variable_proxy)
-        elif issubclass(node_type, nodes.FunctionType):
-            from FunctionPostTypeWidget import FunctionPostTypeWidget
-            return FunctionPostTypeWidget(posttype_proxy, variable_proxy)
-        else:
-            assert False
+        factory = cls._find(node_type, None)
+        assert factory is not None, "Can't make PostType widget for %r" % (node_type,)
+        return factory(posttype_proxy, variable_proxy)
 
-# TODO: Should this be here?
+def build_identifier_posttype(posttype_proxy, variable_proxy):
+    return IdentifierWidget(variable_proxy, style.identifier)
+
+class DeclarationWidgetMaker(WidgetMaker):
+    registrations = {}
+    @classmethod
+    def _make(cls, node_proxy, node):
+        node_type = type(node)
+        factory = cls._find(node_type, None)
+        assert factory is not None, "Can't make declaration widget for %r" % (node_type,)
+        return factory(node_proxy)
+
+class NormalWidgetMaker(WidgetMaker):
+    registrations = {}
+    @classmethod
+    def _make(cls, proxy, value):
+
+        node_type = type(value)
+        assert PostTypeWidgetMaker._find(node_type, None) is None, "Use TypeWidgetMaker on %r" % (value,)
+        factory = cls._find(node_type, ccode_widget_for)
+        return factory(proxy)
+
+# Those directly making IdentifierWidget will probably need their own
+# widgets, but until then they'll be registered here
+PostTypeWidgetMaker.register(nodes.BuiltinType, build_identifier_posttype)
+NormalWidgetMaker.register(nodes.Import, partial(IdentifierWidget, var_style=style.import_))
+
 class TypeWidgetMaker(WidgetMaker):
     @classmethod
     def _make(cls, type_proxy, variable_proxy, type_, variable):
-        from IdentifierWidget import IdentifierWidget
         basetype_widget = IdentifierWidget(ccode.find_basetype(type_proxy), style.base_type)
 
         type_widget = HBox(List([
@@ -63,74 +89,3 @@ class TypeWidgetMaker(WidgetMaker):
         ]))
         type_widget.is_centered = True
         return type_widget
-
-class NormalWidgetMaker(WidgetMaker):
-    @classmethod
-    def _make(cls, proxy, value):
-        from ModuleWidget import ModuleWidget
-        from FunctionWidget import FunctionWidget
-        from IdentifierWidget import IdentifierWidget
-        from VariableWidget import VariableWidget
-        from EnumValueWidget import EnumValueWidget
-        from DefineValueWidget import DefineValueWidget
-        from BlockWidget import BlockWidget
-        from ReturnWidget import ReturnWidget
-        from IfWidget import IfWidget
-        from WhileWidget import WhileWidget
-        from BinaryOpWidget import EqualsWidget, NotEqualsWidget, AssignWidget, SubtractWidget
-        from CallWidget import CallWidget
-        from ArrayDerefWidget import ArrayDerefWidget
-        from LiteralStrWidget import LiteralStrWidget
-        from LiteralCharWidget import LiteralCharWidget
-        from LiteralIntWidget import LiteralIntWidget
-
-        widget_map = {
-            nodes.Module: ModuleWidget,
-            nodes.Function: FunctionWidget,
-
-            nodes.Variable: VariableWidget,
-            nodes.Define: DefineValueWidget,
-            nodes.EnumValue: EnumValueWidget,
-            nodes.Import: partial(IdentifierWidget, var_style=style.import_),
-
-            nodes.Block: BlockWidget,
-            nodes.Return: ReturnWidget,
-
-            nodes.If: IfWidget,
-            nodes.While: WhileWidget,
-
-            nodes.Equals: EqualsWidget,
-            nodes.NotEquals: NotEqualsWidget,
-            nodes.Assign: AssignWidget,
-            nodes.Subtract: SubtractWidget,
-
-            nodes.Call: CallWidget,
-            nodes.ArrayDeref: ArrayDerefWidget,
-
-            nodes.LiteralInt: LiteralIntWidget,
-            nodes.LiteralChar: LiteralCharWidget,
-            nodes.LiteralString: LiteralStrWidget,
-        }
-
-        node_type = type(value)
-        for type_, factory in widget_map.iteritems():
-            if issubclass(node_type, type_):
-                return factory(proxy)
-
-        is_type = issubclass(node_type, (nodes.Ptr, nodes.Array, nodes.BuiltinType))
-        assert not is_type, "Only to be used in TypeWidgetMaker"
-
-        print "Don't know how to widget %r" % (value,)
-        return ccode_widget_for(proxy)
-        #assert False, "Don't know how to widget %r" % (x,)
-
-class DeclarationWidgetMaker(NormalWidgetMaker):
-    @classmethod
-    def _make(cls, node_proxy, node):
-        node_type = type(node)
-        if issubclass(node_type, nodes.Variable):
-            from VariableDeclarationWidget import VariableDeclarationWidget
-            return VariableDeclarationWidget(node_proxy)
-        else:
-            # TODO: HUH?? When can this happen?
-            return NormalWidgetMaker._make(node_proxy, node)

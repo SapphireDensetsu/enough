@@ -19,3 +19,5 @@ class ArrayDerefWidget(HBox):
             NormalWidgetMaker.make(self.array_deref.index),
             make_label(style.bracket, "]"),
         ]))
+import nodes
+NormalWidgetMaker.register(nodes.ArrayDeref, ArrayDerefWidget)

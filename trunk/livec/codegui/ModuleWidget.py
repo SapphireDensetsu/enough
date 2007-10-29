@@ -37,7 +37,7 @@ class ModuleWidget(VBox):
         """Add a new function"""
         func = nodes.Function(
             meta=nodes.Meta(name='new_func'),
-            type=nodes.FunctionType(return_type=builtins.void,
+            type=nodes.FunctionType(return_type=builtins.void(),
                                     parameters=List()),
             block=nodes.Block(statements=List()),
         )
@@ -46,3 +46,4 @@ class ModuleWidget(VBox):
             index = 0
         self.module.declarations.insert(index, func)
         self.func_box.set_index(index)
+NormalWidgetMaker.register(nodes.Module, ModuleWidget)

@@ -4,7 +4,7 @@
 from gui.Box import HBox
 from gui.TextEdit import TextEdit, make_label
 from codegui.loop import loop
-from codegui.widget_for import NormalWidgetMaker, indented
+from codegui.widget_for import NormalWidgetMaker, DeclarationWidgetMaker, indented
 import style
 
 from lib.observable.List import List
@@ -22,3 +22,5 @@ class DefineWidget(HBox):
             make_label(style.space, ' '),
             NormalWidgetMaker.make(self.define.expr),
         ]), relay_focus=True)
+import nodes
+DeclarationWidgetMaker.register(nodes.Define, DefineWidget)

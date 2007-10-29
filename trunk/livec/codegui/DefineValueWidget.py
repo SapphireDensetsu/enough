@@ -9,3 +9,6 @@ class DefineValueWidget(IdentifierWidget):
     def __init__(self, variable_proxy):
         IdentifierWidget.__init__(self, variable_proxy, style.define_value)
         self._info_shower.info_widget = DefineWidget(variable_proxy)
+import nodes
+from widget_for import NormalWidgetMaker
+NormalWidgetMaker.register(nodes.Define, DefineValueWidget)
