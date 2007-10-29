@@ -4,7 +4,7 @@
 import pygame
 from gui import draw
 from guilib import MovingValue
-from Lib.Point import Point
+from lib.Point import Point
 from gui.Widget import Widget
 from gui.TextEdit import TextEdit, TextStyle
 from gui.Keymap import Key, Keymap, all_printable, keydown_noarg
@@ -107,7 +107,7 @@ class NodeWidget(Widget):
         if new_size is not None:
             self.style.font_size = new_size
         self.text_widget.set_style(self.style)
-        self.text_widget.update()
+        self.text_widget.update(force=True)
         
     def get_size(self):
         return tuple(self._size.current)

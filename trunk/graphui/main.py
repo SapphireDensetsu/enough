@@ -8,7 +8,7 @@ import contextlib
 from gui import draw
 from gui.main import pygame_display
 
-from Lib.Graph import Node, Edge
+from lib.graph import Node, Edge
 
 res = (800, 600)
 with pygame_display(res, pygame.DOUBLEBUF) as display:

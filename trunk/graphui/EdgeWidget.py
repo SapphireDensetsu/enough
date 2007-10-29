@@ -5,7 +5,7 @@ import math
 import pygame
 from gui import draw
 from guilib import MovingLine, paint_arrowhead_by_direction, rotate_surface, repaint_arrowhead, get_default
-from Lib.Point import Point, from_polar, point_near_polyline
+from lib.Point import Point, from_polar, point_near_polyline
 from gui.Widget import Widget
 
 from gui.Keymap import Key, keydown_noarg
@@ -61,7 +61,7 @@ class EdgeWidget(Widget):
         line = [Point((int(p[0]*x_scale+x_offset),
                        int(p[1]*y_scale+y_offset))) for p in dot_edge['points']]
 
-        from Lib.Bezier import Bezier
+        from lib.bezier import Bezier
         #line.insert(0, Point(self.get_node_widget(self.edge.source).rect().center))
         line.append(Point(self.get_node_widget(self.edge.target).final_rect().center))
 

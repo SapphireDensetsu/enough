@@ -3,9 +3,9 @@
 
 import twisted
 
-from Lib import Graph
+from lib import Graph
 from functools import partial
-from Lib.Dot import Dot, OutOfDate
+from lib.dot import Dot, OutOfDate
 
 class Layout(object):
     preserve_aspect_ratio = True

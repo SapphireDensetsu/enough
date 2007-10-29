@@ -19,7 +19,7 @@
 ##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## */
 
-from Lib.Point import Point, from_polar
+from lib.Point import Point, from_polar
 import math
 
 def get_default(val, default):

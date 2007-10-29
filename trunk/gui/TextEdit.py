@@ -189,14 +189,14 @@ class TextEdit(Widget):
         except IOError:
             self._font = gui.draw.get_font(pygame.font.get_default_font(), style.font_size, style.is_bold, style.is_underline, style.is_italic)
 
-    def update(self):
+    def update(self, force=False):
         def func(index, atom, curpos):
             return self._font.size(atom)
 
         raw_text = self.get_text()
         text = self._convert(raw_text)
         state = text, self.style, self._cursor, self.is_editing, self.bgcolor, self.color, self.cursor_width, self.cursor_color
-        if self._prev_draw_state == state:
+        if self._prev_draw_state == state and not force:
             return self.size
             
         self._cached_surface = None
@@ -210,11 +210,6 @@ class TextEdit(Widget):
             self._cursor = len(self.get_text())
         self._cursor = min(self._cursor, len(self.get_text()))
 
-    def _fill_cached_surface(self):
-        if self.bgcolor:
-            bgcolor = self.bgcolor[0]
-            gui.draw.fill(self._cached_surface, bgcolor)
-        
     def _draw(self, surface, pos):
         self.fix_cursor()
 
@@ -232,7 +227,6 @@ class TextEdit(Widget):
             return size
 
         self._cached_surface = pygame.Surface(self.size)
-        self._fill_cached_surface()
         self._do(func)
         gui.draw.blit(surface, self._cached_surface, pos)
 
