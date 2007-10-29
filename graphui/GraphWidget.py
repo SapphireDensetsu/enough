@@ -6,7 +6,7 @@ from functools import partial
 import pygame
 from gui import draw
 from guilib import MovingValue, MovingLine
-from Lib.Point import Point
+from lib.Point import Point
 from gui.Widget import Widget
 from NodeWidget import NodeWidget
 from EdgeWidget import EdgeWidget
@@ -18,7 +18,7 @@ from gui.Keymap import Keymap, Key,keydown_noarg
 from lib.observable.SortedItems import SortedItems
 from lib.observable.Dict import Dict
 
-from Lib import Graph
+from lib import Graph
 
 from layout import Layout
 

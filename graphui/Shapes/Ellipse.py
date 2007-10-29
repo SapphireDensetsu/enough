@@ -5,7 +5,7 @@ from __future__ import division
 
 import math
 from gui import draw
-from Lib.Point import Point
+from lib.Point import Point
 from Lib.image import fast_scale
 
 class Ellipse(object):
