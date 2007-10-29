@@ -41,11 +41,14 @@ class Loop(object):
         self.widget = widget
         self.global_keymap.set_next_keymap(self.widget.keymap)
 
+        reactor.callWhenRunning(self._start_loop)
+        reactor.run()
+
+    def _start_loop(self):
         d = self.lc.start(1. / self.fps)
         d.addCallback(self._stop)
         d.addErrback(twisted.python.log.err)
-        reactor.run()
-    
+
     def _iteration(self):
         draw.offset.step()
         for event in pygame.event.get():
