@@ -1,22 +1,22 @@
-* IfWidget/WhileWidget should subclass a common class
-
-* How to solve the lost-cursor problem when widget is replaced? It
-  should probably sit in metadata.
-
-* code widgets should register their classes in the widget_for instead
-  of the ugly tight coupling
+* add the declarations to the top of module widget:
+  * emphasize them when stuff using them is in focus
+  * option to remove them
+  * how to have an observable find_set_of_types_used?
+* Dynamicism of the type widgets
+* how to have an observable find_basetype?
 
 * how to do incremental search?
   * Probably need various trie's and the ability to use a combination
    of such.
 
-* add the declarations to the top of module widget:
-  * emphasize them when stuff using them is in focus
-  * option to remove them
-  * how to have an observable find_set_of_types_used?
-
-* Dynamicism of the type widgets
-* how to have an observable find_basetype?
+Gui:
+* Caching drawing
+* Completion widget
+* Table to replace Box
+* IfWidget/WhileWidget should subclass a common class
+* TextEdit:
+  * should take an observable mutable string, not get/set
+  * should use subclassing instead of functions in __init__
 
 Multichildren:
   * Select multichildren -> Allow to put them in subblock
@@ -42,6 +42,8 @@ Documentation:
 * Document the observable interfaces.
 
 Questions:
+* How to solve the lost-cursor problem when widget is replaced? It
+  should probably sit in metadata.
 * How to manage searches/hierarchy walks?
 * How to manage UNDOs?
 * Should widgets have a destroy()?
@@ -56,5 +58,3 @@ Cleanups:
   change has occured. This is probably not a problem in practice
   because a Widget should go defunct (not referenced from anywhere)
   once the value is replaced... But it is a bit confusing.
-* TextEdit should take an observable mutable string, not get/set
-* TextEdit should use subclassing instead of functions in __init__

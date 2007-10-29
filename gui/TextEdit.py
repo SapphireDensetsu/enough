@@ -226,7 +226,7 @@ class TextEdit(Widget):
             gui.draw.draw_font(self._cached_surface, text_surface, curpos)
             return size
 
-        self._cached_surface = pygame.Surface(self.size)
+        self._cached_surface = pygame.Surface(self.size, pygame.SRCALPHA, 32)
         self._do(func)
         gui.draw.blit(surface, self._cached_surface, pos)
 

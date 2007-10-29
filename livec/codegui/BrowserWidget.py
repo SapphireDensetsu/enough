@@ -39,7 +39,7 @@ class BrowserWidget(Table):
 
         Table.__init__(self, List([List([
             self.main_stack,
-            SpacerWidget((10, 0)),
+            SpacerWidget((0, 10)),
             info_box,
         ])]), relay_focus=True)
 
