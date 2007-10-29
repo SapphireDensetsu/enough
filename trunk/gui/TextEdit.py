@@ -37,6 +37,7 @@ class TextEdit(Widget):
     end_keys = [Keymap.Key(0, pygame.K_END), Keymap.Key(pygame.KMOD_CTRL, pygame.K_e)]
     backspace_key = Keymap.Key(0, pygame.K_BACKSPACE)
     del_key = Keymap.Key(0, pygame.K_DELETE)
+
     
     def __init__(self, style, get_text, set_text=None, groups=None, convertor=None,
                  allowed_text=None):
@@ -55,6 +56,10 @@ class TextEdit(Widget):
         self.set_style(style)
         self._cursor = None
         self.is_editing = False
+
+        self._prev_text = None
+        self._cached_atoms = {}
+
 
     def set_cursor(self, val):
         self._cursor = min(val, len(self.get_text()))
@@ -194,8 +199,11 @@ class TextEdit(Widget):
     def _draw(self, surface, pos):
         self.fix_cursor()
         def func(index, atom, curpos):
-            text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
-            size = self._font.size(atom)
+            text_surface, size = self._cached_atoms.get((atom, self.color, self.bgcolor, self._font), (None,None))
+            if text_surface is None:
+                text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
+                size = self._font.size(atom)
+                self._cached_atoms[(atom, self.color, self.bgcolor, self._font)] = text_surface, size
             abspos = tuple(a+b for a, b in zip(pos, curpos))
             if self.is_editing and index == self._cursor:
                 gui.draw.line(surface, self.cursor_color, abspos,
@@ -211,6 +219,11 @@ class TextEdit(Widget):
 
     def _do(self, func):
         text = self._convert(self.get_text())
+        if (self._prev_text != text):
+            # if the text has changed, clear the cache.
+            self._cached_atoms.clear()
+            self._prev_text = text
+            
         pos = [self.margin[0], self.margin[1]]
         max_width = pos[0]
         for index, atom in enumerate(text + ['']):

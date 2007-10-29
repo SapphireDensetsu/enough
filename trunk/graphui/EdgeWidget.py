@@ -77,7 +77,7 @@ class EdgeWidget(Widget):
     def paint_lines(self, surface, parent_offset):
         parent_offset = Point(parent_offset)
         self.line.update()
-        self.draw_rect = draw.lines(surface, self.bg_color, False, [tuple(Point(p) + parent_offset) for p in self.line.current], 2)
+        self.draw_rect = draw.lines(surface, self.bg_color, False, [tuple(Point(p) + parent_offset) for p in self.line.current], 2, False)
 
         target_widget = self.get_node_widget(self.edge.target)
         if (self.line.done and target_widget._pos.done and target_widget._size.done
