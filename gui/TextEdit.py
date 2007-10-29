@@ -57,7 +57,7 @@ class TextEdit(Widget):
         self._cursor = None
         self.is_editing = False
 
-        self._prev_text_and_style = None
+        self._prev_draw_state = None
         self._cached_surface = None
         self._converted_text = None
 
@@ -193,11 +193,12 @@ class TextEdit(Widget):
             return self._font.size(atom)
 
         raw_text = self.get_text()
-        if self._prev_text_and_style == (raw_text, self.style):
+        state = raw_text, self.style, self._cursor
+        if self._prev_draw_state == state:
             return self.size
             
         self._cached_surface = None
-        self._prev_text_and_style = raw_text, self.style
+        self._prev_draw_state = state
         self._converted_text = self._convert(raw_text)
         
         self.size = self._do(func)
