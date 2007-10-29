@@ -259,3 +259,16 @@ class Table(Widget):
                 abspos = [a+b for a,b in zip(self.cell_positions[rownum,colnum], pos)]
                 child.draw(surface, abspos)
             
+
+
+
+# class HBox(Table):
+#     def __init__(self, child_list, relay_focus=False):
+#         Table.__init__(self, List([child_list]), relay_focus=relay_focus)
+
+# class VBox(Table):
+#     def __init__(self, child_list, relay_focus=False):
+#         Table.__init__(self, CacheMap(self._list, child_list), relay_focus=relay_focus)
+
+#     def _list(self, elem):
+#         return List([elem])
