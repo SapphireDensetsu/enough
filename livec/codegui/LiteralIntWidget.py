@@ -29,9 +29,10 @@ class LiteralIntWidget(LiteralWidget):
         self.keymap.register_key(self.dec_mode_key, Keymap.keydown_noarg(self._set_dec_mode))
         self.keymap.register_key(self.oct_mode_key, Keymap.keydown_noarg(self._set_oct_mode))
 
-        # TODO: there's a bug here, this registration is somehow
-        # swallowed by the digits group
-        self.text_edit.editing_keymap.register_key(self.negate_key, Keymap.keydown_noarg(self._negate))
+        self.text_edit.editing_keymap.register_key(
+            self.negate_key,
+            Keymap.keydown_noarg(self._negate)
+        )
 
     def _negate(self):
         """Negate the number"""
