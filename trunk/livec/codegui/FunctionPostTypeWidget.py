@@ -11,8 +11,8 @@ from lib.observable.CacheMap import CacheMap
         
 class FunctionPostTypeWidget(HBox):
     is_centered = True
-    def __init__(self, function_type, variable):
-        self.function_type = function_type
+    def __init__(self, function_type_proxy, variable_proxy):
+        self.function_type = function_type_proxy.get()
 
         comma = make_label(style.comma, ', ')
         
@@ -22,7 +22,7 @@ class FunctionPostTypeWidget(HBox):
         self.parameters_widget.is_centered = True
 
         HBox.__init__(self, List([
-            posttype_widget_for(self.function_type.return_type, variable),
+            posttype_widget_for(self.function_type.return_type, variable_proxy),
             make_label(style.paren, '('),
             self.parameters_widget,
             make_label(style.paren, ')'),

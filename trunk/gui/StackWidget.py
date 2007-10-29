@@ -3,10 +3,13 @@
 
 import pygame
 from ProxyWidget import ProxyWidget
+from SpacerWidget import SpacerWidget
+from lib.observable.ValueContainer import ValueContainer
 
 class StackWidget(ProxyWidget):
+    _spacer = SpacerWidget((0, 0))
     def __init__(self):
-        ProxyWidget.__init__(self)
+        ProxyWidget.__init__(self, ValueContainer(self._spacer))
         self.items = []
     def push(self, widget):
         self.items.append(widget)
@@ -26,4 +29,4 @@ class StackWidget(ProxyWidget):
         if top is not None:
             self.value_proxy.set(top)
         else:
-            self.value_proxy.clear()
+            self.value_proxy.set(_spacer)

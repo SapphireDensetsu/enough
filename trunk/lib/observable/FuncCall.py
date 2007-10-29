@@ -4,34 +4,27 @@
 from lib.observer import Observable
 
 class FuncCall(object):
-    def __init__(self, func, value):
+    def __init__(self, func, *args):
+        """Return an observable value that is a result of applying
+        function to the given observable arguments. As long as the
+        arguments are unchanging so is the get() of this value."""
         self.func = func
-        self.value = value
+        self.args = args
         self.obs_value = Observable()
         
-        self._cache = self.func(value.get())
-        value.obs_value.add_observer(self, '_value_')
+        self._update_cache()
+        for arg in self.args:
+            arg.obs_value.add_observer(self, '_arg_')
 
-    def _value_changed(self, old_value, new_value):
+    def _update_cache(self):
+        self._cache = self.func(*(arg.get() for arg in self.args))
+
+    def _arg_changed(self, old_arg, new_arg):
         old_cache = self._cache
-        self._cache = self.func(new_value)
+        self._update_cache()
         self.obs_value.notify.changed(old_cache, self._cache)
 
-    def _value_added(self, new_value):
-        self._cache = self.func(new_value)
-        self.obs_value.notify.added(self._cache)
-
-    def _value_deleted(self, old_value):
-        old_cache = self._cache
-        del self._cache
-        self.obs_value.notify.deleted(old_cache)
-
-    def exists(self):
-        return self.value.exists()
     def get(self):
-        self.value.verify_exists()
         return self._cache
     def set(self, value):
         raise TypeError("Cannot set a FuncCall result")
-    def clear(self, value):
-        raise TypeError("Cannot clear a FuncCall result")

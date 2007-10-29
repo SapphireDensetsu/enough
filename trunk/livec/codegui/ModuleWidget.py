@@ -17,8 +17,8 @@ import builtins
 class ModuleWidget(VBox):
     add_func_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_f)
     
-    def __init__(self, module):
-        self.module = module
+    def __init__(self, module_proxy):
+        self.module = module_proxy.get()
         self.func_box = VBox(CacheMap(widget_for, self.module.declarations), relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, loop.namer.get_name(self.module)),

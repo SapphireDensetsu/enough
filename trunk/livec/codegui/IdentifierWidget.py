@@ -9,8 +9,8 @@ from InfoShower import InfoShower
 import style
 
 class IdentifierWidget(TextEdit):
-    def __init__(self, variable, var_style):
-        self.variable = variable
+    def __init__(self, variable_proxy, var_style):
+        self.variable = variable_proxy.get()
         self.var_style = var_style
         TextEdit.__init__(self, var_style,
                           self._get_name, self._set_name,

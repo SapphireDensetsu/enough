@@ -3,12 +3,22 @@
 
 # TODO: This is c-specific
 import nodes
+from lib.observable.ValueContainer import ValueContainer
+from functools import partial
 
-int = nodes.BuiltinType(name='int', meta=nodes.Meta(name='int'))
-char = nodes.BuiltinType(name='char', meta=nodes.Meta(name='char'))
-void = nodes.BuiltinType(name='void', meta=nodes.Meta(name='void'))
-strchr = nodes.Import(include='<string.h>', name='strchr', meta=nodes.Meta(name='strchr'))
-fprintf = nodes.Import(include='<stdio.h>', name='fprintf', meta=nodes.Meta(name='fprintf'))
-printf = nodes.Import(include='<stdio.h>', name='printf', meta=nodes.Meta(name='printf'))
-stderr = nodes.Import(include='<stdio.h>', name='stderr', meta=nodes.Meta(name='stderr'))
-null = nodes.Import(include='<stddef.h>', name='NULL', meta=nodes.Meta(name='NULL'))
+def builtin_type(name):
+    return partial(ValueContainer,
+                   nodes.BuiltinType(name=name, meta=nodes.Meta(name=name)))
+
+def import_(include, name):
+    return partial(ValueContainer,
+                   nodes.Import(include=include, name=name, meta=nodes.Meta(name=name)))
+
+int = builtin_type('int')
+char = builtin_type('char')
+
+strchr = import_(include='<string.h>', name='strchr')
+fprintf = import_(include='<stdio.h>', name='fprintf')
+printf = import_(include='<stdio.h>', name='printf')
+stderr = import_(include='<stdio.h>', name='stderr')
+null = import_(include='<stddef.h>', name='NULL')

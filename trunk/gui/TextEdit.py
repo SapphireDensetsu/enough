@@ -58,17 +58,6 @@ class TextEdit(Widget):
 
     def set_cursor(self, val):
         self._cursor = min(val, len(self.get_text()))
-
-    def __getstate__(self):
-        d = Widget.__getstate__(self)
-        del d['_font']
-        del d['editing_keymap']
-        return d
-    def __setstate__(self, d):
-        d['editing_keymap'] = Keymap.Keymap()
-        Widget.__setstate__(self, d)
-        self.set_style(self._style)
-        self._register_keys()
     
     def _register_keys(self):
         self.focus_keymap.register_key(self.start_editing_key,

@@ -5,26 +5,21 @@ from gui.Box import VBox, HBox
 from codegui.widget_for import widget_for, ccode_widget_for
 from gui.TextEdit import make_label
 from codegui import style
-from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
-from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictProxy import DictProxy
 
 from itertools import chain
 
 class BinaryOpWidget(HBox):
     op_string = None
-    def __init__(self, node):
-        self.node = node
-
-        d = DictProxy(DictOfAttrs(self.node))
+    def __init__(self, node_proxy):
+        self.node = node_proxy.get()
 
         left, right = self.operand_attrs
         HBox.__init__(self, List([
-            ProxyWidget(d.map(left, widget_for)),
+            widget_for(getattr(self.node, left)),
             make_label(style.operator, ' ' + self.op_string + ' '),
-            ProxyWidget(d.map(right, widget_for)),
+            widget_for(getattr(self.node, right)),
         ]))
         self.is_centered = True
         

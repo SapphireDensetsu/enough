@@ -4,7 +4,6 @@
 import nodes
 import pygame
 from gui import Keymap
-
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
 from gui.TextEdit import make_label
@@ -13,7 +12,7 @@ from InfoShower import InfoShower
 
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
-from lib.ListProxy import ListProxy
+from lib.observable.ValueContainer import ValueContainer
 
 import ccode
 import style
@@ -27,17 +26,13 @@ class BlockWidget(VBox):
     plus_keys = (Keymap.Key(0, pygame.K_EQUALS), Keymap.Key(0, pygame.K_KP_PLUS))
     minus_keys = (Keymap.Key(0, pygame.K_MINUS), Keymap.Key(0, pygame.K_KP_MINUS))
     
-    def __init__(self, block):
-        self.block = block
+    def __init__(self, block_proxy):
+        self.block = block_proxy.get()
         self.ellipsis = make_label(style.ellipsis, '...', True)
-        self.proxy_widget = ProxyWidget()
 
-        self.statement_box = VBox(CacheMap(self._widget_for,
-                                           self.block.statements,
-                                           with_index=True),
+        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
                                   relay_focus=True)
-        self.statement_proxy = ListProxy(self.block.statements)
-        self.proxy_widget.value_proxy.set(self.statement_box)
+        self.proxy_widget = ProxyWidget(ValueContainer(self.statement_box))
 
         VBox.__init__(self, List([
             make_label(style.braces, '{'),
@@ -113,10 +108,7 @@ class BlockWidget(VBox):
             return
         self.block.statements.pop(self.statement_box.index)
 
-    def _widget_for(self, (index, x)):
-        if isinstance(x, nodes.Missing):
-            from StatementFillerWidget import StatementFillerWidget
-            return StatementFillerWidget(self.statement_proxy.proxy(index))
+    def _widget_for(self, x):
         w = widget_for(x)
         if ccode.is_expr(x):
             return HBox(List([

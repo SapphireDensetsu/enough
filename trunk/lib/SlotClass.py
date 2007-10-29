@@ -16,8 +16,6 @@ class SlotClass(object):
     defaults = None
     avoid_repr = ()
     def __init__(self, *args, **kw):
-        self.obs_dict = observer.Observable()
-
         slots = list(self.__slots__)
         slots.remove('obs_dict')
         if len(args) > len(slots):
@@ -38,14 +36,16 @@ class SlotClass(object):
             setattr(self, field_name, value)
         if kw:
             raise TypeError("Unknown keyword arguments", kw)
+        self.obs_dict = observer.Observable()
 
     def __setattr__(self, name, value):
         super(SlotClass, self).__setattr__(name, value)
-        if name != 'obs_dict':
-            if hasattr(self, name):
-                self.obs_dict.notify.replace_item(name, getattr(self, name), value)
-            else:
-                self.obs_dict.notify.add_item(name, value)
+        if not hasattr(self, 'obs_dict'):
+            return
+        if hasattr(self, name):
+            self.obs_dict.notify.replace_item(name, getattr(self, name), value)
+        else:
+            self.obs_dict.notify.add_item(name, value)
 
     def __getstate__(self):
         return tuple(getattr(self, field_name)

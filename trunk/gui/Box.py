@@ -62,14 +62,6 @@ class Box(Widget):
         else:
             self._leave_child()
 
-    def __getstate__(self):
-        d = Widget.__getstate__(self)
-        del d['parenting_keymap']
-        return d
-    def __setstate__(self, d):
-        d['parenting_keymap'] = Keymap.Keymap()
-        Widget.__setstate__(self, d)
-        
     def _allow_enter_child(self):
         self.focus_keymap.register_key(
             self.enter_child_key,

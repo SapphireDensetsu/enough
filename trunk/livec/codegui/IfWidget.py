@@ -5,43 +5,55 @@ import nodes
 import pygame
 
 from gui.Box import VBox, HBox
-from gui.ProxyWidget import ProxyWidget
-from gui.SpacerWidget import SpacerWidget
 from gui.TextEdit import make_label
-from codegui.widget_for import widget_for
+from gui.SpacerWidget import SpacerWidget
+from gui import Keymap
+from codegui.widget_for import NormalWidgetMaker
 from codegui import style
 
 from lib.observable.List import List
-from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictProxy import DictProxy
 
-from itertools import chain
-
+class ElseWidgetMaker(NormalWidgetMaker):
+    _spacer = SpacerWidget((0, 0))
+    @classmethod
+    def _make(cls, proxy, value):
+        if value is None:
+            return cls._spacer
+        return VBox(List([
+            make_label(style.else_, 'else'),
+            NormalWidgetMaker._make(proxy, value),
+        ]), relay_focus=True)
 
 class IfWidget(VBox):
-    def __init__(self, if_node):
-        self.if_node = if_node
+    convert_to_while_key = Keymap.Key(pygame.KMOD_CTRL, pygame.K_w)
+    def __init__(self, node_proxy):
+        self.node_proxy = node_proxy
+        self.node = node_proxy.get()
 
-        d = DictProxy(DictOfAttrs(self.if_node))
         cond_part = HBox(List([
             make_label(style.if_, 'if'),
             make_label(style.paren, '('),
-            ProxyWidget(d.map('expr', widget_for)),
+            NormalWidgetMaker.make(self.node.expr),
             make_label(style.paren, ')'),
         ]), relay_focus=True)
         cond_part.is_centered = True
 
         VBox.__init__(self, List([
             cond_part,
-            ProxyWidget(d.map('if_true', widget_for)),
-            ProxyWidget(d.map('if_false', self._widget_for_else)),
+            NormalWidgetMaker.make(self.node.if_true),
+            ElseWidgetMaker.make(self.node.if_false),
         ]))
-    
-    def _widget_for_else(self, x):
-        if x is not None:
-            return VBox(List([
-                make_label(style.else_, 'else'),
-                widget_for(x),
-            ]), relay_focus=True)
-        else:
-            return SpacerWidget((0, 0))
+
+        self.focus_keymap.register_key(
+            self.convert_to_while_key,
+            Keymap.keydown_noarg(self._convert_to_while)
+        )
+
+    def _convert_to_while(self):
+        """Convert this if to a while"""
+        if self.node.if_false.get() is not None:
+            return
+        while_node = nodes.While(expr=self.node.expr,
+                                 block=self.node.if_true,
+                                 meta=self.node.meta)
+        self.node_proxy.set(while_node)

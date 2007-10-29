@@ -124,7 +124,7 @@ all_printable = Group('Printable symbols', [pygame.KMOD_SHIFT, 0],
                       [ord(x) for x in string.printable])
 
 digits = Group('Digit', [0], [ord(x) for x in string.digits])
-extended_digits = Group('Digit', [0], [ord(x) for x in string.digits+'abcdef'])
+extended_digits = Group('Extended digits', [0], [ord(x) for x in string.digits+'abcdef'])
 
 class Keymap(object):
     def __init__(self):
@@ -143,9 +143,6 @@ class Keymap(object):
         self.disabled_group_registrations = {}
         self.is_active = False
 
-    def __getstate__(self):
-        raise Exception("Not picklable!", self)
-    
     def __contains__(self, key):
         if self.next_keymap is not None and key in self.next_keymap:
             return True
