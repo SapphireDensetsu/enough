@@ -12,25 +12,15 @@ from lib.observable.List import List
 from functools import partial
 
 class EnumWidget(VBox):
-    def __init__(self, enum, emphasize_value=None):
-        self.enum = enum
+    # TODO: emphasize_value should be a proxy?
+    def __init__(self, enum_proxy, emphasize_value=None):
+        self.enum = enum_proxy.get()
 
-        comma = make_label(style.comma, ',')
-        def value_widget(value, with_comma):
-            s = style.enum_value
-            if value is emphasize_value:
-                s = style.emphasize(s)
-            l = [
-                TextEdit(s, partial(loop.namer.get_name, value)),
-                make_label(style.operator, ' = '),
-                widget_for(value.value),
-            ]
-            if with_comma:
-                l.append(comma)
-            return HBox(List(l))
+        self._comma = make_label(style.comma, ',')
         values_box = VBox(List([
-            value_widget(value, index!=len(self.enum.values)-1)
-            for index, value in enumerate(self.enum.values)
+            self._value_widget(value_proxy, index!=len(self.enum.values)-1,
+                               emphasize_value)
+            for index, value_proxy in enumerate(self.enum.values)
         ]))
 
         VBox.__init__(self, List([
@@ -46,3 +36,17 @@ class EnumWidget(VBox):
                 make_label(style.semicolon, ';'),
             ]), relay_focus=True)
         ]))
+
+    def _value_widget(self, value_proxy, with_comma, emphasize_value):
+        value = value_proxy.get()
+        s = style.enum_value
+        if value is emphasize_value:
+            s = style.emphasize(s)
+        l = [
+            TextEdit(s, partial(loop.namer.get_name, value)),
+            make_label(style.operator, ' = '),
+            widget_for(value.value),
+        ]
+        if with_comma:
+            l.append(self._comma)
+        return HBox(List(l))

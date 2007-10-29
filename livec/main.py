@@ -6,7 +6,7 @@ from gui.main import pygame_display
 
 import pygame
 
-with pygame_display((800, 600), pygame.DOUBLEBUF) as display:
+with pygame_display((1024, 768), pygame.DOUBLEBUF) as display:
     from codegui.loop import loop
     from codegui.BrowserWidget import BrowserWidget
 

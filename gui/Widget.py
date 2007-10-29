@@ -49,17 +49,6 @@ class Widget(object):
         self._anim_pos = MovingPos()
 
         self.selectable = ValueContainer(True)
-
-    def __getstate__(self):
-        d = self.__dict__.copy()
-        del d['keymap']
-        del d['focus_keymap']
-        return d
-    def __setstate__(self, d):
-        d['keymap'] = Keymap.Keymap()
-        d['focus_keymap'] = Keymap.Keymap()
-        for k,v in d.iteritems():
-            self.__dict__[k] = v
             
     def _keymap_activated(self):
         self.got_focus()

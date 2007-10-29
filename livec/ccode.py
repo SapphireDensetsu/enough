@@ -52,6 +52,19 @@ def is_expr(node):
                              nodes.NotEquals,
                              nodes.Equals))
 
+def find_basetype(x):
+    node_type = type(x.get())
+    if issubclass(node_type, nodes.BuiltinType):
+        return x
+    elif issubclass(node_type, nodes.Ptr):
+        return find_basetype(x.get().pointed_type)
+    elif issubclass(node_type, nodes.Array):
+        return find_basetype(x.get().element_type)
+    elif issubclass(node_type, nodes.FunctionType):
+        return find_basetype(x.get().return_type)
+    else:
+        assert False, "Cannot find base type of %r" % (x,)
+
 class CCodeGenerator(object):
     def __init__(self):
         self._cnames = {}

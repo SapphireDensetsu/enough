@@ -27,6 +27,7 @@ space = _make_style()
 
 keyword = _make_style(color=(255, 90, 90))
 if_ = keyword
+while_ = keyword
 else_ = keyword
 return_ = keyword
 enum = keyword

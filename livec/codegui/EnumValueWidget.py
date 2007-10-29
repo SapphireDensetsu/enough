@@ -4,18 +4,12 @@
 from IdentifierWidget import IdentifierWidget
 from EnumWidget import EnumWidget
 import style
-from gui.ProxyWidget import ProxyWidget
-
-from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictProxy import DictProxy
 
 class EnumValueWidget(IdentifierWidget):
-    def __init__(self, variable):
-        IdentifierWidget.__init__(self, variable, style.enum_value)
+    def __init__(self, variable_proxy):
+        IdentifierWidget.__init__(self, variable_proxy, style.enum_value)
 
-        d = DictProxy(DictOfAttrs(self.variable))
+        self._info_shower.info_widget = self._widget_for(self.variable.enum)
 
-        self._info_shower.info_widget = ProxyWidget(d.map('enum', self._widget_for))
-
-    def _widget_for(self, enum):
-        return EnumWidget(enum, self.variable)
+    def _widget_for(self, enum_proxy):
+        return EnumWidget(enum_proxy, self.variable)

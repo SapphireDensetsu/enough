@@ -11,8 +11,8 @@ from lib.observable.List import List
 class LiteralWidget(HBox):
     example_frame_color = None
     keymap_group = Keymap.all_printable
-    def __init__(self, literal):
-        self.literal = literal
+    def __init__(self, literal_proxy):
+        self.literal = literal_proxy.get()
         self.text_edit = TextEdit(self.literal_style,
                                   self._get_string, self._set_string,
                                   [self.keymap_group],

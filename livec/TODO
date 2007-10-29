@@ -1,3 +1,11 @@
+* IfWidget/WhileWidget should subclass a common class
+
+* How to solve the lost-cursor problem when widget is replaced? It
+  should probably sit in metadata.
+
+* code widgets should register their classes in the widget_for instead
+  of the ugly tight coupling
+
 * how to do incremental search?
   * Probably need various trie's and the ability to use a combination
    of such.
@@ -43,5 +51,10 @@ BUGS:
 * Performance in general
 
 Cleanups:
+* Widgets now take proxy when they only actually use the CURRENT value
+  in proxy.get(), and proxy.set() should only be used before any
+  change has occured. This is probably not a problem in practice
+  because a Widget should go defunct (not referenced from anywhere)
+  once the value is replaced... But it is a bit confusing.
 * TextEdit should take an observable mutable string, not get/set
 * TextEdit should use subclassing instead of functions in __init__

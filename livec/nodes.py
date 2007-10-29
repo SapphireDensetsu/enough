@@ -8,6 +8,9 @@ from lib.observer import Observable
 from lib.proxyclass import proxy_class
 
 from lib.observable.List import List
+from lib.observable.ValueContainer import ValueContainer
+
+from functools import partial
 
 class Meta(dict):
     """This is a special kind of node that does not affect the
@@ -25,6 +28,9 @@ class Node(SlotClass):
             x = getattr(self, i)
             if isinstance(x, Node):
                 yield x
+    @classmethod
+    def proxy(cls, *args, **kw):
+        return ValueContainer(cls(*args, **kw))
 
 class Missing(Node):
     """A node is missing in this position"""
@@ -129,7 +135,11 @@ class Equals(Node):
 
 class If(Node):
     __slots__ = ['expr', 'if_true', 'if_false', 'meta']
-    defaults = dict(meta=Meta, if_false=lambda : None)
+    defaults = dict(meta=Meta, if_false=partial(ValueContainer, None))
+
+class While(Node):
+    __slots__ = ['expr', 'block', 'meta']
+    defaults = dict(meta=Meta)
 
 class Return(Node):
     __slots__ = ['expr', 'meta']

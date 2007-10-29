@@ -4,22 +4,17 @@
 from gui.Box import HBox
 from gui.TextEdit import make_label
 from codegui.widget_for import widget_for
-from gui.ProxyWidget import ProxyWidget
 
 from lib.observable.List import List
-from lib.observable.DictOfAttrs import DictOfAttrs
-from lib.DictProxy import DictProxy
 
 import style
 
 class ReturnWidget(HBox):
-    def __init__(self, return_):
-        self.return_ = return_
-
-        d = DictProxy(DictOfAttrs(self.return_))
+    def __init__(self, return_proxy):
+        self.return_ = return_proxy.get()
 
         HBox.__init__(self, List([
             make_label(style.return_, "return "),
-            ProxyWidget(d.map('expr', widget_for)),
+            widget_for(self.return_.expr),
             make_label(style.semicolon, ";"),
         ]))

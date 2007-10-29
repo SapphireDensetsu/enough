@@ -162,7 +162,8 @@ class Node(ObservableValue):
             yield e
             
 
-identity = lambda x:x
+def identity(x):
+    return x
 def copy(orig_nodes, node_value_copier=identity, edge_value_copier=identity):
     nodes = []
     nodes_map = {}

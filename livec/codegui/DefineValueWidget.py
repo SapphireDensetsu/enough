@@ -6,6 +6,6 @@ from IdentifierWidget import IdentifierWidget
 import style
 
 class DefineValueWidget(IdentifierWidget):
-    def __init__(self, variable):
-        IdentifierWidget.__init__(self, variable, style.define_value)
-        self._info_shower.info_widget = DefineWidget(self.variable)
+    def __init__(self, variable_proxy):
+        IdentifierWidget.__init__(self, variable_proxy, style.define_value)
+        self._info_shower.info_widget = DefineWidget(variable_proxy)
