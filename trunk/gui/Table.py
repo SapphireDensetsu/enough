@@ -1,4 +1,3 @@
-from gui.Box import HBox, VBox
 from gui.Widget import Widget
 
 
@@ -20,9 +19,10 @@ class Table(Widget):
     up_key   = Keymap.Key(0, pygame.K_UP)
     down_key = Keymap.Key(0, pygame.K_DOWN)
     
-    def __init__(self, rows, relay_focus=False):
+    def __init__(self, rows, transposed=False, relay_focus=False):
         Widget.__init__(self)
         self.rows = rows
+        self.transposed = transposed
         #self.rows.obs_list.add_observer(self, '_row_')
         
         for rownum, row in enumerate(self.rows):
@@ -237,13 +237,13 @@ class Table(Widget):
                 self.column_sizes[colnum] = max(self.column_sizes[colnum], child.size[0])
                 self.row_sizes[rownum] = max(self.row_sizes[rownum], child.size[1])
 
-            total[0] = max(total[0], self.row_sizes[rownum])
 
         y = 0
         for rownum, row_size in enumerate(self.row_sizes.itervalues()):
+            total[1] += row_size
             x = 0
             for colnum, col_size in enumerate(self.column_sizes.itervalues()):
-                total[1] = max(total[1], col_size)
+                total[0] += col_size
                 
                 self.cell_positions[rownum,colnum] = x,y
 
@@ -256,6 +256,7 @@ class Table(Widget):
     def _draw(self, surface, pos):
         for rownum, row in enumerate(self.rows):
             for colnum, child in enumerate(row):
+                    
                 abspos = [a+b for a,b in zip(self.cell_positions[rownum,colnum], pos)]
                 child.draw(surface, abspos)
             
