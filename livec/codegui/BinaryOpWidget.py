@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from gui.Box import VBox, HBox
-from codegui.widget_for import widget_for, ccode_widget_for
+from codegui.widget_for import NormalWidgetMaker
 from gui.TextEdit import make_label
 from codegui import style
 
@@ -17,9 +17,9 @@ class BinaryOpWidget(HBox):
 
         left, right = self.operand_attrs
         HBox.__init__(self, List([
-            widget_for(getattr(self.node, left)),
+            NormalWidgetMaker.make(getattr(self.node, left)),
             make_label(style.operator, ' ' + self.op_string + ' '),
-            widget_for(getattr(self.node, right)),
+            NormalWidgetMaker.make(getattr(self.node, right)),
         ]))
         self.is_centered = True
         

@@ -9,7 +9,4 @@ class EnumValueWidget(IdentifierWidget):
     def __init__(self, variable_proxy):
         IdentifierWidget.__init__(self, variable_proxy, style.enum_value)
 
-        self._info_shower.info_widget = self._widget_for(self.variable.enum)
-
-    def _widget_for(self, enum_proxy):
-        return EnumWidget(enum_proxy, self.variable)
+        self._info_shower.info_widget = EnumWidget(self.variable.enum, self.variable)

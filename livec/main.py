@@ -11,11 +11,11 @@ with pygame_display((1024, 768), pygame.DOUBLEBUF) as display:
     from codegui.BrowserWidget import BrowserWidget
 
     from codegui.Namer import Namer
-    from codegui.widget_for import widget_for
+    from codegui.widget_for import NormalWidgetMaker
     loop.namer = Namer()
     
     from example import example
-    loop.browser = BrowserWidget(widget_for(example))
+    loop.browser = BrowserWidget(NormalWidgetMaker.make(example))
 
     import pygame
     pygame.key.set_repeat(250,10)

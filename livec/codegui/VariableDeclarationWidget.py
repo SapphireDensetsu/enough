@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from gui.Box import VBox, HBox
-from widget_for import type_widget_for
+from widget_for import TypeWidgetMaker
 
 from lib.observable.List import List
 
@@ -13,8 +13,5 @@ class VariableDeclarationWidget(HBox):
         self.variable = variable_proxy.get()
 
         HBox.__init__(self, List([
-            self._widget_for_type(self.variable.type),
+            TypeWidgetMaker.make(self.variable.type, self.variable_proxy),
         ]))
-
-    def _widget_for_type(self, typ):
-        return type_widget_for(typ, self.variable_proxy)

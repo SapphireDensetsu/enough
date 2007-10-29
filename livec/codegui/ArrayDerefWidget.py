@@ -3,7 +3,7 @@
 
 from gui.Box import HBox
 from gui.TextEdit import make_label
-from codegui.widget_for import widget_for
+from codegui.widget_for import NormalWidgetMaker
 
 from lib.observable.List import List
 
@@ -14,8 +14,8 @@ class ArrayDerefWidget(HBox):
         self.array_deref = array_deref_proxy.get()
 
         HBox.__init__(self, List([
-            widget_for(self.array_deref.expr),
+            NormalWidgetMaker.make(self.array_deref.expr),
             make_label(style.bracket, "["),
-            widget_for(self.array_deref.index),
+            NormalWidgetMaker.make(self.array_deref.index),
             make_label(style.bracket, "]"),
         ]))
