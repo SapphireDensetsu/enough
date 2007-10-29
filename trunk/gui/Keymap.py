@@ -258,7 +258,7 @@ class Keymap(object):
     def register_key(self, key, func):
         assert isinstance(key, Key)
         assert func.__doc__, "Must use documented functions (%r)" % (func,)
-        for group, func in itertools.chain(self.group_registrations.iteritems(),
+        for group, group_func in itertools.chain(self.group_registrations.iteritems(),
                                            self.disabled_group_registrations.iteritems()):
             assert key not in group
         
