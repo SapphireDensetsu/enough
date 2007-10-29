@@ -30,6 +30,7 @@ class TextEdit(Widget):
     start_editing_key = Keymap.Key(0, pygame.K_RETURN)
     stop_editing_key = Keymap.Key(0, pygame.K_ESCAPE)
     cursor_color = (255, 10, 10)
+    cursor_width = 2
     
     left_key = Keymap.Key(0, pygame.K_LEFT)
     right_key = Keymap.Key(0, pygame.K_RIGHT)
@@ -193,13 +194,14 @@ class TextEdit(Widget):
             return self._font.size(atom)
 
         raw_text = self.get_text()
-        state = raw_text, self.style, self._cursor
+        text = self._convert(raw_text)
+        state = text, self.style, self._cursor, self.is_editing
         if self._prev_draw_state == state:
             return self.size
             
         self._cached_surface = None
         self._prev_draw_state = state
-        self._converted_text = self._convert(raw_text)
+        self._converted_text = text
         
         self.size = self._do(func)
 
@@ -220,15 +222,13 @@ class TextEdit(Widget):
         if self._cached_surface is not None:
             gui.draw.blit(surface, self._cached_surface, pos)
             return
-
-        
         def func(index, atom, curpos):
             text_surface = self._font.render(atom, True, self.color, *self.bgcolor)
             size = self._font.size(atom)
-            #abspos = [a+b for a, b in zip(pos, curpos)]
             if self.is_editing and index == self._cursor:
                 gui.draw.line(self._cached_surface, self.cursor_color, curpos,
-                              (curpos[0], curpos[1]+size[1]), 2)
+                              (curpos[0], curpos[1]+size[1]), self.cursor_width)
+            
             gui.draw.draw_font(self._cached_surface, text_surface, curpos)
             return size
 
@@ -255,7 +255,7 @@ class TextEdit(Widget):
             twidth, theight = func(index, atom, pos)
             pos[0] += twidth + self.margin[0]
             max_width = max(max_width, pos[0])
-        return (max_width, pos[1] + theight + self.margin[1])
+        return (max_width + self.cursor_width, pos[1] + theight + self.margin[1])
 
 def make_label(style, text, selectable=False):
     te = TextEdit(style, lambda : text)
