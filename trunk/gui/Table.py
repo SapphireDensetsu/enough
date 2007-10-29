@@ -243,11 +243,10 @@ class Table(Widget):
             total[1] += row_size
             x = 0
             for colnum, col_size in enumerate(self.column_sizes.itervalues()):
-                total[0] += col_size
-                
                 self.cell_positions[rownum,colnum] = x,y
 
                 x += col_size
+            total[0] = max(total[0],x)
             y += row_size
 
         self.size = total
