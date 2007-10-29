@@ -27,3 +27,5 @@ class FunctionPostTypeWidget(HBox):
             self.parameters_widget,
             make_label(style.paren, ')'),
         ]))
+import nodes
+PostTypeWidgetMaker.register(nodes.FunctionType, FunctionPostTypeWidget)

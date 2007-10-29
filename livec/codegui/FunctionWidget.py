@@ -16,3 +16,5 @@ class FunctionWidget(VBox):
             TypeWidgetMaker.make(self.function.type, self.function_proxy),
             NormalWidgetMaker.make(self.function.block),
         ]))
+import nodes
+NormalWidgetMaker.register(nodes.Function, FunctionWidget)

@@ -57,3 +57,4 @@ class IfWidget(VBox):
                                  block=self.node.if_true,
                                  meta=self.node.meta)
         self.node_proxy.set(while_node)
+NormalWidgetMaker.register(nodes.If, IfWidget)

@@ -22,3 +22,6 @@ class LiteralCharWidget(LiteralWidget):
 
     def _allowed_text(self, value):
         return len(value) <= 4
+import nodes
+from widget_for import NormalWidgetMaker
+NormalWidgetMaker.register(nodes.LiteralChar, LiteralCharWidget)

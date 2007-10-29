@@ -111,3 +111,6 @@ class LiteralIntWidget(LiteralWidget):
         return all((c.isdigit() or c in 'abcdef')
                    for c in value.lower())
     _hex__ldelimiter = '0x'
+import nodes
+from widget_for import NormalWidgetMaker
+NormalWidgetMaker.register(nodes.LiteralInt, LiteralIntWidget)

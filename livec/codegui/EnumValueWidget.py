@@ -10,3 +10,6 @@ class EnumValueWidget(IdentifierWidget):
         IdentifierWidget.__init__(self, variable_proxy, style.enum_value)
 
         self._info_shower.info_widget = EnumWidget(self.variable.enum, self.variable)
+import nodes
+from widget_for import NormalWidgetMaker
+NormalWidgetMaker.register(nodes.EnumValue, EnumValueWidget)

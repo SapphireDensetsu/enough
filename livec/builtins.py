@@ -16,6 +16,7 @@ def import_(include, name):
 
 int = builtin_type('int')
 char = builtin_type('char')
+void = builtin_type('void')
 
 strchr = import_(include='<string.h>', name='strchr')
 fprintf = import_(include='<stdio.h>', name='fprintf')

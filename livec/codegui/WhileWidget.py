@@ -42,3 +42,4 @@ class WhileWidget(VBox):
                            if_true=self.node.block,
                            meta=self.node.meta)
         self.node_proxy.set(if_node)
+NormalWidgetMaker.register(nodes.While, WhileWidget)

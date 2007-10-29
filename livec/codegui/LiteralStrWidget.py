@@ -15,3 +15,6 @@ class LiteralStrWidget(LiteralWidget):
 
     def _get_example_str(self):
         return self._get_string()
+import nodes
+from widget_for import NormalWidgetMaker
+NormalWidgetMaker.register(nodes.LiteralString, LiteralStrWidget)
