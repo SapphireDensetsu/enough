@@ -195,7 +195,7 @@ class TextEdit(Widget):
 
         raw_text = self.get_text()
         text = self._convert(raw_text)
-        state = text, self.style, self._cursor, self.is_editing
+        state = text, self.style, self._cursor, self.is_editing, self.bgcolor, self.color, self.cursor_width, self.cursor_color
         if self._prev_draw_state == state:
             return self.size
             
@@ -211,10 +211,9 @@ class TextEdit(Widget):
         self._cursor = min(self._cursor, len(self.get_text()))
 
     def _fill_cached_surface(self):
-        bgcolor = (0,0,0)
         if self.bgcolor:
             bgcolor = self.bgcolor[0]
-        gui.draw.fill(self._cached_surface, bgcolor)
+            gui.draw.fill(self._cached_surface, bgcolor)
         
     def _draw(self, surface, pos):
         self.fix_cursor()
