@@ -4,7 +4,7 @@
 from gui.Box import VBox, HBox
 from gui.TextEdit import TextEdit, make_label
 from codegui.loop import loop
-from codegui.widget_for import widget_for, indented
+from codegui.widget_for import NormalWidgetMaker, indented
 import style
 
 from lib.observable.List import List
@@ -45,7 +45,7 @@ class EnumWidget(VBox):
         l = [
             TextEdit(s, partial(loop.namer.get_name, value)),
             make_label(style.operator, ' = '),
-            widget_for(value.value),
+            NormalWidgetMaker.make(value.value),
         ]
         if with_comma:
             l.append(self._comma)

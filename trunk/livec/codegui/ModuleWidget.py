@@ -4,8 +4,10 @@
 from gui.Box import VBox
 from gui.TextEdit import make_label
 from gui import Keymap
-from codegui.widget_for import widget_for, style
-from codegui.loop import loop
+
+from widget_for import NormalWidgetMaker
+from loop import loop
+import style
 
 from lib.observable.CacheMap import CacheMap
 from lib.observable.List import List
@@ -19,7 +21,8 @@ class ModuleWidget(VBox):
     
     def __init__(self, module_proxy):
         self.module = module_proxy.get()
-        self.func_box = VBox(CacheMap(widget_for, self.module.declarations), relay_focus=True)
+        self.func_box = VBox(CacheMap(NormalWidgetMaker.make, self.module.declarations),
+                             relay_focus=True)
         VBox.__init__(self, List([
             make_label(style.module_name, loop.namer.get_name(self.module)),
             self.func_box,

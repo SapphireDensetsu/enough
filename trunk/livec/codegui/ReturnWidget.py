@@ -3,7 +3,7 @@
 
 from gui.Box import HBox
 from gui.TextEdit import make_label
-from codegui.widget_for import widget_for
+from codegui.widget_for import NormalWidgetMaker
 
 from lib.observable.List import List
 
@@ -15,6 +15,6 @@ class ReturnWidget(HBox):
 
         HBox.__init__(self, List([
             make_label(style.return_, "return "),
-            widget_for(self.return_.expr),
+            NormalWidgetMaker.make(self.return_.expr),
             make_label(style.semicolon, ";"),
         ]))

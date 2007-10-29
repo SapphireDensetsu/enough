@@ -49,9 +49,6 @@ class PostTypeWidgetMaker(WidgetMaker):
         else:
             assert False
 
-# TODO: Remove this wrapper
-posttype_widget_for = PostTypeWidgetMaker.make
-
 # TODO: Should this be here?
 class TypeWidgetMaker(WidgetMaker):
     @classmethod
@@ -62,13 +59,10 @@ class TypeWidgetMaker(WidgetMaker):
         type_widget = HBox(List([
             basetype_widget,
             make_label(style.space, ' '),
-            posttype_widget_for(type_proxy, variable_proxy),
+            PostTypeWidgetMaker.make(type_proxy, variable_proxy),
         ]))
         type_widget.is_centered = True
         return type_widget
-
-# TODO: Remove this wrapper
-type_widget_for = TypeWidgetMaker.make
 
 class NormalWidgetMaker(WidgetMaker):
     @classmethod
@@ -130,10 +124,6 @@ class NormalWidgetMaker(WidgetMaker):
         return ccode_widget_for(proxy)
         #assert False, "Don't know how to widget %r" % (x,)
 
-# TODO: Remove this wrapper
-widget_for = NormalWidgetMaker.make
-
-
 class DeclarationWidgetMaker(NormalWidgetMaker):
     @classmethod
     def _make(cls, node_proxy, node):
@@ -144,6 +134,3 @@ class DeclarationWidgetMaker(NormalWidgetMaker):
         else:
             # TODO: HUH?? When can this happen?
             return NormalWidgetMaker._make(node_proxy, node)
-
-# TODO: Remove this wrapper
-declaration_widget_for = DeclarationWidgetMaker.make

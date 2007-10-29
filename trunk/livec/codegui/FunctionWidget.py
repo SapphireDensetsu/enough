@@ -3,7 +3,7 @@
 
 from gui.Box import VBox, HBox
 from gui.TextEdit import make_label
-from codegui.widget_for import widget_for, type_widget_for, declaration_widget_for
+from codegui.widget_for import NormalWidgetMaker, TypeWidgetMaker
 
 from lib.observable.List import List
         
@@ -13,9 +13,6 @@ class FunctionWidget(VBox):
         self.function = function_proxy.get()
 
         VBox.__init__(self, List([
-            self._widget_for_prototype(self.function.type),
-            widget_for(self.function.block),
+            TypeWidgetMaker.make(self.function.type, self.function_proxy),
+            NormalWidgetMaker.make(self.function.block),
         ]))
-
-    def _widget_for_prototype(self, type_):
-        return type_widget_for(type_, self.function_proxy)

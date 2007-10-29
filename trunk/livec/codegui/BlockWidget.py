@@ -7,7 +7,7 @@ from gui import Keymap
 from gui.Box import VBox, HBox
 from gui.ProxyWidget import ProxyWidget
 from gui.TextEdit import make_label
-from widget_for import indented, widget_for
+from widget_for import indented, NormalWidgetMaker
 from InfoShower import InfoShower
 
 from lib.observable.CacheMap import CacheMap
@@ -16,6 +16,17 @@ from lib.observable.ValueContainer import ValueContainer
 
 import ccode
 import style
+
+class StatementWidgetMaker(NormalWidgetMaker):
+    @classmethod
+    def _make(cls, proxy, value):
+        widget = NormalWidgetMaker._make(proxy, value)
+        if ccode.is_expr(value):
+            return HBox(List([
+                widget,
+                make_label(style.semicolon, ';')
+            ]), relay_focus=True)
+        return widget
 
 class BlockWidget(VBox):
     default_folded = False
@@ -30,7 +41,7 @@ class BlockWidget(VBox):
         self.block = block_proxy.get()
         self.ellipsis = make_label(style.ellipsis, '...', True)
 
-        self.statement_box = VBox(CacheMap(self._widget_for, self.block.statements),
+        self.statement_box = VBox(CacheMap(StatementWidgetMaker.make, self.block.statements),
                                   relay_focus=True)
         self.proxy_widget = ProxyWidget(ValueContainer(self.statement_box))
 
@@ -107,15 +118,6 @@ class BlockWidget(VBox):
         if self.statement_box.index is None or not self.block.statements:
             return
         self.block.statements.pop(self.statement_box.index)
-
-    def _widget_for(self, x):
-        w = widget_for(x)
-        if ccode.is_expr(x):
-            return HBox(List([
-                w,
-                make_label(style.semicolon, ';')
-            ]), relay_focus=True)
-        return w
 
     def _statement_index(self):
         index = self.statement_box.index

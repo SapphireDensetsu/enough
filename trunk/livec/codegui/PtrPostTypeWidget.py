@@ -3,7 +3,7 @@
 
 from gui.TextEdit import make_label
 from gui.Box import HBox
-from codegui.widget_for import posttype_widget_for
+from codegui.widget_for import PostTypeWidgetMaker
 from codegui import style
 
 from lib.observable.List import List
@@ -14,7 +14,7 @@ class PtrPostTypeWidget(HBox):
         HBox.__init__(self, List([
             make_label(style.paren, '('),
             make_label(style.type_, '*'),
-            posttype_widget_for(self.type.pointed_type, variable_proxy),
+            PostTypeWidgetMaker.make(self.type.pointed_type, variable_proxy),
             make_label(style.paren, ')'),
         ]))
         self.is_centered = True
