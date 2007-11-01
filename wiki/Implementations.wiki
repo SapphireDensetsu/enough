@@ -1,6 +1,5 @@
 #summary Implementations + some tools we wrote for Enough
 
-
 == Libraries ==
 In the process of our work, we are developing a (Pythonic) codebase that includes:
  # A generic library, including:
