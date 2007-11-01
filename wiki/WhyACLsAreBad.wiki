@@ -33,4 +33,5 @@ Capability systems mean that you simply never give away your credit card number.
 In a typical capability system, after they charge you, you kill them so they can never use that number again or tell it to anyone.  However, that may be the point where analogies break :-)
 
 = See Also =
-[http://en.wikipedia.org/wiki/Access_control_list Wikipedia on ACLs]
+[http://en.wikipedia.org/wiki/Access_control_list Wikipedia on ACLs] 
+ 

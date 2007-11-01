@@ -7,4 +7,5 @@ The current research goals are, in possible chronological order:
  * Look for new concepts by finding more published material or related projects
 
 == Old/completed goals ==
- * Formulate/describe each of the BuzzWords and add new ones - looks like we covered most of what we can think of for now
+ * Formulate/describe each of the BuzzWords and add new ones - looks like we covered most of what we can think of for now 
+ 

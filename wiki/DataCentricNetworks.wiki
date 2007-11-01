@@ -105,4 +105,5 @@ In the second type of references, there is no "true location" as the data is imm
 
 = External references =
 
-A Google Tech-Talk by Van Jacobson that explains this idea: http://video.stumbleupon.com/#p=17d2ylezm3
+A Google Tech-Talk by Van Jacobson that explains this idea: http://video.stumbleupon.com/#p=17d2ylezm3 
+ 

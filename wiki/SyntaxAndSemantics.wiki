@@ -89,4 +89,5 @@ void destory_person(struct person **person) {
 }}}
 Here, we obviously think about 'person' as an object. But from a purely C standpoint, there is no such thing as an object. There are functions, variables, statements, expressions, etc. But no objects.
 
-This is an example of thinking outside the language. In our mind (and conversations and documentation) we may use semantics that don't exist in the language we use to implement the program.
+This is an example of thinking outside the language. In our mind (and conversations and documentation) we may use semantics that don't exist in the language we use to implement the program. 
+ 

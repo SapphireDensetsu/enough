@@ -68,4 +68,5 @@ Modifications of remote *Mutables* (that live on other computers) are associated
 
 = Values =
 
-Immutable values exist in thin air, and are referred to by other objects via 
+Immutable values exist in thin air, and are referred to by other objects via  
+ 

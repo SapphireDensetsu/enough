@@ -43,4 +43,5 @@ Graphui is still under development. Here are some ideas for applications.
 
 
 == Future applications ==
-Graphui may be suitable for testing a [LiveProgramming Live programming] environment. We will have to add features for viewing the code in different ways (not just as a Dot graph), especially as a compact tree (like the one used in graphical file managers to represent the directory tree).
+Graphui may be suitable for testing a [LiveProgramming Live programming] environment. We will have to add features for viewing the code in different ways (not just as a Dot graph), especially as a compact tree (like the one used in graphical file managers to represent the directory tree). 
+ 

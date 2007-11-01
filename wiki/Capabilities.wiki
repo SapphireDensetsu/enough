@@ -63,4 +63,5 @@ See the [http://code.google.com/p/enough/ main project page] for more.
  * [http://wiki.erights.org/wiki/Walnut E in a Walnut] by Marc Stiegler
 
 = More resources =
- * [http://www.skyhunter.com/marcs/narratedIntros.html Narrated Intro] by Marc Steigler (from E)
+ * [http://www.skyhunter.com/marcs/narratedIntros.html Narrated Intro] by Marc Steigler (from E) 
+ 

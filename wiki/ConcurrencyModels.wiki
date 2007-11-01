@@ -42,4 +42,5 @@ This model is related to, but not identical, to the flow model above. In the flo
 ==== Problems ====
 How do you design a stateful system with a functional model?
 
-_Expand!_
+_Expand!_ 
+ 

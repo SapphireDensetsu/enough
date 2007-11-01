@@ -49,4 +49,5 @@ In Enough, RAM is just a cache to disk (See [OrthogonalPersistence]). RAM can be
 = TODO =
 
 Example of purging and recomputing?
-How is the low-level RAM management done?
+How is the low-level RAM management done? 
+ 

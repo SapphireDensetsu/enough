@@ -54,4 +54,5 @@ This current feature of installers is less of a feature for the user, and more o
 Using the above methods, the installer program is replaced by some metadata attributes that are attached to the objects being copied.  The author, version, name and other metadata attributes may be specified there so they are later searchable in the database.
 These metadata attributes would become searchable in the local database only if explicitly copied into the database by invoking its copying method, and not if the object is seamlessly copied when used from another computer. If it is seamlessly copied, then the copy is treated as merely a cache.
 
-Due to [AdaptiveProfiling seamless copying], many explicit installations in networked environments would not be necessary, as the OS would transparently "install" applications in an MRU fashion.
+Due to [AdaptiveProfiling seamless copying], many explicit installations in networked environments would not be necessary, as the OS would transparently "install" applications in an MRU fashion. 
+ 

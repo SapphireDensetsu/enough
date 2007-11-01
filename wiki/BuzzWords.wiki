@@ -22,4 +22,5 @@ Fundamental ideas we wish to explore and implement.
  * [DifferentialComputing Differential Computing]
  * [UnifiedInterface Unified Interface]
  * [LazyEvaluation Lazy Evaluation] and [Promises]
- * [MemoryManagement Intelligent Memory Management] (recomputability)
+ * [MemoryManagement Intelligent Memory Management] (recomputability) 
+ 

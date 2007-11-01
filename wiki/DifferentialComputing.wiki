@@ -35,4 +35,5 @@ The consequences of using differential computing are:
   * Since most functions can use existing differential primitives, the functions can become efficiently differential without any extra effort by the developer
   * The common use pattern in a UnifiedInterface and LiveProgramming, of modifying the inputs would be more efficiently processed (rather than reprocessing the entire input at every change).
   * The Enough GUI could avoid quirky jumps when inputs are modified, as these modifications propagate through the processing. The sorted output elements could smoothly move around, visualizing the modification for the user, rather than creating a new result immediately.
-  * The modifications can enable efficient version control, without writing extra differential code.
+  * The modifications can enable efficient version control, without writing extra differential code. 
+ 

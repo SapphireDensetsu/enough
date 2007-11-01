@@ -20,4 +20,5 @@ This is *not new* or special, but when stated clearly in advance it allows us to
 Another common problem is using iterative methodologies without stating it clearly. This can lead to a regression into more primitive, non-iterative methods, after a long time. The eventual result is that the design process stops.
 
 = Summary =
-We want to use iterative methods for design and implementation because our project aims to explore different directions but also to achieve real results.
+We want to use iterative methods for design and implementation because our project aims to explore different directions but also to achieve real results. 
+ 

@@ -18,4 +18,5 @@ Before we go into the various applications of a general dependency systems, let'
  * Doesn't identify build changes correctly (e.g., doesn't take into account the switches we passed to the compiler when deciding whether the existing target is new or old)
  * Can't propogate information up or down a tree (e.g., if we want to disable logging in a whole subsystem we need to change the logging variable in all the makefiles of the subsystem)
 
-People who use _make_ usually supplement the build system with scripts that will make it easier to use. This means that the build system fails to supply some very important features. And of course, other build systems exist. Because of these limitations, many people use build systems other than _make_. 
+People who use _make_ usually supplement the build system with scripts that will make it easier to use. This means that the build system fails to supply some very important features. And of course, other build systems exist. Because of these limitations, many people use build systems other than _make_.  
+ 

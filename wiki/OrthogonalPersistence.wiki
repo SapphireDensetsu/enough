@@ -116,4 +116,5 @@ The above described orthogonal persistence implementation copies data from RAM t
 
 = Additional Information & References =
 _Put some more references, find publications on Orthogonal Persistence_
-[http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia]
+[http://en.wikipedia.org/wiki/Orthogonal_persistence Orthogonal Persistence on WikiPedia] 
+ 

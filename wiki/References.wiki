@@ -6,4 +6,5 @@ For other stuff, see [Resources]
  * Jonathan Edwards' [http://www.subtextual.org Subtext] - an experimental programming language/environment with the idea of 'live code'. See this also, for interesting concepts about how to program conditionals: http://www.subtextual.org/OOPSLA07.pdf
  * [http://www.eros-os.org/~shap Jonathan S. Shapiro] which worked on EROS and now on [http://www.coyotos.org/index.html Coyotos], a project that includes [http://www.coyotos.org/docs/bitc/spec.html BitC] - a programming language.
  * [http://www.python.org Python] is not groundbreaking in any way, but it is a very successful example of the importance of the *usability* of any project.
- * [http://www.wikipedia.org Wikipedia] is a great resource, especially for the informally educated (including us).
+ * [http://www.wikipedia.org Wikipedia] is a great resource, especially for the informally educated (including us). 
+ 

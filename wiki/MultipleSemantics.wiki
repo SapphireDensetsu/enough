@@ -30,4 +30,5 @@ Some "paradigms" are easly translated: a simple imperative program can be transf
 = Goal of Multiple Semantics =
 The goal is to allow the programmer to edit his logical program structure using different semantic structures. For example, the program itself is numerical, but when analyzing it with a metaprogram a logical semantic structure is more appropriate. 
 
-The *key point* is: despite having different semantic structures, with *integrated* multiple sematics, all these differing languages live in the same world.
+The *key point* is: despite having different semantic structures, with *integrated* multiple sematics, all these differing languages live in the same world. 
+ 

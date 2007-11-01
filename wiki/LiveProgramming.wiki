@@ -84,4 +84,5 @@ Many people argue that visual programming is only "nice" and may be cumbersome, 
 
 = Additional resources =
  * [http://www.alice.org Alice], for an interesting demo watch the first one on this page: http://www.alice.org/Alice_movies/
- * [http://www.ni.com/labview/ LabView], a tool for "virtual instrumentation", including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos]
+ * [http://www.ni.com/labview/ LabView], a tool for "virtual instrumentation", including an graphical interface for "block programming" by connecting outputs to inputs. See the [http://www.ni.com/labview/demos.htm Demos] 
+ 

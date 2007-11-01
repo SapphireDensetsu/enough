@@ -22,4 +22,5 @@ In order to allow the computer to trust the request from the network, the receiv
   * Salt (An arbitrary unique number to allow generation of multiple differing references to the same object)
   * Hash (of all of the above, as well as a secret key)
 
-The salt can also be used to later invalidate these network references, thereby revoking them as capabilities.
+The salt can also be used to later invalidate these network references, thereby revoking them as capabilities. 
+ 

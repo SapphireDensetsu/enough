@@ -103,4 +103,5 @@ Versioning is already built-in and versioned data cannot be edited in any case, 
 Games are too difficult to support in this early stage. Also, there are many users for whom a system that does not support games is very viable.
 
 === Voice/Video conversations ===
-Later.
+Later. 
+ 
