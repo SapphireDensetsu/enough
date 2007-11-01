@@ -1,6 +1,9 @@
 #summary Editing the live program instead of dead text
 #labels BuzzWord,Featured
 
+= Status =
+We are currently in the process of designing the "universal" live language.
+
 = Background =
 Live programming is a *fundamental* idea in Enough.
 
