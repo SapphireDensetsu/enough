@@ -19,7 +19,13 @@
 
 == Layer 1: Observable objects with deltas ==
 A few definitions:
- * *Observable*: an object that sends notifications when it is changed (mutated).
+ * *Observable*: an object that sends notifications when it is changed (mutated). Some observable types are:
+    * `List` (notifies when items are added, removed or replaced)
+    * `Dict` (notifies when keys are added, removed or a value is replaced)
+    * `ValueContainer` (notifies when its pythonic value changes)
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object.
- * *Delta*: represents a change in an object (e.g. "ListItemAdd" represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (List, Dict, etc.) has its own set of deltas classes specific to that type.
- * *Expression*: a "computable" that can be thought of as a function: {{{ Expression -> Expression }}} that maps input expressions to output expressions. An expression may have no input (such as Literal, the expression that simply represents a value).
+ * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of deltas classes specific to that type.
+    * *Notifications* of observable objects are actually deltas. When a change occurs, an observable sends a delta describing the change to the observers.
+ * *Expression*: a "computable" that can be thought of as a function: `Expression -> Expression` that maps input expressions to output expressions. Note that the expression doesn't have an "output" really, the expression object itself is the output. An expression may have no input (see `Literal` below). Some important expressions are:
+   * `Literal` - the expression that simply represents a value
+   * `WithDelta` - given a pair (expression, delta), a `WithDelta` represents a revision of an object. The expression input to `WithDelta` is basically a "base revision", and the output (i.e. the `WithDelta` object itself) is the "new revision", which is equal to "base revision" + delta.
