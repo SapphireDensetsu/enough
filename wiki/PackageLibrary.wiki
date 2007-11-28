@@ -5,7 +5,7 @@
 
  * *Purpose:* to allow development of enough projects (e.g. LiveC, Graphui) using a design based on ideas in Enough.
  * *Design:* Currently, the library's design reflects:
-   * [DifferentialComputing differential computing] using deltas and observation
+   * [DifferentialComputing Differential computing] using deltas and observation
    * [LazyEvaluation Lazy Evaluation] using observation
    * [ObjectRevisionControl Object-based revision control] using deltas, histories, and hierarchical baselines. 
    * [RetroactiveMacros Retroactive macros] using a set of WithDelta's
@@ -19,7 +19,7 @@
 
 == Layer 1: Observable objects with deltas and expressions ==
 A few definitions:
- * *Observable*: an object that sends notifications when it is changed (mutated). There are usually multiple "observation ports" for an observable object (~~see Open/Close of observables~~ *TBD*). Some observable types are:
+ * *Observable*: an object that sends notifications when it is changed (mutated). There are usually multiple "observation ports" for an observable object (_Open/Close of observables_). Some observable types are:
     * `List` (notifies when items are added, removed or replaced)
     * `Dict` (notifies when keys are added, removed or a value is replaced)
     * `ValueContainer` (notifies when its pythonic value changes)
@@ -28,4 +28,22 @@ A few definitions:
     * *Notifications* of observable objects are actually deltas. When a change occurs, an observable sends a delta describing the change to the observers.
  * *Expression*: a "computable" that can be thought of as a function: _Expression(s) -> Expression_ that maps input expressions to an output expression. Note that the expression doesn't have an "output" really, the expression object itself is the output. Expressions *observe* their inputs, so that when the input has changed, the expression knows about it. An expression may have no input (see `Literal` below). Some important expressions are:
    * `Literal` - the expression that simply represents a value
-   * `WithDelta` - given a pair (expression, delta), a `WithDelta` represents a revision of an object. The expression input to `WithDelta` is basically a "base revision", and the output (i.e. the `WithDelta` object itself) is the "new revision", which is equal to "base revision" + delta.
+   * `DictMap` - *TODO*
+   * `WithDelta` - see _revision control_, below.
+
+=== Open/Close of Observables ===
+*TODO*
+
+=== Propogation of changes ===
+*TODO*
+
+=== Example ===
+*TODO*
+
+== Layer 2: Revision control ==
+Since all changes in layer 1 are represented by deltas and expressions on which they occur, the revision control can understand not only _how the change looks_ but also _what the change was_. For further discussion see [ObjectRevisionControl Object-based revision control].
+
+Definitions:
+ * `WithDelta` - an *expression* that takes (expression, delta) and represents the given expression with the delta applied. `WithDelta` does not actually _apply_ the delta, it only _represents_ the combination: value+change. The given expression can be thought of as a "base revision" and the `WithDelta` object as a "new revision" which is equal to "base revision" + delta.
+
+*TODO* Define: revision, revision getter, history, baseline.
