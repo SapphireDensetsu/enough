@@ -3,8 +3,8 @@
 
 = Outline =
 
- * *Purpose:* to allow development of enough projects (e.g. LiveC, Graphui) using advanced design based on ideas in Enough.
- * *Design:* Currently, the library's design reflect:
+ * *Purpose:* to allow development of enough projects (e.g. LiveC, Graphui) using a design based on ideas in Enough.
+ * *Design:* Currently, the library's design reflects:
    * [DifferentialComputing differential computing] using deltas and observation
    * [LazyEvaluation Lazy Evaluation] using observation
    * [ObjectRevisionControl Object-based revision control] using deltas, histories, and hierarchical baselines. 
