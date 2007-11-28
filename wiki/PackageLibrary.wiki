@@ -1,0 +1,25 @@
+#summary A library for enough projects
+#labels InProgress
+
+= Outline =
+
+ * *Purpose:* to allow development of enough projects (e.g. Live*, Graphui) using advanced design based on ideas in Enough.
+ * *Design:* Currently, the library's design reflect:
+   * [DifferentialComputing differential computing] using deltas and observation
+   * [LazyEvaluation Lazy Evaluation] using observation
+   * [ObjectRevisionControl Object-based revision control] using deltas, histories, and hierarchical baselines. 
+   * [RetroactiveMacros Retroactive macros] using a set of WithDelta's
+
+ * *Future features* that may be trivial after we complete this phase:
+   * [MemoryManagement Intelligent memory management (recomputability)]
+   * [OrthogonalPersistence Orthogonal persistence]
+   * [AdaptiveProfiling Adaptive profiling]
+
+= Details =
+
+== Layer 1: Observable objects with deltas ==
+A few definitions:
+ * *Observable*: an object that sends notifications when it is changed (mutated).
+ * *Observer*: an entity that is registered to receive notifications about changes in an observable object.
+ * *Delta*: represents a change in an object (e.g. "ListItemAdd" represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (List, Dict, etc.) has its own set of deltas specific to that type.
+ * *Expression*: a "computable" that can be thought of as a function: {{{ Expression: Expression -> Expression }}} 
