@@ -2,6 +2,7 @@
 #labels InProgress
 
 = Outline =
+The current design is the culmination of a few design and implementation efforts, where we learnt important lessons. It is "all-or-nothing" in that you can't really implement only part of it, without getting a lame result.
 
  * *Purpose:* to allow development of enough projects (e.g. LiveC, Graphui) using a design based on ideas in Enough.
  * *Design:* Currently, the library's design reflects:
@@ -18,18 +19,27 @@
 = Details =
 
 == Layer 1: Observable objects with deltas and expressions ==
-A few definitions:
- * *Observable*: an object that sends notifications when it is changed (mutated). There are usually multiple "observation ports" for an observable object (_Open/Close of observables_). Some observable types are:
+First, a list of non-detailed, basic definitions:
+ * *Observable*: an object that sends notifications when it is changed (mutated). There are usually multiple "observation ports" for an observable object (_Open/Close_, below). Some observable types are:
     * `List` (notifies when items are added, removed or replaced)
     * `Dict` (notifies when keys are added, removed or a value is replaced)
     * `ValueContainer` (notifies when its pythonic value changes)
+    * _Expressions_ are also observable, because they have observable inputs (if an input  changes, the output might also change).
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
  * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of deltas classes specific to that type.
     * *Notifications* of observable objects are actually deltas. When a change occurs, an observable sends a delta describing the change to the observers.
- * *Expression*: a "computable" that can be thought of as a function: _Expression(s) -> Expression_ that maps input expressions to an output expression. Note that the expression doesn't have an "output" really, the expression object itself is the output. Expressions *observe* their inputs, so that when the input has changed, the expression knows about it. An expression may have no input (see `Literal` below). Some important expressions are:
-   * `Literal` - the expression that simply represents a value
-   * `DictMap` - *TODO*
-   * `WithDelta` - see _revision control_, below.
+ * *Expression*: a "computable" that can be thought of as a function: _Expression(s) -> Expression_ that maps input expressions to an output expression. 
+   * Note that the expression doesn't have an "output" really, the expression object itself is the output. 
+   * Expressions *observe* their inputs, so that when the input has changed, the expression knows about it. 
+   * An expression may have no input (see `Literal` below).
+   * Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_, below). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
+   * Some example expressions are:
+     * `Literal` - the expression that simply represents a value
+     * `DictMap` - *TODO*
+     * `WithDelta` - see _revision control_, below.
+
+=== Motivation for Observation ===
+It might seem that observation is a by-product of the mutability of some base objects (such as `List`). Can we do without observation, and only use deltas on immutable objects? The answer is no. The main reason is that expressions need to know if their inputs changed. Otherwise, an expression will have to re-calculate itself every time somebody tries to use its value. Also, however uses its value, does not know if that value has changed a moment later, it has to keep checking.
 
 === Open/Close of Observables ===
 *TODO*
