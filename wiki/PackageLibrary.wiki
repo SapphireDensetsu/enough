@@ -12,17 +12,20 @@ The current design is the result of our current livec/graphui implementation eff
    * [RetroactiveMacros Retroactive macros] made possible by history recording and visualization.
 
  * *Future features* that will become possible after we complete this phase:
-   * [MemoryManagement Intelligent memory management (recomputability)]: Deciding which objects should be cached (in-memory), swapped (cached in disk), or dumped (recomputed when necessary) according to the computation costs, storage costs, access frequency and importance. This requires developing some algorithms...
-   * [OrthogonalPersistence Orthogonal persistence] (or a variant thereof): Transparent swapping of unused objects to disk.
+   * [MemoryManagement Intelligent memory management (recomputability)]: Deciding which objects should be cached (in-memory), swapped (cached in disk), or discarded (recomputed when necessary) according to the computation costs, storage costs, access frequency and importance. This requires developing some algorithms...
+   * [OrthogonalPersistence Orthogonal persistence] (or a variant thereof): Transparent swapping of unused objects to disk (due to current LCW implementation, objects will be serialized to files).
 
-= Details =
+= Glossary =
 
-== Layer 1: Observable objects with deltas and expressions ==
-First, a list of non-detailed, basic definitions:
- * *Observable*: an object that sends notifications when it is changed (mutated). There are usually multiple "observation ports" for an observable object (_Open/Close_, below). Some observable types are:
+ * *Observable*: an object that sends notifications. A single object can have multiple "observation ports". A typical observation pattern is typically used by mutable objects to send notifications to observers about mutations. Some examples of observable mutable objects:
     * `List` (notifies when items are added, removed or replaced)
     * `Dict` (notifies when keys are added, removed or a value is replaced)
-    * `ValueContainer` (notifies when its pythonic value changes)
+    * `ValuePtr` (notifies when the ptr is changed to point at another object)
+
+ * *Value*: an entity that holds a piece of data that can be accessed in any way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
+
+ * *Expression*: In order to avoid the memory costs of keeping all values, expressions are used.  Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. Some examples
+
     * _Expressions_ are also observable, because they have observable inputs (if an input  changes, the output might also change).
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
  * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of deltas classes specific to that type.
@@ -36,6 +39,10 @@ First, a list of non-detailed, basic definitions:
      * `Literal` - the expression that simply represents a value
      * `DictMap` - *TODO*
      * `WithDelta` - see _revision control_, below.
+
+= Details =
+
+== Layer 1: Observable objects with deltas and expressions ==
 
 === Motivation for Observation ===
 It might seem that observation is a by-product of the mutability of some base objects (such as `List`). Can we do without observation, and only use deltas on immutable objects? The answer is no. The main reason is that expressions need to know if their inputs changed. Otherwise, an expression will have to re-calculate itself every time somebody tries to use its value. Also, however uses its value, does not know if that value has changed a moment later, it has to keep checking.
