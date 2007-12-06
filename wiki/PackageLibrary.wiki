@@ -22,25 +22,42 @@ The current design is the result of our current livec/graphui implementation eff
     * `Dict` (notifies when keys are added, removed or a value is replaced)
     * `ValuePtr` (notifies when the ptr is changed to point at another object)
 
+ * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
+
  * *Value*: an entity that holds a piece of data that can be accessed in any way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
 
- * *Expression*: In order to avoid the memory costs of keeping all values, expressions are used.  Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. Some examples
+ * *Expression*: In order to avoid the memory costs of keeping all values, expressions are used.  Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. 
 
-    * _Expressions_ are also observable, because they have observable inputs (if an input  changes, the output might also change).
- * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
- * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of deltas classes specific to that type.
-    * *Notifications* of observable objects are actually deltas. When a change occurs, an observable sends a delta describing the change to the observers.
- * *Expression*: a "computable" that can be thought of as a function: _Expression(s) -> Expression_ that maps input expressions to an output expression. 
-   * Note that the expression doesn't have an "output" really, the expression object itself is the output. 
-   * Expressions *observe* their inputs, so that when the input has changed, the expression knows about it. 
+ * *Literal*: A literal is a special kind of expression that contains a mutable value. It does not have inputs but allows changes to take place directly on the value via a special interface.  Only literal expressions are actually mutable, and are not redundant to their inputs.
+
+ * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of delta classes specific to that type.  A delta is always reversible. This means that some deltas hold more information than is necessary to just perform the change, but also information required to reverse it (e.g DictItemReplace also holds the previous value).  Deltas are also combinable via "delta arithmetic".
+
+ * *Delta arithmetic*: Deltas can be combined in various ways.  a+b combines the deltas a and b, into a delta that is equivalent to applying a and then applying b.  -((-b)+(-a)) is equivalent to (a+b).
+
+ * *Merges*: TODO.
+
+ * *Notifications* of observable mutable objects are actually deltas. Mutations are always done via deltas, and the delta is sent to observers.
+
+
+= Details =
+
+== Expressions ==
+
+Expression represent and evaluate to an "output value".
+
+=== Non-literal expressions ===
+
+Expressions that are not literals have certain properties:
+
+* They are not themselves mutable, but they are observable for mutations in their value.
+* They are always redundant to their inputs.
+   * When expressions are observed, they observe their inputs, so that when the input has changed, it may notify its own observers of changes.
    * An expression may have no input (see `Literal` below).
    * Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_, below). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
    * Some example expressions are:
      * `Literal` - the expression that simply represents a value
      * `DictMap` - *TODO*
      * `WithDelta` - see _revision control_, below.
-
-= Details =
 
 == Layer 1: Observable objects with deltas and expressions ==
 
