@@ -2,19 +2,18 @@
 #labels InProgress
 
 = Outline =
-The current design is the culmination of a few design and implementation efforts, where we learnt important lessons. It is "all-or-nothing" in that you can't really implement only part of it, without getting a lame result.
+The current design is the result of our current livec/graphui implementation efforts, where we learned important lessons.
 
  * *Purpose:* to allow development of enough projects (e.g. LiveC, Graphui) using a design based on ideas in Enough.
  * *Design:* Currently, the library's design reflects:
    * [DifferentialComputing Differential computing] using deltas and observation
-   * [LazyEvaluation Lazy Evaluation] using observation
+   * [LazyEvaluation Lazy Evaluation] using "expression objects"
    * [ObjectRevisionControl Object-based revision control] using deltas, histories, and hierarchical baselines. 
-   * [RetroactiveMacros Retroactive macros] using a set of WithDelta's
+   * [RetroactiveMacros Retroactive macros] made possible by history recording and visualization.
 
- * *Future features* that may be trivial after we complete this phase:
-   * [MemoryManagement Intelligent memory management (recomputability)]
-   * [OrthogonalPersistence Orthogonal persistence]
-   * [AdaptiveProfiling Adaptive profiling]
+ * *Future features* that will become possible after we complete this phase:
+   * [MemoryManagement Intelligent memory management (recomputability)]: Deciding which objects should be cached (in-memory), swapped (cached in disk), or dumped (recomputed when necessary) according to the computation costs, storage costs, access frequency and importance. This requires developing some algorithms...
+   * [OrthogonalPersistence Orthogonal persistence] (or a variant thereof): Transparent swapping of unused objects to disk.
 
 = Details =
 
