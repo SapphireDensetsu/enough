@@ -24,7 +24,7 @@ The current design is the result of our current livec/graphui implementation eff
       * `ValuePtr` (notifies when the ptr is changed to point at another object)
     * *Expressions* are always observable - because their inputs may be mutable.
 
- * *Notifications* of *observable* mutable objects are actually *deltas*. Mutations are always done via deltas, and the delta is sent to *observers*.
+ * *Notifications*: in the case of observable mutable objects, a notification is actually  a *delta*. Mutations are always done via deltas, and the delta is sent to *observers*.
 
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
 
