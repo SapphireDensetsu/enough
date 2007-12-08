@@ -58,11 +58,10 @@ Expression represent and evaluate to an "output value".
 
 Expressions that are not literals have certain properties:
 
-* They are not themselves mutable, but they are observable for mutations in their value.
-* They are always redundant to their inputs.
-   * When expressions are observed, they observe their inputs, so that when the input has changed, it may notify its own observers of changes.
-   * An expression may have no input (see `Literal` below).
-   * Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_, below). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
+ * *Immutability:* Expressions are not themselves mutable, but they are observable for mutations in their value (because the input may be mutable).
+ * *Redundancy:* They are always redundant to their inputs. ("a+b" is redundant to a and b, because it adds no additional data besides the operator +)
+ * *Observing the inputs:* When expressions are observed, they observe their inputs, so that when the input has changed, it may notify its own observers of changes.
+ * *Caching*: Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_, below). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
    * Some example expressions are:
      * `Literal` - the expression that simply represents a value
      * `DictMap` - *TODO*
