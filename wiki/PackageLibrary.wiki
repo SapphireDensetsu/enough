@@ -24,6 +24,8 @@ The current design is the result of our current livec/graphui implementation eff
       * `ValuePtr` (notifies when the ptr is changed to point at another object)
     * *Expressions* are always observable - because their inputs may be mutable.
 
+ * *Notifications* of *observable* mutable objects are actually *deltas*. Mutations are always done via deltas, and the delta is sent to *observers*.
+
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
 
  * *Value*: an entity that holds a piece of data that can be accessed in any way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
@@ -36,7 +38,6 @@ The current design is the result of our current livec/graphui implementation eff
 
  * *Delta arithmetic*: Deltas can be combined in various ways. `a + b` is a "combined delta" of a and b, that is equivalent to applying a and then applying b. `-a` is the reverse of a (applying `a` and then `-a` yields no change). `-((-b)+(-a))` is equivalent to (a+b).
 
- * *Notifications* of observable mutable objects are actually deltas. Mutations are always done via deltas, and the delta is sent to observers.
 
  * *Merges*: TODO.
 
