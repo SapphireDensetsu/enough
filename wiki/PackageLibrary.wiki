@@ -26,17 +26,17 @@ The current design is the result of our current livec/graphui implementation eff
 
  * *Value*: an entity that holds a piece of data that can be accessed in any way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
 
- * *Expression*: In order to avoid the memory costs of keeping all values, expressions are used.  Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. 
+ * *Expression*: represents computations on inputs (inputs are other expressions). Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. 
 
  * *Literal*: A literal is a special kind of expression that contains a mutable value. It does not have inputs but allows changes to take place directly on the value via a special interface.  Only literal expressions are actually mutable, and are not redundant to their inputs.
 
- * *Delta*: represents a change in an object (e.g. `ListItemAdd` represents the adding of an item to a list). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of delta classes specific to that type.  A delta is always reversible. This means that some deltas hold more information than is necessary to just perform the change, but also information required to reverse it (e.g DictItemReplace also holds the previous value).  Deltas are also combinable via "delta arithmetic".
+ * *Delta*: represents a change in a class of objects (e.g. `ListItemAdd` represents the adding of an item to a List). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of delta classes specific to that type. A delta is always reversible. This means that some deltas hold more information than is necessary to just perform the change, but also information required to reverse it (e.g DictItemReplace also holds the previous value).  Deltas are also combinable via "delta arithmetic".
 
- * *Delta arithmetic*: Deltas can be combined in various ways.  a+b combines the deltas a and b, into a delta that is equivalent to applying a and then applying b.  -((-b)+(-a)) is equivalent to (a+b).
-
- * *Merges*: TODO.
+ * *Delta arithmetic*: Deltas can be combined in various ways. `a + b` is a "combined delta" of a and b, that is equivalent to applying a and then applying b. `-a` is the reverse of a (applying `a` and then `-a` yields no change). `-((-b)+(-a))` is equivalent to (a+b).
 
  * *Notifications* of observable mutable objects are actually deltas. Mutations are always done via deltas, and the delta is sent to observers.
+
+ * *Merges*: TODO.
 
 
 = Details =
