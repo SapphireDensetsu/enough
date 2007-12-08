@@ -17,7 +17,7 @@ The current design is the result of our current livec/graphui implementation eff
 
 = Glossary =
 
- * *Observable*: an object that sends notifications. A single object can have multiple "observation ports". A typical observation pattern is typically used by mutable objects to send notifications to observers about mutations. Some examples of observable mutable objects:
+ * *Observable*: an object that sends notifications to *observers*. A single object can have multiple "observation ports". A typical observation pattern is typically used by mutable objects to send notifications to observers about mutations. Some examples of observable mutable objects:
     * *Values* are always observable:
       * `List` (notifies when items are added, removed or replaced)
       * `Dict` (notifies when keys are added, removed or a value is replaced)
