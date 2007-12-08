@@ -18,12 +18,7 @@ The current design is the result of our current livec/graphui implementation eff
 = Level 1: Observation and deltas =
 
 ===In short===
-This level provides the basic building blocks of the library. 
-
-*Observation* means that objects watch (_observe_) each other for changes. When a change occurs in one object, it notifies its observers.
-
-*Deltas* provide control over changes. Instead of letting things change "under the hood", all changes are done via deltas.
-
+This level provides the basic building blocks of the library. *Observation* means that objects watch (_observe_) each other for changes. When a change occurs in one object, it notifies its observers. *Deltas* provide control over changes. Instead of letting things change "under the hood", all changes are done via deltas.
 
 == Glossary == 
 
