@@ -50,6 +50,13 @@ This level provides the basic building blocks of the library.
     * *Negation*: reversal - `-a` is the reverse of a (applying `a` and then `-a` yields no change).
     * Example: The delta `-((-b)+(-a))` is equivalent to the delta `a+b`.
 
+== Observables ==
+=== Motivation for Observation ===
+It might seem that observation is a by-product of the mutability of some base objects (such as `List`). Can we do without observation, and only use deltas on immutable objects? The answer is no. The main reason is that expressions need to know if their inputs changed. Otherwise, an expression will have to re-calculate itself every time somebody tries to use its value. Also, however uses its value, does not know if that value has changed a moment later, it has to keep checking.
+
+=== Open/Close of Observables ===
+*TODO*
+
 == Expressions ==
 
 Expression represent and evaluate to an "output value".
@@ -61,30 +68,19 @@ Expressions that are not literals have certain properties:
  * *Immutability:* Expressions are not themselves mutable, but they are observable for mutations in their value (because the input may be mutable).
  * *Redundancy:* They are always redundant to their inputs. ("a+b" is redundant to a and b, because it adds no additional data besides the operator +)
  * *Observing the inputs:* When expressions are observed, they observe their inputs, so that when the input has changed, it may notify its own observers of changes.
- * *Caching*: Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_, below). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
+ * *Caching*: Normally, an expression doesn't store the result of its operation. It calculates the result lazily (see _Open/Close_). Storing the result is called _caching_, and in principal this can be done "intelligently", considering performance tradeoffs, resources, etc.
    * Some example expressions are:
      * `Literal` - the expression that simply represents a value
      * `DictMap` - *TODO*
      * `WithDelta` - see _revision control_, below.
 
-== Layer 1: Observable objects with deltas and expressions ==
-
-=== Motivation for Observation ===
-It might seem that observation is a by-product of the mutability of some base objects (such as `List`). Can we do without observation, and only use deltas on immutable objects? The answer is no. The main reason is that expressions need to know if their inputs changed. Otherwise, an expression will have to re-calculate itself every time somebody tries to use its value. Also, however uses its value, does not know if that value has changed a moment later, it has to keep checking.
-
-=== Open/Close of Observables ===
+== Example ==
 *TODO*
 
-=== Propogation of changes ===
-*TODO*
-
-=== Example ===
-*TODO*
-
-== Layer 2: Revision control ==
+= Layer 2: Revision control =
 Since all changes in layer 1 are represented by deltas and expressions on which they occur, the revision control can understand not only _how the change looks_ but also _what the change was_. For further discussion see [ObjectRevisionControl Object-based revision control].
 
-===
+== Glossary ==
  * `WithDelta` - an *expression* that takes (expression, delta) and represents the given expression with the delta applied. `WithDelta` does not actually _apply_ the delta, it only _represents_ the combination: value+change. The given expression can be thought of as a "base revision" and the `WithDelta` object as a "new revision" which is equal to "base revision" + delta.
 
 *TODO* Define: revision, revision getter, history, baseline.
