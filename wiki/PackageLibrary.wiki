@@ -16,6 +16,7 @@ The current design is the result of our current livec/graphui implementation eff
    * [OrthogonalPersistence Orthogonal persistence] (or a variant thereof): Transparent swapping of unused objects to disk (due to current LCW implementation, objects will be serialized to files).
 
 = Glossary =
+ * *Value*: an entity that holds a piece of data that can be accessed in some way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
 
  * *Observable*: an object that sends *notifications* to *observers*. A single object can have multiple "observation ports". A typical observation pattern is typically used by mutable objects to send notifications to observers about mutations. Some examples of observable mutable objects:
     * *Values* are always observable:
@@ -28,11 +29,8 @@ The current design is the result of our current livec/graphui implementation eff
 
  * *Observer*: an entity that is registered to receive notifications about changes in an observable object. 
 
- * *Value*: an entity that holds a piece of data that can be accessed in any way (read, sliced, etc). Examples: `List`, `Dict`, `ValuePtr`.
-
  * *Expression*: represents computations on inputs (inputs are other expressions). Expressions are "light" objects that do not cost a lot of memory, and represent the necessary computation required to create the value that they represent. 
-
- * *Literal*: A literal is a special kind of expression that contains a mutable value. It does not have inputs but allows changes to take place directly on the value via a special interface.  Only literal expressions are actually mutable, and are not redundant to their inputs.
+    * *Literal*: a special kind of expression that contains a mutable value. It does not have inputs but allows changes to take place directly on the value via a special interface.  Only literal expressions are actually mutable, and are not redundant to their inputs.
 
  * *Delta*: represents a change in a class of objects (e.g. `ListItemAdd` represents the adding of an item to a List). Deltas do not refer to a specific object that has changed - they only represent the change that can be applied to an object. Each object type (`List`, `Dict`, etc.) has its own set of delta classes specific to that type. A delta is always reversible. This means that some deltas hold more information than is necessary to just perform the change, but also information required to reverse it (e.g DictItemReplace also holds the previous value).  Deltas are also combinable via "delta arithmetic".
 
