@@ -15,10 +15,10 @@ The current design is the result of our current livec/graphui implementation eff
    * [MemoryManagement Intelligent memory management (recomputability)]: Deciding which objects should be cached (in-memory), swapped (cached in disk), or discarded (recomputed when necessary) according to the computation costs, storage costs, access frequency and importance. This requires developing some algorithms...
    * [OrthogonalPersistence Orthogonal persistence] (or a variant thereof): Transparent swapping of unused objects to disk (due to current LCW implementation, objects will be serialized to files).
 
-= Level 1: Observation and deltas =
+= Layer 1: Observation and deltas =
 
 ===In short===
-This level provides the basic building blocks of the library. *Observation* means that objects watch (_observe_) each other for changes. When a change occurs in one object, it notifies its observers. *Deltas* provide control over changes. Instead of letting things change "under the hood", all changes are done via deltas.
+This layer provides the basic building blocks of the library. *Observation* means that objects subscribe (_observe_) on each other for notifications. In this layer, observation notifications are "deltas" (modifications to objects). When a modification occurs in one object, it notifies its observers. *Deltas* provide control over changes. All changes are done via deltas.
 
 == Glossary == 
 
