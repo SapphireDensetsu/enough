@@ -80,6 +80,8 @@ An important aspect of this design is that revisioned objects' values may not re
  * *Revisioned world* contains all things that are required for managing the revisions.
  * *View world* contains things that are used for viewing a version of the world.
 
+*Object representation*: every object in the revision world is represented by a pair - the `ObjectHistory` and `Baseline` of that object.
+
 == Glossary ==
 
 === The revision world ===
@@ -88,8 +90,10 @@ An important aspect of this design is that revisioned objects' values may not re
  * A *Delta path* is the difference between two revisions of the same object.
     * The "sum" of a delta path is a delta that reflects the canonical change that the path represents.
     * If an object has some revision tree, including revisions A and B, the delta path from A to B is the accumulation of all deltas one needs to apply to A, in order to get to revision B. 
+
  * `ObjectHistory` - contains a tree of all revisions of an object. There is one `ObjectHistory` per object. The "revisions" here differ by changes to the object itself - not by changes in other objects. For example, if A references B, the `ObjectHistory` of A will not contain a new revision if only B changes. The `ObjectHistory` can be used to calculate a *delta path* between two revisions of the same object. This is used in the `RevisionGetter`.
- * *Baseline* is a "freeze" of a set of objects in specific revisions. Specifically, a baseline is a dict, mapping `ObjectHistory` -> `Baseline`, or `ObjectHistory` -> Revision. 
+
+ * *Baseline* is a "freeze" of a set of objects in specific revisions. Specifically, a baseline is a dict, mapping (`ObjectHistory`, `Baseline`) -> "Baseline revision X".
     * Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. The "leaf" nodes are objects that have no baseline of their own but are managed by their containers.
     * There is a *global baseline* that maps all the top-level objects to their revisions (or to their sub-baselines), and there are *local* baselines that map sub-objects to their revisions or baselines.
     * Baselines are revisioned objects, meaning that they too have revisions and they too have an `ObjectHistory`. The `ObjectHistory` of an object's Baseline is the set of all baselines that exist for that object
@@ -107,6 +111,7 @@ An important aspect of this design is that revisioned objects' values may not re
  * `RevisionGetter` - an object that looks like a specific revision of an object.
     * From the user's point of view, the `RevisionGetter` looks just like the revision itself.
     * If the `RevisionGetter` detects that it should now point to a different revision, it automatically generates (notifies) its users with deltas that represent the change (using a *delta path* from the old to the new revision). 
+
  * `BaselineView` is an object that manages accesses to revisioned objects. `BaselineView` creates `RevisionGetter`s that match the revision that it happens to watch (not the "latest" revision). If the `RevisionGetter`s make a change, they tell observers about new baseline revisions being made.
 
 == Detailed usage of objects ==
