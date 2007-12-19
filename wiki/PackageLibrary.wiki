@@ -75,7 +75,20 @@ Expressions that are not literals have certain properties:
 = Layer 2: Revision control =
 Since all changes in layer 1 are represented by deltas and expressions on which they occur, the revision control can understand not only _how the change looks_ but also _what the change was_. For further discussion see [ObjectRevisionControl Object-based revision control].
 
+=== Viewing the revision world ===
+An important aspect of this design is that revisioned objects' values may not really "exist", in memory or otherwise, until they are viewed. A revisioned object can be computed from the set of deltas that comprise it, plus some base revision's value.
+
+This means that there should be a clear seperation between things in the design that are vital to revisioning, as opposed to things that are used for viewing revisioned things
+
+Therefore, we define two "worlds":
+ * *Revisioned world* contains all things that are required for managing the revisions.
+ * *View world* contains things that are used for viewing a version of the world.
+
+
 == Glossary ==
  * `WithDelta` - an *expression* that takes (expression, delta) and represents the given expression with the delta applied. `WithDelta` does not actually _apply_ the delta, it only _represents_ the combination: value+change. The given expression can be thought of as a "base revision" and the `WithDelta` object as a "new revision" which is equal to "base revision" + delta.
-
-*TODO* Define: revision, revision getter, history, baseline.
+ * A *Revision* of an object is basically a `WithDelta` of that object. Later we might have a specific pythonic object that represents a revision, and that contains the appropriate `WithDelta`.
+ * A *Delta path* is the difference between two revisions of the same object. If an object has some revision tree (or DAG), including revisions A and B, the delta path from A to B is the accumulation of all deltas one needs to apply to A, in order to get to revision B.
+ * `RevisionGetter` - a proxy to a specific revision of an object. From the user's point of view, the `RevisionGetter` looks just like the revision itself. If the proxy is changed to point at a different revision, it automatically generates (notifies) its users with deltas that represent the change (using a *delta path* from the old to the new revision).
+ * `ObjectHistory` - contains a list of all revisions of an object. There is one `ObjectHistory` per object. The "revisions" here differ by changes to the object itself - not by changes in other objects. For example, if A references B, the `ObjectHistory` of A will not contain a new revision if only B changes. The `ObjectHistory` can be used to calculate a *delta path* between two revisions of the same object. This is used in the `RevisionGetter`.
+ * `Baseline` is a "freeze" of a set of objects in specific revisions. Specifically, a baseline is a map: `ObjectHistory` -> `Baseline`, or `ObjectHistory` -> Revision. Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. The "leaf" nodes are objects that have no baseline of their own but are managed by their containers. There is a *global baseline* that maps all the top-level objects to their revisions (or to their sub-baselines), and there are *local* baselines that map sub-objects to their revisions or baselines.
