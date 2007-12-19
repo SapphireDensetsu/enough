@@ -91,3 +91,33 @@ It matters *how* you view an object. When you view an object through some path (
  * *Baseline* is a "freeze" of a set of objects in specific revisions. Specifically, a baseline is a dict, mapping `ObjectHistory` -> `Baseline`, or `ObjectHistory` -> Revision. Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. The "leaf" nodes are objects that have no baseline of their own but are managed by their containers. There is a *global baseline* that maps all the top-level objects to their revisions (or to their sub-baselines), and there are *local* baselines that map sub-objects to their revisions or baselines.
  * *Baselines* are revisioned objects, meaning that they too have an `ObjectHistory`. The `ObjectHistory` of an objects Baseline's is the set of all baselines that exist for that object.
  * *DictMap* is vital for viewing objects. It allows one to express a specific value within a dictionary - we use it here to express a revision within a baseline.
+
+== Propogation of modifications ==
+When an object is modified via some view, the modification causes two propogation chains:
+ # The modification causes the object to emit a delta towards its containers (expressions that use that object as an input). These, in turn, progpogate deltas further up. For each object in the hierarchy, a new revision is created and added to it's `ObjectHistory`.
+ # Modifications are always made in some view of the world - meaning, the object that was modified was accessed through some baseline. A new baseline can be created, where the difference with the old baseline is that the modified object is mapped to it's new revision.
+
+=== Example ===
+*TODO* _describe in further detail and make it correct!_
+
+ * Assume hierarchy of objects, A->B->C. Each object initially has one revision: A0, B0, C0.
+ * Assume a baseline "Baseline A0" that maps: A->A0, B->"Baseline B0"
+ * "Baseline B0" maps: B->B0, C->C0.
+
+The object A is accessed via "Baseline A0". Because the baseline maps A->A0 we are actually viewing revision A0 of A. Since this revision contains a reference to B, we consult "Baseline A0" and find that B has a baseline revision "Baseline B0" in this baseline. Now, using "Baseline B0" we find that B has the specific revision B0, and using B0 we find that it contains a single object - C. Using "Baseline B0" again we find that C is mapped to C0. So far we have only used the baselines to access some objects in the revisioned world.
+
+Now, we wish to apply a change, or: create a new revision of C, that is based on C0. Let's call this new revision C1. We create the new revision and add it to C's `ObjectHistory`. However, since we are viewing C through B, we must update B's baseline history to reflect that there is a new version of C. 
+
+It is *important* to understand that this is completely _view dependent_. In principal, B shouldn't care if C got a new revision - but since we are now _viewing_ the world (and making changes), it is desirable to update our view to reflect the new version we have created. To do this, we must modify B's baseline to point to C1 instead of the old C0. Modifying B's baseline means creating a new revision of it, namely "Baseline B1" which based on "Baseline B0".
+
+The change propogates upwards and also A's baseline needs to be modified. This is because now, in this new version of the world, _in our view_ we want to access C and get to C1 instead of the old C0. Therefore, A's baseline should now map B->"Baseline B1" instead of the old "Baseline B0". Since this is a change in A's baseline, a new revision of it must be created, called "Baseline A1".
+
+*Summary*:
+ # We accessed A->B->C viewed via "Baseline A0"->"Baseline B0"->C0.
+ # We created a new revision C1.
+ # We created new revisions "Baseline B1" and "Baseline A1" to reflect this.
+ # The view is now: A->B->C, via "Baseline A1"->"Baseline B1"->C1.
+
+
+
+*TODO* _describe in detail_
