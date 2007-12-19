@@ -89,8 +89,17 @@ It matters *how* you view an object. When you view an object through some path (
  * `RevisionGetter` - a proxy to a specific revision of an object. From the user's point of view, the `RevisionGetter` looks just like the revision itself. If the proxy is changed to point at a different revision, it automatically generates (notifies) its users with deltas that represent the change (using a *delta path* from the old to the new revision).
  * `ObjectHistory` - contains a list of all revisions of an object. There is one `ObjectHistory` per object. The "revisions" here differ by changes to the object itself - not by changes in other objects. For example, if A references B, the `ObjectHistory` of A will not contain a new revision if only B changes. The `ObjectHistory` can be used to calculate a *delta path* between two revisions of the same object. This is used in the `RevisionGetter`.
  * *Baseline* is a "freeze" of a set of objects in specific revisions. Specifically, a baseline is a dict, mapping `ObjectHistory` -> `Baseline`, or `ObjectHistory` -> Revision. Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. The "leaf" nodes are objects that have no baseline of their own but are managed by their containers. There is a *global baseline* that maps all the top-level objects to their revisions (or to their sub-baselines), and there are *local* baselines that map sub-objects to their revisions or baselines.
- * *Baselines* are revisioned objects, meaning that they too have an `ObjectHistory`. The `ObjectHistory` of an objects Baseline's is the set of all baselines that exist for that object.
+ * *Baselines* are revisioned objects, meaning that they too have an `ObjectHistory`. The `ObjectHistory` of an objects Baseline's is the set of all baselines that exist for that object. When accessing objects (usually using a `RevisionGetter` on a DictMap of the baseline) we access a specific revision of the baseline.
  * *DictMap* is vital for viewing objects. It allows one to express a specific value within a dictionary - we use it here to express a revision within a baseline.
+ * `BaselineView` is an object that manages accesses to revisioned objects. It provides the user with `RevisionGetter`s that are automatically changed to proxy the latest revision of the object they are viewing. This means that if we are viewing A, and using the same `BaselineView` we somehow cause a new revision of A to be created, the `RevisionGetter` for A will automatically be updated to point to the new revision immediately. 
+
+== Detailed usage of objects ==
+First of all, to access any revision we want to use a `RevisionGetter`, because we may want to be notified that a new revision has been created. We use a `BaselineView` to get `RevisionGetter`s that are automatically updated.
+
+The `RevisionGetter` points to the revision by actually pointing to a `DictMap` of the baseline, with the desired object as the key.
+
+*TODO* _Continue this...._
+
 
 == Propogation of modifications ==
 When an object is modified via some view, the modification causes two propogation chains:
@@ -98,10 +107,10 @@ When an object is modified via some view, the modification causes two propogatio
  # Modifications are always made in some view of the world - meaning, the object that was modified was accessed through some baseline. A new baseline can be created, where the difference with the old baseline is that the modified object is mapped to it's new revision.
 
 === Example ===
-*TODO* _describe in further detail and make it correct!_
+*TODO* _describe in further detail, add BaselineView and make it correct!_
 
  * Assume hierarchy of objects, A->B->C. Each object initially has one revision: A0, B0, C0.
- * Assume a baseline "Baseline A0" that maps: A->A0, B->"Baseline B0"
+ * Assume a revision of A's baseline, called "Baseline A0" that maps: A->A0, B->"Baseline B0"
  * "Baseline B0" maps: B->B0, C->C0.
 
 The object A is accessed via "Baseline A0". Because the baseline maps A->A0 we are actually viewing revision A0 of A. Since this revision contains a reference to B, we consult "Baseline A0" and find that B has a baseline revision "Baseline B0" in this baseline. Now, using "Baseline B0" we find that B has the specific revision B0, and using B0 we find that it contains a single object - C. Using "Baseline B0" again we find that C is mapped to C0. So far we have only used the baselines to access some objects in the revisioned world.
