@@ -99,10 +99,11 @@ An important aspect of this design is that revisioned objects' values may not re
     * Baselines are revisioned objects, meaning that they too have revisions and they too have an `ObjectHistory`. The `ObjectHistory` of an object's Baseline is the set of all baselines that exist for that object
     * When accessing objects (usually using a `RevisionGetter` on a DictMap of the baseline) we access a specific revision of the baseline.
 
+ * *MRCA* means Most Recent Common Ancestor. For two revisions B and C, the MRCA is the most recent (newest) revision that is a parent of both B and C.
  * *Conflicting deltas* - when the order of applying the deltas matter.
     * Assume two deltas d0, d1 and a revision A0 of an object A.
     * If applying the deltas on A0 in a different order (d0 and then d1, or d1 and then d0) results in two different values, the deltas are defined to be *conflicting on revision A0 of A*.
-    * Revisions of the same object are said to conflict, if the delta paths from their MRCA (Most Recent Common Ancestor) to each of them evaluates to two conflicting deltas.
+    * Revisions of the same object are said to conflict, if the delta paths from their MRCA to each of them evaluates to two conflicting deltas.
  * *Merge* - Creating a revision from a pair of base revisions.
     * If the base revisions don't conflict, the merge can be resolved automatically by simple applying the two corresponding deltas (from the MRCA to each base revision), in an arbtirary order.
     * If the base revisions conflict, some special interaction must take place to decide how to resolve this. The interaction for resolving may be done manually, or automatically by some intelligent code, but it is not "straightforward" - it is heuristical.
@@ -150,4 +151,4 @@ The change propogates upwards and also A's baseline needs to be modified. This i
 
 
 ==== Merge ====
-*Merge*s are represented as children of their MRCA. If A is the parent revision of children B and C (meaning A->B and A->C), and D is the merge of B and C, in the revision tree the merge will be represented as A->D. This is in contrast to making D have two parents (B and C) which complicates the design. For this reason, the revision tree is always a tree (and not a DAG).
+Merged revisions are represented as children of their MRCA. If A is the parent revision of children B and C (meaning A->B and A->C), and D is the merge of B and C, in the revision tree the merge will be represented as A->D. This is in contrast to making D have two parents (B and C) which complicates the design. For this reason, the revision tree is always a tree (and not a DAG).
