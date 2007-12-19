@@ -99,13 +99,15 @@ An important aspect of this design is that revisioned objects' values may not re
     * Assume two deltas d0, d1 and a revision A0 of an object A.
     * If applying the deltas on A0 in a different order (d0 and then d1, or d1 and then d0) results in two different values, the deltas are defined to be *conflicting on revision A0 of A*.
     * Revisions of the same object are said to conflict, if the delta paths from their MRCA (Most Recent Common Ancestor) to each of them evaluates to two conflicting deltas.
- * *Merge* - Creating a revision from a pair of previous revisions that conflict.
+ * *Merge* - Creating a revision from a pair of base revisions.
+    * If the base revisions don't conflict, the merge can be resolved automatically by simple applying the two corresponding deltas (from the MRCA to each base revision), in an arbtirary order.
+    * If the base revisions conflict, some special interaction must take place to decide how to resolve this. The interaction for resolving may be done manually, or automatically by some intelligent code, but it is not "straightforward" - it is heuristical.
 
 === The view world ===
  * `RevisionGetter` - an object that looks like a specific revision of an object.
     * From the user's point of view, the `RevisionGetter` looks just like the revision itself.
-    * If the RevisionGetter detects that it should now point to a different revision, it automatically generates (notifies) its users with deltas that represent the change (using a *delta path* from the old to the new revision). 
- * `BaselineView` is an object that manages accesses to revisioned objects. It provides the user with `RevisionGetter`s that are automatically changed to proxy the latest revision of the object they are viewing. This means that if we are viewing A, and using the same `BaselineView` we somehow cause a new revision of A to be created, the `RevisionGetter` for A will automatically be updated to point to the new revision immediately. 
+    * If the `RevisionGetter` detects that it should now point to a different revision, it automatically generates (notifies) its users with deltas that represent the change (using a *delta path* from the old to the new revision). 
+ * `BaselineView` is an object that manages accesses to revisioned objects. `BaselineView` creates `RevisionGetter`s that match the revision that it happens to watch (not the "latest" revision). If the `RevisionGetter`s make a change, they tell observers about new baseline revisions being made.
 
 == Detailed usage of objects ==
 When an outside component (such as a GUI) accesses an object in the revisioned world, it uses some revision of a baseline of the world to do so. Now, the GUI needs to reference objects "universally" - meaning, it shouldn't need to keep updating references to objects every time a new revision of an object is created. For this purpose the GUI uses RevisionGetters
@@ -143,4 +145,4 @@ The change propogates upwards and also A's baseline needs to be modified. This i
 
 
 ==== Merge ====
-*Merge*s are represented as children of their common ancestor. If A is the parent revision of conflicting children B and C (meaning A->B and A->C), and D is the merge of B and C, in the revision tree the merge will be represented as A->D. This is in contrast to making D have two parents (B and C) which complicates the design. For this reason, the revision tree is always a tree (and not a DAG).
+*Merge*s are represented as children of their MRCA. If A is the parent revision of children B and C (meaning A->B and A->C), and D is the merge of B and C, in the revision tree the merge will be represented as A->D. This is in contrast to making D have two parents (B and C) which complicates the design. For this reason, the revision tree is always a tree (and not a DAG).
