@@ -150,5 +150,5 @@ The change propogates upwards and also A's baseline needs to be modified. This i
  # The view is now: A->B->C, via "Baseline A1"->"Baseline B1"->C1.
 
 
-==== Merge ====
+== Merge ==
 Merged revisions are represented as children of their MRCA. If A is the parent revision of children B and C (meaning A->B and A->C), and D is the merge of B and C, in the revision tree the merge will be represented as A->D. This is in contrast to making D have two parents (B and C) which complicates the design. For this reason, the revision tree is always a tree (and not a DAG).
