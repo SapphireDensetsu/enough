@@ -1,4 +1,6 @@
-#summary Rules and definitions for deltas
+#summary Formal definitions for deltas
+
+*TODO*: The domains used in some of these definitions/theorems are wrong.
 
 = Basic Definitions =
 
