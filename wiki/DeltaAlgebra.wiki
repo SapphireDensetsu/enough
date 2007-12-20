@@ -8,7 +8,7 @@
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
  * *Domain of a delta*: the domain of a delta _d_ is the group of all _v_'s such that _d_ is applicable to _v_.
  * *Addition* (+):
-    * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,__ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*).
+    * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*).
     * Then the *addition* _d,,1,,_+_d,,2,,_ is defined by: _A_,,d1+d2,,V1,,(_v_) = _A,,d2,V1,,_(_A,,d1,V1,,_(_v_)).
     * Another name for addition is *combination*.
  * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A_,,d1,,V1,,(_v_) = _A,,d2,V1,,_(_v_).
