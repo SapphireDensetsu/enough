@@ -1,0 +1,9 @@
+#summary Rules and definitions for deltas
+
+= Basic Definitions =
+
+ * *V* is the group of all values.
+ * *D* is the group of all deltas.
+ * *A,,d,V1,,* is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d_ function.
+
+ * *Applicable*: A delta _d_ is applicable to a value _v_ if and only if there is defined a function *A,,d,V1,,* where _v_ belongs to *V1.
