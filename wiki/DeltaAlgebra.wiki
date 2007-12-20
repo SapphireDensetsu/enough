@@ -8,7 +8,7 @@
 
 In the following, *V1*, *V2*, etc. are subsets of *V*.
 
- * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function *A,,d,V1,,* where _v_ belongs to *V1.
+ * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function *A,,d,V1,,* where _v_ belongs to *V1*.
  * *Delta support*: The *delta support* of *V1*, is the group of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
  * *Value class*: A *value class* in *V1* is a subset of *V1*, containing values _v_, for which there exists a delta _d_ that is applicable to _v_. In other words, a value class is a group of values that have a common applicable delta.
     * Example: the group of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
