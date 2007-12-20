@@ -97,12 +97,10 @@ An important aspect of this design is that revisioned objects' values may not re
     * Baselines are revisioned, so a baseline object has its own `ObjectHistory`.
     * Every revisioned object has exactly one Baseline. Only Baselines don't have a Baseline.
     * The Baseline of an object A is a map:
-      * for A itself: map (ObjectHistory of A, Baseline of A) -> (Revision of A)
-      * for each object X that is contained by A: map (ObjectHistory of X, Baseline of X) -> (Revision of Baseline of X)
-    * For an object A that doesn't contain other objects, the baseline will have only one entry: (ObjectHistory of A, Baseline of A) -> (Revision of A).
-    * Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. The "leaf" nodes are objects that have no baseline of their own but are managed by their containers.
-    * There is a *global baseline* that maps all the top-level objects to their revisions (or to their sub-baselines), and there are *local* baselines that map sub-objects to their revisions or baselines.
-    * Baselines are revisioned objects, meaning that they too have revisions and they too have an `ObjectHistory`. The `ObjectHistory` of an object's Baseline is the set of all baselines that exist for that object
+      * for A itself: map (`ObjectHistory` of A, Baseline of A) -> (Revision of A)
+      * for each object X that is contained by A: map (`ObjectHistory` of X, Baseline of X) -> (Revision of Baseline of X)
+    * For an object A that doesn't contain other objects, the baseline will have only one entry: (`ObjectHistory` of A, Baseline of A) -> (Revision of A).
+    * Baselines are hierarchial, meaning that a big baseline maps objects to their local baselines. There is a *global baseline* that maps all the top-level objects to a revision of their respective baselines.
     * When accessing objects (usually using a `RevisionGetter` on a DictMap of the baseline) we access a specific revision of the baseline.
 
  * *MRCA* means Most Recent Common Ancestor. For two revisions B and C, the MRCA is the most recent (newest) revision that is a parent of both B and C.
