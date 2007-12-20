@@ -15,5 +15,5 @@ In the following, *V1*, *V2*, etc. are subsets of *V*.
  * *Delta path*: Given _v,,1,,_ belongs to *V1*, a *delta path* from _v,,1,,_ to _v,,2,,_ is an ordered sequence of deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
-    * This is written: |_v,,1,,_ - _v,,2,,_|,,*D*,,. 
-    * Note that |_v,,1,,_ - _v,,2,,_|,,d,, may _not equal_ |_v,,2,,_ - _v,,1,,_|,,*D*,,. 
+    * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
+    * Note that |_v,,1,,_ - _v,,2,,_|*,,D,,* may _not equal_ |_v,,2,,_ - _v,,1,,_|*,,D,,*. 
