@@ -7,22 +7,27 @@
  * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d_ function.
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
  * *Domain of a delta*: the domain of a delta _d_ is the group of all _v_'s such that _d_ is applicable to _v_.
+ * The *Common domain* of a group of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
  * *Addition* (+):
     * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*).
     * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V1,,_(_A,,d1,V1,,_(_v_)).
     * Another name for addition is *combination*.
+    * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
  * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A,,d1,V1,,_(_v_) = _A,,d2,V1,,_(_v_).
     * *Total equality*: If _d,,1,,_ = _d,,2,,_ in *V* (the group of _all_ values), then _d,,1,,_ and _d,,2,,_ are *totaly equal*, that is - they are indistinguishable and can be regarded as the same delta.
  * *Empty delta*: A delta _d_ is an _empty delta_ if for all _v_ in *V*: _A,,d,V,,_(_v_) = _v_ (by definition). We define one such delta and call it _d,,0,,_ (_*the* empty delta_).
-    * *Theorem*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. *Proof*: If _d,,1,,_ is an empty delta, then _A,,d1,V,,_(_v_) = _v_ for all _v_, by definition. However, _v_ = _A,,d0,V,,_(_v_) because we have already defined the empty delta _d,,0,,_. Therefore by definition _d,,0,,_ = _d,,1,,_ (totally) and they are the same delta.
-    * *Theorem*: For every _d_: _d_ + _d,,0,,_ = _d,,0,,_ + _d_ = _d_ in the domain *V1* of _d_. *Proof*: _d_ + _d,,0,,_ means by definition _A,,d+d0,V1,,_(_v_) = _A,,d0,V1,,_(_A,,d,V1,,_(_v_)) = {by definition of _d,,0,,_} = _A,,d,V1,,_(_v_). Therefore applying _d_ + _d,,0,,_ is the same as applying d, and they are equal. The other order _d,,0,,_ + _d_ = _d_ can be proved in the same way.
+    * *Theorem e1*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. *Proof*: If _d,,1,,_ is an empty delta, then _A,,d1,V,,_(_v_) = _v_ for all _v_, by definition. However, _v_ = _A,,d0,V,,_(_v_) because we have already defined the empty delta _d,,0,,_. Therefore by definition _d,,0,,_ = _d,,1,,_ (totally) and they are the same delta.
+    * *Theorem e2*: For every _d_: _d_ + _d,,0,,_ = _d,,0,,_ + _d_ = _d_ in the domain *V1* of _d_. *Proof*: _d_ + _d,,0,,_ means by definition _A,,d+d0,V1,,_(_v_) = _A,,d0,V1,,_(_A,,d,V1,,_(_v_)) = {by definition of _d,,0,,_} = _A,,d,V1,,_(_v_). Therefore applying _d_ + _d,,0,,_ is the same as applying d, and they are equal. The other order _d,,0,,_ + _d_ = _d_ can be proved in the same way.
+    * *Theorem e2*: _d,,1,,_ + _d,,2,,_ = _d,,1,,_ + _d,,3,,_ in *V,,2,3,,* (the common domain of _d,,2,,_ and _d,,3,,_), if and only if: _d,,2,,_ = _d,,3,,_ in *V,,2,3,,*. *Proof*: 
+      # =>: The first equation means that for every _v_ in the domain of _d,,1,,_ for which _A,,d1,V1,,(_v_) is in *V,,2,3,,*: _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V3,,_(_A,,d1,V1,,_(_v_)). We can name _v,,1,__ = _A,,d1,V1,,_(_v_), then: _A,,d2,V1,,_(_v,,1,,_) = _A,,d3,V1,,_(_v,,1,,_). By definition this implies that _d,,2,,_ = _d,,3,,_ (in *V,,2,3,,*).
+      # <=: The second equation means that for every _v_ in *V1*: _A,,d2,V1,,_(_v_) = _A,,d3,V1,,_(_v_) in *V,,2,3,,*. For all _v,,1,,_ for which there exists _v,,2,,_ = _A,,d1,V1,,_(_v,,1,,_): set _v_ = _v,,2,,_ and we get the first equation.
 
 In the following, *V1*, *V2*, etc. are subsets of *V*.
 
 = Axioms on deltas =
  * *Negation* (reversal): for every delta _d_ there exists a delta -_d_ such that: _d_ + (-_d_) = _d,,0,,_ in the domain of _d_. -_d_ is called the *reverse* of _d_.
-    * *Theorem*: _Symmetry of reverse_: if -_d_ is the reverse of _d_, then _d_ is the reverse of -_d_. *Proof*: *TODO*
-    * *Theorem*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. *Proof*: *TODO*
+    * *Theorem n1*: _Symmetry of reverse_: if -_d_ is the reverse of _d_, then _d_ is the reverse of -_d_. *Proof*: _d_ + _-d_ = _d,,0,,_  => {adding both sides to _-d_} => _-d_ + (_d_ + _-d_) = _-d_ + _d,,0,,_ = {associativity on left, and by definition od _d,,0,,_ on right} = (_-d_ + _d_) + _-d_ = _d,,0,,_ + _-d_ = {
+    * *Theorem n2*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. *Proof*: *TODO*
 
 
 = More definitions =
