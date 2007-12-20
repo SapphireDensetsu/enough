@@ -9,7 +9,7 @@
  * *Domain of a delta*: the domain of a delta _d_ is the group of all _v_'s such that _d_ is applicable to _v_.
  * *Addition* (+):
     * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*).
-    * Then the *addition* _d,,1,,_+_d,,2,,_ is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V1,,_(_A,,d1,V1,,_(_v_)).
+    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V1,,_(_A,,d1,V1,,_(_v_)).
     * Another name for addition is *combination*.
  * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A,,d1,V1,,_(_v_) = _A,,d2,V1,,_(_v_).
     * *Total equality*: If _d,,1,,_ = _d,,2,,_ in *V* (the group of _all_ values), then _d,,1,,_ and _d,,2,,_ are *totaly equal*, that is - they are indistinguishable and can be regarded as the same delta.
@@ -20,7 +20,9 @@
 In the following, *V1*, *V2*, etc. are subsets of *V*.
 
 = Axioms on deltas =
- * *Negation* (reversal): for every delta _d_ there exists a delta -_d_ such that: _d_ + (-_d_) = _d,,0,,_ in the domain of _d_.
+ * *Negation* (reversal): for every delta _d_ there exists a delta -_d_ such that: _d_ + (-_d_) = _d,,0,,_ in the domain of _d_. -_d_ is called the *reverse* of _d_.
+    * *Theorem*: _Symmetry of reverse_: if -_d_ is the reverse of _d_, then _d_ is the reverse of -_d_. *Proof*: *TODO*
+    * *Theorem*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. *Proof*: *TODO*
 
 
 = More definitions =
