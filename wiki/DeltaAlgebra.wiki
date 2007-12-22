@@ -60,4 +60,5 @@ The relation between this formalism and the practical deltas used in the Enough 
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
     * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
-    * Note that |_v,,1,,_ - _v,,2,,_|*,,D,,* may _not equal_ |_v,,2,,_ - _v,,1,,_|*,,D,,*. 
+    * *Theorem dist1*: |_v,,1,,_ - _v,,2,,_|*,,D,,* = |_v,,2,,_ - _v,,1,,_|*,,D,,*.
+      * *Proof*: Using the existence of a reverse delta for every delta in the path from _v,,1,,_ to _v,,2,,_, we can always construct a reverse path of the same length. The reverse path can not be shorter, because if there is a way to cancel out deltas on the reverse path, the reverse of the same pair of deltas in the forward path could have also been canceled out.
