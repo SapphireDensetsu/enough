@@ -2,6 +2,14 @@
 
 *TODO*: The domains used in some of these definitions/theorems are wrong.
 
+= Introduction =
+The *Delta Algebra* contains the following primitives:
+ * Values, which are immutable entities on which delta apply functions operate.
+ * Deltas, which are objects that are associated with delta apply functions.
+ * Delta apply functions, which are functions that map values to values.
+
+The relation between this formalism and the practical deltas used in the Enough PackageLibrary is not well defined. This formalism was created mainly for amusement, but it may find future applications in (possibly automatic) formal verification of a system that uses the delta concept.
+
 = Basic Definitions =
 
  * *V* is the set of all values.
@@ -23,9 +31,9 @@
  * *Empty delta*: A delta _d_ is an _empty delta_ if for all _v_ in *V*: _A,,d,V,,_(_v_) = _v_ (by definition). We define one such delta and call it _d,,0,,_ (_*the* empty delta_).
     * *Theorem e1*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. *Proof*: If _d,,1,,_ is an empty delta, then _A,,d1,V,,_(_v_) = _v_ for all _v_, by definition. However, _v_ = _A,,d0,V,,_(_v_) because we have already defined the empty delta _d,,0,,_. Therefore by definition _d,,0,,_ = _d,,1,,_ (totally) and they are the same delta.
     * *Theorem e2*: For every _d_: _d_ + _d,,0,,_ = _d,,0,,_ + _d_ = _d_ in the domain *V1* of _d_. *Proof*: _d_ + _d,,0,,_ means by definition _A,,d+d0,V1,,_(_v_) = _A,,d0,V1,,_(_A,,d,V1,,_(_v_)) = {by definition of _d,,0,,_} = _A,,d,V1,,_(_v_). Therefore applying _d_ + _d,,0,,_ is the same as applying d, and they are equal. The other order _d,,0,,_ + _d_ = _d_ can be proved in the same way.
-    * *Theorem e3*: _d,,1,,_ + _d,,2,,_ = _d,,1,,_ + _d,,3,,_ in *V,,2,3,,* (the common domain of _d,,2,,_ and _d,,3,,_), if and only if: _d,,2,,_ = _d,,3,,_ in *V,,2,3,,*. *Proof*: 
-      # =>: The first equation means that for every _v_ in the domain of _d,,1,,_ for which _A,,d1,V1,,_(_v_) is in *V,,2,3,,*: _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V3,,_(_A,,d1,V1,,_(_v_)). We can name _v,,1,,_ = _A,,d1,V1,,_(_v_), then: _A,,d2,V1,,_(_v,,1,,_) = _A,,d3,V1,,_(_v,,1,,_). By definition this implies that _d,,2,,_ = _d,,3,,_ (in *V,,2,3,,*).
-      # <=: The second equation means that for every _v_ in *V1*: _A,,d2,V1,,_(_v_) = _A,,d3,V1,,_(_v_) in *V,,2,3,,*. For all _v,,1,,_ for which there exists _v,,2,,_ = _A,,d1,V1,,_(_v,,1,,_): set _v_ = _v,,2,,_ and we get the first equation.
+    * *Theorem e3*: _d,,1,,_ + _d,,2,,_ = _d,,1,,_ + _d,,3,,_ in *V,,1,,*, if and only if: _d,,2,,_ = _d,,3,,_ in the image of _A,,d1,V1,,_. *Proof*: 
+      # =>: The first equation means that for every _v_ in *V1* (for which we assume that _A,,d1,V1,,_(_v_) is in *V,,2,3,,*): _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V3,,_(_A,,d1,V1,,_(_v_)). We can name _v,,1,,_ = _A,,d1,V1,,_(_v_), then: _A,,d2,V2,,_(_v,,1,,_) = _A,,d3,V3,,_(_v,,1,,_). By definition this implies that _d,,2,,_ = _d,,3,,_ (in the image of _A,,d1,V1,,).
+      # <=: The second equation is: _A,,d2,V2,,_(_v_) = _A,,d3,V3,,_(_v_) in the image of _A,,d1,V1,,. For all _v,,1,,_ in *V1*, there exists _v,,2,,_ = _A,,d1,V1,,_(_v,,1,,_): set _v_ = _v,,2,,_ and we get the first equation.
 
 
 = Axioms on deltas =
