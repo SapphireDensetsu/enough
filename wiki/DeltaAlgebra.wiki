@@ -51,7 +51,8 @@ The relation between this formalism and the practical deltas used in the Enough 
 
 = More definitions =
  * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
- * *Value class*: A *value class* in *V1* is a subset of *V1*, containing values _v_, for which there exists a delta _d_ that is applicable to _v_. In other words, a value class is a set of values that have a common applicable delta.
+ * *Common applicable delta* of a set of values, is a delta that is applicable to all values in the set.
+ * *Value class*: A *value class* is a set of values with at least one common applicable delta.
     * Example: the set of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
  * *Delta path*: Given _v,,1,,_ belongs to *V1*, a *delta path* from _v,,1,,_ to _v,,2,,_ is an ordered sequence of deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
