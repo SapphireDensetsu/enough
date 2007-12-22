@@ -6,7 +6,7 @@
 
  * *V* is the group of all values.
  * *D* is the group of all deltas.
- * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d_ function.
+ * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d in V1_ function.
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
  * *Domain of a delta*: the domain of a delta _d_ is the group of all _v_'s such that _d_ is applicable to _v_.
  * The *Common domain* of a group of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
