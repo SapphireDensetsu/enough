@@ -4,12 +4,12 @@
 
 = Basic Definitions =
 
- * *V* is the group of all values.
- * *D* is the group of all deltas.
+ * *V* is the set of all values.
+ * *D* is the set of all deltas.
  * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d in V1_ function.
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
- * *Domain of a delta*: the domain of a delta _d_ is the group of all _v_'s such that _d_ is applicable to _v_.
- * The *Common domain* of a group of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
+ * *Domain of a delta*: the domain of a delta _d_ is the set of all _v_'s such that _d_ is applicable to _v_.
+ * The *Common domain* of a set of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
 
  * *Addition* (+):
     * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*).
@@ -18,7 +18,7 @@
     * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
 
  * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A,,d1,V1,,_(_v_) = _A,,d2,V1,,_(_v_).
-    * *Total equality*: If _d,,1,,_ = _d,,2,,_ in *V* (the group of _all_ values), then _d,,1,,_ and _d,,2,,_ are *totally equal*, that is - they are indistinguishable and can be regarded as the same delta.
+    * *Total equality*: If _d,,1,,_ = _d,,2,,_ in *V* (the set of _all_ values), then _d,,1,,_ and _d,,2,,_ are *totally equal*, that is - they are indistinguishable and can be regarded as the same delta.
 
  * *Empty delta*: A delta _d_ is an _empty delta_ if for all _v_ in *V*: _A,,d,V,,_(_v_) = _v_ (by definition). We define one such delta and call it _d,,0,,_ (_*the* empty delta_).
     * *Theorem e1*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. *Proof*: If _d,,1,,_ is an empty delta, then _A,,d1,V,,_(_v_) = _v_ for all _v_, by definition. However, _v_ = _A,,d0,V,,_(_v_) because we have already defined the empty delta _d,,0,,_. Therefore by definition _d,,0,,_ = _d,,1,,_ (totally) and they are the same delta.
@@ -35,9 +35,9 @@
 
 
 = More definitions =
- * *Delta support*: The *delta support* of *V1*, is the group of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
- * *Value class*: A *value class* in *V1* is a subset of *V1*, containing values _v_, for which there exists a delta _d_ that is applicable to _v_. In other words, a value class is a group of values that have a common applicable delta.
-    * Example: the group of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
+ * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
+ * *Value class*: A *value class* in *V1* is a subset of *V1*, containing values _v_, for which there exists a delta _d_ that is applicable to _v_. In other words, a value class is a set of values that have a common applicable delta.
+    * Example: the set of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
  * *Delta path*: Given _v,,1,,_ belongs to *V1*, a *delta path* from _v,,1,,_ to _v,,2,,_ is an ordered sequence of deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
