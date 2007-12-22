@@ -38,7 +38,7 @@ The relation between this formalism and the practical deltas used in the Enough 
 
 = Axioms on deltas =
  * *Axiom 1: Negation* (reversal): for every delta _d_ there exists a delta -_d_ such that: _d_ + (-_d_) = _d,,0,,_ in the domain of _d_. -_d_ is called the *reverse* of _d_.
-    * *Theorem n1*: _Symmetry of reverse_: if -_d_ is the reverse of _d_, then _d_ is the reverse of -_d_. *Proof*: _d_ + _-d_ = _d,,0,,_  => {adding both sides to _-d_, theorem e3} => _-d_ + (_d_ + _-d_) = _-d_ + _d,,0,,_ = {associativity on left, and by definition od _d,,0,,_ on right} = (_-d_ + _d_) + _-d_ = _d,,0,,_ + _-d_ => {theorem e3} => _-d_ + _d_ = _d,,0,,_.
+    * *Theorem n1*: _Symmetry of reverse_: if -_d_ is the reverse of _d_, then _d_ is the reverse of -_d_. *Proof*: _d_ + _-d_ = _d,,0,,_  => {adding both sides to _-d_, theorem e3} => _-d_ + (_d_ + _-d_) = _-d_ + _d,,0,,_ = {associativity on left, and by definition commutativity with _d,,0,,_ on right} = (_-d_ + _d_) + _-d_ = _d,,0,,_ + _-d_ => {theorem e3} => _-d_ + _d_ = _d,,0,,_.
     * *Theorem n2*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. *Proof*: If _d,,1,,_ is another reverse of _d_, then _d_ + _d,,1,,_ = _d,,0,,_ = _d_ + _-d_ => {theorem e3} => _d,,1,,_ = _-d_.
 
 
