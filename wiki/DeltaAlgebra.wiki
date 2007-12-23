@@ -27,7 +27,7 @@ The relation between this formalism and the practical deltas used in the Enough 
     * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)). Another name for addition is *combination*.
     * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. 
       * *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
-      * Because of associativity, we can simply write _d,,1,,_ + _d,,2,,_ + _d,,3,,_ (without the previously used parenthesis).
+      * By induction, because of associativity we can simply write _d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_ (without any parenthesis).
 
  * *Empty delta*: A delta _d_ is an _empty delta_ if for all _v_ in *V*: _A,,d,V,,_(_v_) = _v_ (by definition). We define one such delta and call it _d,,0,,_ (_*the* empty delta_).
     * *Theorem e1*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. 
