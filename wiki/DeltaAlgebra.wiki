@@ -56,8 +56,12 @@ The relation between this formalism and the practical deltas used in the Enough 
  * *Delta path*: A *delta path* from _v,,1,,_ to _v,,2,,_ is any ordered sequence of *atomic* deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_.
    * Note that by definition there is a single delta (_d,,1,,_+_d,,2,,_+...+_d,,n,,_) that is the same as the above application of the sequence, but it is not a delta path because it is not atomic.
    * Also, there is an infinite number of arbitrary long delta paths from any value to any value, because we can always add another pair of canceling atomic deltas to the path: (_d_, -_d_).
-   * *Theorem (path 1)*: _Reverse delta path theorem_: Every delta path from _v,,1,,_ to _v,,2,,_ has a reverse delta path from _v,,2,,_ to _v,,1,,_ of the same length.
-     * *Proof* (for finite case): A delta path from _v,,1,,_ to _v,,2,,_ consists of a sequence of atomic deltas, {_d,,1,,_, _d,,2,,_, ..., _d,,n,,_}. We can build a delta, the sum _s,,n,,_ = (_d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_), which will lead also from _v,,1,,_ to _v,,2,,_. Using axiom 1 (every delta has a reverse), this composite sum also has a reverse -_s,,n,,. If -_s,,n,,_ is atomic, we have found a reverse delta path. If not, by definition there exists a set of deltas who's sum is -_s,,n,,_ and they are the reverse delta path.
+   * *Theorem (path 1)*: _Reverse delta path theorem_: Every finite delta path from _v,,1,,_ to _v,,2,,_ has a reverse delta path from _v,,2,,_ to _v,,1,,_.
+     * *Proof*: A delta path from _v,,1,,_ to _v,,2,,_ consists of a sequence of atomic deltas, {_d,,1,,_, _d,,2,,_, ..., _d,,n,,_}. We can build a delta, the sum _s,,n,,_ = (_d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_), which will lead also from _v,,1,,_ to _v,,2,,_. Using axiom 1 (every delta has a reverse), this composite sum also has a reverse -_s,,n,,_. If -_s,,n,,_ is atomic, we have found a reverse delta path. If not, by definition there exists a set of deltas who's sum is -_s,,n,,_ and they are the reverse delta path.
+   * *Theorem* (path 1a): Like theorem (path 1) but the reverse path is of the same length as the original path.
+     * *Proof*: *TODO*
+   * *Theorem* (path 1b): Like theorem (path 1) but the path is infinite.
+     * *Proof*: *TODO*
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
     * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
