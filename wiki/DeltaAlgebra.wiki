@@ -24,8 +24,7 @@ The relation between this formalism and the practical deltas used in the Enough 
 
  * *Addition* (+):
     * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*. Or in other words, _A,,d1,V1,,_ is at least _into_ the domain of _d,,2,,_).
-    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)).
-    * Another name for addition is *combination*.
+    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)). Another name for addition is *combination*.
     * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. 
       * *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
 
@@ -50,13 +49,14 @@ The relation between this formalism and the practical deltas used in the Enough 
 
 
 = More definitions =
+ * *Atomic delta*: _d_ is an *atomic delta* if and only if there is no pair (_d,,1,,_, _d,,2,,_) such that _d,,1,,_ + _d,,2,,_ = _d_ in the domain of _d_.
  * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
  * *Common applicable delta* of a set of values, is a delta that is applicable to all values in the set.
  * *Value class*: A *value class* is a set of values with at least one common applicable delta.
     * Example: the set of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
- * *Delta path*: A *delta path* from _v,,1,,_ to _v,,2,,_ is any ordered sequence of deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_.
-   * Note that by definition there is a single delta (_d,,1,,_+_d,,2,,_+...+_d,,n,,_) that is the same as the above application of the sequence.
-   * Also, there is an infinite number of arbitrary long delta paths from any value to any value, because we can always add another pair of canceling deltas to the path.
+ * *Delta path*: A *delta path* from _v,,1,,_ to _v,,2,,_ is any ordered sequence of *atomic* deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_.
+   * Note that by definition there is a single delta (_d,,1,,_+_d,,2,,_+...+_d,,n,,_) that is the same as the above application of the sequence, but it is not a delta path because it is not atomic.
+   * Also, there is an infinite number of arbitrary long delta paths from any value to any value, because we can always add another pair of canceling atomic deltas to the path: (_d_, -_d_).
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
     * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
