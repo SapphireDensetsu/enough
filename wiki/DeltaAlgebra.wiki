@@ -1,7 +1,5 @@
 #summary Formal definitions for deltas
 
-*TODO*: The domains used in some of these definitions/theorems are wrong.
-
 = Introduction =
 The *Delta Algebra* contains the following primitives:
  * Values, which are immutable entities on which delta apply functions operate.
@@ -16,7 +14,8 @@ The relation between this formalism and the practical deltas used in the Enough 
  * *D* is the set of all deltas.
  * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d in V1_ function.
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
- * *Domain of a delta*: the domain of a delta _d_ is the set of all _v_'s such that _d_ is applicable to _v_.
+ * *Domain of a delta*: the domain of a delta _d_ is the set of all _v_'s such that _d_ is applicable to _v_. 
+ * The *image of a delta* _d_, is the set of all values _v_ such that applying _d_ to a value in _d_'s domain yields _v_. (It is the image of _A,,d,V1,,_.)
  * The *Common domain* of a set of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
 
  * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A,,d1,V1,,_(_v_) = _A,,d2,V1,,_(_v_) (that is, if the delta apply functions have equal values for a given _v_).
@@ -51,7 +50,6 @@ The relation between this formalism and the practical deltas used in the Enough 
 
 = More definitions =
  * *Atomic delta*: _d_ is an *atomic delta* if and only if there is no pair (_d,,1,,_, _d,,2,,_) such that _d,,1,,_ + _d,,2,,_ = _d_ in the domain of _d_.
- * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*.
  * *Common applicable delta* of a set of values, is a delta that is applicable to all values in the set.
  * *Value class*: A *value class* is a set of values with at least one common applicable delta.
     * Example: the set of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
@@ -63,3 +61,5 @@ The relation between this formalism and the practical deltas used in the Enough 
     * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
     * *Theorem dist1*: |_v,,1,,_ - _v,,2,,_|*,,D,,* = |_v,,2,,_ - _v,,1,,_|*,,D,,*.
       * *Proof*: Using the existence of a reverse delta for every delta in the path from _v,,1,,_ to _v,,2,,_, we can always construct a reverse path of the same length. The reverse path can not be shorter, because if there is a way to cancel out deltas on the reverse path, the reverse of the same pair of deltas in the forward path could have also been canceled out.
+
+ * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*. It is equal to the union of all sets of common applicable deltas for all subsets of *V1*.
