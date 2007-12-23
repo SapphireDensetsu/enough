@@ -44,6 +44,7 @@ This layer provides the basic building blocks of the library. *Observation* mean
     * *Addition*: applying `a+b` is equivalent to applying `a`, and then applying `b`.
     * *Negation*: reversal - `-a` is the reverse of a (applying `a` and then `-a` yields no change).
     * Example: The delta `-((-b)+(-a))` is equivalent to the delta `a+b`.
+    * For a formal discussion see *[DeltaAlgebra Delta Algebra]*.
 
 == Observables ==
 === Motivation for Observation ===
