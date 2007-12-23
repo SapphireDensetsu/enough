@@ -56,13 +56,18 @@ The relation between this formalism and the practical deltas used in the Enough 
  * *Delta path*: A *delta path* from _v,,1,,_ to _v,,2,,_ is any ordered sequence of *atomic* deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_.
    * Note that by definition there is a single delta (_d,,1,,_+_d,,2,,_+...+_d,,n,,_) that is the same as the above application of the sequence, but it is not a delta path because it is not atomic.
    * Also, there is an infinite number of arbitrary long delta paths from any value to any value, because we can always add another pair of canceling atomic deltas to the path: (_d_, -_d_).
+   * *Theorem (path 1)*: _Reverse delta path theorem_: Every delta path from _v,,1,,_ to _v,,2,,_ has a reverse delta path from _v,,2,,_ to _v,,1,,_ of the same length.
+     * *Proof* (for finite case): A delta path from _v,,1,,_ to _v,,2,,_ consists of a sequence of atomic deltas, {_d,,1,,_, _d,,2,,_, ..., _d,,n,,_}. We can build a delta, the sum _s,,n,,_ = (_d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_), which will lead also from _v,,1,,_ to _v,,2,,_. Using axiom 1 (every delta has a reverse), this composite sum also has a reverse -_s,,n,,. If -_s,,n,,_ is atomic, we have found a reverse delta path. If not, by definition there exists a set of deltas who's sum is -_s,,n,,_ and they are the reverse delta path.
  * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
  * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
     * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
-    * *Theorem dist1*: |_v,,1,,_ - _v,,2,,_|*,,D,,* = |_v,,2,,_ - _v,,1,,_|*,,D,,*.
+    * *Theorem (distance 1)*: |_v,,1,,_ - _v,,2,,_|*,,D,,* = |_v,,2,,_ - _v,,1,,_|*,,D,,*.
       * *Proof*: Using the existence of a reverse delta for every delta in the path from _v,,1,,_ to _v,,2,,_, we can always construct a reverse path of the same length. The reverse path can not be shorter, because if there is a way to cancel out deltas on the reverse path, the reverse of the same pair of deltas in the forward path could have also been canceled out.
  
  * *Conflicting deltas*: a pair of deltas is said to _*conflict* in *V1*_ (*V1* is a subset of *V*) if and only if the deltas are *not commutative* under addition, in *V1*.
-   * *Theorem conf1*: _An empty delta never conflicts_.
+   * *Theorem (conflict 1)*: _An empty delta never conflicts_.
      * *Proof*: Trivial - by definition, an empty delta is always commutative under addition with any delta.
+
+ * *Connected values*: For a given set of deltas, *D1*, two values are connected if and only if there is a delta path from one value to the other.
+   * Note: According to theorem 
  * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*. It is equal to the union of all sets of common applicable deltas for all subsets of *V1*.
