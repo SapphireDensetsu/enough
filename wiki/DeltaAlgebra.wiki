@@ -23,7 +23,7 @@ The relation between this formalism and the practical deltas used in the Enough 
 
  * *Addition* (+):
     * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*. Or in other words, _A,,d1,V1,,_ is at least _into_ the domain of _d,,2,,_).
-    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)). Another name for addition is *combination*.
+    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)). Another name for addition is *combination*. As a formal notation, the left form is the _combined_ form, and the right side of the equation is the _canonical_ form. That is, if _d_ = _d,,1,,_ + _d,,2,,_ then _d_ is combined, _d,,1,,_ + _d,,2,,_ is canonical.
     * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. 
       * *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
       * By induction, because of associativity we can simply write _d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_ (without any parenthesis).
