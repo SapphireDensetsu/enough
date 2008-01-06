@@ -1,18 +1,44 @@
 #summary Formal definitions for deltas
 
 = Introduction =
-The *Delta Algebra* contains the following primitives:
- * Values, which are immutable entities on which delta apply functions operate.
- * Deltas, which are objects that are associated with delta apply functions.
- * Delta apply functions, which are functions that map values to values.
+"Delta Algebra" is the name for a formalism of the concept of deltas used in PackageLibrary. The relation between this formalism and the practical deltas used in the Enough PackageLibrary is not well defined. This formalism was created mainly for amusement, but it may find future applications in (possibly automatic) formal verification of a system that uses the delta concept.
 
-The relation between this formalism and the practical deltas used in the Enough PackageLibrary is not well defined. This formalism was created mainly for amusement, but it may find future applications in (possibly automatic) formal verification of a system that uses the delta concept.
+== Notation ==
+ * Functions are in _italic_, e.g. _f_.
+ * Sets are in *bold*, e.g. *V1*.
+ * The empty set is {}.
 
-= Basic Definitions =
-
+= Invertible functions group =
+== Basics ==
  * *V* is the set of all values.
+ * Let _f_ be a function with the following properties:
+   * _f: *V1* -> *V2*_, where *V1* and *V2* are subsets of *V*.
+   * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every x in *V1*.
+     * By definition, we have _f^-1^_: *V2* -> *V1.
+ * *Equality*:
+   * Given the following:
+     * _f_: *V1* -> *V2*, where *V1*, *V2* are subsets of *V*
+     * _g_: *W1* -> *W2*, where *W1*, *W2* are subsets of *V*
+     * _intersection_(*V1*, *W1*) = *X1* != {}
+   * We define _f_ = _g_ _in *X1*_ iff for every x in *X1* _f_(x) = _g_(x).
+   * If *V1* = *W1* ( = *X1*) then we say that _f_ = _g_ _totally_, or: _f_ and _g_ are totally equal, or: _f_ and _g_ are identical. In this case the two functions are indistinguishable.
+ * We define F,,inv,, as the set of invertible functions (including _id_).
+ * The *identity function* _id_: *V* -> *V* maps every value to itself. By definition _id_ = _id^-1^_.
+   * *Theorem*: There is only one identity function in F,,inv,,.
+      * *Proof*: If _f_: *V* -> *V* is an identity function, then _f_(x) = x for every x in *V* by definition. However, x = _id_(x) because we have already defined the identity function _id_. Therefore by definition _f_ = _id_ (totally) and they are the same function.
+
+== Group ==
+The set of invertible functions F,,inv,, with *composition* and *inversion* form a *group*.
+ * *Composition*: (_f_ o _g_)[x] = _f_(_g_[x]). In our notation: _f_ o _g_ = _fg_.
+   * *Associativity*: _(fg)h_ = _f(gh)_ because _(fg)h_[x] = _f_(_g_( _h_[x] )) = _f_( _g_(_h_[x])) = _f(gh)_[x] for every x in the domain of _h_.
+     * By induction, any finite composition of functions is associative, and we can always simply write: _f,,1,,f,,2,,f,,3,,f,,4,,...f,,n,,_ without parenthesis.
+ * *Inversion*: by definition every function in the set of invertible function has an inverse. Therefore we may define the _inverse operation_ notated by ^-1^.
+   * *Theorem i1*: _Uniqueness of inverse_. 
+
+
  * *D* is the set of all deltas.
- * _A,,d,V1,,_ is a function, *V1* -> *V2* where *V1* and *V2* are subsets of *V*. It is called the _apply d in V1_ function.
+ * *A* is a set of deltas, called the *atomic set*. Every delta in *A* is called an *atomic delta*.
+
  * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
  * *Domain of a delta*: the domain of a delta _d_ is the set of all _v_'s such that _d_ is applicable to _v_. 
  * The *image of a delta* _d_, is the set of all values _v_ such that applying _d_ to a value in _d_'s domain yields _v_. (It is the image of _A,,d,V1,,_.)
