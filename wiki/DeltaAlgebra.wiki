@@ -23,8 +23,8 @@
      * *X1* is a subset of *V1* and also a subset of *W1* (a subdomain of both _f_ and _g_).
    * We define _f_ = _g_ _in *X1*_ iff for every x in *X1* _f_(x) = _g_(x).
    * If *V1* = *W1* ( = *X1*) then we say that _f_ = _g_ _totally_, or: _f_ and _g_ are totally equal, or: _f_ and _g_ are identical. In this case the two functions are indistinguishable and are one and the same. 
-   * The *Greatest subdomain of equality* is the largest set *X2* such that *X2* is a subdomain of both _f_ and _g_, and such that _f_ = _g_ in *X2*.
      * Trivial result: _f_ = _g_ _totally_ iff  _f^1^_ = _g^1^_ _totally_.
+   * The *Greatest subdomain of equality* is the largest set *X2* such that *X2* is a subdomain of both _f_ and _g_, and such that _f_ = _g_ in *X2*.
    * *Theorem e1*: If _f_ = _g_ _in *X1*_ then _Image_(_f_ on *X1*) = _Image_(_g_ on *X1*) =  *Y*, and *Y* is a subset of _intersection_(_Image_(_f_), _Image_(_g_)).
      * *Proof*: Since _f_ = _g_ _in *X1*_ we have for every x in *X1* a value y = _f_(x) = _g_(x). Call the set of all y's: *Y*. By definition every y in *Y* is in _Image_(_f_) and also in _Image_(_g_), so it is in their intersection.
    * *Theorem e2*: Using theorem e1's defintions. If *Y* = _intersection_(_Image_(_f_), _Image_(_g_)) then *X1* is the greatest subdomain of equality.
