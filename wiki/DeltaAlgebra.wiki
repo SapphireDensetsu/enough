@@ -39,8 +39,8 @@
 
 == Group ==
 The set of invertible functions F,,inv,, with *composition* and *inversion* form a *group*.
- * *Composition*: (_f_ o _g_)[x] = _f_(_g_[x]). In our notation: _f_ o _g_ = _fg_.
-   * *Associativity*: _(fg)h_ = _f(gh)_ because _(fg)h_[x] = _f_(_g_( _h_[x] )) = _f_( _g_(_h_[x])) = _f(gh)_[x] for every x in the domain of _h_.
+ * *Composition*: (_f_ o _g_)(x) = _f_(_g_(x)). In our notation: _f_ o _g_ = _fg_.
+   * *Associativity*: _(fg)h_ = _f(gh)_ because _(fg)h_(x) = _f_(_g_( _h_(x) )) = _f_( _g_(_h_(x))) = _f(gh)_(x) for every x in the domain of _h_.
      * By induction, any finite composition of functions is associative, and we can always simply write: _f,,1,,f,,2,,f,,3,,f,,4,,...f,,n,,_ without parenthesis.
  * *Inversion*: by definition every function in the set of invertible function has an inverse. Therefore we may define the _inverse operation_ notated by ^-1^.
    * *Theorem i1*: _Uniqueness of inverse_. 
