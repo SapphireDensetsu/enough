@@ -35,7 +35,12 @@
  * The *identity function* _id_: *V* -> *V* maps every value to itself. By definition _id_ = _id^-1^_.
    * *Theorem id1*: There is only one identity function in F,,inv,,.
       * *Proof*: If _f_: *V* -> *V* is an identity function, then _f_(x) = x for every x in *V* by definition. However, x = _id_(x) because we have already defined the identity function _id_. Therefore by definition _f_ = _id_ (totally) and they are the same function.
-
+   * *Theorem id2*: For every _f_: _f_ _id_ = _id_ _f_ = _f_ in the domain of _f_. 
+     * *Proof*: _f_ _id_ means by definition _f_(_id_(x)) = _f_(x) = _id_(_f_(x)).
+   * *Theorem id3*: _g_ _f_ = _h_ _f_ in the domain of _f_, if and only if: _g_ = _h_ in the image of _f_. 
+     * *Proof*: 
+       # =>: The first equation means that for every x in the domain of _f_, _g_(_f_(x)) = _h_(_f_(x)). We can name y = _f_(x), then: _g_(y) = _h_(y) for all y in the image of _f_, which means that _g_ = _h_ in the image of _f_.
+       # <=: The second equation is: _g_ = _h_ in the image of _f_. For all x in the domain of _f_, there exists y = _f_(x). So for all x, we get _g_(_f_(x)) = _h_(_f_(x)).
 
 == Group ==
 The set of invertible functions F,,inv,, with *composition* and *inversion* form a *group*.
@@ -43,45 +48,16 @@ The set of invertible functions F,,inv,, with *composition* and *inversion* form
    * *Associativity*: _(fg)h_ = _f(gh)_ because _(fg)h_(x) = _f_(_g_( _h_(x) )) = _f_( _g_(_h_(x))) = _f(gh)_(x) for every x in the domain of _h_.
      * By induction, any finite composition of functions is associative, and we can always simply write: _f,,1,,f,,2,,f,,3,,f,,4,,...f,,n,,_ without parenthesis.
  * *Inversion*: by definition every function in the set of invertible function has an inverse. Therefore we may define the _inverse operation_ notated by ^-1^.
-   * *Theorem i1*: _Uniqueness of inverse_. 
+   * *Theorem inv1*: _Symmetry of reverse_: If _f^-1^_ is the inverse of _f_, then _f_ is the inverse of _f^-1^_. (Trivial proof).
+   * *Theorem n2*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. 
+     * *Proof*: If _d,,1,,_ is another reverse of _d_, then _d_ + _d,,1,,_ = _d,,0,,_ = _d_ + _-d_ => {theorem e3} => _d,,1,,_ = _-d_.
 
 
- * *D* is the set of all deltas.
- * *A* is a set of deltas, called the *atomic set*. Every delta in *A* is called an *atomic delta*.
-
- * *Applicable*: A delta _d_ is *applicable* to a value _v_ if and only if there is defined a function _A,,d,V1,,_ where _v_ belongs to *V1*.
- * *Domain of a delta*: the domain of a delta _d_ is the set of all _v_'s such that _d_ is applicable to _v_. 
- * The *image of a delta* _d_, is the set of all values _v_ such that applying _d_ to a value in _d_'s domain yields _v_. (It is the image of _A,,d,V1,,_.)
- * The *Common domain* of a set of deltas *D1* (a subset of *D*), is the intersection of all the domains of each _d_ in *D1*.
-
- * *Equality* (=): For every pair of deltas _d,,1,,_, _d,,2,,_, it is said that _d,,1,,_ = _d,,2,,_ _in *V1*_ (they are _*equal* in *V1*_) if and only if for evey _v_ in *V1*: _A,,d1,V1,,_(_v_) = _A,,d2,V1,,_(_v_) (that is, if the delta apply functions have equal values for a given _v_).
-    * *Total equality*: If _d,,1,,_ = _d,,2,,_ in the domain of _d,,1,,_, and the domain of _d,,1,,_ is also the domain of _d,,2,,_, then _d,,1,,_ and _d,,2,,_ are *totally equal*, that is - they are indistinguishable and can be regarded as the same delta.
-
- * *Addition* (+):
-    * Assume a pair of deltas _d,,1,,_, _d,,2,,_ such that the range of _A,,d1,V1,,_ is a subset of the domain of _d,,2,,_ (that is: _d,,2,,_ is applicable to _A,,d1,V1,,_(_v_) for all _v_ in *V1*. Or in other words, _A,,d1,V1,,_ is at least _into_ the domain of _d,,2,,_).
-    * Then the *addition* _d,,1,,_+_d,,2,,_ is a delta, that is defined by: _A_,,d1+d2,V1,,(_v_) = _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)). Another name for addition is *combination*. As a formal notation, the left form is the _combined_ form, and the right side of the equation is the _canonical_ form. That is, if _d_ = _d,,1,,_ + _d,,2,,_ then _d_ is combined, _d,,1,,_ + _d,,2,,_ is canonical.
-    * *Theorem a1*: _Associativity of addition_: _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) = (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. 
-      * *Proof*:  _d,,1,,_ + (_d,,2,,_ + _d,,3,,_) means _A,,d2+d3,V1,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V1,,_(_A,,d2,V1,,_(_A,,d1,V1,,_(_v_))) = _A,,d3,V1,,_(_A,,d1+d2,V1,,_(_v_)) which means (_d,,1,,_ + _d,,2,,_) + _d,,3,,_. Therefore the two sides are equivalent, and + is associative.
-      * By induction, because of associativity we can simply write _d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_ (without any parenthesis).
-
- * *Empty delta*: A delta _d_ is an _empty delta_ if for all _v_ in *V*: _A,,d,V,,_(_v_) = _v_ (by definition). We define one such delta and call it _d,,0,,_ (_*the* empty delta_).
-    * *Theorem e1*: _Uniqueness of the empty delta_: _there is exactly one delta that is an empty delta_. 
-      * *Proof*: If _d,,1,,_ is an empty delta, then _A,,d1,V,,_(_v_) = _v_ for all _v_, by definition. However, _v_ = _A,,d0,V,,_(_v_) because we have already defined the empty delta _d,,0,,_. Therefore by definition _d,,0,,_ = _d,,1,,_ (totally) and they are the same delta.
-    * *Theorem e2*: For every _d_: _d_ + _d,,0,,_ = _d,,0,,_ + _d_ = _d_ in the domain *V1* of _d_. 
-      * *Proof*: _d_ + _d,,0,,_ means by definition _A,,d+d0,V1,,_(_v_) = _A,,d0,V1,,_(_A,,d,V1,,_(_v_)) = {by definition of _d,,0,,_} = _A,,d,V1,,_(_v_). Therefore applying _d_ + _d,,0,,_ is the same as applying d, and they are equal. The other order _d,,0,,_ + _d_ = _d_ can be proved in the same way.
-    * *Theorem e3*: _d,,1,,_ + _d,,2,,_ = _d,,1,,_ + _d,,3,,_ in *V,,1,,*, if and only if: _d,,2,,_ = _d,,3,,_ in the image of _A,,d1,V1,,_. 
-      * *Proof*: 
-        # =>: The first equation means that for every _v_ in *V1* (for which we assume that _A,,d1,V1,,_(_v_) is in *V,,2,3,,*): _A,,d2,V2,,_(_A,,d1,V1,,_(_v_)) = _A,,d3,V3,,_(_A,,d1,V1,,_(_v_)). We can name _v,,1,,_ = _A,,d1,V1,,_(_v_), then: _A,,d2,V2,,_(_v,,1,,_) = _A,,d3,V3,,_(_v,,1,,_). By definition this implies that _d,,2,,_ = _d,,3,,_ (in the image of _A,,d1,V1,,).
-        # <=: The second equation is: _A,,d2,V2,,_(_v_) = _A,,d3,V3,,_(_v_) in the image of _A,,d1,V1,,. For all _v,,1,,_ in *V1*, there exists _v,,2,,_ = _A,,d1,V1,,_(_v,,1,,_): set _v_ = _v,,2,,_ and we get the first equation.
+= Extensions to the group =
+ * *A* is a set of functions, called the *atomic set*. Every delta in *A* is called an *atomic delta*.
 
 
-= Axioms on deltas =
- * *Axiom 1: Negation* (reversal): for every delta _d_ there exists a delta -_d_ such that: _d_ + (-_d_) = _d,,0,,_ in the domain of _d_. -_d_ is called the *reverse* of _d_.
-    * Note that by definition, the image of _d_ is the domain of _-d_.
-    * *Theorem n1*: _Symmetry of reverse_: If -_d_ is the reverse of _d_, and the image of  _-d_ is the domain of _d_, then _d_ is the reverse of -_d_.
-      * *Proof*: _d_ + _-d_ = _d,,0,,_  in the domain of _d_ => {adding both sides to _-d_: using the condition that the image of _-d_ is the domain of _d_  to apply theorem e3} => _-d_ + (_d_ + _-d_) = _-d_ + _d,,0,,_ = {associativity on left, and by definition commutativity with _d,,0,,_ on right} = (_-d_ + _d_) + _-d_ = _d,,0,,_ + _-d_ => {theorem e3} => _-d_ + _d_ = _d,,0,,_.
-    * *Theorem n2*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. 
-      * *Proof*: If _d,,1,,_ is another reverse of _d_, then _d_ + _d,,1,,_ = _d,,0,,_ = _d_ + _-d_ => {theorem e3} => _d,,1,,_ = _-d_.
+
 
 
 = More definitions =
