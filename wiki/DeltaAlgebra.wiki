@@ -65,7 +65,7 @@ The set of invertible functions F,,inv,, with *composition* and *inversion* form
 == Metric space ==
 After constructing the *group* with *F,,inv,,*, composition, and inversion, we define a metric on this group.
 
- * *Function path*: For two functions _f_, _g_ with an identical domain, the function path from _f_ to _g_ is a sequence of atomic functions, {_h,,n,,_} (called "the path", where each _h,,n,,_ belongs to _A_) such that _h,,n,,_ _h,,n-1,,_ ... _h,,1,,_  _f_ = _g_ totally.
+ * *Function path*: For two functions _f_, _g_ with an identical domain, a *function path* from _f_ to _g_ is a sequence of atomic functions, {_h,,n,,_} (called "the path", where each _h,,n,,_ belongs to _A_) such that _h,,n,,_ _h,,n-1,,_ ... _h,,1,,_  _f_ = _g_ totally.
    * If _f_ = _g_ totally then the empty sequence is a path ("empty path") from _f_ to _g_ and vice verse.
  * *Length* of a function path is the number of elements in the path (number of elements in {_h,,n,,_}, which is simply _n_). An empty path has length 0.
    * *Theorem path1*: For every path from _f_ to _g_ there exists a path of the same length from _g_ to _f_.
@@ -94,4 +94,4 @@ The resultant set _S,,A,,_ is an _invertible, atomic, function set_.
  * _Invertible_ because of property 3.
  * _Atomic_ because of properties 1, 2. 
 
-It is fundamental that only functions that can composed from atomic functions can exist in _S,,A,,_.
+It is fundamental that only functions that can be composed from atomic functions can exist in _S,,A,,_.
