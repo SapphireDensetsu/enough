@@ -8,8 +8,9 @@
  * Sets are in *bold*, e.g. *V1*.
  * The empty set is {}.
 
-= Invertible functions group =
-== Basics ==
+= Foundations =
+== Invertible functions group ==
+=== Basics ===
  * *V* is the set of all values.
  * *Common domain* of _f_ and _g_ is the intersection of their domains.
  * We define F,,inv,, as the set of invertible functions. These are functions satifying:
@@ -42,47 +43,37 @@
        # =>: The first equation means that for every x in the domain of _f_, _g_(_f_(x)) = _h_(_f_(x)). We can name y = _f_(x), then: _g_(y) = _h_(y) for all y in the image of _f_, which means that _g_ = _h_ in the image of _f_.
        # <=: The second equation is: _g_ = _h_ in the image of _f_. For all x in the domain of _f_, there exists y = _f_(x). So for all x, we get _g_(_f_(x)) = _h_(_f_(x)).
 
-== Group ==
+=== Group ===
 The set of invertible functions F,,inv,, with *composition* and *inversion* form a *group*.
  * *Composition*: (_f_ o _g_)(x) = _f_(_g_(x)). In our notation: _f_ o _g_ = _fg_.
    * *Associativity*: _(fg)h_ = _f(gh)_ because _(fg)h_(x) = _f_(_g_( _h_(x) )) = _f_( _g_(_h_(x))) = _f(gh)_(x) for every x in the domain of _h_.
      * By induction, any finite composition of functions is associative, and we can always simply write: _f,,1,,f,,2,,f,,3,,f,,4,,...f,,n,,_ without parenthesis.
  * *Inversion*: by definition every function in the set of invertible function has an inverse. Therefore we may define the _inverse operation_ notated by ^-1^.
    * *Theorem inv1*: _Symmetry of reverse_: If _f^-1^_ is the inverse of _f_, then _f_ is the inverse of _f^-1^_. (Trivial proof).
-   * *Theorem n2*: _Uniqueness of reverse_: For every _d_ there exists exactly one reverse. 
-     * *Proof*: If _d,,1,,_ is another reverse of _d_, then _d_ + _d,,1,,_ = _d,,0,,_ = _d_ + _-d_ => {theorem e3} => _d,,1,,_ = _-d_.
+   * *Theorem inv2*: _Uniqueness of inverse_: For every _f_ there exists exactly one inverse. 
+     * *Proof*: If _g_ is another inverse of _f_, then _g_ _f_ = _id_ = _f^-1^_ _f_ => {theorem e3} => _f^-1^_ = _g_.
 
+=== Additional definitions ===
+ * *A* is a set of functions, called the *atomic set*. Every function in *A* is called an *atomic function*.
+ * A function _f_ is *applicable* to a value x if x is in the domain of _f_.
+ * A *common applicable function* for a set of values *W* is a function that is applicable to all the values in *W* (*W* is a subset of the domain of _f_).
+ * *Value class*: A *value class* is a set of values with at least one common applicable function (in other words, a value class is a set *W* of values where *W* is a subset of an intersection of _n_ domains of functions, where _n_ > 0).
+ * *Conflict*: a pair of functions is said to _*conflict* in *X*_ (*X* is a subset of *V*) if and only if the functions are *not commutative* under composition, in *X*.
+   * *Theorem (conflict 1)*: _An identity function never conflicts_.
+     * *Proof*: Trivial - by definition, an identity function is always commutative under composition with any function.
 
-= Extensions to the group =
- * *A* is a set of functions, called the *atomic set*. Every delta in *A* is called an *atomic delta*.
+== Metric space ==
+After constructing the *group* with *F,,inv,,*, composition, and inversion, we define a metric on this group.
 
-
-
-
-
-= More definitions =
- * *Atomic delta*: _d_ is an *atomic delta* if and only if there is no pair (_d,,1,,_, _d,,2,,_) such that _d,,1,,_ + _d,,2,,_ = _d_ in the domain of _d_.
- * *Common applicable delta* of a set of values, is a delta that is applicable to all values in the set.
- * *Value class*: A *value class* is a set of values with at least one common applicable delta.
-    * Example: the set of all `Dict`s is a value class (because they have a common applicable delta, in fact they have several).
- * *Delta path*: A *delta path* from _v,,1,,_ to _v,,2,,_ is any ordered sequence of *atomic* deltas (_d,,1,,_, _d,,2,,_, ..., _d,,n,,_), such that _A,,dn,V1,,(A,,d(n-1),V1,,(...(A,,d1,V1,,(_v,,1,,_)))..))_ = _v,,2,,_.
-   * Note that by definition there is a single delta (_d,,1,,_+_d,,2,,_+...+_d,,n,,_) that is the same as the above application of the sequence, but it is not a delta path because it is not atomic.
-   * Also, there is an infinite number of arbitrary long delta paths from any value to any value, because we can always add another pair of canceling atomic deltas to the path: (_d_, -_d_).
-   * *Theorem (path 1)*: _Reverse delta path theorem_: Every finite delta path from _v,,1,,_ to _v,,2,,_ has a reverse delta path from _v,,2,,_ to _v,,1,,_.
-     * *Proof*: A delta path from _v,,1,,_ to _v,,2,,_ consists of a sequence of atomic deltas, {_d,,1,,_, _d,,2,,_, ..., _d,,n,,_}. We can build a delta, the sum _s,,n,,_ = (_d,,1,,_ + _d,,2,,_ + ... + _d,,n,,_), which will lead also from _v,,1,,_ to _v,,2,,_. Using axiom 1 (every delta has a reverse), this composite sum also has a reverse -_s,,n,,_. If -_s,,n,,_ is atomic, we have found a reverse delta path. If not, by definition there exists a set of deltas who's sum is -_s,,n,,_ and they are the reverse delta path.
-   * *Theorem* (path 1a): Like theorem (path 1) but the reverse path is of the same length as the original path.
+ * *Function path*: The function path from _f_ to _g_ is a sequence of atomic functions, {_h,,n,,_} (called "the path", where each _h,,n,,_ belongs to _A_) such that _h,,n,,_ _h,,n-1,,_ ... _h,,1,,_  _f_ = _g_ in the domain of _f_.
+   * If _f_ = _g_ then the empty sequence is a path ("empty path") from _f_ to _g_ and vice verse.
+ * *Length* of a function path is the number of elements in the path (number of elements in {_h,,n,,_}, which is simply _n_). An empty path has length 0.
+   * *Theorem path1*: For every path from _f_ to _g_ there exists a path of the same length from _g_ to _f_.
      * *Proof*: *TODO*
-   * *Theorem* (path 1b): Like theorem (path 1) but the path is infinite.
-     * *Proof*: *TODO*
- * *Length of delta path*: The length of a delta path is the number of deltas in the sequence.
- * *Delta distance*: the delta distance from _v,,1,,_ to _v,,2,,_ is the shortest length of any delta path from _v,,1,,_ to _v,,2,,_.
-    * This is written: |_v,,1,,_ - _v,,2,,_|*,,D,,*. 
-    * *Theorem (distance 1)*: |_v,,1,,_ - _v,,2,,_|*,,D,,* = |_v,,2,,_ - _v,,1,,_|*,,D,,*.
-      * *Proof*: Using the existence of a reverse delta for every delta in the path from _v,,1,,_ to _v,,2,,_, we can always construct a reverse path of the same length. The reverse path can not be shorter, because if there is a way to cancel out deltas on the reverse path, the reverse of the same pair of deltas in the forward path could have also been canceled out.
- 
- * *Conflicting deltas*: a pair of deltas is said to _*conflict* in *V1*_ (*V1* is a subset of *V*) if and only if the deltas are *not commutative* under addition, in *V1*.
-   * *Theorem (conflict 1)*: _An empty delta never conflicts_.
-     * *Proof*: Trivial - by definition, an empty delta is always commutative under addition with any delta.
+ * *Function distance*: The distance _d_(_f_, _g_) is defined as the length of the shortest path from _f_ to _g_. Properties:
+   * _d_(_f_, _g_) >= 0 (there is no path with negative length).
+   * _d_(_f_, _g_) = 0 if and only if  _f_ = _g_.
+     * *Proof*: 
 
  * *Connected values*: For a given set of deltas, *D1*, two values are connected if and only if there is a delta path from one value to the other.
    * Note: According to theorem 
