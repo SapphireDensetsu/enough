@@ -13,7 +13,7 @@
 === Basics ===
  * *V* is the set of all values.
  * *Common domain* of _f_ and _g_ is the intersection of their domains.
- * We define F,,inv,, as the set of invertible functions. These are functions satifying:
+ * *F,,inv,,* is the set of invertible functions. These are functions satifying:
    * _f: *V1* -> *V2*_, where *V1* and *V2* are subsets of *V*.
    * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every x in *V1*.
      * By definition, we have _f^-1^_: *V2* -> *V1*.
@@ -65,15 +65,22 @@ The set of invertible functions F,,inv,, with *composition* and *inversion* form
 == Metric space ==
 After constructing the *group* with *F,,inv,,*, composition, and inversion, we define a metric on this group.
 
- * *Function path*: The function path from _f_ to _g_ is a sequence of atomic functions, {_h,,n,,_} (called "the path", where each _h,,n,,_ belongs to _A_) such that _h,,n,,_ _h,,n-1,,_ ... _h,,1,,_  _f_ = _g_ in the domain of _f_.
-   * If _f_ = _g_ then the empty sequence is a path ("empty path") from _f_ to _g_ and vice verse.
+ * *Function path*: For two functions _f_, _g_ with an identical domain, the function path from _f_ to _g_ is a sequence of atomic functions, {_h,,n,,_} (called "the path", where each _h,,n,,_ belongs to _A_) such that _h,,n,,_ _h,,n-1,,_ ... _h,,1,,_  _f_ = _g_ totally.
+   * If _f_ = _g_ totally then the empty sequence is a path ("empty path") from _f_ to _g_ and vice verse.
  * *Length* of a function path is the number of elements in the path (number of elements in {_h,,n,,_}, which is simply _n_). An empty path has length 0.
    * *Theorem path1*: For every path from _f_ to _g_ there exists a path of the same length from _g_ to _f_.
-     * *Proof*: *TODO*
+     * *Proof*: *TODO* using inversion.
  * *Function distance*: The distance _d_(_f_, _g_) is defined as the length of the shortest path from _f_ to _g_. Properties:
    * _d_(_f_, _g_) >= 0 (there is no path with negative length).
-   * _d_(_f_, _g_) = 0 if and only if  _f_ = _g_.
-     * *Proof*: 
+   * _d_(_f_, _g_) = 0 if and only if _f_ = _g_ in the domain of _f_.
+     * *Proof*:
+       * =>: if _d_(_f_, _g_) = 0 then the path from _f_ to _g_ is empty, therefore _f_ = _g_ in the domain of _f_.
+       * <=: if _f_ = _g_ in the domain of _f_, then an empty path leads from _f_ to _g_, and the distance is 0.
+   * _d_(_f_, _g_) = _d_(_g_, _f_). (Because of theorem path1).
+   * _d_(_f_, _h_) <= _d_(_f_, _g_) + _d_(_g_, _h_).
+     * *Proof*: If there is a path from _f_ to _g_ to _h_, then the path from _f_ to _h_ is at least as short - if we use the same path from _f_ to _h_ (through _g_). (Need to prove that it can be shorter?).
+
+
 
  * *Connected values*: For a given set of deltas, *D1*, two values are connected if and only if there is a delta path from one value to the other.
    * Note: According to theorem 
