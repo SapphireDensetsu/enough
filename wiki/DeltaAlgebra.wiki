@@ -81,4 +81,5 @@ After constructing the *group* with *F,,inv,,*, composition, and inversion, we d
      * *Proof*: If there is a path from _f_ to _g_ to _h_, then the path from _f_ to _h_ is at least as short - if we use the same path from _f_ to _h_ (through _g_). (Need to prove that it can be shorter?).
 
 === Additional definitions on the metric space ===
- * *Connected values*: For a given set of functions, *F1* subset of *F,,inv,,*, two values x, y are *connected* if and only if there is a function _f_ such that _f_(x) = y (by inversion we also have the opposite).
+ * *Connected values*: For a given set of functions, *F1* subset of *F,,inv,,*, two values x, y are *connected* if and only if there is a function _f_ in *F1* such that _f_(x) = y (by inversion we also have the opposite). 
+   * We then say that x and y are connected under *F1*.
