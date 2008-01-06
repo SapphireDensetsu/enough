@@ -83,3 +83,15 @@ After constructing the *group* with *F,,inv,,*, composition, and inversion, we d
 === Additional definitions on the metric space ===
  * *Connected values*: For a given set of functions, *F1* subset of *F,,inv,,*, two values x, y are *connected* if and only if there is a function _f_ in *F1* such that _f_(x) = y (by inversion we also have the opposite). 
    * We then say that x and y are connected under *F1*.
+
+== Invertible atomic function space ==
+Given *A* a set of atomic functions, we may define a set _S,,A,,_ as follows:
+ # Every element of *A* is in _S,,A,,_.
+ # Every finite composition of atomic functions from *A* is also in _S,,A,,_.
+ # If _f_ is in _S,,A,,_, then _f^-1^_ is also in _S,,A,,_.
+
+The resultant set _S,,A,,_ is an _invertible, atomic, function set_.
+ * _Invertible_ because of property 3.
+ * _Atomic_ because of properties 1, 2. 
+
+It is fundamental that only functions that can composed from atomic functions can exist in _S,,A,,_.
