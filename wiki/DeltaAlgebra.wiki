@@ -12,7 +12,7 @@
 == Basics ==
  * *V* is the set of all values.
  * *Common domain* of _f_ and _g_ is the intersection of their domains.
- * Functions in our interest - functions satisfying the following:
+ * We define F,,inv,, as the set of invertible functions. These are functions satifying:
    * _f: *V1* -> *V2*_, where *V1* and *V2* are subsets of *V*.
    * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every x in *V1*.
      * By definition, we have _f^-1^_: *V2* -> *V1*.
@@ -32,7 +32,6 @@
      * *Proof*: *TODO*.
    * *Theorem e3*: The restriction of _f_ to *X1* a subset of the common domain, named _f,,x1,,_ is totally equal to the restriction of _g_ to *X1*, named _g,,x1,,_.
      * *Proof*: _f,,x1,,_ and _g,,x1,,_ have the same domain, and the same image, and are therefore totally equal.
- * We define F,,inv,, as the set of invertible functions (including _id_).
  * The *identity function* _id_: *V* -> *V* maps every value to itself. By definition _id_ = _id^-1^_.
    * *Theorem id1*: There is only one identity function in F,,inv,,.
       * *Proof*: If _f_: *V* -> *V* is an identity function, then _f_(x) = x for every x in *V* by definition. However, x = _id_(x) because we have already defined the identity function _id_. Therefore by definition _f_ = _id_ (totally) and they are the same function.
