@@ -14,8 +14,7 @@
  * *Common domain* of _f_ and _g_ is the intersection of their domains.
  * Functions in our interest - functions satisfying the following:
    * _f: *V1* -> *V2*_, where *V1* and *V2* are subsets of *V*.
-   * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every 
-x in *V1*.
+   * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every x in *V1*.
      * By definition, we have _f^-1^_: *V2* -> *V1*.
  * *Equality*:
    * Given the following:
