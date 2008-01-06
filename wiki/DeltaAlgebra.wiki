@@ -80,8 +80,5 @@ After constructing the *group* with *F,,inv,,*, composition, and inversion, we d
    * _d_(_f_, _h_) <= _d_(_f_, _g_) + _d_(_g_, _h_).
      * *Proof*: If there is a path from _f_ to _g_ to _h_, then the path from _f_ to _h_ is at least as short - if we use the same path from _f_ to _h_ (through _g_). (Need to prove that it can be shorter?).
 
-
-
- * *Connected values*: For a given set of deltas, *D1*, two values are connected if and only if there is a delta path from one value to the other.
-   * Note: According to theorem 
- * *Delta support*: The *delta support* of *V1*, is the set of all deltas _d_ such that _d_ is applicable to at least one value in *V1*. It is equal to the union of all sets of common applicable deltas for all subsets of *V1*.
+=== Additional definitions on the metric space ===
+ * *Connected values*: For a given set of functions, *F1* subset of *F,,inv,,*, two values x, y are *connected* if and only if there is a function _f_ such that _f_(x) = y (by inversion we also have the opposite).
