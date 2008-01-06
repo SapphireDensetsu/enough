@@ -14,7 +14,7 @@
  * Let _f_ be a function with the following properties:
    * _f: *V1* -> *V2*_, where *V1* and *V2* are subsets of *V*.
    * _f_ is *invertible*: There exists _f^-1^_ such that _f^-1^_(_f_(x)) = x for every x in *V1*.
-     * By definition, we have _f^-1^_: *V2* -> *V1.
+     * By definition, we have _f^-1^_: *V2* -> *V1*.
  * *Equality*:
    * Given the following:
      * _f_: *V1* -> *V2*, where *V1*, *V2* are subsets of *V*
