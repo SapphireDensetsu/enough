@@ -17,8 +17,11 @@ In the process of our work, we are developing a (Pythonic) codebase that include
   * Graph objects (Nodes, Edges) and some basic algorithms.
   * etc.
 
+== LiveC ==
+LiveC is a demonstration of a LiveProgramming interface for C. It is the current focus of attention.
+
 == NF ==
-NF is a gui for live programming. Still waiting for a first release.
+NF is a gui for functional live programming. A few prototypes were developed.
 
 == Graphui ==
 See here: [Graphui]
