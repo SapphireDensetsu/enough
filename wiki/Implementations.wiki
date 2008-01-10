@@ -6,14 +6,12 @@ In the process of our work, we are developing a (Pythonic) codebase that include
   * Observables - primitives that notify registrars about events, when an underlying object mutates. A basic building block for DifferentialComputing.
     * Observable values (observables that have state (contain data) such as List, Dict, ValuePtr).
     * Expressions - function-like object that represent operations on each other, and that ultimately depend on observable values (through the special Literal expression).
-  * Revision control
-
+  * Revision control - where every change is understood by the system (unlike current revision control systems where changes are done on the data and the system "guesses" what the diff means).
  # A GUI toolkit, based on the concepts:
   * Complete separation between model and view - view only contains state that model does not.
   * Model changes <--> view changes, automatically, using Observables.
   * Keys are processed by a Keymap tree.
   * Based on pygame
-
  # Other utility things including:
   * parsing dot output (used in Graphui)
   * Graph objects (Nodes, Edges) and some basic algorithms.
