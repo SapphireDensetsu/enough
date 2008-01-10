@@ -120,6 +120,9 @@ An important aspect of this design is that revisioned objects' values may not re
 
  * `BaselineView` is an object that manages accesses to revisioned objects. `BaselineView` creates `RevisionGetter`s that match the revision that it happens to watch (not the "latest" revision). If the `RevisionGetter`s make a change, they tell observers about new baseline revisions being made.
 
+ * `ObjectAccessor` encapsulates work that is always done in the view world to access objects. It allows access to a versioned object, while recursively supplying `ObjectAccessor`s when you reference a sub-object. 
+
+
 == Detailed usage of objects ==
 When an outside component (such as a GUI) accesses an object in the revisioned world, it uses some revision of a baseline of the world to do so. Now, the GUI needs to reference objects "universally" - meaning, it shouldn't need to keep updating references to objects every time a new revision of an object is created. For this purpose the GUI uses RevisionGetters
 
