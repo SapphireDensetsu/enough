@@ -2,12 +2,10 @@
 #labels BuzzWord,Featured
 
 = Status =
-We are currently in the process of designing the "universal" live language.
+We were in the process of designing the "universal" live language. After some progress we decided to start an "exprimenting phase" where we will implement a live programming environment for an existing language. See [Implementations LiveC].
 
 = Background =
-Live programming is a *fundamental* idea in Enough.
-
-Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]. It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
+Live programming is a *fundamental* idea in Enough. Live programming is proposed as a solution to the [SyntaxProblems Problems of Syntatic Languages]. It is applicable in many semantic models, but has some extra advantages when applied on a [FunctionalProgramming functional programming] semantic model.
 
 = What is "Live Programming?" =
 Live programming is a new way to edit code. The editing environment understands the code as you edit it.
