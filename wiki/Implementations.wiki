@@ -2,17 +2,20 @@
 
 == Libraries ==
 In the process of our work, we are developing a (Pythonic) codebase that includes:
- # A generic library, including:
+ # A generic library (PackageLibrary), including:
   * Observables - primitives that notify registrars about events, when an underlying object mutates (including wrappers for: list, dict, list-map and more).
-  * parsing dot output (used in Graphui)
-  * Graph objects (Nodes, Edges) and some basic algorithms.
-  * etc.
+  * Revision control
 
  # A GUI toolkit, based on the concepts:
   * Complete separation between model and view - view only contains state that model does not.
   * Model changes <--> view changes, automatically, using Observables.
-  * Keys are processed by a Keymap chain.
+  * Keys are processed by a Keymap tree.
   * Based on pygame
+
+ # Other utility things including:
+  * parsing dot output (used in Graphui)
+  * Graph objects (Nodes, Edges) and some basic algorithms.
+  * etc.
 
 == NF ==
 NF is a gui for live programming. Still waiting for a first release.
