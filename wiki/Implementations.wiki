@@ -3,7 +3,9 @@
 == Libraries ==
 In the process of our work, we are developing a (Pythonic) codebase that includes:
  # A generic library (PackageLibrary), including:
-  * Observables - primitives that notify registrars about events, when an underlying object mutates (including wrappers for: list, dict, list-map and more).
+  * Observables - primitives that notify registrars about events, when an underlying object mutates. A basic building block for DifferentialComputing.
+    * Observable values (observables that have state (contain data) such as List, Dict, ValuePtr).
+    * Expressions - function-like object that represent operations on each other, and that ultimately depend on observable values (through the special Literal expression).
   * Revision control
 
  # A GUI toolkit, based on the concepts:
