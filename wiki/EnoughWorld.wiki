@@ -116,7 +116,7 @@ System files in Enough are replaced by ordinary objects who are serialized to di
 
 == Persisting user data ==
 
-In Enough, [[OrthogonalPersistence everything persists]].
+In Enough, [OrthogonalPersistence everything persists].
 
 == Organizing/searching user data ==
 
