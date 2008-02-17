@@ -49,3 +49,10 @@ Implement a native code compiler and JIT for the live language.
 
 Add a new semantic model that can be used to access platform-specific features.
 Implement a kernel and drivers that provides the facilities required by the environment's implementation.
+
+= Result =
+
+The result of this plan should be a self-hosting Operating System, Desktop Environment (User interface), Programming Language and Network collaboration system.
+
+All principles outlined by [[EnoughWorld]] should be possible after this plan.
+TODO: Explain how each step makes some stuff in [[EnoughWorld]] possible.
