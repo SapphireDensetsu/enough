@@ -63,3 +63,73 @@ GUI glue code generally consists of defining which widget layout to use in order
  * Nothing - Let the GUI heuristics sort out the layout to interface with the functions and actions automatically
  * Hints - The developers of the actions/functions (or others!) can write hints about the various functions, actions and their inputs and outputs (beyond metadata such as type that exists already), that helps the GUI heuristics build a sensible layout.
  * Layout configurations - If hints are difficult, or not good enough, full layout configurations specifying which widgets are to be used and how to access the actions and functions can be provided. Unlike existing glue code, multiple such configurations can exist, and be provided from multiple sources. The configuration of the GUI widgets should be directly editable from within the GUI.
+
+GUI widgets are generally used to provide novel user interfaces. For example, one of the core components of a "word processor" is a marked-up-text editor widget. It consists of code that specifies how to respond to user interface events, and how to draw the user interface.
+These GUI widgets are ordinary objects in Enough, and can be distributed as well.
+
+== Scripting ==
+
+Many applications today integrate "scripting engines" that try to expose their internal objects to a "scripting language".
+In Enough, all objects are already exposed to the user interface, which is fully scriptable. For example, any object can be taken and given to any function or action.
+There is no need for "scripting languages" or any extra work to expose objects and the interfaces.
+
+= Email =
+
+The "Email" concept is composed of several things.
+
+== The inbox ==
+
+The inbox, and various other "folders" or labels used, is basically a container for "messages". Each message in Enough is simply a document object. The "Inbox" can be implemented as an "Object Database", but one that also exports actions/methods to add items into the inbox.
+
+== POP/IMAP ==
+
+These message retrieval protocols are replaced simply by network-transparent reference to a remote object database object.
+
+== SMTP/email addresses ==
+
+These can be replaced by handing out a network-transparent reference to the append/add method of the object database. By creating trivial append/add wrapper actions and handing out references to them, one can know more about the source of the message (equivalent to Gmail's username+identifier@gmail.com feature, except its more secure).
+
+== Mail browsing GUIs ==
+
+Webmail is very popular, and so are various desktop mail readers.
+These various GUI's would be replaced by a configuration of functions and widgets.
+For example, a Sort function can be used on the object database containing the mail items, and the output of Sort can be attached to a GUI widget. The object database can have some metadata about the fields within it (such as containing of "send time", "receive time") which allow the display widget to sensibly display the messages.
+
+== Calendaring ==
+
+A calendar in Enough is the mapping of Time objects to arbitrary TimeRange objects. In the case of typical calendaring, these arbitrary objects would be "Meeting" objects that contain various data about the meeting.
+An action that adds to the calendar (after whatever prompts necessary) can be used on any "Meeting" objects that are in the inbox. A specific action that adds to a specific calendar can be specified as a default action for Meeting objects (Allowing double clicking on any Meeting object from any context, not just email, to add it to that calendar).
+In addition, an action that processes all messages that go into inbox could apply them automatically on the calendar according to arbitrary conditionals (as to allow exposure to the information in those Meeting objects in the Calendar viewer immediately).
+
+== Availability issues ==
+
+Much of the point of email is the availability of the mail servers, and the resending features they use to overcome downtime in various mail servers. The typical client pulls his mail from the mail server at his uptime, allowing him to be down most of the time.
+If handing out network references to methods of objects on the local machine, downtime could make message sending impossible. Enough can resolve this in the same way its resolved today: use mail "servers" with high uptime, as simple hosts that host the inbox objects and appending actions on them, to allow network references to be given to those hosts.
+
+= File system =
+
+The file system serves a few purposes:
+
+== System files ==
+
+System files in Enough are replaced by ordinary objects who are serialized to disk transparently.
+
+== Persisting user data ==
+
+In Enough, [[OrthogonalPersistence everything persists]].
+
+== Organizing/searching user data ==
+
+In Enough, object databases hold the user data, and allow for far more powerful organization than a hierarchy of strings. Objects can refer to other objects directly, are typed, and can be associated with metadata that is indexed for fast searches.
+
+= Save/Load =
+
+Save is a user interface action that asks the system to persist the document, or whatever is being edited, now. Save has a few problems:
+ * Saving multiple times typically requires writing a lot more than the amount of data that actually changed between saves, as the entire document is re-written.
+ * It requires moving the disk head to a specific location that stores the specific document.
+ * It often writes in-place, which may have catastrophic results in case of a crash (Not only may the save itself fail, but it may destroy the existing copy).
+
+These problems have led to the current design of exposing an explicit "Save" action to the user, which also requires the user to select a "name" for the file.
+
+This has a significant drawback: User data is *Lost by default*.
+In Enough, save is unnecessary. Only the very latest user data can be lost in a crash (inherent flaw), which loses at most a short moment of work.
