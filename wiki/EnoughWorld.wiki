@@ -1,0 +1,65 @@
+#summary The Enough-way to do many things that are currently done in the software world.
+
+= The web =
+
+The web is used to access many types of things. Each thing is replaced by something else in the Enough world.
+
+== Static content ==
+
+Static content should be replaced by remote read-only references to document, text, sound or image objects.
+
+== Dynamically generated content ==
+
+Dynamically generated content should be replaced by functions that return documents.
+
+== Web applications ==
+
+Web applications should be replaced by remote references to factories that make instances that can be conveniently used by the GUI.
+
+== Flash applications ==
+
+Flash applications should be replaced by GUI widget implementations that run locally (via AdaptiveProfiling).
+
+== Search engines ==
+
+Search engines should be replaced by "object databases" that hold many objects and can search them quickly. These databases can "spider"-walk documents and any object which can be walked, much like existing search engines.
+Unlike search engines, an "object database":
+ * Can be created and used over any scope of objects, local, remote or a hybrid.
+ * Can get change notifications from the objects inside it, rather than having to poll these objects periodically. Thus the "Google" equivalent would receive notifications of updates rather than poll millions of unchanging websites, and be permanently out of date.
+For extra efficiency, site update aggregators can be used to collect notifications about updates and notify all who are interested in those updates.
+
+This aggregator can let millions of sites send updates to a single entity, rather than many different spiders. It can also be a central place 
+
+This approach also makes implementing a [http://www.archive.org Web Archive] much easier.
+
+= Processes =
+
+Processes are not required, as address space separations are not required.
+
+= Threads =
+
+Threads may still exist, as explicit entities. Hopefully, threads will be implicitly used for independent functional (side-effect-free) paths.
+
+= Applications =
+
+Applications today are a collection of multiple things.
+Enough does not have "Applications" as such. Instead, it uses the existing simpler primitives of objects, references and the uniform GUI to achieve the same and far more.
+
+== Executables ==
+
+Executables are replaced with objects and types. Some objects contain functions and actions, which contain code. These functions and actions can be serialized transparently and efficiently. More importantly, they can be deserialized efficiently.
+Currently, executing an executable incurs a large penalty of deserializing an ad-hoc executable format, copying various things from the executable, and so on.
+Instead, the executable can be replaced by a singleton object in some cases, or an instance factory in others.
+References to library functions and such are direct references to either proxies or function objects of other libraries.
+Thus, the penalties of execution, including those of dynamic linkage to various libraries, loading of much code into memory, and so on, are eliminated.
+
+== GUI ==
+
+Applications contain mainly two types of GUI code:
+ * GUI glue code (This is the vast majority of "application code")
+ * GUI widgets (Some applications implement their own user interface features)
+
+GUI glue code generally consists of defining which widget layout to use in order to feed inputs and events into functions and actions. This can be replaced by either:
+ * Nothing - Let the GUI heuristics sort out the layout to interface with the functions and actions automatically
+ * Hints - The developers of the actions/functions (or others!) can write hints about the various functions, actions and their inputs and outputs (beyond metadata such as type that exists already), that helps the GUI heuristics build a sensible layout.
+ * Layout configurations - If hints are difficult, or not good enough, full layout configurations specifying which widgets are to be used and how to access the actions and functions can be provided. Unlike existing glue code, multiple such configurations can exist, and be provided from multiple sources. The configuration of the GUI widgets should be directly editable from within the GUI.
