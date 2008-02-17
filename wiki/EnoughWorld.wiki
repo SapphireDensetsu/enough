@@ -28,7 +28,7 @@ Unlike search engines, an "object database":
  * Can get change notifications from the objects inside it, rather than having to poll these objects periodically. Thus the "Google" equivalent would receive notifications of updates rather than poll millions of unchanging websites, and be permanently out of date.
 For extra efficiency, site update aggregators can be used to collect notifications about updates and notify all who are interested in those updates.
 
-This aggregator can let millions of sites send updates to a single entity, rather than many different spiders. It can also be a central place 
+This aggregator can let millions of sites send updates to a single entity, rather than many different spiders. It can also be a central place to allow multiple search engines or content aggregators to watch the same site listing. It would allow sites to register with one large index, rather than many small ones.
 
 This approach also makes implementing a [http://www.archive.org Web Archive] much easier.
 
