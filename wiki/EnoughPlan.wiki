@@ -43,7 +43,7 @@ The purpose of this stage is to make the LiveProgramming environment a desktop e
 
 == Step 7 ==
 
-Implement [[AdaptiveProfiling]]. This should allow for the network-transparent object system to replace the web, file servers, and various other protocols with far more efficient adaptive setups.
+Implement AdaptiveProfiling. This should allow for the network-transparent object system to replace the web, file servers, and various other protocols with far more efficient adaptive setups.
 
 == Step 8 ==
 
@@ -58,5 +58,5 @@ Implement a kernel and drivers that provides the facilities required by the envi
 
 The result of this plan should be a self-hosting Operating System, Desktop Environment (User interface), Programming Language and Network collaboration system.
 
-All principles outlined by [[EnoughWorld]] should be possible after this plan.
-TODO: Explain how each step makes some stuff in [[EnoughWorld]] possible.
+All principles outlined by EnoughWorld should be possible after this plan.
+TODO: Explain how each step makes some stuff in EnoughWorld possible.
