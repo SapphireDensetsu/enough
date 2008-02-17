@@ -30,7 +30,7 @@ Reimplement the editor in the LiveProgramming language, to be self-hosting.
 
 == Step 5 ==
 
-Add network transparency. References to objects can be either local and remote. API's and protocols are inter-changable.
+Add network transparency. References to objects can be either local or remote. API's and protocols are inter-changable.
 
 == Step 6 ==
 
