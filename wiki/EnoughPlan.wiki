@@ -9,10 +9,10 @@ Enough's purposes and scope are replacing virtually the entire body of software 
 == Step 1 ==
 
 Develop a code editor in Python that features:
- o SemanticEditing
- o Unifies similar semantic models (such as C#/Java), allowing multiple syntatic frontends for them
- o Requires less key presses for all common operations
- o Revision control, including merges, conflict handling, and generates far fewer conflicts
+ * SemanticEditing
+ * Unifies similar semantic models (such as C#/Java), allowing multiple syntatic frontends for them
+ * Requires less key presses for all common operations
+ * Revision control, including merges, conflict handling, and generates far fewer conflicts
 
 == Step 2 (Optional) ==
 
@@ -35,9 +35,9 @@ Add network transparency. References to objects can be either local or remote. A
 == Step 6 ==
 
 Extend the UI of the LiveProgramming editor, such that it can be used with a very slight learning curve, and add UI features such as:
- o Default actions/functions to handle various datatypes
- o Double-clicking to invoke the default function
- o Grouping of objects that are commonly used in day-to-day tasks
+ * Default actions/functions to handle various datatypes
+ * Double-clicking to invoke the default function
+ * Grouping of objects that are commonly used in day-to-day tasks
 
 The purpose of this stage is to make the LiveProgramming environment a desktop environment.
 
