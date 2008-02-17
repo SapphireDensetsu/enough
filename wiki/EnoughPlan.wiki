@@ -43,9 +43,13 @@ The purpose of this stage is to make the LiveProgramming environment a desktop e
 
 == Step 7 ==
 
-Implement a native code compiler and JIT for the live language.
+Implement [[AdaptiveProfiling]]. This should allow for the network-transparent object system to replace the web, file servers, and various other protocols with far more efficient adaptive setups.
 
 == Step 8 ==
+
+Implement a native code compiler and JIT for the live language.
+
+== Step 9 ==
 
 Add a new semantic model that can be used to access platform-specific features.
 Implement a kernel and drivers that provides the facilities required by the environment's implementation.
