@@ -24,13 +24,18 @@ Flash applications should be replaced by GUI widget implementations that run loc
 
 Search engines should be replaced by "object databases" that hold many objects and can search them quickly. These databases can "spider"-walk documents and any object which can be walked, much like existing search engines.
 Unlike search engines, an "object database":
- * Can be created and used over any scope of objects, local, remote or a hybrid.
- * Can get change notifications from the objects inside it, rather than having to poll these objects periodically. Thus the "Google" equivalent would receive notifications of updates rather than poll millions of unchanging websites, and be permanently out of date.
+  * Can be created and used over any scope of objects, local, remote or a hybrid.
+  * Can get change notifications from the objects inside it, rather than having to poll these objects periodically. Thus the "Google" equivalent would receive notifications of updates rather than poll millions of unchanging websites, and be permanently out of date.
 For extra efficiency, site update aggregators can be used to collect notifications about updates and notify all who are interested in those updates.
 
 This aggregator can let millions of sites send updates to a single entity, rather than many different spiders. It can also be a central place to allow multiple search engines or content aggregators to watch the same site listing. It would allow sites to register with one large index, rather than many small ones.
 
 This approach also makes implementing a [http://www.archive.org Web Archive] much easier.
+
+=== Questions ===
+  # Why should a user spend his resources on updating a global search engine he doesn't care about? On the other hand, if the search engine DOES care about the user's data, how will the search engine index it, if the user doesn't care to update himself?
+  # Who will be responsible for hosting such a huge database? It costs tons of money and some sort of profit will have to cover it. If there are several competing databases, will every user have to register his data with all databases to make sure he can be found?
+
 
 = Processes =
 
@@ -56,15 +61,16 @@ Thus, the penalties of execution, including those of dynamic linkage to various 
 == GUI ==
 
 Applications contain mainly two types of GUI code:
- * GUI glue code (This is the vast majority of "application code")
- * GUI widgets (Some applications implement their own user interface features)
+  * GUI glue code (This is the vast majority of "application code")
+  * GUI widgets (Some applications implement their own user interface features)
 
 GUI glue code generally consists of defining which widget layout to use in order to feed inputs and events into functions and actions. This can be replaced by either:
- * Nothing - Let the GUI heuristics sort out the layout to interface with the functions and actions automatically
- * Hints - The developers of the actions/functions (or others!) can write hints about the various functions, actions and their inputs and outputs (beyond metadata such as type that exists already), that helps the GUI heuristics build a sensible layout.
- * Layout configurations - If hints are difficult, or not good enough, full layout configurations specifying which widgets are to be used and how to access the actions and functions can be provided. Unlike existing glue code, multiple such configurations can exist, and be provided from multiple sources. The configuration of the GUI widgets should be directly editable from within the GUI.
+  * Nothing - Let the GUI heuristics sort out the layout to interface with the functions and actions automatically
+  * Hints - The developers of the actions/functions (or others!) can write hints about the various functions, actions and their inputs and outputs (beyond metadata such as type that exists already), that helps the GUI heuristics build a sensible layout.
+  * Layout configurations - If hints are difficult, or not good enough, full layout configurations specifying which widgets are to be used and how to access the actions and functions can be provided. Unlike existing glue code, multiple such configurations can exist, and be provided from multiple sources. The configuration of the GUI widgets should be directly editable from within the GUI.
 
 GUI widgets are generally used to provide novel user interfaces. For example, one of the core components of a "word processor" is a marked-up-text editor widget. It consists of code that specifies how to respond to user interface events, and how to draw the user interface.
+
 These GUI widgets are ordinary objects in Enough, and can be distributed as well.
 
 == Scripting ==
@@ -80,6 +86,7 @@ The "Email" concept is composed of several things.
 == The inbox ==
 
 The inbox, and various other "folders" or labels used, is basically a container for "messages". Each message in Enough is simply a document object. The "Inbox" can be implemented as an "Object Database", but one that also exports actions/methods to add items into the inbox.
+
 
 == POP/IMAP ==
 
