@@ -34,7 +34,9 @@ This approach also makes implementing a [http://www.archive.org Web Archive] muc
 
 === Questions ===
   # Why should a user spend his resources on updating a global search engine he doesn't care about? On the other hand, if the search engine DOES care about the user's data, how will the search engine index it, if the user doesn't care to update himself?
+    * The user spends resources on that because he wants his pages to appear up-to-date in the search results, and because otherwise, he's forcing the engine to poll him regularly (which will waste more of his resources!)
   # Who will be responsible for hosting such a huge database? It costs tons of money and some sort of profit will have to cover it. If there are several competing databases, will every user have to register his data with all databases to make sure he can be found?
+    * Same as today, a company like Google. It will still use "spidering" so you don't have to register with anyone or anything.
 
 
 = Processes =
