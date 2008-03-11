@@ -1,4 +1,13 @@
 #summary Ideas for Google Summer of Code 2008
+#labels GSOC
+
+= Basic requirements for student applicants =
+We need people with the following experience:
+  * Good knowledge of Python - a basic requirement.
+    * Experience with [http://www.pygame.org pygame] - helpful but not essential
+  * Ability to dive into Enough's design and critical thinking
+  * Experience with functional languages (especially Haskell) is very welcome
+  * Experience in developing a programming language - the more abstract the better 
 
 = LiveC =
 We need to re-implement the live C programming environment after the re-design that we recently did. This involves learning the design, the enough package library, and using the tracer to implement a high-performance environment for live C.
@@ -10,4 +19,14 @@ Graphui is the generic graph gui (GraphViz/dot GUI). We need to re-implement Gra
 As a research assignment, we need to study Haskell and analyze our design with the accumulated knowledge.
 
 = Python Tracer =
-The tracer needs a better gui. See http://pythontracer.googlecode.com
+The tracer needs a better gui. See http://pythontracer.googlecode.com.
+
+This sub-project needs two things:
+  # Developing the tracer, which requires:
+    * Deep knowledge of Python and how CPython works.
+    * Good experience in C
+  # Developing the GUI, which requires:
+    * Experience developing GUI with Python
+
+
+=
