@@ -6,8 +6,10 @@ We need people with the following experience:
   * Good knowledge of Python - a basic requirement.
     * Experience with [http://www.pygame.org pygame] - helpful but not essential
   * Ability to dive into Enough's design and critical thinking
+
+Nice to have:
   * Experience with functional languages (especially Haskell) is very welcome
-  * Experience in developing a programming language - the more abstract the better 
+  * Experience in developing programming languages - the more abstract the better 
 
 = LiveC =
 We need to re-implement the live C programming environment after the re-design that we recently did. This involves learning the design, the enough package library, and using the tracer to implement a high-performance environment for live C.
