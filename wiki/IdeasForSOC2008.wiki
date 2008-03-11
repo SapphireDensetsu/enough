@@ -5,6 +5,8 @@
 We need people with the following experience:
   * Good knowledge of Python - a basic requirement.
     * Experience with [http://www.pygame.org pygame] - helpful but not essential
+  * Good knowledge of computer system architecture, familiarization with a kernel
+  * Experience with C and C++
   * Ability to dive into Enough's design and critical thinking
 
 Nice to have:
