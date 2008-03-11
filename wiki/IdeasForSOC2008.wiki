@@ -1,0 +1,13 @@
+#summary Ideas for Google Summer of Code 2008
+
+= LiveC =
+We need to re-implement the live C programming environment after the re-design that we recently did. This involves learning the design, the enough package library, and using the tracer to implement a high-performance environment for live C.
+
+= Graphui =
+Graphui is the generic graph gui (GraphViz/dot GUI). We need to re-implement Graphui after the re-design of the enough package library.
+
+= Haskell =
+As a research assignment, we need to study Haskell and analyze our design with the accumulated knowledge.
+
+= Python Tracer =
+The tracer needs a better gui. See http://pythontracer.googlecode.com
