@@ -7,14 +7,11 @@ After two test versions, and a better understanding of the way we want to do thi
 = Features =
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
 
-Short *[http://enough.googlecode.com/svn/trunk/media/graphui_sneak_2.mp4 demo video]* (if you experience problems with QuickTime, use something else.)
+Short *[http://www.youtube.com/watch?v=RT87JfTYIvo Demo video]* (or try this: [http://enough.googlecode.com/svn/trunk/media/graphui_sneak_2.mp4 demo video] and if you experience problems with QuickTime, use something else.)
 
 [http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2.jpg Screenshot]:
 
 http://enough.googlecode.com/svn/trunk/media/graphui_screenshot_2_thumb.jpg
-
-
-
 
 Here are the current "features":
  * Automatic layout using [http://www.graphviz.org Dot, Neato & Twopi] (Graphviz). You can switch layout engines in real time
@@ -37,6 +34,7 @@ For better performance get Pyrex too (and run setup.py build make sure to use th
 Here is a short animation showing Graphui switching between layout engines:
 
 http://enough.googlecode.com/svn/trunk/media/graphui_switch_layouts.gif
+
 
 = Applications =
 Graphui is still under development. Here are some ideas for applications.
