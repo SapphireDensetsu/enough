@@ -1,7 +1,13 @@
 #summary Object Capability Python Fork
 #labels GSOC
 
-= Introduction (by Peaker) =
+= List of initial tasks =
+  * Work on the Python fork that will allow privates.
+  * Review Python library modules and classify each module as: Data (such as xml module) or Authority (ie. I/O or system calls, such as os or socket). We also need to specify if a module has mixed portions (for example, if a data module also does some direct IO from it's C code).
+  * Create forks of all the mixed modules by removing the I/O parts and seperating it into a different module - we might do this in some other way, but this is the general idea.
+  * There is a lot more to do, see below.
+
+= Detailed explanation (by Peaker) =
 
 Object-capability security is the opposite of "ambient authority" security. Ambient authority means that authority exists in the "background" and you "ask" for authority and permissions checks may or may not grant it. For example, any system with an "open" call that takes a filename into a global namespace has "ambient authority".
 
