@@ -2,7 +2,7 @@
 #labels Featured
 
 = Status =
-After two test versions, and a better understanding of the way we want to do this, we have decided to halt development until design and implementation of our base library has been completed.
+We have re-implemented the [PackageLibrary] - so now we need a major re-write of Graphui as well.
 
 = Features =
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
