@@ -3,22 +3,15 @@
 
 = Introduction (by Peaker) =
 
-Object-capability security is the opposite of "ambient authority"
-security. Ambient authority means that authority exists in the
-"background" and you "ask" for authority and permissions checks may or
-may not grant it. For example, any system with an "open" call that
-takes a filename into a global namespace has "ambient authority".
+Object-capability security is the opposite of "ambient authority" security. Ambient authority means that authority exists in the "background" and you "ask" for authority and permissions checks may or may not grant it. For example, any system with an "open" call that takes a filename into a global namespace has "ambient authority".
 
 Object-capability systems must not have ambient authority.
 
 First, start with some realizations:
-*Python Modules can be divided into two kinds*
-  # Pure immutable code/data modules (modules that define a class of
-mutable instances are themselves immutable. Its the instances that are
-mutable).
-  # Modules that use C code to access "Ambient authority" of the
-underlying system (access syscalls that let you access authority in
-global namespaces).
+Python Modules can be divided into *two kinds:*
+
+  # Pure immutable code/data modules (modules that define a class of mutable instances are themselves immutable. Its the instances that are mutable).
+  # Modules that use C code to access "Ambient authority" of the underlying system (access syscalls that let you access authority in global namespaces).
 
 We want to get rid of ambient authority in Python, so we just need to
 get rid of 2.
@@ -35,20 +28,10 @@ l33t_hax0r = read_only_accessor._full_access_file
 Which is a big no-no.
 
 Therefore, I propose this plan:
-  # Make normal modules (consider "xml" as an example) immutable
-(recursively. It must not contain anything mutable).
-  # Remove all "authority" from modules. ("os" goes bye bye! "zipfile"
-loses its open-wrappers, etc). This may prove to be the hard/tedious
-part (need to review all library modules for authority).
-  # Add private support to Python, by adding a C class that exposes
-only a subset of attributes/methods of any arbitrary object (thanks
-Rhamp for the idea).  This still means you have to use the C class
-everywhere and you unnecessarily expose authority, and can be further
-improved later.
-  # Create a main() wrapper that converts silly Unix conventions (like
-filenames) into authority-objects that represent directories, files,
-etc.  These objects can be passed around instead of an "almighty" "os"
-module.
+  # Make normal modules (consider "xml" as an example) immutable (recursively. It must not contain anything mutable).
+  # Remove all "authority" from modules. ("os" goes bye bye! "zipfile" loses its open-wrappers, etc). This may prove to be the hard/tedious part (need to review all library modules for authority).
+  # Add private support to Python, by adding a C class that exposes only a subset of attributes/methods of any arbitrary object (thanks Rhamp for the idea).  This still means you have to use the C class everywhere and you unnecessarily expose authority, and can be further improved later.
+  # Create a main() wrapper that converts silly Unix conventions (like filenames) into authority-objects that represent directories, files, etc.  These objects can be passed around instead of an "almighty" "os" module.
 
 This might allow Python to be used to run untrusted code without fear,
 and be the first proper OCap language that uses mainstream concepts...
