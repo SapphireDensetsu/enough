@@ -14,7 +14,7 @@ Nice to have:
   * Experience in developing programming languages - the more abstract the better 
 
 = OCaPy - Object Capability Python Fork =
-[OCaPy See here for details].
+Developing a Python fork that uses object capabilities rather than ambient authority. [OCaPy See here for details].
 
 = LiveC =
 We need to re-implement the live C programming environment after the re-design that we recently did. This involves learning the design, the enough package library, and using the tracer to implement a high-performance environment for live C.
