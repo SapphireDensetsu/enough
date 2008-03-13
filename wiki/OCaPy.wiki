@@ -3,6 +3,7 @@
 
 = List of initial tasks =
   * Work on the Python fork that will allow privates.
+  * Add digital signature verification support for C-module imports.
   * Review Python library modules and classify each module as: Data (such as xml module) or Authority (ie. I/O or system calls, such as os or socket). We also need to specify if a module has mixed portions (for example, if a data module also does some direct IO from it's C code).
   * Create forks of all the mixed modules by removing the I/O parts and seperating it into a different module - we might do this in some other way, but this is the general idea.
   * There is a lot more to do, see below.
