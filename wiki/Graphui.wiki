@@ -4,6 +4,7 @@
 = Status =
 We have re-implemented the [PackageLibrary] - so now we need a major re-write of Graphui as well.
 
+== Download ==
 The latest version (BEFORE the anticipated rewrite) is: [http://enough.googlecode.com/files/graphui485.tar.gz Here]
 
 = Features =
