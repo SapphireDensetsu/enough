@@ -5,7 +5,7 @@
 We have re-implemented the [PackageLibrary] - so now we need a major re-write of Graphui as well.
 
 == Download ==
-The latest version (BEFORE the anticipated rewrite) is: [http://enough.googlecode.com/files/graphui488.tar.gz Latest Version]
+The latest version (BEFORE the anticipated rewrite) is: [http://enough.googlecode.com/files/graphui488_only.tar.gz Latest Version]
 
 = Features =
 Graphui (pronounced grafoo-ee) is an attempt at a generic graph editing gui. The code is in the svn under [http://enough.googlecode.com/svn/trunk/graphui/ graphui].
