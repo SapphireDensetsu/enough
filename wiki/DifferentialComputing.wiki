@@ -8,6 +8,8 @@ A more efficient solution is to run a slightly modified algorithm, a differentia
 
 While a normal algorithm (or processor) processes the input it receives, a differential algorithm processes *differences* to the input it receives.
 
+Differential computing raises the issue of [ComputationVsStorage].
+
 == Some examples ==
 
 A computer's media collection is often sorted by title, author, and time.  When adding new media to the collection, the sort must not break. In order for this to occur, most programs incorporate special logic for the insertion of the media into the collection that does not break the sort - or they rescan the entire collection slowly whenever it is changed.
