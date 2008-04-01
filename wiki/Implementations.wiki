@@ -26,6 +26,9 @@ NF is a gui for functional live programming. A few prototypes were developed.
 == Graphui ==
 See here: [Graphui]
 
+== Python Tracer ==
+[http://code.google.com/p/pythontracer Python Tracer]
+
 == Tools ==
  * *videowriter* is a tiny program for *creating a video out of a sequence of images*. Available in the SVN under tools. *Requires*: OpenCV library. Or you can try the [http://enough.googlecode.com/svn/trunk/tools/video_writer linux binary].
 
